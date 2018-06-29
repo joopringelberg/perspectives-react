@@ -1,0 +1,29 @@
+{
+  "name": "perspectives-react",
+  "version": "1.0.0",
+  "description": "React components to build a GUI based on the perspectives-protocol (hides connection to perspectives-core).",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joopringelberg/perspectives-react.git"
+  },
+  "keywords": [
+    "perspectives",
+    "react"
+  ],
+  "author": "Joop Ringelberg <joop.ringelberg@gmail.com>",
+  "license": "Copyright Perspect-IT 2018",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/joopringelberg/perspectives-react/issues"
+  },
+  "homepage": "https://github.com/joopringelberg/perspectives-react#readme",
+  "dependencies": {
+    "react": "^16.2.0",
+    "react-dom": "^16.4.1",
+    "prop-types": "^15.6.2",
+    "perspectives-proxy": "^1.0.0"
+  }
+}

@@ -1,8 +1,7 @@
-const react = require("react");
+const React = require("react");
 const PropTypes = require("prop-types");
 const perspectivesApiProxy = require("perspectives-proxy");
 
-const React = react.React;
 const Component = react.Component;
 
 class PerspectivesComponent extends Component {

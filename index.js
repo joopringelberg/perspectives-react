@@ -1,6 +1,6 @@
 const React = require("react");
 const PropTypes = require("prop-types");
-const perspectivesApiProxy = require("perspectives-proxy");
+const Perspectives = require("perspectives-proxy").Perspectives;
 
 const Component = React.Component;
 
@@ -320,6 +320,6 @@ module.exports = {
   Binding: Binding,
   View: View,
   ContextVanRol: ContextVanRol,
-  ExterneView: ExterneView,
-  createRequestEmitterImpl: perspectivesApiProxy.createRequestEmitterImpl,
-  createTcpConnectionToPerspectives: perspectivesApiProxy.createTcpConnectionToPerspectives };
+  ExterneView: ExterneView
+};
+

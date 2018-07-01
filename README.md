@@ -9,3 +9,10 @@ Install with npm:
 $ npm install perspectives-react
 ```
 This package depends on React. JSX is used in the source.
+
+## build
+Create index.js by evaluating on the command line:
+
+```
+$ npm run build
+```

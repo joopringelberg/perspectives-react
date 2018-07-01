@@ -1,6 +1,3 @@
-// import React, { Component } from "react";
-// import { Perspectives, createRequestEmitterImpl, createTcpConnectionToPerspectives } from "./perspectivesApiProxy";
-// import PropTypes from "prop-types";
 const react = require("react");
 const PropTypes = require("prop-types");
 const perspectivesApiProxy = require("perspectives-proxy");
@@ -8,129 +5,110 @@ const perspectivesApiProxy = require("perspectives-proxy");
 const React = react.React;
 const Component = react.Component;
 
-class PerspectivesComponent extends Component
-{
-  constructor(props)
-  {
+class PerspectivesComponent extends Component {
+  constructor(props) {
     super(props);
     this.state = {};
     this.unsubscribers = [];
   }
 
-  componentWillUnmount ()
-  {
-    this.unsubscribers.forEach( unsubscriber => unsubscriber() );
+  componentWillUnmount() {
+    this.unsubscribers.forEach(unsubscriber => unsubscriber());
   }
 
-  addUnsubscriber(unsubscriber)
-  {
+  addUnsubscriber(unsubscriber) {
     this.unsubscribers.push(unsubscriber);
   }
 
-  stateIsComplete ()
-  {
+  stateIsComplete() {
     const component = this;
     let isComplete = true;
-    Object.keys(component.state).forEach(
-      function (prop)
-      {
-        if (!component.state[prop])
-        {isComplete = false;}
-      });
+    Object.keys(component.state).forEach(function (prop) {
+      if (!component.state[prop]) {
+        isComplete = false;
+      }
+    });
 
     return isComplete;
   }
 
-  stateIsEmpty ()
-  {
+  stateIsEmpty() {
     return Object.keys(this.state).length === 0;
   }
 
 }
 
-class Context extends PerspectivesComponent
-{
-  constructor (props)
-  {
+class Context extends PerspectivesComponent {
+  constructor(props) {
     let component;
     super(props);
     component = this;
     component.props.rollen.forEach(rn => component.state[rn] = undefined);
   }
 
-  componentDidMount ()
-  {
+  componentDidMount() {
     const component = this;
-    component.props.rollen.forEach(
-      function (rolName)
-      {
-        Perspectives.then(
-          function (pproxy)
-          {
-            component.addUnsubscriber(
-              pproxy.getRol(
-                component.props.instance,
-                component.props.type + "$" + rolName,
-                function (rolIds)
-                {
-                  const updater = {};
-                  updater[rolName] = rolIds;
-                  component.setState(updater);
-                }));
-          });
-      }
-    );
+    component.props.rollen.forEach(function (rolName) {
+      Perspectives.then(function (pproxy) {
+        component.addUnsubscriber(pproxy.getRol(component.props.instance, component.props.type + "$" + rolName, function (rolIds) {
+          const updater = {};
+          updater[rolName] = rolIds;
+          component.setState(updater);
+        }));
+      });
+    });
   }
 
-  render ()
-  {
+  render() {
     const component = this;
     let children;
 
-    if (component.stateIsComplete())
-    {
-      if (Array.isArray(component.props.children))
-      {
+    if (component.stateIsComplete()) {
+      if (Array.isArray(component.props.children)) {
         children = component.props.children;
-      }
-      else
-      {
+      } else {
         children = [component.props.children];
       }
-      return React.Children.map(
-        children,
-        function (child)
-        {
-          const childRol = child.props.rol;
-          let instances;
-          if (!childRol)
-          {
-            console.error("Context (" + component.props.type + ") finds child of type '" + child.type.name + "' that has no 'rol' on its props.");
-            return <p className="error">Context ({component.props.type}) finds child of type '{child.type.name}' that has no 'rol' on its props.</p>;
-          }
-          instances = component.state[childRol];
-          if (!instances)
-          {
-            console.error( "Context (" + component.props.type + ") has no rol '" + childRol + "' while the child of type '" + child.type.name + "' asks for it." );
-            return <p className="error">Context ({component.props.type}) has no rol '{childRol}' while the child of type '{child.type.name}' asks for it.</p>;
-          }
-          return instances.map(
-            function(instance)
-            {
-              return React.cloneElement(
-                child,
-                {
-                  key: instance,
-                  instance: instance,
-                  namespace: component.props.type
-                });
-            }
+      return React.Children.map(children, function (child) {
+        const childRol = child.props.rol;
+        let instances;
+        if (!childRol) {
+          console.error("Context (" + component.props.type + ") finds child of type '" + child.type.name + "' that has no 'rol' on its props.");
+          return React.createElement(
+            "p",
+            { className: "error" },
+            "Context (",
+            component.props.type,
+            ") finds child of type '",
+            child.type.name,
+            "' that has no 'rol' on its props."
           );
+        }
+        instances = component.state[childRol];
+        if (!instances) {
+          console.error("Context (" + component.props.type + ") has no rol '" + childRol + "' while the child of type '" + child.type.name + "' asks for it.");
+          return React.createElement(
+            "p",
+            { className: "error" },
+            "Context (",
+            component.props.type,
+            ") has no rol '",
+            childRol,
+            "' while the child of type '",
+            child.type.name,
+            "' asks for it."
+          );
+        }
+        return instances.map(function (instance) {
+          return React.cloneElement(child, {
+            key: instance,
+            instance: instance,
+            namespace: component.props.type
+          });
         });
-    }
-    else
-    {
-      return <div />;
+      });
+    } else {
+      return React.createElement("div", null);
     }
   }
 }
@@ -141,77 +119,49 @@ Context.propTypes = {
   rollen: PropTypes.array.isRequired
 };
 
-class Binding extends PerspectivesComponent
-{
-  constructor (props)
-  {
+class Binding extends PerspectivesComponent {
+  constructor(props) {
     super(props);
     this.state.binding = undefined;
     this.state.bindingType = undefined;
   }
 
-  componentDidMount ()
-  {
+  componentDidMount() {
     const component = this;
-    Perspectives.then(
-      function (pproxy)
-      {
-        component.addUnsubscriber(
-          pproxy.getBinding(
-            component.props.instance,
-            function (binding)
-            {
-              component.setState({binding: binding[0]});
-            }));
-        // Retrieve the type of the binding.
-        // This will be the namespace that its properties are defined in.
-        component.addUnsubscriber(
-          pproxy.getBindingType(
-            component.props.instance,
-            function (bindingType)
-            {
-              component.setState({bindingType: bindingType[0]});
-            }));
-      }
-    );
+    Perspectives.then(function (pproxy) {
+      component.addUnsubscriber(pproxy.getBinding(component.props.instance, function (binding) {
+        component.setState({ binding: binding[0] });
+      }));
+      // Retrieve the type of the binding.
+      // This will be the namespace that its properties are defined in.
+      component.addUnsubscriber(pproxy.getBindingType(component.props.instance, function (bindingType) {
+        component.setState({ bindingType: bindingType[0] });
+      }));
+    });
   }
 
   // Render! props.children contains the nested elements.
   // These should be provided the retrieved binding value.
   // However, this can only be done after state is available.
-  render ()
-  {
+  render() {
     const component = this;
 
-    if (component.stateIsComplete())
-    {
-      if (Array.isArray(component.props.children))
-      {
-        return React.Children.map(
-          component.props.children,
-          function (child)
-          {
-            return React.cloneElement(
-              child,
-              {
-                instance: component.state.binding,
-                namespace: component.state.bindingType
-              });
-          });
-      }
-      else
-      {
-        return React.cloneElement(
-          component.props.children,
-          {
+    if (component.stateIsComplete()) {
+      if (Array.isArray(component.props.children)) {
+        return React.Children.map(component.props.children, function (child) {
+          return React.cloneElement(child, {
             instance: component.state.binding,
             namespace: component.state.bindingType
           });
+        });
+      } else {
+        return React.cloneElement(component.props.children, {
+          instance: component.state.binding,
+          namespace: component.state.bindingType
+        });
       }
-    }
-    else
-    {
-      return <div />;
+    } else {
+      return React.createElement("div", null);
     }
   }
 
@@ -223,105 +173,61 @@ Binding.propTypes = {
   rol: PropTypes.string.isRequired
 };
 
-class View extends PerspectivesComponent
-{
-  componentDidMount ()
-  {
+class View extends PerspectivesComponent {
+  componentDidMount() {
     const component = this;
-    Perspectives.then(
-      function(pproxy)
-      {
-        let qualifiedView;
-        if (component.props.rol)
-        {
-          qualifiedView = component.props.namespace + "$" + component.props.rol + "$" + component.props.viewnaam;
-        }
-        else
-        {
-          qualifiedView = component.props.namespace + "$" + component.props.viewnaam;
-        }
-        pproxy.getViewProperties(
-          qualifiedView,
-          function(propertyNames)
-          {
-            // First initialize state
-            // NOTE: React will not notice this.
-            propertyNames.forEach(
-              function(propertyName)
-              {
-                const ln = deconstructLocalNameFromDomeinURI_(propertyName);
-                component.state[ln] = undefined;
-              }
-            );
-            propertyNames.forEach(
-              function(propertyName)
-              {
-                component.addUnsubscriber(
-                  pproxy.getProperty(
-                    component.props.instance,
-                    propertyName,
-                    function (propertyValues)
-                    {
-                      const updater = {};
-                      const ln = deconstructLocalNameFromDomeinURI_(propertyName);
-                      updater[ln] = propertyValues;
-                      component.setState(updater);
-                    },
-                    component.addUnsubscriber.bind(component)
-                  ));
-              }
-            );
-          },
-          component.addUnsubscriber.bind(component)
-        );
+    Perspectives.then(function (pproxy) {
+      let qualifiedView;
+      if (component.props.rol) {
+        qualifiedView = component.props.namespace + "$" + component.props.rol + "$" + component.props.viewnaam;
+      } else {
+        qualifiedView = component.props.namespace + "$" + component.props.viewnaam;
       }
-    );
+      pproxy.getViewProperties(qualifiedView, function (propertyNames) {
+        // First initialize state
+        // NOTE: React will not notice this.
+        propertyNames.forEach(function (propertyName) {
+          const ln = deconstructLocalNameFromDomeinURI_(propertyName);
+          component.state[ln] = undefined;
+        });
+        propertyNames.forEach(function (propertyName) {
+          component.addUnsubscriber(pproxy.getProperty(component.props.instance, propertyName, function (propertyValues) {
+            const updater = {};
+            const ln = deconstructLocalNameFromDomeinURI_(propertyName);
+            updater[ln] = propertyValues;
+            component.setState(updater);
+          }, component.addUnsubscriber.bind(component)));
+        });
+      }, component.addUnsubscriber.bind(component));
+    });
   }
-
 
   // Render! props.children contains the nested elements.
   // These should be provided all property name-value pairs,
   // except when it has a prop 'propertyName'.
   // However, this can only be done after state is available.
-  render ()
-  {
+  render() {
     const component = this;
 
-    function cloneChild (child)
-    {
+    function cloneChild(child) {
       // If the child has a prop 'propertyName', just provide the property value.
-      if (child.props.propertyName)
-      {
-        return React.cloneElement(
-          child,
-          {
-            value: component.state[child.props.propertyName]
-          });
-      }
-      else
-      {
-        return React.cloneElement(
-          child,
-          component.state);
+      if (child.props.propertyName) {
+        return React.cloneElement(child, {
+          value: component.state[child.props.propertyName]
+        });
+      } else {
+        return React.cloneElement(child, component.state);
       }
     }
 
-    if (!component.stateIsEmpty() && component.stateIsComplete())
-    {
-      if (Array.isArray(component.props.children))
-      {
-        return React.Children.map(
-          component.props.children,
-          cloneChild);
-      }
-      else
-      {
+    if (!component.stateIsEmpty() && component.stateIsComplete()) {
+      if (Array.isArray(component.props.children)) {
+        return React.Children.map(component.props.children, cloneChild);
+      } else {
         return cloneChild(component.props.children);
       }
-    }
-    else
-    {
-      return <div />;
+    } else {
+      return React.createElement("div", null);
     }
   }
 
@@ -334,58 +240,38 @@ View.propTypes = {
   viewnaam: PropTypes.string.isRequired
 };
 
-class ContextVanRol extends PerspectivesComponent
-{
-  constructor (props)
-  {
+class ContextVanRol extends PerspectivesComponent {
+  constructor(props) {
     super(props);
     this.state.instance = undefined;
     this.state.type = undefined;
   }
 
-  componentDidMount ()
-  {
+  componentDidMount() {
     const component = this;
-    Perspectives.then(
-      function (pproxy)
-      {
-        // The context of the rol will be bound to the state prop 'instance'.
-        component.addUnsubscriber(
-          pproxy.getRolContext(
-            component.props.instance,
-            function (contextId)
-            {
-              component.setState({instance: contextId[0]});
-              // The type of the context.
-              component.addUnsubscriber(
-                pproxy.getContextType(
-                  contextId,
-                  function (contextType)
-                  {
-                    component.setState({type: contextType[0]});
-                  },
-                  component.addUnsubscriber.bind(component)
-                ));
-            },
-            component.addUnsubscriber.bind(component)
-          ));
-      }
-    );
+    Perspectives.then(function (pproxy) {
+      // The context of the rol will be bound to the state prop 'instance'.
+      component.addUnsubscriber(pproxy.getRolContext(component.props.instance, function (contextId) {
+        component.setState({ instance: contextId[0] });
+        // The type of the context.
+        component.addUnsubscriber(pproxy.getContextType(contextId, function (contextType) {
+          component.setState({ type: contextType[0] });
+        }, component.addUnsubscriber.bind(component)));
+      }, component.addUnsubscriber.bind(component)));
+    });
   }
 
-  render ()
-  {
+  render() {
     const component = this;
 
-    if (component.stateIsComplete())
-    {
-      return (<Context instance={component.state.instance} rollen={component.props.rollen} type={component.state.type}>
-        {component.props.children}
-      </Context>);
-    }
-    else
-    {
-      return <div />;
+    if (component.stateIsComplete()) {
+      return React.createElement(
+        Context,
+        { instance: component.state.instance, rollen: component.props.rollen, type: component.state.type },
+        component.props.children
+      );
+    } else {
+      return React.createElement("div", null);
     }
   }
 
@@ -394,12 +280,16 @@ ContextVanRol.propTypes = {
   rollen: PropTypes.array.isRequired
 };
 
-
-function ExterneView(props)
-{
-  return (<Binding rol={props.rol} instance={props.instance}>
-    <View viewnaam={props.viewnaam}>{props.children}</View>
-  </Binding>);
+function ExterneView(props) {
+  return React.createElement(
+    Binding,
+    { rol: props.rol, instance: props.instance },
+    React.createElement(
+      View,
+      { viewnaam: props.viewnaam },
+      props.children
+    )
+  );
 }
 
 ExterneView.propTypes = {
@@ -415,16 +305,12 @@ ExterneView.propTypes = {
 // Returns "localName" from "model:ModelName$localName" or Nothing
 // deconstructLocalNameFromDomeinURI_ :: String -> String
 // NOTE DEPENDENCY. This code is adapted from module Perspectives.Identifiers.
-function deconstructLocalNameFromDomeinURI_(s)
-{
+function deconstructLocalNameFromDomeinURI_(s) {
   // domeinURIRegex :: Regex
-  const domeinURIRegex = new Regex ("^(model:\\w*.*)\\$(\\w*)");
-  try
-  {
+  const domeinURIRegex = new Regex("^(model:\\w*.*)\\$(\\w*)");
+  try {
     return s.match(domeinURIRegex1)[2];
-  }
-  catch(e)
-  {
+  } catch (e) {
     throw "deconstructLocalNameFromDomeinURI_: no local name in '" + s + "'.";
   }
 }
@@ -438,3 +324,4 @@ module.exports = {
   ExterneView: ExterneView,
   createRequestEmitterImpl: perspectivesApiProxy.createRequestEmitterImpl,
   createTcpConnectionToPerspectives: perspectivesApiProxy.createTcpConnectionToPerspectives };
+

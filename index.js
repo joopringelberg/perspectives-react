@@ -2,7 +2,7 @@ const React = require("react");
 const PropTypes = require("prop-types");
 const perspectivesApiProxy = require("perspectives-proxy");
 
-const Component = react.Component;
+const Component = React.Component;
 
 class PerspectivesComponent extends Component {
   constructor(props) {
@@ -323,4 +323,3 @@ module.exports = {
   ExterneView: ExterneView,
   createRequestEmitterImpl: perspectivesApiProxy.createRequestEmitterImpl,
   createTcpConnectionToPerspectives: perspectivesApiProxy.createTcpConnectionToPerspectives };
-

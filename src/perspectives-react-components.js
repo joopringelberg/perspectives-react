@@ -411,19 +411,18 @@ ExterneView.propTypes = {
 // Returns "localName" from "model:ModelName$localName" or Nothing
 // deconstructLocalNameFromDomeinURI_ :: String -> String
 // NOTE DEPENDENCY. This code is adapted from module Perspectives.Identifiers.
-function deconstructLocalNameFromDomeinURI_(s)
-{
+function deconstructLocalNameFromDomeinURI_(s) {
   // domeinURIRegex :: Regex
-  const domeinURIRegex = new Regex ("^(model:\\w*.*)\\$(\\w*)");
+  const domeinURIRegex = new RegExp("^(model:\\w*.*)\\$(\\w*)");
   try
   {
-    return s.match(domeinURIRegex1)[2];
-  }
-  catch(e)
+    return s.match(domeinURIRegex)[2];
+  } catch (e)
   {
     throw "deconstructLocalNameFromDomeinURI_: no local name in '" + s + "'.";
   }
 }
+
 
 // export { Context, Binding, View, ContextVanRol, ExterneView, createRequestEmitterImpl, createTcpConnectionToPerspectives };
 module.exports = {

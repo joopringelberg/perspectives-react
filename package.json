@@ -2,9 +2,11 @@
   "name": "perspectives-react",
   "version": "1.1.0",
   "description": "React components to build a GUI based on the perspectives-protocol (hides connection to perspectives-core).",
+  "main": "dist/perspectives-react.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "./node_modules/.bin/babel ./src/perspectives-react-components.js > index.js"
+    "watch": "webpack --watch",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -30,6 +32,10 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.24.1"
+    "babel-preset-react": "^6.24.1",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "webpack": "^4.15.1",
+    "webpack-cli": "^3.0.8"
   }
 }

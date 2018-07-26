@@ -44,7 +44,45 @@ class PerspectivesComponent extends Component
 
 }
 
-class Context extends PerspectivesComponent
+class Context extends Component
+{
+  constructor (props)
+  {
+    super(props);
+  }
+  render ()
+  {
+    const component = this;
+    let children;
+
+    if (Array.isArray(component.props.children))
+    {
+      children = component.props.children;
+    }
+    else
+    {
+      children = [component.props.children];
+    }
+
+    return React.Children.map(
+      children,
+      function (child)
+      {
+        return React.cloneElement(
+          child,
+          {
+            instance: component.props.instance,
+            namespace: component.props.type
+          });
+      });
+  }
+}
+Context.propTypes = {
+  instance: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired
+};
+
+class Rollen extends PerspectivesComponent
 {
   constructor (props)
   {
@@ -67,7 +105,7 @@ class Context extends PerspectivesComponent
             component.addUnsubscriber(
               pproxy.getRol(
                 context,
-                component.props.type + "$" + rolName,
+                component.props.namespace + "$" + rolName,
                 function (rolIds)
                 {
                   const updater = {};
@@ -102,18 +140,18 @@ class Context extends PerspectivesComponent
           let instances;
           if (!childRol)
           {
-            console.error("Context (" + component.props.type + ") finds child of type '" + child.type.name + "' that has no 'rol' on its props.");
-            return <p className="error">Context ({component.props.type}) finds child of type '{child.type.name}' that has no 'rol' on its props.</p>;
+            console.error("Rollen (" + component.props.namespace + ") finds child of type '" + child.type.name + "' that has no 'rol' on its props.");
+            return <p className="error">Rollen ({component.props.namespace}) finds child of type '{child.type.name}' that has no 'rol' on its props.</p>;
           }
           instances = component.state[childRol];
           if (childRol === "buitenRol")
           {
-            instances = buitenRol( component.props.instance );
+            instances = [buitenRol( component.props.instance )];
           }
           if (!instances)
           {
-            console.error( "Context (" + component.props.type + ") has no rol '" + childRol + "' while the child of type '" + child.type.name + "' asks for it." );
-            return <p className="error">Context ({component.props.type}) has no rol '{childRol}' while the child of type '{child.type.name}' asks for it.</p>;
+            console.error( "Rollen (" + component.props.namespace + ") has no rol '" + childRol + "' while the child of type '" + child.type.name + "' asks for it." );
+            return <p className="error">Rollen ({component.props.namespace}) has no rol '{childRol}' while the child of type '{child.type.name}' asks for it.</p>;
           }
           return instances.map(
             function(instance)
@@ -123,7 +161,7 @@ class Context extends PerspectivesComponent
                 {
                   key: instance,
                   instance: instance,
-                  namespace: component.props.type
+                  namespace: component.props.namespace
                 });
             }
           );
@@ -136,9 +174,7 @@ class Context extends PerspectivesComponent
   }
 }
 
-Context.propTypes = {
-  instance: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
+Rollen.propTypes = {
   rollen: PropTypes.array.isRequired
 };
 
@@ -235,7 +271,15 @@ class View extends PerspectivesComponent
         let qualifiedView;
         if (component.props.rol)
         {
-          qualifiedView = component.props.namespace + "$" + component.props.rol + "$" + component.props.viewnaam;
+          // This ugly hack needs to go! The royal way is to make the type of buitenRol no longer have "Beschrijving" as part of its name.
+          if (component.props.rol === "buitenRol")
+          {
+            qualifiedView = component.props.namespace + "$" + component.props.rol + "Beschrijving$" + component.props.viewnaam;
+          }
+          else
+          {
+            qualifiedView = component.props.namespace + "$" + component.props.rol + "$" + component.props.viewnaam;
+          }
         }
         else
         {
@@ -380,7 +424,7 @@ class ContextVanRol extends PerspectivesComponent
 
     if (component.stateIsComplete())
     {
-      return (<Context instance={component.state.instance} rollen={component.props.rollen} type={component.state.type}>
+      return (<Context instance={component.state.instance} type={component.state.type}>
         {component.props.children}
       </Context>);
     }
@@ -391,9 +435,7 @@ class ContextVanRol extends PerspectivesComponent
   }
 
 }
-ContextVanRol.propTypes = {
-  rollen: PropTypes.array.isRequired
-};
+ContextVanRol.propTypes = {};
 
 // Access a View on the BuitenRol bound to a Rol of the surrounding context.
 function ExterneViewOfBoundContext(props)
@@ -425,19 +467,21 @@ ExterneViewOfBoundContext.propTypes = {
   viewnaam: PropTypes.string.isRequired
 };
 
-function ExterneView(props)
+// Access a View on the BuitenRol of a Context.
+function ViewOnBuitenRol(props)
 {
-  return (<View rol="buitenRol" viewnaam={props.viewnaam}/>);
+  return (<Rollen instance={props.instance} namespace={props.namespace} rollen={[]}>
+      <View rol="buitenRol" viewnaam={props.viewnaam}>{props.children}</View>
+    </Rollen>)
 }
 
-ExterneView.propTypes = {
+ViewOnBuitenRol.propTypes = {
   viewnaam: PropTypes.string.isRequired
 };
 
 // TODO
 // GebondenContext
 // InterneView
-// ExterneView
 // BuitenRol
 // BinnenRol
 // Binding
@@ -474,9 +518,10 @@ function buitenRol( s )
 
 module.exports = {
   Context: Context,
+  Rollen: Rollen,
   RolBinding: RolBinding,
   View: View,
   ContextVanRol: ContextVanRol,
   ExterneViewOfBoundContext: ExterneViewOfBoundContext,
-  ExterneView: ExterneView
+  ViewOnBuitenRol: ViewOnBuitenRol
 };

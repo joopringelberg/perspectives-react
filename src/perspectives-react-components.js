@@ -57,6 +57,7 @@ class Context extends PerspectivesComponent
   componentDidMount ()
   {
     const component = this;
+    const context = component.props.instance;
     component.props.rollen.forEach(
       function (rolName)
       {
@@ -65,7 +66,7 @@ class Context extends PerspectivesComponent
           {
             component.addUnsubscriber(
               pproxy.getRol(
-                component.props.instance,
+                context,
                 component.props.type + "$" + rolName,
                 function (rolIds)
                 {
@@ -105,6 +106,10 @@ class Context extends PerspectivesComponent
             return <p className="error">Context ({component.props.type}) finds child of type '{child.type.name}' that has no 'rol' on its props.</p>;
           }
           instances = component.state[childRol];
+          if (childRol === "buitenRol")
+          {
+            instances = buitenRol( component.props.instance );
+          }
           if (!instances)
           {
             console.error( "Context (" + component.props.type + ") has no rol '" + childRol + "' while the child of type '" + child.type.name + "' asks for it." );
@@ -137,7 +142,7 @@ Context.propTypes = {
   rollen: PropTypes.array.isRequired
 };
 
-class Binding extends PerspectivesComponent
+class RolBinding extends PerspectivesComponent
 {
   constructor (props)
   {
@@ -213,7 +218,7 @@ class Binding extends PerspectivesComponent
 
 }
 
-Binding.propTypes = {
+RolBinding.propTypes = {
   instance: PropTypes.string,
   namespace: PropTypes.string,
   rol: PropTypes.string.isRequired
@@ -390,23 +395,52 @@ ContextVanRol.propTypes = {
   rollen: PropTypes.array.isRequired
 };
 
-
-function ExterneView(props)
+// Access a View on the BuitenRol bound to a Rol of the surrounding context.
+function ExterneViewOfBoundContext(props)
 {
-  return (<Binding rol={props.rol} instance={props.instance}>
+  return (<RolBinding rol={props.rol} instance={props.instance}>
     <View viewnaam={props.viewnaam}>{props.children}</View>
-  </Binding>);
+  </RolBinding>);
 }
 
-ExterneView.propTypes = {
+ExterneViewOfBoundContext.propTypes = {
+  rol: PropTypes.string.isRequired,
+  viewnaam: PropTypes.string.isRequired,
+  instance: PropTypes.string,
+  namespace: PropTypes.string
+};
+
+// Access a View on the BinnenRol bound to a Rol of the surrounding context.
+function InterneViewOfBoundContext(props)
+{
+  return (<RolBinding rol={props.rol} instance={props.instance}>
+    <ContextVanRol rollen={[]}>
+      <InterneView viewnaam={props.viewnaam}>{props.children}</InterneView>
+    </ContextVanRol>
+  </RolBinding>);
+}
+
+ExterneViewOfBoundContext.propTypes = {
   rol: PropTypes.string.isRequired,
   viewnaam: PropTypes.string.isRequired
 };
 
+function ExterneView(props)
+{
+  return (<View rol="buitenRol" viewnaam={props.viewnaam}/>);
+}
+
+ExterneView.propTypes = {
+  viewnaam: PropTypes.string.isRequired
+};
+
 // TODO
-// ExterneView
 // GebondenContext
 // InterneView
+// ExterneView
+// BuitenRol
+// BinnenRol
+// Binding
 
 // Returns "localName" from "model:ModelName$localName" or Nothing
 // deconstructLocalNameFromDomeinURI_ :: String -> String
@@ -423,12 +457,26 @@ function deconstructLocalNameFromDomeinURI_(s) {
   }
 }
 
+// A Namespace has the form "model:Name"
+// NOTE DEPENDENCY. This code is adapted from module Perspectives.Identifiers.
+function buitenRol( s )
+{
+  const modelRegEx = new RegExp("^model:(\\w*)$");
+  if (s.match(modelRegEx))
+  {
+    return s + "$_buitenRol";
+  }
+  else
+  {
+    return s + "_buitenRol";
+  }
+}
 
-// export { Context, Binding, View, ContextVanRol, ExterneView, createRequestEmitterImpl, createTcpConnectionToPerspectives };
 module.exports = {
   Context: Context,
-  Binding: Binding,
+  RolBinding: RolBinding,
   View: View,
   ContextVanRol: ContextVanRol,
+  ExterneViewOfBoundContext: ExterneViewOfBoundContext,
   ExterneView: ExterneView
 };

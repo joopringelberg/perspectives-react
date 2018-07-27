@@ -384,8 +384,8 @@ class ContextVanRol extends PerspectivesComponent
   constructor (props)
   {
     super(props);
-    this.state.instance = undefined;
-    this.state.type = undefined;
+    this.state.contextInstance = undefined;
+    this.state.contextType = undefined;
   }
 
   componentDidMount ()
@@ -394,20 +394,20 @@ class ContextVanRol extends PerspectivesComponent
     Perspectives.then(
       function (pproxy)
       {
-        // The context of the rol will be bound to the state prop 'instance'.
+        // The context of the rol will be bound to the state prop 'contextInstance'.
         component.addUnsubscriber(
           pproxy.getRolContext(
             component.props.instance,
             function (contextId)
             {
-              component.setState({instance: contextId[0]});
-              // The type of the context.
+              component.setState({contextInstance: contextId[0]});
+              // The type of the contextInstance.
               component.addUnsubscriber(
                 pproxy.getContextType(
                   contextId,
                   function (contextType)
                   {
-                    component.setState({type: contextType[0]});
+                    component.setState({contextType: contextType[0]});
                   },
                   component.addUnsubscriber.bind(component)
                 ));
@@ -424,7 +424,7 @@ class ContextVanRol extends PerspectivesComponent
 
     if (component.stateIsComplete())
     {
-      return (<Context instance={component.state.instance} type={component.state.type}>
+      return (<Context instance={component.state.contextInstance} type={component.state.contextType}>
         {component.props.children}
       </Context>);
     }
@@ -456,7 +456,7 @@ ExterneViewOfBoundContext.propTypes = {
 function InterneViewOfBoundContext(props)
 {
   return (<RolBinding rol={props.rol} instance={props.instance}>
-    <ContextVanRol rollen={[]}>
+    <ContextVanRol>
       <InterneView viewnaam={props.viewnaam}>{props.children}</InterneView>
     </ContextVanRol>
   </RolBinding>);

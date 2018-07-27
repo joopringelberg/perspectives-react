@@ -42,11 +42,11 @@ Construct a tree of Perspectives React Components. These must be understood as *
 All Components (with the exception of the Context Component) must be nested inside another Component, that should provide either a Context or a Role. All Components can be categorized as to what they provide to their children: a Context, Role(s) or Properties. The matrix below gives a complete overview.
 
 
-.| Embed in Role | Embed in Context | No embedding
+&nbsp;| Embed in Role | Embed in Context | No embedding
 --- | --- | --- | ---
-**Provides Role(s)** | .| Roles, ExternalRole, RoleBinding, InverseRoleBinding |.
+**Provides Role(s)** |&nbsp;| Roles, ExternalRole, RoleBinding, InverseRoleBinding |&nbsp;
 **Provides Context** |ContextOfRole |BoundContext |Context
-**Provides Properties** | View | ViewOnExternalRole, ViewOnInternalRole, ExternalViewOfBoundContext, InternalViewOfBoundContext |.
+**Provides Properties** | View | ViewOnExternalRole, ViewOnInternalRole, ExternalViewOfBoundContext, InternalViewOfBoundContext |&nbsp;
 
 
 *Example*. `Context` is in the middle row and so provides a Context (it is in the column **No Embedding**, so can be put anywhere in your html). What can be inside a `Context` Component? Everything in the column **Embed in Context**, so: `Roles`, `ExternalRole`, `InverseRoleBinding`, `ViewOnExternalRole` and `ViewOnInternalRole`.

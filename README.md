@@ -121,7 +121,7 @@ The `ContextOfRole` Component navigates from a Role to its Context, so it gives 
 
 
 ### View
-Selects a View of a Role and makes the properties of that View available. A `View` Component can be used inside a `Roles` Component or a `RoleBinding` Component.
+Selects a View of a Role and makes the properties of that View available. A `View` Component can be used inside the `Roles`, `ExternalRole`, `RoleBinding` or `InverseRoleBinding` Component.
 
 Possible content elements: any user-defined Component that can make good use of the props that are passed on.
 
@@ -145,7 +145,7 @@ function UserName (props)
 ```
 
 ### ExternalViewOfBoundContext
-Selects the View `viewname` of a ExternalRole; expects that ExternalRole to be the Binding of its `role` attribute. This Component is the composition `View <<< RoleBinding`.
+Selects the View `viewname` of an ExternalRole; expects that ExternalRole to be the Binding of its `role` attribute. This Component is the composition `View <<< RoleBinding`.
 
 Attribute | Description
 --- | ---
@@ -154,7 +154,7 @@ viewname | The **local name** of a View.
 
 
 ### InternalViewOfBoundContext
-Selects the View `viewname` of a InternalRole; expects the Binding of its `role` attribute to be a ExternalRole. This Component is the Composition `ViewOnInternalRole <<< ContextOfRole <<< RoleBinding`.
+Selects the View `viewname` of an InternalRole; expects the Binding of its `role` attribute to be a ExternalRole. This Component is the Composition `ViewOnInternalRole <<< ContextOfRole <<< RoleBinding`.
 
 Attribute | Description
 --- | ---

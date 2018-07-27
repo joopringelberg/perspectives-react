@@ -43,10 +43,11 @@ All Components (with the exception of the Context Component) must be nested insi
 
 
  | Embed in Role | Embed in Context | No embedding
- --- | --- | --- | ---
- **Provides Role(s)** | | Roles, ExternalRole, RoleBinding, InverseRoleBinding |
- **Provides Context** |ContextOfRole |BoundContext |Context
- **Provides Properties** | View | ViewOnExternalRole, ViewOnInternalRole, ExternalViewOfBoundContext, InternalViewOfBoundContext |
+--- | --- | --- | ---
+**Provides Role(s)** | | Roles, ExternalRole, RoleBinding, InverseRoleBinding |
+**Provides Context** |ContextOfRole |BoundContext |Context
+**Provides Properties** | View | ViewOnExternalRole, ViewOnInternalRole, ExternalViewOfBoundContext, InternalViewOfBoundContext | 
+
 
 *Example*. `Context` is in the middle row and so provides a Context (it is in the column **No Embedding**, so can be put anywhere in your html). What can be inside a `Context` Component? Everything in the column **Embed in Context**, so: `Roles`, `ExternalRole`, `InverseRoleBinding`, `ViewOnExternalRole` and `ViewOnInternalRole`.
 
@@ -111,6 +112,9 @@ Attribute | Description
 --- | ---
 role | The qualified name of a Role.
 
+
+### ExternalRole
+The `ExternalRole` Component navigates from a Context to its ExternalRole. This Component has no attributes.
 
 ### ContextOfRole
 The `ContextOfRole` Component navigates from a Role to its Context, so it gives access to a Context, just as the `Context` Component does. This Component has no attributes.

@@ -49,11 +49,11 @@ All Components (with the exception of the Context Component) must be nested insi
 **Provides Properties** | View | ViewOnExternalRole, ViewOnInternalRole, ExternalViewOfBoundContext, InternalViewOfBoundContext |&nbsp;
 
 
-*Example*. `Context` is in the middle row and so provides a Context (it is in the column **No Embedding**, so can be put anywhere in your html). What can be inside a `Context` Component? Everything in the column **Embed in Context**, so: `Roles`, `ExternalRole`, `InverseRoleBinding`, `ViewOnExternalRole` and `ViewOnInternalRole`.
+*Example*. `Context` is in the middle row and so provides a Context (it is in the column **No Embedding**, so can be put anywhere in your html). What can be inside a `Context` Component? Everything in the column **Embed in Context**, so: `Roles`, `ExternalRole`, `RoleBinding`, `InverseRoleBinding`, `BoundContext`, `ViewOnExternalRole`, `ViewOnInternalRole`, `ExternalViewOfBoundContext` and `InterneViewOfBoundContext`.
 
-*Another example*. Where can we use `BoundContext`? It is in the column **Embed in Role**, so we can put it inside anything that provides a Role. In other words, everything in the row **Provides Role(s)**: `RoleBinding`, `InverseRoleBinding`, `Roles` and `ExternalRole`.
+*Another example*. Where can we use `BoundContext`? It is in the column **Embed in Context**, so we can put it inside anything that provides a Context. In other words, everything in the row **Provides Context**: `ContextOfRole`, `BoundContext` and `Context`.
 
-*A word on compositions*. The Components `BoundContext`, `ExternalViewOfBoundContext` and `InternalViewOfBoundContext` are *compositions* of other (more elementary) Components. They are there for convenience. However, use them with care as they expect specific conditions. Take `BoundContext` as an example. It is a composition of `RoleBinding` followed by `ContextOfRole`. The name suggests that you'll end up with a Context and indeed, it is put in the row **Provides Context** above. However, this will only be correct if, indeed, the Role is bound to the ExternalRole of a Context! You, as programmer, are responsible for guaranteeing that semantics.
+*A word on compositions*. The Components `BoundContext`, `ExternalViewOfBoundContext` and `InternalViewOfBoundContext` are *compositions* of other (more elementary) Components. They are here for convenience. However, use them with care as they expect specific conditions. Take `BoundContext` as an example. It is a composition of `RoleBinding` followed by `ContextOfRole`. The name suggests that you'll end up with a Context and as such it is put in the row **Provides Context** above. However, this will only be correct if, indeed, the Role is bound to the ExternalRole of a Context! You, as programmer, are responsible for guaranteeing that semantics.
 
 Name | Composition (f <<< g is f after g)
 --- | ---
@@ -93,7 +93,7 @@ The `RoleBinding` Component navigates to the binding of the Role that is selecte
 
 Attribute | Description
 --- | ---
-role | The qualified name of a Role.
+role | The local name of a Role.
 
 
 ### BoundContext
@@ -101,7 +101,7 @@ The `BoundContext` Component navigates to the Context bound to the Role indicate
 
 Attribute | Description
 --- | ---
-role | The qualified name of a Role.
+role | The local name of a Role.
 
 
 ### InverseRoleBinding
@@ -110,7 +110,7 @@ The `InverseRoleBinding` Component navigates to the Roles that bind the Role tha
 
 Attribute | Description
 --- | ---
-role | The qualified name of a Role.
+role | The local name of a Role.
 
 
 ### ExternalRole

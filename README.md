@@ -44,22 +44,22 @@ All Components (with the exception of the Context Component) must be nested insi
 
 &nbsp;| Embed in Role | Embed in Context | No embedding
 --- | --- | --- | ---
-**Provides Role(s)** |&nbsp;| Rollen, ExternalRole, RoleBinding, InverseRoleBinding |&nbsp;
+**Provides Role(s)** |&nbsp;| Rollen, ExternalRole, RolBinding, InverseRoleBinding |&nbsp;
 **Provides Context** |ContextOfRole |BoundContext |Context
 **Provides Properties** | View | ViewOnExternalRole, ViewOnInternalRole, ExternalViewOfBoundContext, InternalViewOfBoundContext |&nbsp;
 
 
-*Example*. `Context` is in the middle row and so provides a Context (it is in the column **No Embedding**, so can be put anywhere in your html). What can be inside a `Context` Component? Everything in the column **Embed in Context**, so: `Rollen`, `ExternalRole`, `RoleBinding`, `InverseRoleBinding`, `BoundContext`, `ViewOnExternalRole`, `ViewOnInternalRole`, `ExternalViewOfBoundContext` and `InterneViewOfBoundContext`.
+*Example*. `Context` is in the middle row and so provides a Context (it is in the column **No Embedding**, so can be put anywhere in your html). What can be inside a `Context` Component? Everything in the column **Embed in Context**, so: `Rollen`, `ExternalRole`, `RolBinding`, `InverseRoleBinding`, `BoundContext`, `ViewOnExternalRole`, `ViewOnInternalRole`, `ExternalViewOfBoundContext` and `InterneViewOfBoundContext`.
 
 *Another example*. Where can we use `BoundContext`? It is in the column **Embed in Context**, so we can put it inside anything that provides a Context. In other words, everything in the row **Provides Context**: `ContextOfRole`, `BoundContext` and `Context`.
 
-*A word on compositions*. The Components `BoundContext`, `ExternalViewOfBoundContext` and `InternalViewOfBoundContext` are *compositions* of other (more elementary) Components. They are here for convenience. However, use them with care as they expect specific conditions. Take `BoundContext` as an example. It is a composition of `RoleBinding` followed by `ContextOfRole`. The name suggests that you'll end up with a Context and as such it is put in the row **Provides Context** above. However, this will only be correct if, indeed, the Role is bound to the ExternalRole of a Context! You, as programmer, are responsible for guaranteeing that semantics.
+*A word on compositions*. The Components `BoundContext`, `ExternalViewOfBoundContext` and `InternalViewOfBoundContext` are *compositions* of other (more elementary) Components. They are here for convenience. However, use them with care as they expect specific conditions. Take `BoundContext` as an example. It is a composition of `RolBinding` followed by `ContextOfRole`. The name suggests that you'll end up with a Context and as such it is put in the row **Provides Context** above. However, this will only be correct if, indeed, the Role is bound to the ExternalRole of a Context! You, as programmer, are responsible for guaranteeing that semantics.
 
 Name | Composition (f <<< g is f after g)
 --- | ---
-BoundContext | ContextOfRole <<< RoleBinding
-ExternalViewOfBoundContext | View <<< RoleBinding
-InternalViewOfBoundContext | ViewOnInternalRole <<< ContextOfRole <<< RoleBinding
+BoundContext | ContextOfRole <<< RolBinding
+ExternalViewOfBoundContext | View <<< RolBinding
+InternalViewOfBoundContext | ViewOnInternalRole <<< ContextOfRole <<< RolBinding
 
 
 ### Context
@@ -88,8 +88,8 @@ Roles may be functional or relational, the latter meaning that there can be more
         ]}>
 ```
 
-### RoleBinding
-The `RoleBinding` Component navigates to the binding of the Role that is selected by its `role` attribute. This will be a ExternalRole, or a RoleInContext. Consequently, all elements that need one of these as context can be nested inside a `RoleBinding` Component. It is the programmers responsibility to ensure they use appropriate elements for the two kinds of Role!
+### RolBinding
+The `RolBinding` Component navigates to the binding of the Role that is selected by its `instance` attribute. This will be an ExternalRole, or a RoleInContext. Consequently, all elements that need one of these as context can be nested inside a `RolBinding` Component. It is the programmers responsibility to ensure they use appropriate elements for the two kinds of Role!
 
 Attribute | Description
 --- | ---
@@ -97,7 +97,7 @@ role | The local name of a Role.
 
 
 ### BoundContext
-The `BoundContext` Component navigates to the Context bound to the Role indicated by its `role` attribute. This Component is the composition `ContextOfRole <<< RoleBinding`.
+The `BoundContext` Component navigates to the Context bound to the Role indicated by its `role` attribute. This Component is the composition `ContextOfRole <<< RolBinding`.
 
 Attribute | Description
 --- | ---
@@ -121,7 +121,7 @@ The `ContextOfRole` Component navigates from a Role to its Context, so it gives 
 
 
 ### View
-Selects a View of a Role and makes the properties of that View available. A `View` Component can be used inside the `Rollen`, `ExternalRole`, `RoleBinding` or `InverseRoleBinding` Component.
+Selects a View of a Role and makes the properties of that View available. A `View` Component can be used inside the `Rollen`, `ExternalRole`, `RolBinding` or `InverseRoleBinding` Component.
 
 Possible content elements: any user-defined Component that can make good use of the props that are passed on.
 
@@ -145,7 +145,7 @@ function UserName (props)
 ```
 
 ### ExternalViewOfBoundContext
-Selects the View `viewname` of an ExternalRole; expects that ExternalRole to be the Binding of its `role` attribute. This Component is the composition `View <<< RoleBinding`.
+Selects the View `viewname` of an ExternalRole; expects that ExternalRole to be the Binding of its `role` attribute. This Component is the composition `View <<< RolBinding`.
 
 Attribute | Description
 --- | ---
@@ -154,7 +154,7 @@ viewname | The **local name** of a View.
 
 
 ### InternalViewOfBoundContext
-Selects the View `viewname` of an InternalRole; expects the Binding of its `role` attribute to be a ExternalRole. This Component is the Composition `ViewOnInternalRole <<< ContextOfRole <<< RoleBinding`.
+Selects the View `viewname` of an InternalRole; expects the Binding of its `role` attribute to be a ExternalRole. This Component is the Composition `ViewOnInternalRole <<< ContextOfRole <<< RolBinding`.
 
 Attribute | Description
 --- | ---

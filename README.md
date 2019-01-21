@@ -44,12 +44,12 @@ All Components (with the exception of the Context Component) must be nested insi
 
 &nbsp;| Embed in Role | Embed in Context | No embedding
 --- | --- | --- | ---
-**Provides Role(s)** |&nbsp;| Roles, ExternalRole, RoleBinding, InverseRoleBinding |&nbsp;
+**Provides Role(s)** |&nbsp;| Rollen, ExternalRole, RoleBinding, InverseRoleBinding |&nbsp;
 **Provides Context** |ContextOfRole |BoundContext |Context
 **Provides Properties** | View | ViewOnExternalRole, ViewOnInternalRole, ExternalViewOfBoundContext, InternalViewOfBoundContext |&nbsp;
 
 
-*Example*. `Context` is in the middle row and so provides a Context (it is in the column **No Embedding**, so can be put anywhere in your html). What can be inside a `Context` Component? Everything in the column **Embed in Context**, so: `Roles`, `ExternalRole`, `RoleBinding`, `InverseRoleBinding`, `BoundContext`, `ViewOnExternalRole`, `ViewOnInternalRole`, `ExternalViewOfBoundContext` and `InterneViewOfBoundContext`.
+*Example*. `Context` is in the middle row and so provides a Context (it is in the column **No Embedding**, so can be put anywhere in your html). What can be inside a `Context` Component? Everything in the column **Embed in Context**, so: `Rollen`, `ExternalRole`, `RoleBinding`, `InverseRoleBinding`, `BoundContext`, `ViewOnExternalRole`, `ViewOnInternalRole`, `ExternalViewOfBoundContext` and `InterneViewOfBoundContext`.
 
 *Another example*. Where can we use `BoundContext`? It is in the column **Embed in Context**, so we can put it inside anything that provides a Context. In other words, everything in the row **Provides Context**: `ContextOfRole`, `BoundContext` and `Context`.
 
@@ -71,8 +71,8 @@ instance | The identification of the Context. This must be a qualified name.
 type | The qualified `psp:type` of the Context
 
 
-### Roles
-A `Roles` Component makes selected roles available (including its Internal- and ExternalRole). Use the `Roles` Component to access Roles of the surrounding Context.
+### Rollen
+A `Rollen` Component makes selected roles available (including its Internal- and ExternalRole). Use the `Rollen` Component to access Roles of the surrounding Context.
 
 Attribute | Description
 --- | ---
@@ -81,7 +81,7 @@ roles | An array of **local** Role names.
 Roles may be functional or relational, the latter meaning that there can be more than one instance of the Role. A child Component that selects a particular Role will be mapped over the instances of that Role. Each duplicated Component has a prop `instance` on its props (its value is a qualified Role identifier). It will also have a prop `key` with the same value; this prop is used by React to identify the various elements of the resulting sequence.
 
 ```
-<Roles roles={[
+<Rollen roles={[
           "user",
           "models",
           "trustedCluster"
@@ -121,7 +121,7 @@ The `ContextOfRole` Component navigates from a Role to its Context, so it gives 
 
 
 ### View
-Selects a View of a Role and makes the properties of that View available. A `View` Component can be used inside the `Roles`, `ExternalRole`, `RoleBinding` or `InverseRoleBinding` Component.
+Selects a View of a Role and makes the properties of that View available. A `View` Component can be used inside the `Rollen`, `ExternalRole`, `RoleBinding` or `InverseRoleBinding` Component.
 
 Possible content elements: any user-defined Component that can make good use of the props that are passed on.
 

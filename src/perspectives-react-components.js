@@ -71,17 +71,23 @@ class Context extends Component
         return React.cloneElement(
           child,
           {
-            instance: component.props.instance,
+            contextinstance: component.props.contextinstance,
             namespace: component.props.type
           });
       });
   }
 }
 Context.propTypes = {
-  instance: PropTypes.string.isRequired,
+  contextinstance: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired
 };
+// Context passes on:
+// contextinstance
+// namespace
 
+
+// NOTE. Any Role that is taken from an Aspect, will not be found by Rollen, because this implementation
+// assumes that each Role is in the namespace of the context.
 class Rollen extends PerspectivesComponent
 {
   constructor (props)
@@ -95,7 +101,7 @@ class Rollen extends PerspectivesComponent
   componentDidMount ()
   {
     const component = this;
-    const context = component.props.instance;
+    const context = component.props.contextinstance;
     component.props.rollen.forEach(
       function (rolName)
       {
@@ -136,31 +142,31 @@ class Rollen extends PerspectivesComponent
         children,
         function (child)
         {
-          const childRol = child.props.rol;
-          let instances;
+          const childRol = child.props.rolname;
+          let roleInstances;
           if (!childRol)
           {
             console.error("Rollen (" + component.props.namespace + ") finds child of type '" + child.type.name + "' that has no 'rol' on its props.");
             return <p className="error">Rollen ({component.props.namespace}) finds child of type '{child.type.name}' that has no 'rol' on its props.</p>;
           }
-          instances = component.state[childRol];
+          roleInstances = component.state[childRol];
           if (childRol === "buitenRol")
           {
-            instances = [buitenRol( component.props.instance )];
+            roleInstances = [buitenRol( component.props.contextinstance )];
           }
-          if (!instances)
+          if (!roleInstances)
           {
             console.error( "Rollen (" + component.props.namespace + ") has no rol '" + childRol + "' while the child of type '" + child.type.name + "' asks for it." );
             return <p className="error">Rollen ({component.props.namespace}) has no rol '{childRol}' while the child of type '{child.type.name}' asks for it.</p>;
           }
-          return instances.map(
-            function(instance)
+          return roleInstances.map(
+            function(roleInstance)
             {
               return React.cloneElement(
                 child,
                 {
-                  key: instance,
-                  instance: instance,
+                  key: roleInstance,
+                  rolinstance: roleInstance,
                   namespace: component.props.namespace
                 });
             }
@@ -175,8 +181,14 @@ class Rollen extends PerspectivesComponent
 }
 
 Rollen.propTypes = {
-  rollen: PropTypes.array.isRequired
+  rollen: PropTypes.array.isRequired,
+  namespace: PropTypes.string,
+  contextinstance: PropTypes.string
 };
+// Rollen passes on:
+// key
+// namespace
+// rolinstance
 
 class RolBinding extends PerspectivesComponent
 {
@@ -195,7 +207,7 @@ class RolBinding extends PerspectivesComponent
       {
         component.addUnsubscriber(
           pproxy.getBinding(
-            component.props.instance,
+            component.props.rolinstance,
             function (binding)
             {
               component.setState({binding: binding[0]});
@@ -204,7 +216,7 @@ class RolBinding extends PerspectivesComponent
         // This will be the namespace that its properties are defined in.
         component.addUnsubscriber(
           pproxy.getBindingType(
-            component.props.instance,
+            component.props.rolinstance,
             function (bindingType)
             {
               component.setState({bindingType: bindingType[0]});
@@ -231,7 +243,7 @@ class RolBinding extends PerspectivesComponent
             return React.cloneElement(
               child,
               {
-                instance: component.state.binding,
+                rolinstance: component.state.binding,
                 namespace: component.state.bindingType
               });
           });
@@ -241,7 +253,7 @@ class RolBinding extends PerspectivesComponent
         return React.cloneElement(
           component.props.children,
           {
-            instance: component.state.binding,
+            rolinstance: component.state.binding,
             namespace: component.state.bindingType
           });
       }
@@ -255,11 +267,33 @@ class RolBinding extends PerspectivesComponent
 }
 
 RolBinding.propTypes = {
-  instance: PropTypes.string,
   namespace: PropTypes.string,
-  rol: PropTypes.string.isRequired
+  rolinstance: PropTypes.string,
+  rolname: PropTypes.string
 };
+// RolBinding passes on:
+// rolinstance
+// namespace (= the type of the binding).
 
+function BoundContext(props)
+{
+  return (<RolBinding rolname={props.rolname}>
+      <ContextOfRole></ContextOfRole>
+    </RolBinding>);
+}
+
+BoundContext.propTypes = {
+  rolinstance: PropTypes.string,
+  rolname: PropTypes.string
+}
+
+// BoundContext passes on:
+// contextinstance
+// namespace
+
+// NOTE. If a view contains two properties whose local names are equal (even while their qualified names are unique),
+// the state of the View component will have the value of the property that was last fetched for that local name.
+// To solve this problem, use the localName rolProperty of the View (however, this has not yet been implemented).
 class View extends PerspectivesComponent
 {
   componentDidMount ()
@@ -269,21 +303,21 @@ class View extends PerspectivesComponent
       function(pproxy)
       {
         let qualifiedView;
-        if (component.props.rol)
+        if (component.props.rolname)
         {
           // This ugly hack needs to go! The royal way is to make the type of buitenRol no longer have "Beschrijving" as part of its name.
-          if (component.props.rol === "buitenRol")
+          if (component.props.rolname === "buitenRol")
           {
-            qualifiedView = component.props.namespace + "$" + component.props.rol + "Beschrijving$" + component.props.viewnaam;
+            qualifiedView = component.props.namespace + "$" + component.props.rolname + "Beschrijving$" + component.props.viewname;
           }
           else
           {
-            qualifiedView = component.props.namespace + "$" + component.props.rol + "$" + component.props.viewnaam;
+            qualifiedView = component.props.namespace + "$" + component.props.rolname + "$" + component.props.viewname;
           }
         }
         else
         {
-          qualifiedView = component.props.namespace + "$" + component.props.viewnaam;
+          qualifiedView = component.props.namespace + "$" + component.props.viewname;
         }
         pproxy.getViewProperties(
           qualifiedView,
@@ -303,7 +337,7 @@ class View extends PerspectivesComponent
               {
                 component.addUnsubscriber(
                   pproxy.getProperty(
-                    component.props.instance,
+                    component.props.rolinstance,
                     propertyName,
                     function (propertyValues)
                     {
@@ -324,7 +358,7 @@ class View extends PerspectivesComponent
   }
 
 
-  // Render! props.children contains the nested elements.
+  // render! props.children contains the nested elements.
   // These should be provided all property name-value pairs,
   // except when it has a prop 'propertyName'.
   // However, this can only be done after state is available.
@@ -335,16 +369,20 @@ class View extends PerspectivesComponent
     function cloneChild (child)
     {
       // If the child has a prop 'propertyName', just provide the property value.
-      if (child.props.propertyName)
+      if (child.props.propertyname)
       {
         return React.cloneElement(
           child,
           {
-            value: component.state[child.props.propertyName]
+            value: component.state[child.props.propertyname],
+            namespace: component.props.namespace,
+            rolinstance: component.props.rolinstance,
+            rolname: component.props.rolname
           });
       }
       else
       {
+        // State has a member for each property, holding its value.
         return React.cloneElement(
           child,
           component.state);
@@ -373,13 +411,13 @@ class View extends PerspectivesComponent
 }
 
 View.propTypes = {
-  instance: PropTypes.string,
   namespace: PropTypes.string,
-  rol: PropTypes.string,
-  viewnaam: PropTypes.string.isRequired
+  rolinstance: PropTypes.string,
+  rolname: PropTypes.string,
+  viewname: PropTypes.string.isRequired
 };
 
-class ContextVanRol extends PerspectivesComponent
+class ContextOfRole extends PerspectivesComponent
 {
   constructor (props)
   {
@@ -397,7 +435,7 @@ class ContextVanRol extends PerspectivesComponent
         // The context of the rol will be bound to the state prop 'contextInstance'.
         component.addUnsubscriber(
           pproxy.getRolContext(
-            component.props.instance,
+            component.props.rolinstance,
             function (contextId)
             {
               component.setState({contextInstance: contextId[0]});
@@ -424,7 +462,7 @@ class ContextVanRol extends PerspectivesComponent
 
     if (component.stateIsComplete())
     {
-      return (<Context instance={component.state.contextInstance} type={component.state.contextType}>
+      return (<Context contextinstance={component.state.contextInstance} type={component.state.contextType}>
         {component.props.children}
       </Context>);
     }
@@ -435,56 +473,228 @@ class ContextVanRol extends PerspectivesComponent
   }
 
 }
-ContextVanRol.propTypes = {};
+ContextOfRole.propTypes = {
+  rolinstance: PropTypes.string
+};
+// ContextOfRole passes on:
+// contextinstance
 
 // Access a View on the BuitenRol bound to a Rol of the surrounding context.
-function ExterneViewOfBoundContext(props)
+function ExternalViewOfBoundContext(props)
 {
-  return (<RolBinding rol={props.rol} instance={props.instance}>
-    <View viewnaam={props.viewnaam}>{props.children}</View>
+  return (<RolBinding rolname={props.rolname} rolinstance={props.rolinstance}>
+    <View viewname={props.viewname}>{props.children}</View>
   </RolBinding>);
 }
 
-ExterneViewOfBoundContext.propTypes = {
-  rol: PropTypes.string.isRequired,
-  viewnaam: PropTypes.string.isRequired,
-  instance: PropTypes.string,
-  namespace: PropTypes.string
+ExternalViewOfBoundContext.propTypes = {
+  rolname: PropTypes.string.isRequired,
+  viewname: PropTypes.string.isRequired,
+  rolinstance: PropTypes.string
 };
 
 // Access a View on the BinnenRol bound to a Rol of the surrounding context.
-function InterneViewOfBoundContext(props)
+function InternalViewOfBoundContext(props)
 {
-  return (<RolBinding rol={props.rol} instance={props.instance}>
-    <ContextVanRol>
-      <InterneView viewnaam={props.viewnaam}>{props.children}</InterneView>
-    </ContextVanRol>
+  return (<RolBinding rolname={props.rolname} rolinstance={props.rolinstance}>
+    <ContextOfRole>
+      <ViewOnInternalRole viewname={props.viewname}>{props.children}</ViewOnInternalRole>
+    </ContextOfRole>
   </RolBinding>);
 }
 
-ExterneViewOfBoundContext.propTypes = {
-  rol: PropTypes.string.isRequired,
-  viewnaam: PropTypes.string.isRequired
+InternalViewOfBoundContext.propTypes = {
+  rolname: PropTypes.string.isRequired,
+  rolinstance: PropTypes.string,
+  viewname: PropTypes.string.isRequired
 };
 
 // Access a View on the BuitenRol of a Context.
-function ViewOnBuitenRol(props)
+function ViewOnExternalRole(props)
 {
-  return (<Rollen instance={props.instance} namespace={props.namespace} rollen={[]}>
-      <View rol="buitenRol" viewnaam={props.viewnaam}>{props.children}</View>
-    </Rollen>)
+  return (<ExternalRole contextinstance={props.contextinstance} namespace={props.namespace}>
+      <View viewname={props.viewname}>{props.children}</View>
+    </ExternalRole>)
 }
 
-ViewOnBuitenRol.propTypes = {
-  viewnaam: PropTypes.string.isRequired
+ViewOnExternalRole.propTypes = {
+  contextinstance: PropTypes.string,
+  namespace: PropTypes.string,
+  viewname: PropTypes.string.isRequired
 };
 
-// TODO
-// GebondenContext
-// InterneView
-// BuitenRol
-// BinnenRol
-// Binding
+class ExternalRole extends PerspectivesComponent
+{
+  constructor (props)
+  {
+    super(props);
+    this.state.rolinstance = buitenRol( props.contextinstance );
+  }
+  componentDidMount()
+  {
+    const component = this;
+    Perspectives.then(
+      function (pproxy)
+      {
+        component.addUnsubscriber(
+          pproxy.getRolType(
+            component.state.rolinstance,
+            function(rolType)
+            {
+              const updater = { rolinstance: component.state.rolinstance, roltype: rolType};
+              component.setState( updater );
+            }
+          )
+        )
+      }
+    );
+  }
+
+  render ()
+  {
+    const component = this;
+    return React.Children.map(
+      function(child)
+      {
+        // Set contextinstance and namespace of the children.
+        return React.cloneElement(
+          child,
+          {
+            rolinstance: component.state.rolinstance,
+            namespace: component.state.roltype
+          });
+      }
+    );
+  }
+}
+
+ExternalRole.propTypes = {
+  contextinstance: PropTypes.string,
+  namespace: PropTypes.string
+};
+
+// ExternalRole passes on:
+// namespace
+// rolinstance
+
+class SetProperty extends PerspectivesComponent
+{
+  changeValue (val)
+  {
+    const component = this,
+      roleInstance = component.props.rolinstance,
+      propertyname = component.props.namespace + "$" + component.props.rolname + "$" + component.props.propertyname;
+    Perspectives.then(
+      function(pproxy)
+      {
+        pproxy.setProperty(roleInstance, propertyname, val);
+      });
+  }
+
+  // Render! props.children contains the nested elements that provide input controls.
+  // These should be provided these props:
+  //  - value
+  //  - setvalue
+  render ()
+  {
+    const component = this;
+    // component.props.propertyname
+    // component.props.value
+
+    function cloneChild (child)
+    {
+      return React.cloneElement(
+        child,
+        {
+          defaultvalue: component.props.value,
+          setvalue: function(val)
+          {
+            component.changeValue(val);
+          }
+        });
+    }
+
+    if (Array.isArray(component.props.children))
+    {
+      return React.Children.map(
+        component.props.children,
+        cloneChild);
+    }
+    else
+    {
+      return cloneChild(component.props.children);
+    }
+  }
+}
+
+SetProperty.propTypes = {
+  namespace: PropTypes.string,
+  propertyname: PropTypes.string.isRequired,
+  rolinstance: PropTypes.string,
+  rolname: PropTypes.string,
+  value: PropTypes.array
+};
+
+// SetProperty passes on:
+// defaultvalue
+// setvalue
+
+class CreateContext extends PerspectivesComponent
+{
+  create (contextDescription)
+  {
+    const component = this,
+      rol = component.props.namespace + "$" + component.props.rolname
+
+      roleInstance = component.props.rolinstance // ??
+    Perspectives.then(
+      function(pproxy)
+      {
+        pproxy.setProperty(roleInstance, propertyname, val);
+      });
+  }
+
+  // Render! props.children contains the nested elements that provide input controls.
+  // These should be provided these props:
+  //  - create
+  // the created context id?
+  render ()
+  {
+    const component = this;
+
+    function cloneChild (child)
+    {
+      return React.cloneElement(
+        child,
+        {
+          create: function(contextDescription)
+          {
+            component.create(contextDescription);
+          }
+        });
+    }
+
+    if (Array.isArray(component.props.children))
+    {
+      return React.Children.map(
+        component.props.children,
+        cloneChild);
+    }
+    else
+    {
+      return cloneChild(component.props.children);
+    }
+  }
+}
+
+CreateContext.propTypes = {
+  rolname: PropTypes.string.isRequired,
+
+  roleinstance: PropTypes.string,
+  namespace: PropTypes.string,
+  propertyname: PropTypes.string.isRequired,
+  value: PropTypes.array
+};
 
 // Returns "localName" from "model:ModelName$localName" or Nothing
 // deconstructLocalNameFromDomeinURI_ :: String -> String
@@ -516,12 +726,19 @@ function buitenRol( s )
   }
 }
 
+// TODO
+// InverseRoleBinding
+// ViewOnInternalRole
+
 module.exports = {
   Context: Context,
   Rollen: Rollen,
   RolBinding: RolBinding,
   View: View,
-  ContextVanRol: ContextVanRol,
-  ExterneViewOfBoundContext: ExterneViewOfBoundContext,
-  ViewOnBuitenRol: ViewOnBuitenRol
+  ContextOfRole: ContextOfRole,
+  ExternalViewOfBoundContext: ExternalViewOfBoundContext,
+  InternalViewOfBoundContext: InternalViewOfBoundContext,
+  ViewOnExternalRole: ViewOnExternalRole,
+  SetProperty: SetProperty,
+  BoundContext: BoundContext
 };

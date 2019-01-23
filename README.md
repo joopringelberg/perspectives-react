@@ -39,19 +39,25 @@ We use the name **prop** to indicate React properties (keys on the props object)
 Construct a tree of Perspectives React Components. These must be understood as *container components* that provide data to other container components and ultimately to *display components*. Write display components that make use of the props passed on by the container components. These React props correspond to Perspectives Properties. In other words, only the programmers' display components will actually create visible elements.  Display components can only be nested inside components that provide Properties (explained below)!
 
 ### Allowed Nesting
-All Components (with the exception of the Context Component) must be nested inside another Component, that should provide either a Context or a Role. All Components can be categorized as to what they provide to their children: a Context, Role(s) or Properties. The matrix below gives a complete overview.
+Each Component (with the exception of the Context Component) must be nested inside another Component. But not all nestings are valid. Each component needs a number of props. These can be set by using an attribute in JSX, or they can be passed on by the enclosing component. Components differ as to what they pass on, meaning that the attributes a Component needs, depend on where it is used. Consequently, in the descriptions below we show what props a Component needs and what props it passes on. So to find out what attributes you should use in your JSX, subtract the props passed on by the container from the props needed. In rare cases, a Component needs an attribute in each context. Such props are printed in **bold**.
+
+NOTE: the objective of these (data)-containers is that they retrieve values from the PDR. A Component may pass on such data, for example a role-instance. Consequently, a Component may pass on values as props for its children that it does not receive!
+
+Most components need either a contextinstance or a rolinstance. All Components can be categorized as to what they provide to their children: a Context, Role(s) or values for Properties. The matrix below gives a complete overview.
 
 
-&nbsp;| Embed in Role | Embed in Context | No embedding
---- | --- | --- | ---
-**Provides Role(s)** |&nbsp;| Rollen, ExternalRole, RolBinding, InverseRoleBinding |&nbsp;
-**Provides Context** |ContextOfRole |BoundContext |Context
-**Provides Properties** | View | ViewOnExternalRole, ViewOnInternalRole, ExternalViewOfBoundContext, InternalViewOfBoundContext |&nbsp;
+&nbsp;| Needs a rolinstance | Needs a contextinstance
+--- | --- | ---
+**Passes a rolinstance** |RolBinding, InverseRoleBinding | Rollen, ExternalRole
+**Passes a contextinstance** |ContextOfRole, BoundContext | Context
+**Provides values of Properties** | View | ViewOnExternalRole, ViewOnInternalRole, ExternalViewOfBoundContext, InternalViewOfBoundContext
 
+*Examples*
+  1. `Context` is in the middle row and so provides a Context (it is in the column **Needs a contextinstance**. So if you make it the root of your Component tree, you'll have to provide the fully qualified id of a Context instance). Notice that `Context` merely passes on the props it receives. It is meant to be the root of a Component tree, that you anchor to a Context instance whose fully qualified ID you enter as an attribute.
 
-*Example*. `Context` is in the middle row and so provides a Context (it is in the column **No Embedding**, so can be put anywhere in your html). What can be inside a `Context` Component? Everything in the column **Embed in Context**, so: `Rollen`, `ExternalRole`, `RolBinding`, `InverseRoleBinding`, `BoundContext`, `ViewOnExternalRole`, `ViewOnInternalRole`, `ExternalViewOfBoundContext` and `InterneViewOfBoundContext`.
+  2. What can be inside a `Context` Component? Everything in the column **Needs a contextinstance**, so: `Rollen`, `ExternalRole`, `Context` (but this is rather pointless), `ViewOnExternalRole`, `ViewOnInternalRole`, `ExternalViewOfBoundContext` and `InternalViewOfBoundContext`.
 
-*Another example*. Where can we use `BoundContext`? It is in the column **Embed in Context**, so we can put it inside anything that provides a Context. In other words, everything in the row **Provides Context**: `ContextOfRole`, `BoundContext` and `Context`.
+  3. Where can we use `BoundContext`? It is in the column **Needs a rolinstance**, so we can put it inside anything that provides a Rol. In other words, everything in the row **Passes a rolinstance**: `RolBinding`, `InverseRoleBinding`, `Rollen`, and `ExternalRole`.
 
 *A word on compositions*. The Components `BoundContext`, `ExternalViewOfBoundContext` and `InternalViewOfBoundContext` are *compositions* of other (more elementary) Components. They are here for convenience. However, use them with care as they expect specific conditions. Take `BoundContext` as an example. It is a composition of `RolBinding` followed by `ContextOfRole`. The name suggests that you'll end up with a Context and as such it is put in the row **Provides Context** above. However, this will only be correct if, indeed, the Role is bound to the ExternalRole of a Context! You, as programmer, are responsible for guaranteeing that semantics.
 
@@ -65,23 +71,44 @@ InternalViewOfBoundContext | ViewOnInternalRole <<< ContextOfRole <<< RolBinding
 ### Context
 The `Context` Component provides a root for a container component hierarchy. This Component need not be nested in any other container.
 
-Attribute | Description
+Prop | Description
 --- | ---
-instance | The identification of the Context. This must be a qualified name.
-type | The qualified `psp:type` of the Context
+**contextinstance** | The identification of the Context. This must be a qualified name.
+**type** | The qualified `psp:type` of the Context
 
+`Context` passes the following props to its children:
+
+Prop | Description
+--- | ---
+contextinstance | The identification of the Context. This must be a qualified name.
+namespace | The type of the Context.
 
 ### Rollen
-A `Rollen` Component makes selected roles available (including its Internal- and ExternalRole). Use the `Rollen` Component to access Roles of the surrounding Context.
+A `Rollen` Component makes instances of selected roles available. Use the `Rollen` Component to access Roles of the surrounding Context. Select a Role by using its *local name*.
 
-Attribute | Description
+To access the BuitenRol of a Context, use the `ExternalRole` Component rather than trying to include the name of the BuitenRol. To access properties on a BuitenRol, use `ViewOnExternalRole` To access properties on a BinnenRol, use `ViewOnInternalRole`.
+
+**NOTE**. Any Role that is taken from an Aspect, will not be found by Rollen, because it's current implementation assumes that each Role is in the namespace of the context.
+
+
+Prop | Description
 --- | ---
-roles | An array of **local** Role names.
+**rollen** | An array of **local** Role names.
+namespace | the *type* of the Context that the roleinstance is taken from (NOTE: this will not be the namespace of a Role that was taken from an Aspect!)
+contextinstance | The id of the context that the rolinstances are taken from.
 
-Roles may be functional or relational, the latter meaning that there can be more than one instance of the Role. A child Component that selects a particular Role will be mapped over the instances of that Role. Each duplicated Component has a prop `instance` on its props (its value is a qualified Role identifier). It will also have a prop `key` with the same value; this prop is used by React to identify the various elements of the resulting sequence.
+`Rollen` passes the following props to its children:
+
+Prop | Description
+--- | ---
+key | Used by Reactjs to distinguish between instances (actually is the rolinstance value)
+namespace | The namespace as passed into Rollen.
+rolinstance | Identifies an instance of a rol.
+
+Roles may be functional or relational, the latter meaning that there can be more than one instance of the Role. A child Component that selects a particular Role will be mapped over the instances of that Role. Each duplicated Component has a prop `rolinstance` on its props (its value is a qualified Role identifier). It will also have a prop `key` with the same value; this prop is used by React to identify the various elements of the resulting sequence.
 
 ```
-<Rollen roles={[
+<Rollen rollen={[
           "user",
           "models",
           "trustedCluster"
@@ -89,48 +116,101 @@ Roles may be functional or relational, the latter meaning that there can be more
 ```
 
 ### RolBinding
-The `RolBinding` Component navigates to the binding of the Role that is selected by its `instance` attribute. This will be an ExternalRole, or a RoleInContext. Consequently, all elements that need one of these as context can be nested inside a `RolBinding` Component. It is the programmers responsibility to ensure they use appropriate elements for the two kinds of Role!
+The `RolBinding` Component navigates to the binding of the Role that is selected by its `rolinstance` prop and passes it on. This will be an ExternalRole or a BuitenRol. Consequently, all elements that need one of these as context can be nested inside a `RolBinding` Component. It is the programmers responsibility to ensure they use appropriate elements for the two kinds of Role!
 
-Attribute | Description
+Prop | Description
 --- | ---
-role | The local name of a Role.
+namespace | The type of the bound rolinstance.
+rolinstance | The id of the bound rolinstance.
+rolname | The local name of a Role. Use this when embedding the RolBinding in a `Rollen` component, to select instances of a specific Role.
+
+`RolBinding` passes on:
+
+Prop | Description
+--- | ---
+rolinstance | The instance of the binding (which is, of course, a rol)
+namespace | The type of the binding.
 
 
 ### BoundContext
-The `BoundContext` Component navigates to the Context bound to the Role indicated by its `role` attribute. This Component is the composition `ContextOfRole <<< RolBinding`.
+The `BoundContext` Component navigates to the Context bound to the Role indicated by its `roleinstance` prop. This Component is the composition `ContextOfRole <<< RolBinding`.
 
-Attribute | Description
+Prop | Description
 --- | ---
-role | The local name of a Role.
+rolinstance | The local name of a Role.
+rolname | The local name of a Role. Use this when embedding the BoundContext in a `Rollen` component!
+
+`BoundContext` passes on:
+
+Prop | Description
+--- | ---
+contextinstance | The identification of the Context. This must be a qualified name.
+namespace | The type of the Context.
 
 
 ### InverseRoleBinding
-The `InverseRoleBinding` Component navigates to the Roles that bind the Role that is selected by its `role` attribute.
+The `InverseRoleBinding` Component navigates to the instances of the Role whose local name is `rolname`, that bind the instance of a Role that is stored in the prop `rolinstance` of the Component `InverseRoleBinding`. Note that `rolname` identifies a Role in *another* Context than the one that holds the rolinstance (we navigate backwards)!
 
-
-Attribute | Description
+Prop | Description
 --- | ---
-role | The local name of a Role.
+rolinstance | The id of the instance of the Role to navigate from.
+rolname | The local name of a Role to navigate with.
+
+`InverseRoleBinding` passes on:
+
+Prop | Description
+--- | ---
+key | As rolinstance, used by React.
+rolinstance | The id of the instance of the Role.
 
 
 ### ExternalRole
-The `ExternalRole` Component navigates from a Context to its ExternalRole. This Component has no attributes.
+The `ExternalRole` Component navigates from a Context to its ExternalRole.
+
+Prop | Description
+--- | ---
+contextinstance | The id of the context that we navigate from.
+namespace | The type of the context that we navigate from.
+
+`ExternalRole` passes the following props to its children:
+
+Prop | Description
+--- | ---
+namespace | The **fully qualified** type of the instance of the BuitenRol.
+rolinstance | Identifies an instance of a BuitenRol.
+
 
 ### ContextOfRole
-The `ContextOfRole` Component navigates from a Role to its Context, so it gives access to a Context, just as the `Context` Component does. This Component has no attributes.
+The `ContextOfRole` Component navigates from a Role to its Context, so it gives access to a Context, just as the `Context` Component does. `ContextOfRole` uses `Context` internally, so passes on exactly the same props as `Context` does.
+
+
+Prop | Description
+--- | ---
+rolinstance | The id of the instance of the Rol that we want the Context of.
+
+`ContextOfRole` passes the following props to its children:
+
+Prop | Description
+--- | ---
+contextinstance | The identification of the Context. This must be a qualified name.
+namespace | The type of the Context.
 
 
 ### View
-Selects a View of a Role and makes the properties of that View available. A `View` Component can be used inside the `Rollen`, `ExternalRole`, `RolBinding` or `InverseRoleBinding` Component.
+Selects a View of a Role and makes the properties of that View available. A `View` Component can be used inside the `Rollen`, `ExternalRole`, `RolBinding` or `InverseRoleBinding` Component, all of which pass on a `rolinstance` value. If the embedding context is `Rollen`, it needs the `rolname` prop of the View component to select the right instance.
 
 Possible content elements: any user-defined Component that can make good use of the props that are passed on.
 
-Attribute | Description
+Prop | Description
 --- | ---
-role | The **local name** of a Role.
+namespace | The **fully qualified** type of the instance of the Rol that we retrieve property values from.
+rolinstance | The instance of the Rol that we retrieve property values from.
+rolname | The **local name** of a Role. Use this when embedding the View in a `Rollen` component!
 viewname | The **local name** of a View.
 
-If A child has a prop `propertyname` (provided with an attribute), just that property will be passed on.
+A `View` component passes props to its children. Each Perspectives Property that is part of the View adds a single prop, where the name of the prop is the **local name** of the Property. Its value obviously is the Property's value on the instance of the Role.
+
+If A child of the View Component has a prop `propertyname` (provided with an attribute), just the value of that property will be passed on as the member `value`.
 
 
 ```
@@ -147,19 +227,24 @@ function UserName (props)
 ### ExternalViewOfBoundContext
 Selects the View `viewname` of an ExternalRole; expects that ExternalRole to be the Binding of its `role` attribute. This Component is the composition `View <<< RolBinding`.
 
-Attribute | Description
+Prop | Description
 --- | ---
-role | The **local name** of a Role.
-viewname | The **local name** of a View.
+namespace | The type of the bound rolinstance.
+rolinstance | The id of the bound rolinstance.
+rolname | The local name of a Role. Use this when embedding the `ExternalViewOfBoundContext` in a `Rollen` component, to select instances of a specific Role.
 
+Passes values of properties on, just like `View`.
 
 ### InternalViewOfBoundContext
 Selects the View `viewname` of an InternalRole; expects the Binding of its `role` attribute to be a ExternalRole. This Component is the Composition `ViewOnInternalRole <<< ContextOfRole <<< RolBinding`.
 
-Attribute | Description
+Prop | Description
 --- | ---
-role | The **local name** of a Role.
-viewname | The **local name** of a View.
+namespace | The type of the bound rolinstance.
+rolinstance | The id of the bound rolinstance.
+rolname | The local name of a Role. Use this when embedding the InternalViewOfBoundContext in a `Rollen` component, to select instances of a specific Role.
+
+Passes values of properties on, just like `View`.
 
 ### ViewOnExternalRole
 Selects the View `viewname` of the ExternalRole of the Context. Use this Component directly inside a Component that provides a Context, such as `Context` of `BoundContext`.
@@ -174,3 +259,47 @@ Selects the View `viewname` of the InternalRole of the Context. Use this Compone
 Attribute | Description
 --- | ---
 viewname | The **local name** of a View.
+
+
+### ExternalRole
+Selects the BuitenRol of a context instance.
+
+Prop | Description
+--- | ---
+contextinstance | The id of the context instance.
+namespace | The fully qualified type of the context instance.
+
+`ExternalRole` passes on:
+
+Prop | Description
+--- | ---
+rolinstance | The id of the BuitenRol of the context instance.
+namespace | The fully qualified type of the BuitenRol of the context instance.
+
+### SetProperty
+Use this Component to change the value of a property. Use it in the context of a Component that provides property values. The attribute `propertyname` is mandatory. It selects the Property whose value will be changed.
+
+Prop | Description
+--- | ---
+namespace | The type of the rolinstance on which we will change a Property value.
+**propertyname** | The **local** name of the Property on which we will change a value.
+rolinstance | The id of the rolinstance on which we will change a Property value.
+rolname | The local name of a Role. Use this when embedding the InternalViewOfBoundContext in a `Rollen` component, to select instances of a specific Role.
+value | The value of the Property before changing it.
+
+**Example**
+```
+<View rolname="gebruiker" viewname="VolledigeNaam">
+  <SetProperty propertyname="voornaam">
+    <GebruikerVoornaamInput/>
+  </SetProperty>
+</View>
+
+function GebruikerVoornaamInput (props)
+{
+  return (<fieldset>
+    <legend>Verander de gebruikers' voornaam in:</legend>
+    <input defaultValue={props.defaultvalue} onBlur={e => props.setvalue(e.target.value)} />
+    </fieldset>);
+}
+```

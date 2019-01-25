@@ -643,21 +643,50 @@ class CreateContext extends PerspectivesComponent
 {
   create (contextDescription)
   {
-    const component = this,
-      rol = component.props.namespace + "$" + component.props.rolname
-
-      roleInstance = component.props.rolinstance // ??
+    const component = this;
+    contextDescription.ctype = component.props.contextname;
     Perspectives.then(
       function(pproxy)
       {
-        pproxy.setProperty(roleInstance, propertyname, val);
+        if ( component.props.rolinstance )
+        {
+          // Create a new Context and bind it in the existing rolinstance.
+          pproxy.createContext(
+            contextDescription,
+            function( buitenRolId )
+            {
+              pproxy.setBinding( component.props.rolinstance, buitenRolId );
+            });
+        }
+        else if ( component.props.contextinstance && component.props.rolname )
+        {
+          // Create a new Context and bind it in a new rolinstance.
+          pproxy.createContext(
+            contextDescription,
+            function( buitenRolId )
+            {
+              pproxy.createRol(
+                component.props.contextinstance,
+                component.props.rolname,
+                function( rolId )
+                {
+                  pproxy.setBinding( rolId, buitenRolId );
+                });
+            });
+        }
+        else
+        {
+          // Create a new Context.
+          pproxy.createContext(
+            contextDescription,
+            function( buitenRolId ) {});
+        }
       });
   }
 
   // Render! props.children contains the nested elements that provide input controls.
   // These should be provided these props:
   //  - create
-  // the created context id?
   render ()
   {
     const component = this;
@@ -688,13 +717,15 @@ class CreateContext extends PerspectivesComponent
 }
 
 CreateContext.propTypes = {
-  rolname: PropTypes.string.isRequired,
-
-  roleinstance: PropTypes.string,
-  namespace: PropTypes.string,
-  propertyname: PropTypes.string.isRequired,
-  value: PropTypes.array
+  contextinstance: PropTypes.string,
+  contextname: PropTypes.string.isRequired,
+  rolinstance: PropTypes.string,
+  rolname: PropTypes.string
 };
+
+// CreateContext passes on:
+// create
+
 
 // Returns "localName" from "model:ModelName$localName" or Nothing
 // deconstructLocalNameFromDomeinURI_ :: String -> String
@@ -740,5 +771,6 @@ module.exports = {
   InternalViewOfBoundContext: InternalViewOfBoundContext,
   ViewOnExternalRole: ViewOnExternalRole,
   SetProperty: SetProperty,
-  BoundContext: BoundContext
+  BoundContext: BoundContext,
+  CreateContext: CreateContext
 };

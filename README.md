@@ -303,3 +303,43 @@ function GebruikerVoornaamInput (props)
     </fieldset>);
 }
 ```
+
+### CreateContext
+Use this Component to embed a control in that governs creating a new Context (like a button). Optionally, add fields that provide, for example, properties of the new Context. Gather them in a ContextDescription JSON object to pass on to the create function that is provided by CreateContext to its children.
+
+This Component behaves in three distinct ways:
+
+  * Create a Context bound to an existing instance of a Rol. CreateContext then **must** receive a `rolinstance` prop.
+  * Create a Context and create a Rol to bind it in. CreateContext then **must** receive a `contextinstance` and `rolname` prop.
+  * Just Create a Context.
+
+In all three cases, the `contextname` prop that gives the type of the Context to create, is required.
+
+This Component does **not** provide a contextinstance to its children. Instead, to view the new Context, create for example a Rollen Component that selects it and a View inside that shows it.
+
+Prop | Description
+--- | ---
+contextinstance | An surrounding, existing Context that we will create a new Rol in that will be boundnd to the new Context.
+**contextname** | The type of the Context to be created.
+rolinstance | The existing rolinstance to bind the new Context to (optional)
+rolname | The local name of the Rol in the surrounding, existing Context that we will create.
+
+`CreateContext` passes on:
+
+Prop | Description
+--- | ---
+create | A function accepting a ContextDescription JSON value. Calling the function will create the Context.
+
+#### Context- and Role serialisation
+These types are simpler versions of PerspectContext and PerspectRol as defined in the Core program. They cannot be put into Couchdb but are used to transport created contexts and roles through the API to the PDR. This structure is described in perspectives-apitypes.
+
+Example:
+```
+{ "rollen": { Role1:  [ { "properties": { "prop1": "1", "prop2": "two" }, "binding": "someOtherRole" }
+                      , { "properties": {}, "binding": "yetAnotherRole" }  ]}
+, "interneProperties": {iprop1: "2"}
+, "externeProperties": {}
+}
+```
+
+Notice that the properties `id` and `ctype` (as given in perspectives-apitypes) miss from the example above. This is because a value for `id` is computed (by the PDR) and a value for `ctype` must be provided by passing in the attribute `contextname`.

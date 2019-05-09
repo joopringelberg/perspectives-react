@@ -442,7 +442,7 @@ class ContextOfRole extends PerspectivesComponent
               // The type of the contextInstance.
               component.addUnsubscriber(
                 pproxy.getContextType(
-                  contextId,
+                  contextId[0],
                   function (contextType)
                   {
                     component.setState({contextType: contextType[0]});
@@ -653,7 +653,7 @@ class CreateContext extends PerspectivesComponent
           // Create a new Context and bind it in the existing rolinstance.
           pproxy.createContext(
             contextDescription,
-            function( buitenRolId )
+            function( buitenRolId ) // a string!
             {
               pproxy.setBinding( component.props.rolinstance, buitenRolId );
             });
@@ -663,12 +663,14 @@ class CreateContext extends PerspectivesComponent
           // Create a new Context and bind it in a new rolinstance.
           pproxy.createContext(
             contextDescription,
-            function( buitenRolId )
+            function( buitenRolId ) // a string!
             {
               pproxy.createRol(
                 component.props.contextinstance,
-                component.props.rolname,
-                function( rolId )
+                // dit moet namespace zijn.
+                component.props.namespace + "$" + component.props.rolname,
+                {},
+                function( rolId ) // a string!
                 {
                   pproxy.setBinding( rolId, buitenRolId );
                 });
@@ -719,6 +721,7 @@ class CreateContext extends PerspectivesComponent
 CreateContext.propTypes = {
   contextinstance: PropTypes.string,
   contextname: PropTypes.string.isRequired,
+  namespace: PropTypes.string,
   rolinstance: PropTypes.string,
   rolname: PropTypes.string
 };

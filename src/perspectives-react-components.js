@@ -644,7 +644,17 @@ class CreateContext extends PerspectivesComponent
   create (contextDescription)
   {
     const component = this;
-    contextDescription.ctype = component.props.contextname;
+    const defaultContextDescription = {
+      // id :: String, will be created in the core.
+      prototype : undefined,
+      ctype: component.props.contextname,
+      rollen: {},
+      interneProperties: {},
+      externeProperties: {}
+    };
+    // Move all properties to the default context description to ensure we send a complete description.
+    Object.assign(contextDescription, defaultContextDescription);
+
     Perspectives.then(
       function(pproxy)
       {
@@ -652,7 +662,7 @@ class CreateContext extends PerspectivesComponent
         {
           // Create a new Context and bind it in the existing rolinstance.
           pproxy.createContext(
-            contextDescription,
+            defaultContextDescription,
             function( buitenRolId ) // a string!
             {
               pproxy.setBinding( component.props.rolinstance, buitenRolId );
@@ -662,7 +672,7 @@ class CreateContext extends PerspectivesComponent
         {
           // Create a new Context and bind it in a new rolinstance.
           pproxy.createContext(
-            contextDescription,
+            defaultContextDescription,
             function( buitenRolId ) // a string!
             {
               pproxy.createRol(
@@ -680,7 +690,7 @@ class CreateContext extends PerspectivesComponent
         {
           // Create a new Context.
           pproxy.createContext(
-            contextDescription,
+            defaultContextDescription,
             function( buitenRolId ) {});
         }
       });

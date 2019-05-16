@@ -154,6 +154,10 @@ class Rollen extends PerspectivesComponent
           {
             roleInstances = [buitenRol( component.props.contextinstance )];
           }
+          if (childRol === "binnenRol")
+          {
+            roleInstances = [binnenRol( component.props.contextinstance )];
+          }
           if (!roleInstances)
           {
             console.error( "Rollen (" + component.props.namespace + ") has no rol '" + childRol + "' while the child of type '" + child.type.name + "' asks for it." );
@@ -305,21 +309,26 @@ class View extends PerspectivesComponent
         let qualifiedView;
         component.state.namespace = component.props.namespace;
         component.state.rolinstance = component.props.rolinstance;
-        if (component.props.rolname)
+        // This ugly hack needs to go! The royal way is to make the type of buitenRol no longer have "Beschrijving" as part of its name.
+        if (component.props.rolname === "buitenRol")
         {
-          // This ugly hack needs to go! The royal way is to make the type of buitenRol no longer have "Beschrijving" as part of its name.
-          if (component.props.rolname === "buitenRol" || component.props.rolname === "binnenRol")
-          {
-            qualifiedView = component.props.namespace + "$" + component.props.rolname + "Beschrijving$" + component.props.viewname;
-          }
-          else
-          {
-            qualifiedView = component.props.namespace + "$" + component.props.rolname + "$" + component.props.viewname;
-          }
+          component.state.rolname = "buitenRolBeschrijving"
+        }
+        else if (component.props.rolname === "binnenRol")
+        {
+          component.state.rolname = "binnenRolBeschrijving"
         }
         else
         {
-          qualifiedView = component.props.namespace + "$" + component.props.viewname;
+          component.state.rolname = component.props.rolname;
+        }
+        if (component.state.rolname)
+        {
+          qualifiedView = component.state.namespace + "$" + component.state.rolname + "$" + component.props.viewname;
+        }
+        else
+        {
+          qualifiedView = component.state.namespace + "$" + component.props.viewname;
         }
         pproxy.getViewProperties(
           qualifiedView,
@@ -377,9 +386,9 @@ class View extends PerspectivesComponent
           child,
           {
             value: component.state[child.props.propertyname],
-            namespace: component.props.namespace,
-            rolinstance: component.props.rolinstance,
-            rolname: component.props.rolname
+            namespace: component.state.namespace,
+            rolinstance: component.state.rolinstance,
+            rolname: component.state.rolname
           });
       }
       else
@@ -411,6 +420,13 @@ class View extends PerspectivesComponent
   }
 
 }
+// View passes on:
+// namespace
+// rolinstance
+// rolname
+// and a prop for each Property on the View.
+// If a child has a value for 'propertyname' on its props,
+// it will receive prop 'value' and the above.
 
 View.propTypes = {
   namespace: PropTypes.string,
@@ -581,7 +597,8 @@ class ExternalRole extends PerspectivesComponent
             child,
             {
               rolinstance: component.state.rolinstance,
-              namespace: component.state.roltype
+              namespace: deconstructNamespace( component.state.roltype ),
+              rolname: "buitenRolBeschrijving"
             });
         }
       );
@@ -600,6 +617,7 @@ ExternalRole.propTypes = {
 // ExternalRole passes on:
 // namespace
 // rolinstance
+// rolname
 
 class InternalRole extends PerspectivesComponent
 {
@@ -643,7 +661,8 @@ class InternalRole extends PerspectivesComponent
             child,
             {
               rolinstance: component.state.rolinstance,
-              namespace: component.state.roltype
+              namespace: deconstructNamespace( component.state.roltype ),
+              rolname: "binnenRolBeschrijving"
             });
         }
       );
@@ -663,6 +682,7 @@ InternalRole.propTypes = {
 // InternalRole passes on:
 // namespace
 // rolinstance
+// rolname
 
 class SetProperty extends PerspectivesComponent
 {
@@ -670,7 +690,7 @@ class SetProperty extends PerspectivesComponent
   {
     const component = this,
       roleInstance = component.props.rolinstance,
-      propertyname = component.props.namespace + "$" + component.props.propertyname;
+      propertyname = component.props.namespace + "$" + component.props.rolname + "$" + component.props.propertyname;
     Perspectives.then(
       function(pproxy)
       {
@@ -842,8 +862,9 @@ function deconstructLocalNameFromDomeinURI_(s) {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// NOTE DEPENDENCIES. Code in this section is adapted from module Perspectives.Identifiers.
 // A Namespace has the form "model:Name"
-// NOTE DEPENDENCY. This code is adapted from module Perspectives.Identifiers.
 function buitenRol( s )
 {
   const modelRegEx = new RegExp("^model:(\\w*)$");
@@ -869,6 +890,20 @@ function binnenRol( s )
     return s + "_binnenRol";
   }
 }
+
+function deconstructNamespace( s )
+{
+  const domeinURIRegex = new RegExp("^(model:\\w*.*)\\$(\\w*)");
+  const m = s.match(domeinURIRegex);
+  if ( m )
+  {
+    return m[1];
+  }
+  else {
+    throw "deconstructNamespace: the string '" + s + "' is not a well-formed domeinURI";
+  }
+}
+////////////////////////////////////////////////////////////////////////////////
 
 // TODO
 // InverseRoleBinding

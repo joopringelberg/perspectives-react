@@ -67,7 +67,6 @@ BoundContext | ContextOfRole <<< RolBinding
 ExternalViewOfBoundContext | View <<< RolBinding
 InternalViewOfBoundContext | ViewOnInternalRole <<< ContextOfRole <<< RolBinding
 
-
 ### Context
 The `Context` Component provides a root for a container component hierarchy. This Component need not be nested in any other container.
 
@@ -178,7 +177,24 @@ Prop | Description
 --- | ---
 namespace | The **fully qualified** type of the instance of the BuitenRol.
 rolinstance | Identifies an instance of a BuitenRol.
+rolname | The value "buitenRolBeschrijving"
 
+
+### InternalRole
+The `InternalRole` Component navigates from a Context to its InternalRole.
+
+Prop | Description
+--- | ---
+contextinstance | The id of the context that we navigate from.
+namespace | The type of the context that we navigate from.
+
+`InternalRole` passes the following props to its children:
+
+Prop | Description
+--- | ---
+namespace | The **fully qualified** type of the instance of the BuitenRol.
+rolinstance | Identifies an instance of a BuitenRol.
+rolname | The value "buitenRolBeschrijving"
 
 ### ContextOfRole
 The `ContextOfRole` Component navigates from a Role to its Context, so it gives access to a Context, just as the `Context` Component does. `ContextOfRole` uses `Context` internally, so passes on exactly the same props as `Context` does.
@@ -208,7 +224,14 @@ rolinstance | The instance of the Rol that we retrieve property values from.
 rolname | The **local name** of a Role. Use this when embedding the View in a `Rollen` component!
 viewname | The **local name** of a View.
 
-A `View` component passes props to its children. Each Perspectives Property that is part of the View adds a single prop, where the name of the prop is the **local name** of the Property. Its value obviously is the Property's value on the instance of the Role.
+`View` passes the following props to its children:
+
+Prop | Description
+--- | ---
+namespace | The namespace that it has received (the qualified name of the Rol type).
+rolinstance | The rolinstance that it received.
+rolname | the local name of the Rol. **NOTE** `binnenRol` will be replaced by `binnenRolBeschrijving`, `buitenRol` by `buitenRolBeschrijving`.
+Property | Each Perspectives Property that is part of the View.
 
 If A child of the View Component has a prop `propertyname` (provided with an attribute), just the value of that property will be passed on as the member `value`.
 
@@ -260,21 +283,6 @@ Attribute | Description
 --- | ---
 viewname | The **local name** of a View.
 
-
-### ExternalRole
-Selects the BuitenRol of a context instance.
-
-Prop | Description
---- | ---
-contextinstance | The id of the context instance.
-namespace | The fully qualified type of the context instance.
-
-`ExternalRole` passes on:
-
-Prop | Description
---- | ---
-rolinstance | The id of the BuitenRol of the context instance.
-namespace | The fully qualified type of the BuitenRol of the context instance.
 
 ### SetProperty
 Use this Component to change the value of a property. Use it in the context of a Component that provides property values. The attribute `propertyname` is mandatory. It selects the Property whose value will be changed.

@@ -303,10 +303,12 @@ class View extends PerspectivesComponent
       function(pproxy)
       {
         let qualifiedView;
+        component.state.namespace = component.props.namespace;
+        component.state.rolinstance = component.props.rolinstance;
         if (component.props.rolname)
         {
           // This ugly hack needs to go! The royal way is to make the type of buitenRol no longer have "Beschrijving" as part of its name.
-          if (component.props.rolname === "buitenRol")
+          if (component.props.rolname === "buitenRol" || component.props.rolname === "binnenRol")
           {
             qualifiedView = component.props.namespace + "$" + component.props.rolname + "Beschrijving$" + component.props.viewname;
           }
@@ -523,12 +525,27 @@ ViewOnExternalRole.propTypes = {
   viewname: PropTypes.string.isRequired
 };
 
+// Access a View on the BinnenRol of a Context.
+function ViewOnInternalRole(props)
+{
+  return (<InternalRole contextinstance={props.contextinstance} namespace={props.namespace}>
+      <View viewname={props.viewname}>{props.children}</View>
+    </InternalRole>)
+}
+
+ViewOnInternalRole.propTypes = {
+  contextinstance: PropTypes.string,
+  namespace: PropTypes.string,
+  viewname: PropTypes.string.isRequired
+};
+
 class ExternalRole extends PerspectivesComponent
 {
   constructor (props)
   {
     super(props);
     this.state.rolinstance = buitenRol( props.contextinstance );
+    this.state.roltype = undefined;
   }
   componentDidMount()
   {
@@ -541,7 +558,7 @@ class ExternalRole extends PerspectivesComponent
             component.state.rolinstance,
             function(rolType)
             {
-              const updater = { rolinstance: component.state.rolinstance, roltype: rolType};
+              const updater = { rolinstance: component.state.rolinstance, roltype: rolType[0]};
               component.setState( updater );
             }
           )
@@ -553,18 +570,26 @@ class ExternalRole extends PerspectivesComponent
   render ()
   {
     const component = this;
-    return React.Children.map(
-      function(child)
-      {
-        // Set contextinstance and namespace of the children.
-        return React.cloneElement(
-          child,
-          {
-            rolinstance: component.state.rolinstance,
-            namespace: component.state.roltype
-          });
-      }
-    );
+    if (component.stateIsComplete())
+    {
+      return React.Children.map(
+        component.props.children,
+        function(child)
+        {
+          // Set contextinstance and namespace of the children.
+          return React.cloneElement(
+            child,
+            {
+              rolinstance: component.state.rolinstance,
+              namespace: component.state.roltype
+            });
+        }
+      );
+    }
+    else
+    {
+      return <div/>;
+    }
   }
 }
 
@@ -572,8 +597,70 @@ ExternalRole.propTypes = {
   contextinstance: PropTypes.string,
   namespace: PropTypes.string
 };
-
 // ExternalRole passes on:
+// namespace
+// rolinstance
+
+class InternalRole extends PerspectivesComponent
+{
+  constructor (props)
+  {
+    super(props);
+    this.state.rolinstance = binnenRol( props.contextinstance );
+    this.state.roltype = undefined;
+  }
+  componentDidMount()
+  {
+    const component = this;
+    Perspectives.then(
+      function (pproxy)
+      {
+        component.addUnsubscriber(
+          pproxy.getRolType(
+            component.state.rolinstance,
+            function(rolType)
+            {
+              const updater = { rolinstance: component.state.rolinstance, roltype: rolType[0]};
+              component.setState( updater );
+            }
+          )
+        )
+      }
+    );
+  }
+
+  render ()
+  {
+    const component = this;
+    if (component.stateIsComplete())
+    {
+      return React.Children.map(
+        component.props.children,
+        function(child)
+        {
+          // Set contextinstance and namespace of the children.
+          return React.cloneElement(
+            child,
+            {
+              rolinstance: component.state.rolinstance,
+              namespace: component.state.roltype
+            });
+        }
+      );
+    }
+    else
+    {
+      return <div/>;
+    }
+  }
+}
+
+InternalRole.propTypes = {
+  contextinstance: PropTypes.string,
+  namespace: PropTypes.string
+};
+
+// InternalRole passes on:
 // namespace
 // rolinstance
 
@@ -583,7 +670,7 @@ class SetProperty extends PerspectivesComponent
   {
     const component = this,
       roleInstance = component.props.rolinstance,
-      propertyname = component.props.namespace + "$" + component.props.rolname + "$" + component.props.propertyname;
+      propertyname = component.props.namespace + "$" + component.props.propertyname;
     Perspectives.then(
       function(pproxy)
       {
@@ -645,7 +732,7 @@ class CreateContext extends PerspectivesComponent
   {
     const component = this;
     const defaultContextDescription = {
-      // id :: String, will be created in the core.
+      id: "", // will be set in the core.
       prototype : undefined,
       ctype: component.props.contextname,
       rollen: {},
@@ -663,9 +750,9 @@ class CreateContext extends PerspectivesComponent
           // Create a new Context and bind it in the existing rolinstance.
           pproxy.createContext(
             defaultContextDescription,
-            function( buitenRolId ) // a string!
+            function( buitenRolId )
             {
-              pproxy.setBinding( component.props.rolinstance, buitenRolId );
+              pproxy.setBinding( component.props.rolinstance, buitenRolId[0] );
             });
         }
         else if ( component.props.contextinstance && component.props.rolname )
@@ -673,16 +760,16 @@ class CreateContext extends PerspectivesComponent
           // Create a new Context and bind it in a new rolinstance.
           pproxy.createContext(
             defaultContextDescription,
-            function( buitenRolId ) // a string!
+            function( buitenRolId )
             {
               pproxy.createRol(
                 component.props.contextinstance,
                 // dit moet namespace zijn.
                 component.props.namespace + "$" + component.props.rolname,
-                {},
-                function( rolId ) // a string!
+                {properties: {}},
+                function( rolId )
                 {
-                  pproxy.setBinding( rolId, buitenRolId );
+                  pproxy.setBinding( rolId[0], buitenRolId[0] );
                 });
             });
         }
@@ -770,9 +857,21 @@ function buitenRol( s )
   }
 }
 
+function binnenRol( s )
+{
+  const modelRegEx = new RegExp("^model:(\\w*)$");
+  if (s.match(modelRegEx))
+  {
+    return s + "$_binnenRol";
+  }
+  else
+  {
+    return s + "_binnenRol";
+  }
+}
+
 // TODO
 // InverseRoleBinding
-// ViewOnInternalRole
 
 module.exports = {
   Context: Context,

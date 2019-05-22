@@ -256,7 +256,7 @@ namespace | The type of the bound rolinstance.
 rolinstance | The id of the bound rolinstance.
 rolname | The local name of a Role. Use this when embedding the `ExternalViewOfBoundContext` in a `Rollen` component, to select instances of a specific Role.
 
-Passes values of properties on, just like `View`.
+As this component is composed of `View`, passes the same properties on.
 
 ### InternalViewOfBoundContext
 Selects the View `viewname` of an InternalRole; expects the Binding of its `role` attribute to be a ExternalRole. This Component is the Composition `ViewOnInternalRole <<< ContextOfRole <<< RolBinding`.
@@ -267,7 +267,7 @@ namespace | The type of the bound rolinstance.
 rolinstance | The id of the bound rolinstance.
 rolname | The local name of a Role. Use this when embedding the InternalViewOfBoundContext in a `Rollen` component, to select instances of a specific Role.
 
-Passes values of properties on, just like `View`.
+As this component is composed of `View`, passes the same properties on.
 
 ### ViewOnExternalRole
 Selects the View `viewname` of the ExternalRole of the Context. Use this Component directly inside a Component that provides a Context, such as `Context` of `BoundContext`.
@@ -276,6 +276,8 @@ Attribute | Description
 --- | ---
 viewname | The **local name** of a View.
 
+As this component is composed of `View`, passes the same properties on.
+
 ### ViewOnInternalRole
 Selects the View `viewname` of the InternalRole of the Context. Use this Component directly inside a Component that provides a Context, such as `Context` of `BoundContext`.
 
@@ -283,6 +285,7 @@ Attribute | Description
 --- | ---
 viewname | The **local name** of a View.
 
+As this component is composed of `View`, passes the same properties on.
 
 ### SetProperty
 Use this Component to change the value of a property. Use it in the context of a Component that provides property values. The attribute `propertyname` is mandatory. It selects the Property whose value will be changed.
@@ -294,6 +297,14 @@ namespace | The type of the rolinstance on which we will change a Property value
 rolinstance | The id of the rolinstance on which we will change a Property value.
 rolname | The local name of a Role. Use this when embedding the InternalViewOfBoundContext in a `Rollen` component, to select instances of a specific Role.
 value | The value of the Property before changing it.
+
+`SetProperty` passes the following props to its children:
+
+Prop | Description
+--- | ---
+defaultvalue | The value received as prop.
+setvalue | A function to change the value. Use this function in html code, e.g. as the action attached to `onblur`.
+
 
 **Example**
 ```
@@ -310,6 +321,23 @@ function GebruikerVoornaamInput (props)
     <input defaultValue={props.defaultvalue} onBlur={e => props.setvalue(e.target.value)} />
     </fieldset>);
 }
+```
+
+*A word on passing value*. If SetProperty is embedded directly in a View, View will see SetProperty is interested in a specific Property (it reads the attribute `propertyName`). View will consequently pass on the prop `value`. SetProperty will then pick up this prop and pass it on to its children as the prop `defaultvalue`. However, if SetProperty is not directly embedded into View, this will not work (View then cannot 'see' that SetProperty asks for it). In such a case, make sure to pass on the `value` prop explicitly as an attribute!
+
+```
+function Test (props)
+{
+  return (
+    <div>
+      <p><label>v2:</label>{props.v2}</p>
+      <SetProperty propertyname="trigger" namespace={props.namespace} rolinstance={props.rolinstance} rolname={props.rolname} value={props.trigger}>
+        <TriggerInput/>
+      </SetProperty>
+    </div>
+  );
+}
+
 ```
 
 ### CreateContext

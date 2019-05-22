@@ -846,8 +846,64 @@ CreateContext.propTypes = {
 // CreateContext passes on:
 // create
 
+// DeleteContext
+class DeleteContext extends PerspectivesComponent
+{
+  delete ()
+  {
+    const component = this;
 
+    Perspectives.then(
+      function(pproxy)
+      {
+        pproxy.deleteContext(
+          component.props.contextinstance,
+          function()
+          {}
+        );
+      });
+  }
+
+  // Render! props.children contains the nested elements that provide input controls.
+  // These should be provided these props:
+  //  - delete
+  render ()
+  {
+    const component = this;
+
+    function cloneChild (child)
+    {
+      return React.cloneElement(
+        child,
+        {
+          delete: function()
+          {
+            component.delete();
+          }
+        });
+    }
+
+    if (Array.isArray(component.props.children))
+    {
+      return React.Children.map(
+        component.props.children,
+        cloneChild);
+    }
+    else
+    {
+      return cloneChild(component.props.children);
+    }
+  }
+}
+
+DeleteContext.propTypes = {
+  contextinstance: PropTypes.string
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// NOTE DEPENDENCIES. Code in this section is adapted from module Perspectives.Identifiers.
 // Returns "localName" from "model:ModelName$localName" or Nothing
+
 // deconstructLocalNameFromDomeinURI_ :: String -> String
 // NOTE DEPENDENCY. This code is adapted from module Perspectives.Identifiers.
 function deconstructLocalNameFromDomeinURI_(s) {
@@ -862,8 +918,6 @@ function deconstructLocalNameFromDomeinURI_(s) {
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// NOTE DEPENDENCIES. Code in this section is adapted from module Perspectives.Identifiers.
 // A Namespace has the form "model:Name"
 function buitenRol( s )
 {
@@ -917,7 +971,9 @@ module.exports = {
   ExternalViewOfBoundContext: ExternalViewOfBoundContext,
   InternalViewOfBoundContext: InternalViewOfBoundContext,
   ViewOnExternalRole: ViewOnExternalRole,
+  ViewOnInternalRole: ViewOnInternalRole,
   SetProperty: SetProperty,
   BoundContext: BoundContext,
-  CreateContext: CreateContext
+  CreateContext: CreateContext,
+  DeleteContext: DeleteContext
 };

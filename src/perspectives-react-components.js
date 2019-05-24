@@ -20,7 +20,10 @@ class PerspectivesComponent extends Component
 
   addUnsubscriber(unsubscriber)
   {
-    this.unsubscribers.push(unsubscriber);
+    if (unsubscriber)
+    {
+      this.unsubscribers.push(unsubscriber);
+    }
   }
 
   stateIsComplete ()

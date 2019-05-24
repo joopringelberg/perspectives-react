@@ -15,9 +15,22 @@ class PerspectivesComponent extends Component
 
   componentWillUnmount ()
   {
-    this.unsubscribers.forEach( unsubscriber => unsubscriber() );
+    const component = this;
+    this.unsubscribers.forEach(
+      function(unsubscriber)
+      {
+        unsubscriber.request = "Unsubscribe";
+        Perspectives.then(
+          function (pproxy)
+          {
+            pproxy.send(unsubscriber, function(){});
+          });
+      });
   }
 
+  // A single component may perform multiple calls through the API. All of these may connect a callback
+  // to the dependency network in the core. When the component unmounts, it should inform the core that
+  // these callbacks can be unsubscribed. This is what we use the unsubscriber for.
   addUnsubscriber(unsubscriber)
   {
     if (unsubscriber)

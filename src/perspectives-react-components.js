@@ -325,6 +325,7 @@ class View extends PerspectivesComponent
         let qualifiedView;
         component.state.namespace = component.props.namespace;
         component.state.rolinstance = component.props.rolinstance;
+        component.state.contextinstance = component.props.contextinstance;
         // This ugly hack needs to go! The royal way is to make the type of buitenRol no longer have "Beschrijving" as part of its name.
         if (component.props.rolname === "buitenRol")
         {
@@ -403,6 +404,7 @@ class View extends PerspectivesComponent
           {
             value: component.state[child.props.propertyname],
             namespace: component.state.namespace,
+            contextinstance: component.state.contextinstance,
             rolinstance: component.state.rolinstance,
             rolname: component.state.rolname
           });
@@ -438,6 +440,7 @@ class View extends PerspectivesComponent
 }
 // View passes on:
 // namespace
+// contextinstance
 // rolinstance
 // rolname
 // and a prop for each Property on the View.
@@ -677,6 +680,7 @@ class InternalRole extends PerspectivesComponent
             child,
             {
               rolinstance: component.state.rolinstance,
+              contextinstance: component.props.contextinstance,
               namespace: deconstructNamespace( component.state.roltype ),
               rolname: "binnenRolBeschrijving"
             });
@@ -697,6 +701,7 @@ InternalRole.propTypes = {
 
 // InternalRole passes on:
 // namespace
+// contextinstance
 // rolinstance
 // rolname
 

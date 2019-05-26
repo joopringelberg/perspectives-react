@@ -48,7 +48,7 @@ Most components need either a contextinstance or a rolinstance. All Components c
 
 &nbsp;| Needs a rolinstance | Needs a contextinstance
 --- | --- | ---
-**Passes a rolinstance** |RolBinding, InverseRoleBinding | Rollen, ExternalRole
+**Passes a rolinstance** |RolBinding, InverseRoleBinding | Rollen, ExternalRole, InternalRole
 **Passes a contextinstance** |ContextOfRole, BoundContext | Context
 **Provides values of Properties** | View | ViewOnExternalRole, ViewOnInternalRole, ExternalViewOfBoundContext, InternalViewOfBoundContext
 

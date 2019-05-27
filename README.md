@@ -73,14 +73,14 @@ The `Context` Component provides a root for a container component hierarchy. Thi
 Prop | Description
 --- | ---
 **contextinstance** | The identification of the Context. This must be a qualified name.
-**type** | The qualified `psp:type` of the Context
+**contexttype** | The qualified `psp:type` of the Context
 
-`Context` passes the following props to its children:
+`Context` passes the following props down its children tree with the `PSContext` React Context:
 
 Prop | Description
 --- | ---
 contextinstance | The identification of the Context. This must be a qualified name.
-namespace | The type of the Context.
+contexttype | The type of the Context.
 
 ### Rollen
 A `Rollen` Component makes instances of selected roles available. Use the `Rollen` Component to access Roles of the surrounding Context. Select a Role by using its *local name*.

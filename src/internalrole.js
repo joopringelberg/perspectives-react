@@ -2,16 +2,16 @@ const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 const PerspectivesComponent = require("perspectivescomponent").PerspectivesComponent;
-const deconstructNamespace = require("urifunctions").deconstructNamespace;
-const binnenRol = require("urifucntions").binnenRol;
+const {binnenRol, deconstructNamespace} = require("./urifunctions.js");
+import {PSRol, PSContext} from "./reactcontexts";
+
 
 class InternalRole extends PerspectivesComponent
 {
   constructor (props)
   {
     super(props);
-    this.state.rolinstance = binnenRol( props.contextinstance );
-    this.state.roltype = undefined;
+    this.state.value = undefined;
   }
   componentDidMount()
   {
@@ -21,14 +21,19 @@ class InternalRole extends PerspectivesComponent
       {
         component.addUnsubscriber(
           pproxy.getRolType(
-            component.state.rolinstance,
+            binnenRol( component.context.contextinstance),
             function(rolType)
             {
-              const updater = { rolinstance: component.state.rolinstance, roltype: rolType[0]};
+              const updater = {value:
+                { contextinstance: component.context.contextinstance
+                , contexttype: component.context.contexttype
+                , rolinstance: buitenRol( component.context.contextinstance)
+                , roltype: rolType[0]
+                }}
               component.setState( updater );
             }
           )
-        )
+        );
       }
     );
   }
@@ -38,21 +43,9 @@ class InternalRole extends PerspectivesComponent
     const component = this;
     if (component.stateIsComplete())
     {
-      return React.Children.map(
-        component.props.children,
-        function(child)
-        {
-          // Set contextinstance and namespace of the children.
-          return React.cloneElement(
-            child,
-            {
-              rolinstance: component.state.rolinstance,
-              contextinstance: component.props.contextinstance,
-              namespace: deconstructNamespace( component.state.roltype ),
-              rolname: "binnenRolBeschrijving"
-            });
-        }
-      );
+      return (<PSRol.Provider value={component.state.value}>
+        {component.props.children}
+        </PSRol.Provider>)
     }
     else
     {
@@ -61,15 +54,8 @@ class InternalRole extends PerspectivesComponent
   }
 }
 
-InternalRole.propTypes = {
-  contextinstance: PropTypes.string,
-  namespace: PropTypes.string
-};
+ExternalRole.contextType = PSContext;
 
-// InternalRole passes on:
-// namespace
-// contextinstance
-// rolinstance
-// rolname
+// InternalRole passes on a PSRol ReactContext.
 
 module.exports = InternalRole;

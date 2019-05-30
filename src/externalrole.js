@@ -32,7 +32,7 @@ class ExternalRole extends PerspectivesComponent
               component.setState( updater );
             }
           )
-        )
+        );
       }
     );
   }

@@ -11,6 +11,7 @@ const SetProperty = require("./setproperty.js");
 const BoundContext = require("./boundcontext.js");
 const CreateContext = require("./createcontext.js");
 const DeleteContext = require("./deletecontext.js");
+const PSView = require("./reactcontexts.js").PSView
 
 
 // TODO
@@ -29,5 +30,6 @@ module.exports = {
   SetProperty: SetProperty,
   BoundContext: BoundContext,
   CreateContext: CreateContext,
-  DeleteContext: DeleteContext
+  DeleteContext: DeleteContext,
+  PSView: PSView
 };

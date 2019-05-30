@@ -3,7 +3,7 @@ const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 const PerspectivesComponent = require("./perspectivescomponent.js");
 const deconstructLocalNameFromDomeinURI_ = require("./urifunctions.js").deconstructLocalNameFromDomeinURI_;
-const PSRol = require("./reactcontexts.js").PSRol;
+const {PSRol, PSView} = require("./reactcontexts.js");
 
 // NOTE. If a view contains two properties whose local names are equal (even while their qualified names are unique),
 // the state of the View component will have the value of the property that was last fetched for that local name.
@@ -17,11 +17,12 @@ class View extends PerspectivesComponent
       function(pproxy)
       {
         pproxy.getViewProperties(
-          component.context.roltype, // De context is hier niet beschikbaar. Toch is de manier van gebruik goed.
+          component.context.roltype,
           component.props.viewname,
           function(propertyNames)
           {
-            // First initialize state, so we can check whether it is complete.
+            // We will use the state as the value of PSView.
+            // First initialize state property members, so we can check whether it is complete.
             // NOTE: React will not notice this.
             propertyNames.forEach(
               function(propertyName)
@@ -30,6 +31,15 @@ class View extends PerspectivesComponent
                 component.state[ln] = undefined;
               }
             );
+            // Now add the viewProperties to state.
+            component.setState(
+              { contextinstance: component.context.contextinstance
+              , contexttype: component.context.contexttype
+              , rolinstance: component.context.rolinstance
+              , roltype: component.context.roltype
+              , viewproperties: propertyNames
+              });
+            // Then fetch the values of the properties, to complete the state.
             propertyNames.forEach(
               function(propertyName)
               {
@@ -55,15 +65,9 @@ class View extends PerspectivesComponent
     );
   }
 
-
-  // render! props.children contains the nested elements.
-  // These should be provided all property name-value pairs,
-  // except when it has a prop 'propertyName'.
-  // However, this can only be done after state is available.
   render ()
   {
     const component = this;
-
     function cloneChild (child)
     {
       // If the child has a prop 'propertyName', just provide the property value.
@@ -98,16 +102,9 @@ class View extends PerspectivesComponent
 
     if (!component.stateIsEmpty() && component.stateIsComplete())
     {
-      if (Array.isArray(component.props.children))
-      {
-        return React.Children.map(
-          component.props.children,
-          cloneChild);
-      }
-      else
-      {
-        return cloneChild(component.props.children);
-      }
+      return (<PSView.Provider value={component.state}>
+        {component.props.children}
+        </PSView.Provider>)
     }
     else
     {
@@ -119,14 +116,7 @@ class View extends PerspectivesComponent
 
 View.contextType = PSRol;
 
-// View passes on:
-// namespace
-// contextinstance
-// rolinstance
-// rolname
-// and a prop for each Property on the View.
-// If a child has a value for 'propertyname' on its props,
-// it will receive prop 'value' and the above.
+// View passes on a PSView:
 
 View.propTypes = {
   viewname: PropTypes.string.isRequired

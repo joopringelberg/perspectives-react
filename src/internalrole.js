@@ -1,7 +1,7 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("perspectivescomponent").PerspectivesComponent;
+const PerspectivesComponent = require("./perspectivescomponent.js");
 const {binnenRol, deconstructNamespace} = require("./urifunctions.js");
 import {PSRol, PSContext} from "./reactcontexts";
 
@@ -54,7 +54,7 @@ class InternalRole extends PerspectivesComponent
   }
 }
 
-ExternalRole.contextType = PSContext;
+InternalRole.contextType = PSContext;
 
 // InternalRole passes on a PSRol ReactContext.
 

@@ -2,23 +2,16 @@ const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 const PerspectivesComponent = require("./perspectivescomponent.js");
-const RolBinding = require("./rolbinding.js").RolBinding;
-const ContextOfRole = require("./contextofrole.js").ContextOfRole;
+const RolBinding = require("./rolbinding.js");
+const ContextOfRole = require("./contextofrole.js");
 
 function BoundContext(props)
 {
-  return (<RolBinding rolname={props.rolname}>
-      <ContextOfRole></ContextOfRole>
+  return (<RolBinding>
+      <ContextOfRole>{props.children}</ContextOfRole>
     </RolBinding>);
 }
 
-BoundContext.propTypes = {
-  rolinstance: PropTypes.string,
-  rolname: PropTypes.string
-}
-
-// BoundContext passes on:
-// contextinstance
-// namespace
+// BoundContext passes on the PSContext that comes from ContextOfRole:
 
 module.exports = BoundContext;

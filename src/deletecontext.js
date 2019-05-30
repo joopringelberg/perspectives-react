@@ -1,7 +1,7 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("perspectivescomponent").PerspectivesComponent;
+const PerspectivesComponent = require("./perspectivescomponent.js");
 
 class DeleteContext extends PerspectivesComponent
 {
@@ -56,4 +56,4 @@ DeleteContext.propTypes = {
   contextinstance: PropTypes.string
 };
 
-module.exports = {Context: Context};
+module.exports = DeleteContext;

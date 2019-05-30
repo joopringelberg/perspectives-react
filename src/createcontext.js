@@ -1,7 +1,7 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("perspectivescomponent").PerspectivesComponent;
+const PerspectivesComponent = require("./perspectivescomponent.js");
 
 class CreateContext extends PerspectivesComponent
 {
@@ -103,4 +103,4 @@ CreateContext.propTypes = {
 // CreateContext passes on:
 // create
 
-module.exports = {CreateContext: CreateContext};
+module.exports = CreateContext;

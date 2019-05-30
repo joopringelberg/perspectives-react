@@ -1,16 +1,16 @@
-const Context = require("context").Context;
-const Rollen = require("rollen").Rollen;
-const RolBinding = require("rolbinding").RolBinding;
-const View = require("view").View;
-const ContextOfRole = require("contextofrole").ContextOfRole;
-const ExternalViewOfBoundContext = require("externalviewofboundcontext").ExternalViewOfBoundContext;
-const InternalViewOfBoundContext = require("internalviewofboundcontext").InternalViewOfBoundContext;
-const ViewOnExternalRole = require("viewonexternalrole").ViewOnExternalRole;
-const ViewOnInternalRole = require("viewoninternalrole").ViewOnInternalRole;
-const SetProperty = require("setproperty").SetProperty;
-const BoundContext = require("boundcontext").BoundContext;
-const CreateContext = require("createcontext").CreateContext;
-const DeleteContext = require("deletecontext").DeleteContext;
+const Context = require("./context.js");
+const Rol = require("./rol.js");
+const RolBinding = require("./rolbinding.js");
+const View = require("./view.js");
+const ContextOfRole = require("./contextofrole.js");
+const ExternalViewOfBoundContext = require("./views.js").ExternalViewOfBoundContext;
+const InternalViewOfBoundContext = require("./views.js").InternalViewOfBoundContext;
+const ViewOnExternalRole = require("./views.js").ViewOnExternalRole;
+const ViewOnInternalRole = require("./views.js").ViewOnInternalRole;
+const SetProperty = require("./setproperty.js");
+const BoundContext = require("./boundcontext.js");
+const CreateContext = require("./createcontext.js");
+const DeleteContext = require("./deletecontext.js");
 
 
 // TODO
@@ -18,7 +18,7 @@ const DeleteContext = require("deletecontext").DeleteContext;
 
 module.exports = {
   Context: Context,
-  Rollen: Rollen,
+  Rol: Rol,
   RolBinding: RolBinding,
   View: View,
   ContextOfRole: ContextOfRole,

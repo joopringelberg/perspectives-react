@@ -2,6 +2,7 @@ const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 const PerspectivesComponent = require("perspectivescomponent").PerspectivesComponent;
+const PSRol = require("reactcontexts").PSRol;
 
 // NOTE. Any Role that is taken from an Aspect, will not be found by Rollen, because this implementation
 // assumes that each Role is in the namespace of the context.
@@ -83,13 +84,18 @@ class Rollen extends PerspectivesComponent
           return roleInstances.map(
             function(roleInstance)
             {
-              return React.cloneElement(
+              const psrolValues =
+                { contextinstance: this.context.contextinstance
+                , contexttype: this.context.contexttype
+                , rolinstance: roleInstance
+                , roltype: component.props.namespace + "$" + childRol,
+              }
+
+              return <PSRol.Provider value={psrolValues}>{React.cloneElement(
                 child,
                 {
-                  key: roleInstance,
-                  rolinstance: roleInstance,
-                  namespace: component.props.namespace
-                });
+                  key: roleInstance
+                })}</PSRol.Provider>
             }
           );
         });
@@ -101,14 +107,20 @@ class Rollen extends PerspectivesComponent
   }
 }
 
+Rollen.contextType = PSContext;
+
 Rollen.propTypes = {
   rollen: PropTypes.array.isRequired,
-  namespace: PropTypes.string,
+  contexttype: PropTypes.string,
   contextinstance: PropTypes.string
 };
-// Rollen passes on:
+// Rollen passes on as a prop:
 // key
-// namespace
+
+// Rollen passes on through PSRol:
+// contextinstance
+// contexttype
 // rolinstance
+// roltype
 
 module.exports = {Rollen: Rollen};

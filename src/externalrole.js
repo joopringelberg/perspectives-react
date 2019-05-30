@@ -69,4 +69,4 @@ ExternalRole.propTypes = {
 // rolinstance
 // rolname
 
-module.exports = {ExternalRole: ExternalRole};
+module.exports = ExternalRole;

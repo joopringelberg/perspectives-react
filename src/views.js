@@ -1,12 +1,12 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("perspectivescomponent").PerspectivesComponent;
-const RolBinding = require("rolbinding").RolBinding;
-const View = require("view").View;
-const ContextOfRole = require("contextofrole").ContextOfRole;
-const ExternalRole = require("externalrole").ExternalRole;
-const InternalRole = require("internalrole").InternalRole;
+const PerspectivesComponent = require("./perspectivescomponent.js");
+const RolBinding = require("./rolbinding.js").RolBinding;
+const View = require("./view.js").View;
+const ContextOfRole = require("./views.js").ContextOfRole;
+const ExternalRole = require("./views.js").ExternalRole;
+const InternalRole = require("./views.js").InternalRole;
 
 // Access a View on the BuitenRol bound to a Rol of the surrounding context.
 function ExternalViewOfBoundContext(props)

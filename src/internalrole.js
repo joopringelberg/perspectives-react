@@ -72,4 +72,4 @@ InternalRole.propTypes = {
 // rolinstance
 // rolname
 
-module.exports = {InternalRole: InternalRole};
+module.exports = InternalRole;

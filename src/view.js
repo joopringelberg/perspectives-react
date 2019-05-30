@@ -1,8 +1,9 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("perspectivescomponent").PerspectivesComponent;
-const deconstructLocalNameFromDomeinURI_ = require("urifunctions").deconstructLocalNameFromDomeinURI_;
+const PerspectivesComponent = require("./perspectivescomponent.js");
+const deconstructLocalNameFromDomeinURI_ = require("./urifunctions.js").deconstructLocalNameFromDomeinURI_;
+const PSRol = require("./reactcontexts.js").PSRol;
 
 // NOTE. If a view contains two properties whose local names are equal (even while their qualified names are unique),
 // the state of the View component will have the value of the property that was last fetched for that local name.
@@ -15,36 +16,12 @@ class View extends PerspectivesComponent
     Perspectives.then(
       function(pproxy)
       {
-        let qualifiedView;
-        component.state.namespace = component.props.namespace;
-        component.state.rolinstance = component.props.rolinstance;
-        component.state.contextinstance = component.props.contextinstance;
-        // This ugly hack needs to go! The royal way is to make the type of buitenRol no longer have "Beschrijving" as part of its name.
-        if (component.props.rolname === "buitenRol")
-        {
-          component.state.rolname = "buitenRolBeschrijving"
-        }
-        else if (component.props.rolname === "binnenRol")
-        {
-          component.state.rolname = "binnenRolBeschrijving"
-        }
-        else
-        {
-          component.state.rolname = component.props.rolname;
-        }
-        if (component.state.rolname)
-        {
-          qualifiedView = component.state.namespace + "$" + component.state.rolname + "$" + component.props.viewname;
-        }
-        else
-        {
-          qualifiedView = component.state.namespace + "$" + component.props.viewname;
-        }
         pproxy.getViewProperties(
-          qualifiedView,
+          component.context.roltype, // De context is hier niet beschikbaar. Toch is de manier van gebruik goed.
+          component.props.viewname,
           function(propertyNames)
           {
-            // First initialize state
+            // First initialize state, so we can check whether it is complete.
             // NOTE: React will not notice this.
             propertyNames.forEach(
               function(propertyName)
@@ -58,7 +35,7 @@ class View extends PerspectivesComponent
               {
                 component.addUnsubscriber(
                   pproxy.getProperty(
-                    component.props.rolinstance,
+                    component.context.rolinstance,
                     propertyName,
                     function (propertyValues)
                     {
@@ -95,11 +72,12 @@ class View extends PerspectivesComponent
         return React.cloneElement(
           child,
           {
+            propertyname: child.props.propertyname,
             value: component.state[child.props.propertyname],
-            namespace: component.state.namespace,
-            contextinstance: component.state.contextinstance,
-            rolinstance: component.state.rolinstance,
-            rolname: component.state.rolname
+            contexttype: component.context.contexttype,
+            contextinstance: component.context.contextinstance,
+            rolinstance: component.context.rolinstance,
+            roltype: component.context.roltype
           });
       }
       else
@@ -107,7 +85,14 @@ class View extends PerspectivesComponent
         // State has a member for each property, holding its value.
         return React.cloneElement(
           child,
-          component.state);
+          Object.assign(
+            {
+              contexttype: component.context.contexttype,
+              contextinstance: component.context.contextinstance,
+              rolinstance: component.context.rolinstance,
+              roltype: component.context.roltype
+            },
+            component.state));
       }
     }
 
@@ -131,6 +116,9 @@ class View extends PerspectivesComponent
   }
 
 }
+
+View.contextType = PSRol;
+
 // View passes on:
 // namespace
 // contextinstance
@@ -141,10 +129,7 @@ class View extends PerspectivesComponent
 // it will receive prop 'value' and the above.
 
 View.propTypes = {
-  namespace: PropTypes.string,
-  rolinstance: PropTypes.string,
-  rolname: PropTypes.string,
   viewname: PropTypes.string.isRequired
 };
 
-module.exports = {View: View};
+module.exports = View;

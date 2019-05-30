@@ -1,7 +1,7 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("perspectivescomponent").PerspectivesComponent;
+const PerspectivesComponent = require("./perspectivescomponent.js");
 
 
 class SetProperty extends PerspectivesComponent
@@ -66,4 +66,4 @@ SetProperty.propTypes = {
 // defaultvalue
 // setvalue
 
-module.exports = {PerspectivesComponent: PerspectivesComponent}
+module.exports = SetProperty

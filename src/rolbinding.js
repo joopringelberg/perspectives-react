@@ -1,7 +1,7 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("perspectivescomponent").PerspectivesComponent;
+const PerspectivesComponent = require("./perspectivescomponent.js");
 
 class RolBinding extends PerspectivesComponent
 {
@@ -88,4 +88,4 @@ RolBinding.propTypes = {
 // rolinstance
 // namespace (= the type of the binding).
 
-module.exports = {RolBinding: RolBinding};
+module.exports = RolBinding;

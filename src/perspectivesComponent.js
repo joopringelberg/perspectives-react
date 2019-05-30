@@ -60,4 +60,4 @@ class PerspectivesComponent extends Component
 
 }
 
-module.exports = {PerspectivesComponent: PerspectivesComponent};
+module.exports = PerspectivesComponent;

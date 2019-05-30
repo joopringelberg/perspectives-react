@@ -67,19 +67,11 @@ class Rol extends PerspectivesComponent
 
     if (component.stateIsComplete())
     {
-      if (Array.isArray(component.props.children))
-      {
-        children = component.props.children;
-      }
-      else
-      {
-        children = [component.props.children];
-      }
       return component.state.instances.map(
         function( rolInstance )
         {
           return (<PSRol.Provider key={rolInstance} value={component.state[rolInstance]}>
-            {children}
+            {component.props.children}
             </PSRol.Provider>)
         }
       );

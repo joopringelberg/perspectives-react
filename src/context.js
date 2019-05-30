@@ -18,17 +18,8 @@ class Context extends Component
   render ()
   {
     const component = this;
-    let children;
-    if (Array.isArray(component.props.children))
-    {
-      children = component.props.children;
-    }
-    else
-    {
-      children = [component.props.children];
-    }
     return (<PSContext.Provider value={component.state.value}>
-        {children}
+        {component.props.children}
       </PSContext.Provider>)
   }
 }

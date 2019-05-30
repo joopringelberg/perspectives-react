@@ -2,14 +2,14 @@ const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 const PerspectivesComponent = require("./perspectivescomponent.js");
+import {PSContext, PSRol} from "./reactcontexts";
 
 class ContextOfRole extends PerspectivesComponent
 {
   constructor (props)
   {
     super(props);
-    this.state.contextInstance = undefined;
-    this.state.contextType = undefined;
+    this.state.value = undefined;
   }
 
   componentDidMount ()
@@ -21,17 +21,18 @@ class ContextOfRole extends PerspectivesComponent
         // The context of the rol will be bound to the state prop 'contextInstance'.
         component.addUnsubscriber(
           pproxy.getRolContext(
-            component.props.rolinstance,
+            component.context.rolinstance,
             function (contextId)
             {
-              component.setState({contextInstance: contextId[0]});
-              // The type of the contextInstance.
               component.addUnsubscriber(
                 pproxy.getContextType(
                   contextId[0],
                   function (contextType)
                   {
-                    component.setState({contextType: contextType[0]});
+                    component.setState({ value:
+                      { contextinstance: contextId[0]
+                      , contexttype: contextType[0]
+                      }})
                   },
                   component.addUnsubscriber.bind(component)
                 ));
@@ -48,9 +49,10 @@ class ContextOfRole extends PerspectivesComponent
 
     if (component.stateIsComplete())
     {
-      return (<Context contextinstance={component.state.contextInstance} type={component.state.contextType}>
-        {component.props.children}
-      </Context>);
+      const component = this;
+      return (<PSContext.Provider value={component.state.value}>
+          {component.props.children}
+        </PSContext.Provider>)
     }
     else
     {
@@ -59,6 +61,9 @@ class ContextOfRole extends PerspectivesComponent
   }
 
 }
+
+ContextOfRole.contextType = PSRol;
+
 ContextOfRole.propTypes = {
   rolinstance: PropTypes.string
 };

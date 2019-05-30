@@ -2,14 +2,14 @@ const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 const PerspectivesComponent = require("./perspectivescomponent.js");
+import {PSRol} from "./reactcontexts";
 
 class RolBinding extends PerspectivesComponent
 {
   constructor (props)
   {
     super(props);
-    this.state.binding = undefined;
-    this.state.bindingType = undefined;
+    this.state.value = undefined;
   }
 
   componentDidMount ()
@@ -20,19 +20,27 @@ class RolBinding extends PerspectivesComponent
       {
         component.addUnsubscriber(
           pproxy.getBinding(
-            component.props.rolinstance,
+            component.context.rolinstance,
             function (binding)
             {
-              component.setState({binding: binding[0]});
-            }));
-        // Retrieve the type of the binding.
-        // This will be the namespace that its properties are defined in.
-        component.addUnsubscriber(
-          pproxy.getBindingType(
-            component.props.rolinstance,
-            function (bindingType)
-            {
-              component.setState({bindingType: bindingType[0]});
+              // Retrieve the type of the binding.
+              // This will be the namespace that its properties are defined in.
+              component.addUnsubscriber(
+                pproxy.getBindingType(
+                  component.context.rolinstance,
+                  function (bindingType)
+                  {
+                    component.setState(
+                      {
+                        value:
+                        { contextinstance: component.context.contextinstance
+                        , contexttype: component.context.contexttype
+                        , rolinstance: binding[0]
+                        , roltype: bindingType[0]
+                        }
+                      }
+                    );
+                  }));
             }));
       }
     );
@@ -47,29 +55,9 @@ class RolBinding extends PerspectivesComponent
 
     if (component.stateIsComplete())
     {
-      if (Array.isArray(component.props.children))
-      {
-        return React.Children.map(
-          component.props.children,
-          function (child)
-          {
-            return React.cloneElement(
-              child,
-              {
-                rolinstance: component.state.binding,
-                namespace: component.state.bindingType
-              });
-          });
-      }
-      else
-      {
-        return React.cloneElement(
-          component.props.children,
-          {
-            rolinstance: component.state.binding,
-            namespace: component.state.bindingType
-          });
-      }
+      return (<PSRol.Provider value={component.state.value}>
+        {component.props.children}
+        </PSRol.Provider>)
     }
     else
     {
@@ -79,13 +67,13 @@ class RolBinding extends PerspectivesComponent
 
 }
 
+RolBinding.contextType = PSRol;
+
 RolBinding.propTypes = {
   namespace: PropTypes.string,
   rolinstance: PropTypes.string,
   rolname: PropTypes.string
 };
-// RolBinding passes on:
-// rolinstance
-// namespace (= the type of the binding).
+// RolBinding passes on a PSRol.
 
 module.exports = RolBinding;

@@ -12,6 +12,7 @@ const BoundContext = require("./boundcontext.js");
 const CreateContext = require("./createcontext.js");
 const DeleteContext = require("./deletecontext.js");
 const PSView = require("./reactcontexts.js").PSView
+const ExternalRole = require("./externalrole.js");
 
 
 // TODO
@@ -31,5 +32,6 @@ module.exports = {
   BoundContext: BoundContext,
   CreateContext: CreateContext,
   DeleteContext: DeleteContext,
-  PSView: PSView
+  PSView: PSView,
+  ExternalRole: ExternalRole
 };

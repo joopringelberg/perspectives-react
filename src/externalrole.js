@@ -1,17 +1,16 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("perspectivescomponent").PerspectivesComponent;
-const deconstructNamespace = require("urifunctions").deconstructNamespace;
-const buitenRol = require("urifucntions").buitenRol;
+const PerspectivesComponent = require("./perspectivescomponent.js");
+const {buitenRol, deconstructNamespace} = require("./urifunctions.js");
+import {PSRol, PSContext} from "./reactcontexts";
 
 class ExternalRole extends PerspectivesComponent
 {
   constructor (props)
   {
     super(props);
-    this.state.rolinstance = buitenRol( props.contextinstance );
-    this.state.roltype = undefined;
+    this.state.value = undefined;
   }
   componentDidMount()
   {
@@ -21,10 +20,15 @@ class ExternalRole extends PerspectivesComponent
       {
         component.addUnsubscriber(
           pproxy.getRolType(
-            component.state.rolinstance,
+            buitenRol( component.context.contextinstance),
             function(rolType)
             {
-              const updater = { rolinstance: component.state.rolinstance, roltype: rolType[0]};
+              const updater = {value:
+                { contextinstance: component.context.contextinstance
+                , contexttype: component.context.contexttype
+                , rolinstance: buitenRol( component.context.contextinstance)
+                , roltype: rolType[0]
+                }}
               component.setState( updater );
             }
           )
@@ -38,20 +42,9 @@ class ExternalRole extends PerspectivesComponent
     const component = this;
     if (component.stateIsComplete())
     {
-      return React.Children.map(
-        component.props.children,
-        function(child)
-        {
-          // Set contextinstance and namespace of the children.
-          return React.cloneElement(
-            child,
-            {
-              rolinstance: component.state.rolinstance,
-              namespace: deconstructNamespace( component.state.roltype ),
-              rolname: "buitenRolBeschrijving"
-            });
-        }
-      );
+      return (<PSRol.Provider value={component.state.value}>
+        {component.props.children}
+        </PSRol.Provider>)
     }
     else
     {
@@ -60,13 +53,8 @@ class ExternalRole extends PerspectivesComponent
   }
 }
 
-ExternalRole.propTypes = {
-  contextinstance: PropTypes.string,
-  namespace: PropTypes.string
-};
-// ExternalRole passes on:
-// namespace
-// rolinstance
-// rolname
+ExternalRole.contextType = PSContext;
+
+// ExternalRole passes on a PSRol ReactContext.
 
 module.exports = ExternalRole;

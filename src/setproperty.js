@@ -2,38 +2,40 @@ const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 const PerspectivesComponent = require("./perspectivescomponent.js");
-
+const {PSView} = require("./reactcontexts.js");
 
 class SetProperty extends PerspectivesComponent
 {
   changeValue (val)
   {
-    const component = this,
-      roleInstance = component.props.rolinstance,
-      propertyname = component.props.namespace + "$" + component.props.rolname + "$" + component.props.propertyname;
+    const component = this;
     Perspectives.then(
       function(pproxy)
       {
-        pproxy.setProperty(roleInstance, propertyname, val);
+        pproxy.setProperty(
+          component.context.rolinstance,
+          component.getQualifiedPropertyName(),
+          val);
       });
   }
 
-  // Render! props.children contains the nested elements that provide input controls.
-  // These should be provided these props:
-  //  - value
-  //  - setvalue
+  getQualifiedPropertyName ()
+  {
+      // Match the local propertyname given as a prop with the qualified names in context.
+      const r = new RegExp(".*" + this.props.propertyname + "$");
+      return this.context.viewproperties.find( qn => qn.match(r));
+  }
+
   render ()
   {
     const component = this;
-    // component.props.propertyname
-    // component.props.value
 
     function cloneChild (child)
     {
       return React.cloneElement(
         child,
         {
-          defaultvalue: component.props.value,
+          defaultvalue: component.context[component.props.propertyname],
           setvalue: function(val)
           {
             component.changeValue(val);
@@ -54,11 +56,10 @@ class SetProperty extends PerspectivesComponent
   }
 }
 
+SetProperty.contextType = PSView;
+
 SetProperty.propTypes = {
-  namespace: PropTypes.string,
   propertyname: PropTypes.string.isRequired,
-  rolinstance: PropTypes.string,
-  rolname: PropTypes.string,
   value: PropTypes.array
 };
 

@@ -27,10 +27,12 @@ class Rol extends PerspectivesComponent
             component.props.rol,
             function (rolIds)
             {
+              // TODO. Hoe hanteer je verdwenen rollen?
               const anInstance = rolIds[0];
               if (anInstance)
               {
                 // Now get the type for one of the rolIds.
+                // TODO. Haal het type op vóór de instanties. Dan doe je het maar één keer.
                 pproxy.getRolType(
                   anInstance,
                   function(rolTypeArr) // An array!

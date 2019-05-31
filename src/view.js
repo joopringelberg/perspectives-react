@@ -21,6 +21,11 @@ class View extends PerspectivesComponent
           component.props.viewname,
           function(propertyNames)
           {
+            // TODO. Dit is inefficient.
+            // Als er een Property bij komt of vanaf gaat, wordt voor elke Property de waarde opnieuw opgehaald.
+            // Als er één af gaat is dat al helemaal niet nodig.
+            // Komt er één bij, dan hoeven we alleen voor die nieuwe Property de waarde op te halen.
+
             // We will use the state as the value of PSView.
             // First initialize state property members, so we can check whether it is complete.
             // NOTE: React will not notice this.

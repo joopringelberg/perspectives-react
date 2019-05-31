@@ -23,24 +23,38 @@ class RolBinding extends PerspectivesComponent
             component.context.rolinstance,
             function (binding)
             {
-              // Retrieve the type of the binding.
-              // This will be the namespace that its properties are defined in.
-              component.addUnsubscriber(
-                pproxy.getBindingType(
-                  component.context.rolinstance,
-                  function (bindingType)
-                  {
-                    component.setState(
-                      {
-                        value:
-                        { contextinstance: component.context.contextinstance
-                        , contexttype: component.context.contexttype
-                        , rolinstance: binding[0]
-                        , roltype: bindingType[0]
+              if (binding[0])
+              {
+                // Retrieve the type of the binding.
+                // This will be the namespace that its properties are defined in.
+                component.addUnsubscriber(
+                  pproxy.getBindingType(
+                    component.context.rolinstance,
+                    function (bindingType)
+                    {
+                      component.setState(
+                        {
+                          value:
+                          { contextinstance: component.context.contextinstance
+                          , contexttype: component.context.contexttype
+                          , rolinstance: binding[0]
+                          , roltype: bindingType[0]
+                          }
                         }
-                      }
-                    );
-                  }));
+                      );
+                    }));
+              }
+              else
+              {
+                component.setState(
+                  {
+                    value:
+                    { contextinstance: component.context.contextinstance
+                    , contexttype: component.context.contexttype
+                    }
+                  }
+                )
+              }
             }));
       }
     );
@@ -53,7 +67,7 @@ class RolBinding extends PerspectivesComponent
   {
     const component = this;
 
-    if (component.stateIsComplete())
+    if (component.stateIsComplete() && component.state.value.rolinstance && component.state.value.roltype)
     {
       return (<PSRol.Provider value={component.state.value}>
         {component.props.children}

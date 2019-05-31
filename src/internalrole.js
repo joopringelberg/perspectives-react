@@ -27,7 +27,7 @@ class InternalRole extends PerspectivesComponent
               const updater = {value:
                 { contextinstance: component.context.contextinstance
                 , contexttype: component.context.contexttype
-                , rolinstance: buitenRol( component.context.contextinstance)
+                , rolinstance: binnenRol( component.context.contextinstance)
                 , roltype: rolType[0]
                 }}
               component.setState( updater );

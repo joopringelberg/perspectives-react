@@ -2,9 +2,9 @@ const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 const PerspectivesComponent = require("./perspectivescomponent.js");
-import {PSContext} from "./reactcontexts";
+import {PSRol} from "./reactcontexts";
 
-class CreateContext extends PerspectivesComponent
+class CreateContextInExistingRol extends PerspectivesComponent
 {
   create (contextDescription)
   {
@@ -18,24 +18,17 @@ class CreateContext extends PerspectivesComponent
       externeProperties: {}
     };
     // Move all properties to the default context description to ensure we send a complete description.
-    Object.assign(defaultContextDescription, contextDescription);
+    Object.assign(contextDescription, defaultContextDescription);
 
     Perspectives.then(
       function(pproxy)
       {
+        const component = this;
         pproxy.createContext(
           defaultContextDescription,
           function( buitenRolId )
           {
-            pproxy.createRolWithLocalName(
-              component.context.contextinstance,
-              component.props.rolname,
-              component.context.contexttype,
-              {properties: {}},
-              function( rolId )
-              {
-                pproxy.setBinding( rolId[0], buitenRolId[0] );
-              });
+            pproxy.setBinding( component.context.rolinstance, buitenRolId[0] );
           });
       });
   }
@@ -72,14 +65,13 @@ class CreateContext extends PerspectivesComponent
   }
 }
 
-CreateContext.contextType = PSContext;
+CreateContextInExistingRol.contextType = PSRol;
 
-CreateContext.propTypes = {
-  contextname: PropTypes.string.isRequired, // fully qualified name
-  rolname: PropTypes.string.isRequired // local name
+CreateContextInExistingRol.propTypes = {
+  contextname: PropTypes.string.isRequired // fully qualified name
 };
 
 // CreateContext passes on:
 // create
 
-module.exports = CreateContext;
+module.exports = CreateContextInExistingRol;

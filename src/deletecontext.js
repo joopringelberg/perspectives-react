@@ -2,6 +2,7 @@ const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 const PerspectivesComponent = require("./perspectivescomponent.js");
+import {PSContext} from "./reactcontexts";
 
 class DeleteContext extends PerspectivesComponent
 {
@@ -13,7 +14,7 @@ class DeleteContext extends PerspectivesComponent
       function(pproxy)
       {
         pproxy.deleteContext(
-          component.props.contextinstance,
+          component.context.contextinstance,
           function()
           {}
         );
@@ -52,8 +53,6 @@ class DeleteContext extends PerspectivesComponent
   }
 }
 
-DeleteContext.propTypes = {
-  contextinstance: PropTypes.string
-};
+DeleteContext.contextType = PSContext;
 
 module.exports = DeleteContext;

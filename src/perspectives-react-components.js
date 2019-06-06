@@ -11,10 +11,11 @@ const SetProperty = require("./setproperty.js");
 const BoundContext = require("./boundcontext.js");
 const CreateContext = require("./createcontext.js");
 const DeleteContext = require("./deletecontext.js");
-const PSView = require("./reactcontexts.js").PSView
+import {PSContext, PSRol, PSView} from "./reactcontexts";
 const ExternalRole = require("./externalrole.js");
 const InternalRole = require("./externalrole.js");
 const CreateContextInExistingRol = require("./createcontextinexistingrol.js");
+const {getModelName, deconstructLocalNameFromDomeinURI_} = require("./urifunctions.js");
 
 
 // TODO
@@ -35,7 +36,11 @@ module.exports = {
   CreateContext: CreateContext,
   DeleteContext: DeleteContext,
   PSView: PSView,
+  PSRol: PSRol,
+  PSContext: PSContext,
   ExternalRole: ExternalRole,
   InternalRole: InternalRole,
-  CreateContextInExistingRol: CreateContextInExistingRol
+  CreateContextInExistingRol: CreateContextInExistingRol,
+  getModelName: getModelName,
+  deconstructLocalNameFromDomeinURI_: deconstructLocalNameFromDomeinURI_
 };

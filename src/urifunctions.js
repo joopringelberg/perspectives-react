@@ -55,10 +55,29 @@ function deconstructNamespace( s )
   }
 }
 
+// Construct a directoryname from a modelname.
+// Each modelname must be unique.
+// It is the composition of "model:" and the name proper.
+// So all we need do to create a directoryname is to get the first fragment, i.e.
+// the part after "model:" and before the first "$".
+function getModelName( s )
+{
+  const modelRegExp = new RegExp("^(model:)(\\w*).*");
+  const m = s.match(modelRegExp);
+  if ( m )
+  {
+    return m[2];
+  }
+  else {
+    throw "getModelName: the string '" + s + "' is not a well-formed domeinURI";
+  }
+}
+
 module.exports =
   {
       deconstructLocalNameFromDomeinURI_: deconstructLocalNameFromDomeinURI_,
       buitenRol: buitenRol,
-      binnenRol, binnenRol,
-      deconstructNamespace: deconstructNamespace
+      binnenRol: binnenRol,
+      deconstructNamespace: deconstructNamespace,
+      getModelName: getModelName
   }

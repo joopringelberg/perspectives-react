@@ -15,7 +15,7 @@ import {PSContext, PSRol, PSView} from "./reactcontexts";
 const ExternalRole = require("./externalrole.js");
 const InternalRole = require("./externalrole.js");
 const CreateContextInExistingRol = require("./createcontextinexistingrol.js");
-const {getModelName, deconstructLocalNameFromDomeinURI_} = require("./urifunctions.js");
+const {getModelName, deconstructLocalNameFromDomeinURI_, deconstructNamespace} = require("./urifunctions.js");
 
 
 // TODO
@@ -42,5 +42,6 @@ module.exports = {
   InternalRole: InternalRole,
   CreateContextInExistingRol: CreateContextInExistingRol,
   getModelName: getModelName,
-  deconstructLocalNameFromDomeinURI_: deconstructLocalNameFromDomeinURI_
+  deconstructLocalNameFromDomeinURI_: deconstructLocalNameFromDomeinURI_,
+  deconstructNamespace: deconstructNamespace
 };

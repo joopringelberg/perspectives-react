@@ -384,3 +384,16 @@ Example:
 ```
 
 Notice that the properties `id` and `ctype` (as given in perspectives-apitypes) miss from the example above. This is because a value for `id` is computed (by the PDR) and a value for `ctype` must be provided by passing in the attribute `contextname`.
+
+## Screen
+The `Screen` component encapsulates the dynamic loading of a module that defines a component that displays a screen for a Role in a Context. Consequently, it needs, on its `props`, a value for `roltype`. A typical way of embedding `Screen` is this:
+
+```
+<PSRol.Consumer>
+  {value => <Screen roltype={value.roltype}/>}
+</PSRol.Consumer>
+```
+
+Prop | Description
+--- | ---
+roltype | The type of the Rol. This is used to retrieve the `screens.js` library document that should be attached to the model the screen belongs to. Then the role name is used to retrieve a component from the library.

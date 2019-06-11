@@ -8,9 +8,6 @@ module.exports = {
     filename: "perspectives-react.js",
     path: path.join(__dirname, "dist")
   },
-  externals:
-    { perspectivesGlobals: 'perspectivesGlobals'
-    , react: 'React'},
   mode: "development",
   target: "electron-renderer",
   module: {
@@ -31,11 +28,13 @@ module.exports = {
       }]
   },
   externals: {
-    "perspectives-proxy": {
-      commonjs: 'perspectives-proxy',
-      commonjs2: 'perspectives-proxy',
-      amd: 'perspectives-proxy',
-      root: "perspectivesProxy"
+    "perspectivesGlobals": "perspectivesGlobals"
+    , "react": "React"
+    , "perspectives-proxy":
+      { commonjs: 'perspectives-proxy'
+      , commonjs2: 'perspectives-proxy'
+      , amd: 'perspectives-proxy'
+      , root: "perspectivesProxy"
     }
   }
 };

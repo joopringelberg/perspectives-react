@@ -9,12 +9,25 @@ Install with npm:
 $ npm install perspectives-react
 ```
 ## Dependencies
-This package depends on React. JSX is used in the source. It also depends on `perpectives-proxy`. However, this module is declared external in order to be able to share it with `perspectives-core` (the core also depends on the proxy, but react and core need to share the same instance of proxy).
+This package depends on:
+  * react
+  * prop-types
+  * react-loadable
+  * perspectives-proxy
+  * perspectivesGlobals
+  * importModule
+
+## Bundled Dependencies
+`prop-types` and `react-loadable` are bundled with the distribution.
 
 ## External Dependencies
-The environment (c.q. 'window' for Electron) should have a global variable `perspectivesGlobals` that has a member called `host`.
+In order to minimize the size of the bundle, and because it will always be used in the context of a program that uses React, we have externalised React.
 
-Also, the environment should have a function 'import'.
+`perpectives-proxy` is declared external in order to be able to share it with `perspectives-core` (the core also depends on the proxy, but react and core need to share the same instance of proxy).
+
+`perspectivesGlobals` should have a member called `host`. It is declared external, so the calling program has control over its members.
+
+Finally, the `Screen` component should use the unadorned `import` function. However, Webpack treats expressions with this function as a trigger to bundle or split bundles. This is not what we want. Hence, we use a function `importModule` that really is nothing but `import`, to be present on `window` of the calling program.
 
 ## Build
 Create `dist/perspectives-react.js` by evaluating on the command line:

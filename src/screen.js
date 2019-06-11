@@ -1,10 +1,6 @@
 import { getModelName, deconstructLocalNameFromDomeinURI_ } from "./urifunctions.js";
 import Loadable from 'react-loadable';
 
-// import "importModule";
-// import host from "perspectivesGlobals"; 
-
-
 function importRoleScreen( roleName )
 {
   // modelName = model part of the roleName
@@ -16,6 +12,7 @@ function importRoleScreen( roleName )
   // url = host + "perspect_models/" + <modelName> + "/screens.js"
   const url = perspectivesGlobals.host + "perspect_models/" + modelName + "/screens.js"
 
+  // importModule should be available on the global scope of the program that uses this library.
   return importModule( url ).then(
     function(r)
     {

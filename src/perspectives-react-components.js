@@ -16,6 +16,7 @@ const ExternalRole = require("./externalrole.js");
 const InternalRole = require("./externalrole.js");
 const CreateContextInExistingRol = require("./createcontextinexistingrol.js");
 const {getModelName, deconstructLocalNameFromDomeinURI_, deconstructNamespace} = require("./urifunctions.js");
+const Screen = require("./appImporter.js");
 
 
 // TODO
@@ -43,5 +44,6 @@ module.exports = {
   CreateContextInExistingRol: CreateContextInExistingRol,
   getModelName: getModelName,
   deconstructLocalNameFromDomeinURI_: deconstructLocalNameFromDomeinURI_,
-  deconstructNamespace: deconstructNamespace
+  deconstructNamespace: deconstructNamespace,
+  Screen: Screen
 };

@@ -11,6 +11,11 @@ $ npm install perspectives-react
 ## Dependencies
 This package depends on React. JSX is used in the source. It also depends on `perpectives-proxy`. However, this module is declared external in order to be able to share it with `perspectives-core` (the core also depends on the proxy, but react and core need to share the same instance of proxy).
 
+## External Dependencies
+The environment (c.q. 'window' for Electron) should have a global variable `perspectivesGlobals` that has a member called `host`.
+
+Also, the environment should have a function 'import'.
+
 ## Build
 Create `dist/perspectives-react.js` by evaluating on the command line:
 

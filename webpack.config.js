@@ -28,7 +28,7 @@ module.exports = {
       }]
   },
   externals: {
-    "perspectivesGlobals": "perspectivesGlobals"
+    "PerspectivesGlobals": "PerspectivesGlobals"
     , "react": "React"
     , "perspectives-proxy":
       { commonjs: 'perspectives-proxy'

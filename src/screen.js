@@ -1,6 +1,9 @@
 import { getModelName, deconstructLocalNameFromDomeinURI_ } from "./urifunctions.js";
 import Loadable from 'react-loadable';
 
+// TODO. Even though PerspectivesGlobals has been declared external, we cannot import it here.
+// Doing so will cause a runtime error if the calling program has not put it on the global scope in time.
+
 function importRoleScreen( roleName )
 {
   // modelName = model part of the roleName
@@ -9,8 +12,8 @@ function importRoleScreen( roleName )
   // screenName = local part of the roleName
   const screenName = deconstructLocalNameFromDomeinURI_(roleName);
 
-  // url = host + "perspect_models/" + <modelName> + "/screens.js"
-  const url = perspectivesGlobals.host + "perspect_models/" + modelName + "/screens.js"
+  // PerspectivesGlobals should be available on the global scope of the program that uses this library.
+  const url = PerspectivesGlobals.host + "perspect_models/" + modelName + "/screens.js"
 
   // importModule should be available on the global scope of the program that uses this library.
   return importModule( url ).then(

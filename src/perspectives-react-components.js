@@ -16,7 +16,7 @@ const ExternalRole = require("./externalrole.js");
 const InternalRole = require("./externalrole.js");
 const CreateContextInExistingRol = require("./createcontextinexistingrol.js");
 const {getModelName, deconstructLocalNameFromDomeinURI_, deconstructNamespace} = require("./urifunctions.js");
-const Screen = require("./screenName.js");
+const Screen = require("./screen.js");
 
 
 // TODO

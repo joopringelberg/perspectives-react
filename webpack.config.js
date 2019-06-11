@@ -8,7 +8,9 @@ module.exports = {
     filename: "perspectives-react.js",
     path: path.join(__dirname, "dist")
   },
-  externals: {perspectivesGlobals: 'perspectivesGlobals'},
+  externals:
+    { perspectivesGlobals: 'perspectivesGlobals'
+    , react: 'React'},
   mode: "development",
   target: "electron-renderer",
   module: {

@@ -75,7 +75,7 @@ class RolBinding extends PerspectivesComponent
     }
     else
     {
-      return <div />;
+      return null;
     }
   }
 

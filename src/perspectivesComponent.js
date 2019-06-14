@@ -16,13 +16,16 @@ class PerspectivesComponent extends Component
   componentWillUnmount ()
   {
     const component = this;
-    this.unsubscribers.forEach(
-      function(unsubscriber)
+    ///////////////
+    console.log(this.constructor.name + " will unmount.")
+    ///////////////
+    Perspectives.then(
+      function(pproxy)
       {
-        unsubscriber.request = "Unsubscribe";
-        Perspectives.then(
-          function (pproxy)
+        component.unsubscribers.forEach(
+          function(unsubscriber)
           {
+            unsubscriber.request = "Unsubscribe";
             pproxy.send(unsubscriber, function(){});
           });
       });

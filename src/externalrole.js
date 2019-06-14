@@ -48,7 +48,7 @@ class ExternalRole extends PerspectivesComponent
     }
     else
     {
-      return <div/>;
+      return null;
     }
   }
 }

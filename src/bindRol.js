@@ -17,6 +17,9 @@ class BindRol extends PerspectivesComponent
   {
     const component = this;
     let rolinstance
+    ///////////////
+    console.log("BindRol did mount.")
+    ///////////////
     Perspectives.then(
       function (pproxy)
       {
@@ -51,7 +54,7 @@ class BindRol extends PerspectivesComponent
     }
     else
     {
-      return <div />;
+      return null;
     }
   }
 }

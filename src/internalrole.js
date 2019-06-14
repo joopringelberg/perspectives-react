@@ -49,7 +49,7 @@ class InternalRole extends PerspectivesComponent
     }
     else
     {
-      return <div/>;
+      return null;
     }
   }
 }

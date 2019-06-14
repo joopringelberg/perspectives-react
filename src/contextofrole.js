@@ -33,12 +33,9 @@ class ContextOfRole extends PerspectivesComponent
                       { contextinstance: contextId[0]
                       , contexttype: contextType[0]
                       }})
-                  },
-                  component.addUnsubscriber.bind(component)
+                  }
                 ));
-            },
-            component.addUnsubscriber.bind(component)
-          ));
+            }));
       }
     );
   }
@@ -56,7 +53,7 @@ class ContextOfRole extends PerspectivesComponent
     }
     else
     {
-      return <div />;
+      return null;
     }
   }
 

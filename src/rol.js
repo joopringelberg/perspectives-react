@@ -10,8 +10,7 @@ class Rol extends PerspectivesComponent
   {
     super(props);
     const component = this;
-    const rol = component.props.rol;
-    component.state.instances = undefined;
+    component.state.instances = [];
   }
 
   componentDidMount ()
@@ -22,43 +21,42 @@ class Rol extends PerspectivesComponent
       function (pproxy)
       {
         component.addUnsubscriber(
-          pproxy.getUnqualifiedRol(
-            component.context.contextinstance,
+          pproxy.getUnqualifiedRolType(
+            component.context.contexttype,
             component.props.rol,
-            function (rolIds)
+            function(rolTypeArr)
             {
-              // TODO. Hoe hanteer je verdwenen rollen?
-              const anInstance = rolIds[0];
-              if (anInstance)
+              const rolType = rolTypeArr[0];
+              if (!rolType)
               {
-                // Now get the type for one of the rolIds.
-                // TODO. Haal het type op vóór de instanties. Dan doe je het maar één keer.
-                pproxy.getRolType(
-                  anInstance,
-                  function(rolTypeArr) // An array!
-                  {
-                    const rolType = rolTypeArr[0];
-                    const updater = {
-                      instances: rolIds
-                    };
-                    if (rolType)
-                    {
-                      rolIds.forEach(
-                        function( rolInstance )
-                        {
-                          updater[rolInstance] =
-                            { contextinstance: component.context.contextinstance
-                            , contexttype: component.context.contexttype
-                            , rolinstance: rolInstance
-                            , roltype: rolType
-                            }
-                        });
-                      component.setState(updater);
-                    }
-                  }
-                );
+                throw("Rol: could not establish qualified name of Rol '" + component.props.rol + "' for Context '" + component.context.contexttype + "'.");
               }
-            }));
+              component.addUnsubscriber(
+                pproxy.getRol(
+                  component.context.contextinstance,
+                  rolType,
+                  function(rolIdArr)
+                  {
+                    const updater = {
+                      instances: rolIdArr
+                    };
+                    rolIdArr.forEach(
+                      function( rolInstance )
+                      {
+                        updater[rolInstance] =
+                          { contextinstance: component.context.contextinstance
+                          , contexttype: component.context.contexttype
+                          , rolinstance: rolInstance
+                          , roltype: rolType
+                          }
+                      });
+                    component.setState(updater);
+                  }
+                )
+              );
+            }
+          )
+        );
       });
   }
 
@@ -67,21 +65,14 @@ class Rol extends PerspectivesComponent
     const component = this;
     let children;
 
-    if (component.stateIsComplete())
-    {
-      return component.state.instances.map(
-        function( rolInstance )
-        {
-          return (<PSRol.Provider key={rolInstance} value={component.state[rolInstance]}>
-            {component.props.children}
-            </PSRol.Provider>)
-        }
-      );
-    }
-    else
-    {
-      return <div />;
-    }
+    return component.state.instances.map(
+      function( rolInstance )
+      {
+        return (<PSRol.Provider key={rolInstance} value={component.state[rolInstance]}>
+          {component.props.children}
+          </PSRol.Provider>)
+      }
+    );
   }
 }
 

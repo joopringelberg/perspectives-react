@@ -12,6 +12,13 @@ const PSRol = React.createContext(
   , roltype: ""
   });
 
+const PSRolBinding = React.createContext(
+  { contextinstance: ""
+  , contexttype: ""
+  , roltype: ""
+  , bindrol: function(){}
+  });
+
 const PSView = React.createContext(
   { contextinstance: ""
   , contexttype: ""
@@ -25,5 +32,6 @@ module.exports =
   {
     PSContext: PSContext,
     PSRol: PSRol,
-    PSView: PSView
+    PSView: PSView,
+    PSRolBinding: PSRolBinding
   }

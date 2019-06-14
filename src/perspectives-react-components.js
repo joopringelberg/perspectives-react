@@ -1,5 +1,6 @@
 const Context = require("./context.js");
 const Rol = require("./rol.js");
+const BindRol = require("./bindRol.js");
 const RolBinding = require("./rolbinding.js");
 const View = require("./view.js");
 const ContextOfRole = require("./contextofrole.js");
@@ -11,7 +12,7 @@ const SetProperty = require("./setproperty.js");
 const BoundContext = require("./boundcontext.js");
 const CreateContext = require("./createcontext.js");
 const DeleteContext = require("./deletecontext.js");
-import {PSContext, PSRol, PSView} from "./reactcontexts";
+import {PSContext, PSRol, PSView, PSRolBinding} from "./reactcontexts";
 const ExternalRole = require("./externalrole.js");
 const InternalRole = require("./externalrole.js");
 const CreateContextInExistingRol = require("./createcontextinexistingrol.js");
@@ -25,6 +26,7 @@ const Screen = require("./screen.js");
 module.exports = {
   Context: Context,
   Rol: Rol,
+  BindRol: BindRol,
   RolBinding: RolBinding,
   View: View,
   ContextOfRole: ContextOfRole,
@@ -39,6 +41,7 @@ module.exports = {
   PSView: PSView,
   PSRol: PSRol,
   PSContext: PSContext,
+  PSRolBinding: PSRolBinding,
   ExternalRole: ExternalRole,
   InternalRole: InternalRole,
   CreateContextInExistingRol: CreateContextInExistingRol,

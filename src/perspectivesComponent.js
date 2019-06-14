@@ -16,9 +16,6 @@ class PerspectivesComponent extends Component
   componentWillUnmount ()
   {
     const component = this;
-    ///////////////
-    console.log(this.constructor.name + " will unmount.")
-    ///////////////
     Perspectives.then(
       function(pproxy)
       {

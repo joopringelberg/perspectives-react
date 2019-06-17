@@ -21,13 +21,14 @@ class BindRol extends PerspectivesComponent
       function (pproxy)
       {
         const updater = {
-          bindRol: function(rolInstance)
+          // Can be applied to a PSRol context.
+          bindRol: function({rolinstance})
             {
               pproxy.createRolWithLocalName(
                 component.context.contextinstance,
                 component.props.rol,
                 component.context.contexttype,
-                {properties: {}, binding: rolInstance},
+                {properties: {}, binding: rolinstance},
                 function( rolId ){});
             }
         }

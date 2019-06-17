@@ -38,7 +38,7 @@ class Rol extends PerspectivesComponent
                   function(rolIdArr)
                   {
                     const updater = {
-                      instances: rolIdArr
+                      instances: rolIdArr.sort()
                     };
                     rolIdArr.forEach(
                       function( rolInstance )

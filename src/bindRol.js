@@ -23,13 +23,48 @@ class BindRol extends PerspectivesComponent
         const updater = {
           // Can be applied to a PSRol context.
           bindRol: function({rolinstance})
+          {
+            if (rolinstance)
             {
-              pproxy.createRolWithLocalName(
-                component.context.contextinstance,
-                component.props.rol,
+              // checkBinding( typeOfRolToBindTo, valueToBind )
+              pproxy.checkBinding(
                 component.context.contexttype,
-                {properties: {}, binding: rolinstance},
-                function( rolId ){});
+                component.props.rol,
+                rolinstance,
+                function(psbool)
+                {
+                  if ( psbool[0] === "true" )
+                  {
+                    // We use 'createRolWithLocalName' rather than 'bindInNewRol' because we only have the local rol name, not its qualified name.
+                    pproxy.createRolWithLocalName(
+                    component.context.contextinstance,
+                    component.props.rol,
+                    component.context.contexttype,
+                    {properties: {}, binding: rolinstance},
+                    function( rolId ){});
+                  }
+                  else
+                  {
+                    alert("Cannot bind!")
+                  }
+                });
+            }
+          },
+          // Can be applied to a PSRol context.
+          checkBinding: function({rolinstance}, callback)
+            {
+              // checkBinding( typeOfRolToBindTo, valueToBind )
+              pproxy.checkBinding(
+                component.context.contexttype,
+                component.props.rol,
+                rolinstance,
+                function(psbool)
+                {
+                  if ( psbool[0] === "true" )
+                  {
+                    callback();
+                  }
+                });
             }
         }
         component.setState(updater);
@@ -47,6 +82,7 @@ class BindRol extends PerspectivesComponent
         { contextinstance: component.context.contextinstance
         , contexttype: component.context.contexttype
         , bindrol: component.state.bindRol
+        , checkbinding: component.state.checkBinding
       }
       return (<PSRolBinding.Provider value={rolBindingContext}>{component.props.children}</PSRolBinding.Provider>);
     }

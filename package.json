@@ -18,7 +18,7 @@
     "react"
   ],
   "author": "Joop Ringelberg <joop.ringelberg@gmail.com>",
-  "license": "Copyright Perspect-IT 2018",
+  "license": "MIT",
   "private": true,
   "bugs": {
     "url": "https://github.com/joopringelberg/perspectives-react/issues"

@@ -37,11 +37,11 @@ class BindRol extends PerspectivesComponent
                   {
                     // We use 'createRolWithLocalName' rather than 'bindInNewRol' because we only have the local rol name, not its qualified name.
                     pproxy.createRolWithLocalName(
-                    component.context.contextinstance,
-                    component.props.rol,
-                    component.context.contexttype,
-                    {properties: {}, binding: rolinstance},
-                    function( rolId ){});
+                      component.context.contextinstance,
+                      component.props.rol,
+                      component.context.contexttype,
+                      {properties: {}, binding: rolinstance},
+                      function( rolId ){});
                   }
                   else
                   {

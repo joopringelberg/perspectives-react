@@ -2,7 +2,7 @@ const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 const PerspectivesComponent = require("./perspectivescomponent.js");
-const {buitenRol, deconstructNamespace} = require("./urifunctions.js");
+const {externalRole} = require("./urifunctions.js");
 import {PSRol, PSContext} from "./reactcontexts";
 
 class ExternalRole extends PerspectivesComponent
@@ -20,13 +20,13 @@ class ExternalRole extends PerspectivesComponent
       {
         component.addUnsubscriber(
           pproxy.getRolType(
-            buitenRol( component.context.contextinstance),
+            externalRole( component.context.contextinstance),
             function(rolType)
             {
               const updater = {value:
                 { contextinstance: component.context.contextinstance
                 , contexttype: component.context.contexttype
-                , rolinstance: buitenRol( component.context.contextinstance)
+                , rolinstance: externalRole( component.context.contextinstance)
                 , roltype: rolType[0]
                 }}
               component.setState( updater );

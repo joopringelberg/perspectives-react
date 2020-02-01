@@ -1,16 +1,28 @@
-import { getModelName, deconstructLocalNameFromDomeinURI_ } from "./urifunctions.js";
+import { deconstructModelName, deconstructSegments } from "./urifunctions.js";
 import Loadable from 'react-loadable';
+const Perspectives = require("perspectives-proxy").Perspectives;
+const PerspectivesComponent = require("./perspectivescomponent.js");
+const ContextOfRole = require("./contextofrole.js");
+import {PSContext} from "./reactcontexts";
 
 // TODO. Even though PerspectivesGlobals has been declared external, we cannot import it here.
 // Doing so will cause a runtime error if the calling program has not put it on the global scope in time.
 
 function importRoleScreen( roleName )
 {
+  // Make the identifier start with lowercase and replace '$' with _ (underscore).
+  function mapName (s)
+  {
+    const regex1 = /\$/gi;
+    const regex2 = /^./gi;
+    return s.replace(regex1, '_').replace(regex2, s.charAt(0).toLowerCase());
+  }
+
   // modelName = model part of the roleName
-  const modelName = "model:" + getModelName( roleName );
+  const modelName = deconstructModelName( roleName );
 
   // screenName = local part of the roleName
-  const screenName = deconstructLocalNameFromDomeinURI_(roleName);
+  const screenName = mapName( deconstructSegments(roleName) );
 
   // PerspectivesGlobals should be available on the global scope of the program that uses this library.
   const url = PerspectivesGlobals.host + "perspect_models/" + modelName + "/screens.js"
@@ -36,13 +48,48 @@ function Loading(props) {
   }
 }
 
-function Screen(props)
+class Screen extends PerspectivesComponent
 {
-  const LoadableScreen = Loadable({
-    loader: () => importRoleScreen( props.roltype ),
-    loading: Loading,
-  });
-  return <LoadableScreen/>;
+  constructor (props)
+  {
+    super(props);
+    this.state.myroletype = undefined;
+  }
+
+  componentDidMount ()
+  {
+    const component = this;
+    Perspectives.then(
+      function(pproxy)
+      {
+        pproxy.getMeForContext( component.props.rolinstance,
+          function(userRoles)
+          {
+            component.setState({myroletype: userRoles[0]});
+          })
+      }
+    );
+  }
+
+  render ()
+  {
+    const component = this;
+
+    if (component.stateIsComplete())
+    {
+      const LoadableScreen = Loadable({
+        loader: () => importRoleScreen( component.state.myroletype ),
+        loading: Loading,
+      });
+      return <ContextOfRole rolinstance={component.props.rolinstance}><LoadableScreen/></ContextOfRole>;
+    }
+    else
+      return <div></div>
+  }
 }
+
+Screen.contextType = PSContext;
+
+Screen.propTypes = {};
 
 module.exports = Screen;

@@ -6,7 +6,6 @@ const RolBinding = require("./rolbinding.js");
 const View = require("./view.js");
 const ContextOfRole = require("./contextofrole.js");
 const ExternalRole = require("./externalrole.js");
-const InternalRole = require("./internalrole.js");
 
 // Access a View on the BuitenRol bound to a Rol of the surrounding context.
 function ExternalViewOfBoundContext(props)

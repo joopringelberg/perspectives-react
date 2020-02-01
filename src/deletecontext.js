@@ -13,8 +13,10 @@ class DeleteContext extends PerspectivesComponent
     Perspectives.then(
       function(pproxy)
       {
+        var c;
+        if (component.props.contextinstance) {c = component.props.contextinstance} else {c = component.context.contextinstance}
         pproxy.deleteContext(
-          component.context.contextinstance,
+          c,
           function()
           {}
         );
@@ -54,5 +56,7 @@ class DeleteContext extends PerspectivesComponent
 }
 
 DeleteContext.contextType = PSContext;
+
+DeleteContext.propTypes = { contextinstance: PropTypes.string }
 
 module.exports = DeleteContext;

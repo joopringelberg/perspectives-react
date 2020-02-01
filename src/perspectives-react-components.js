@@ -16,7 +16,7 @@ import {PSContext, PSRol, PSView, PSRolBinding} from "./reactcontexts";
 const ExternalRole = require("./externalrole.js");
 const InternalRole = require("./externalrole.js");
 const CreateContextInExistingRol = require("./createcontextinexistingrol.js");
-const {getModelName, deconstructLocalNameFromDomeinURI_, deconstructNamespace} = require("./urifunctions.js");
+const {deconstructModelName, deconstructSegments} = require("./urifunctions.js");
 const Screen = require("./screen.js");
 const RemoveBinding = require("./removeBinding.js");
 const RemoveRol = require( "./removeRol.js")
@@ -47,9 +47,8 @@ module.exports = {
   ExternalRole: ExternalRole,
   InternalRole: InternalRole,
   CreateContextInExistingRol: CreateContextInExistingRol,
-  getModelName: getModelName,
-  deconstructLocalNameFromDomeinURI_: deconstructLocalNameFromDomeinURI_,
-  deconstructNamespace: deconstructNamespace,
+  deconstructModelName: deconstructModelName,
+  deconstructSegments: deconstructSegments,
   Screen: Screen,
   RemoveBinding: RemoveBinding,
   RemoveRol: RemoveRol

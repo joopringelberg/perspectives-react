@@ -2,6 +2,7 @@ const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 const PerspectivesComponent = require("./perspectivescomponent.js");
+const getQualifiedPropertyName = require("./urifunctions.js").getQualifiedPropertyName
 const {PSView} = require("./reactcontexts.js");
 
 class SetProperty extends PerspectivesComponent
@@ -9,21 +10,18 @@ class SetProperty extends PerspectivesComponent
   changeValue (val)
   {
     const component = this;
-    Perspectives.then(
-      function(pproxy)
-      {
-        pproxy.setProperty(
-          component.context.rolinstance,
-          component.getQualifiedPropertyName(),
-          val);
-      });
-  }
-
-  getQualifiedPropertyName ()
-  {
-      // Match the local propertyname given as a prop with the qualified names in context.
-      const r = new RegExp(".*" + this.props.propertyname + "$");
-      return this.context.viewproperties.find( qn => qn.match(r));
+    const oldValue = component.context[getQualifiedPropertyName(component.props.propertyname, component.context.viewproperties)];
+    if ( val != oldValue)
+    {
+      Perspectives.then(
+        function(pproxy)
+        {
+          pproxy.setProperty(
+            component.context.rolinstance,
+            getQualifiedPropertyName(component.props.propertyname, component.context.viewproperties),
+            val);
+        });
+    }
   }
 
   render ()
@@ -35,7 +33,7 @@ class SetProperty extends PerspectivesComponent
       return React.cloneElement(
         child,
         {
-          defaultvalue: component.context[component.props.propertyname],
+          defaultvalue: component.context[getQualifiedPropertyName(component.props.propertyname, component.context.viewproperties)],
           setvalue: function(val)
           {
             component.changeValue(val);

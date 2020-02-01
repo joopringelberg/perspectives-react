@@ -66,24 +66,23 @@ Most components need either a contextinstance or a rolinstance. All Components c
 
 &nbsp;| Needs a rolinstance | Needs a contextinstance
 --- | --- | ---
-**Passes a rolinstance** |RolBinding, InverseRoleBinding | Rollen, ExternalRole, InternalRole
+**Passes a rolinstance** |RolBinding, InverseRoleBinding | Rollen, ExternalRole
 **Passes a contextinstance** |ContextOfRole, BoundContext | Context
-**Provides values of Properties** | View | ViewOnExternalRole, ViewOnInternalRole, ExternalViewOfBoundContext, InternalViewOfBoundContext
+**Provides values of Properties** | View | ViewOnExternalRole, ExternalViewOfBoundContext
 
 *Examples*
   1. `Context` is in the middle row and so provides a Context (it is in the column **Needs a contextinstance**. So if you make it the root of your Component tree, you'll have to provide the fully qualified id of a Context instance). Notice that `Context` merely passes on the props it receives. It is meant to be the root of a Component tree, that you anchor to a Context instance whose fully qualified ID you enter as an attribute.
 
-  2. What can be inside a `Context` Component? Everything in the column **Needs a contextinstance**, so: `Rollen`, `ExternalRole`, `Context` (but this is rather pointless), `ViewOnExternalRole`, `ViewOnInternalRole`, `ExternalViewOfBoundContext` and `InternalViewOfBoundContext`.
+  2. What can be inside a `Context` Component? Everything in the column **Needs a contextinstance**, so: `Rollen`, `ExternalRole`, `Context` (but this is rather pointless), `ViewOnExternalRole` and `ExternalViewOfBoundContext`.
 
   3. Where can we use `BoundContext`? It is in the column **Needs a rolinstance**, so we can put it inside anything that provides a Rol. In other words, everything in the row **Passes a rolinstance**: `RolBinding`, `InverseRoleBinding`, `Rollen`, and `ExternalRole`.
 
-*A word on compositions*. The Components `BoundContext`, `ExternalViewOfBoundContext` and `InternalViewOfBoundContext` are *compositions* of other (more elementary) Components. They are here for convenience. However, use them with care as they expect specific conditions. Take `BoundContext` as an example. It is a composition of `RolBinding` followed by `ContextOfRole`. The name suggests that you'll end up with a Context and as such it is put in the row **Provides Context** above. However, this will only be correct if, indeed, the Role is bound to the ExternalRole of a Context! You, as programmer, are responsible for guaranteeing that semantics.
+*A word on compositions*. The Components `BoundContext` and `ExternalViewOfBoundContext` are *compositions* of other (more elementary) Components. They are here for convenience. However, use them with care as they expect specific conditions. Take `BoundContext` as an example. It is a composition of `RolBinding` followed by `ContextOfRole`. The name suggests that you'll end up with a Context and as such it is put in the row **Provides Context** above. However, this will only be correct if, indeed, the Role is bound to the ExternalRole of a Context! You, as programmer, are responsible for guaranteeing that semantics.
 
 Name | Composition (f <<< g is f after g)
 --- | ---
 BoundContext | ContextOfRole <<< RolBinding
 ExternalViewOfBoundContext | View <<< RolBinding
-InternalViewOfBoundContext | ViewOnInternalRole <<< ContextOfRole <<< RolBinding
 
 ### Context
 The `Context` Component provides a root for a container component hierarchy. This Component need not be nested in any other container.
@@ -103,7 +102,7 @@ contexttype | The type of the Context.
 ### Rollen
 A `Rollen` Component makes instances of selected roles available. Use the `Rollen` Component to access Roles of the surrounding Context. Select a Role by using its *local name*.
 
-To access the BuitenRol of a Context, use the `ExternalRole` Component rather than trying to include the name of the BuitenRol. To access properties on a BuitenRol, use `ViewOnExternalRole` To access properties on a BinnenRol, use `ViewOnInternalRole`.
+To access the BuitenRol of a Context, use the `ExternalRole` Component rather than trying to include the name of the BuitenRol. To access properties on a BuitenRol, use `ViewOnExternalRole`.
 
 **NOTE**. Any Role that is taken from an Aspect, will not be found by Rollen, because it's current implementation assumes that each Role is in the namespace of the context.
 
@@ -198,22 +197,6 @@ rolinstance | Identifies an instance of a BuitenRol.
 rolname | The value "buitenRolBeschrijving"
 
 
-### InternalRole
-The `InternalRole` Component navigates from a Context to its InternalRole.
-
-Prop | Description
---- | ---
-contextinstance | The id of the context that we navigate from.
-namespace | The type of the context that we navigate from.
-
-`InternalRole` passes the following props to its children:
-
-Prop | Description
---- | ---
-namespace | The **fully qualified** type of the instance of the BuitenRol.
-rolinstance | Identifies an instance of a BuitenRol.
-rolname | The value "buitenRolBeschrijving"
-
 ### ContextOfRole
 The `ContextOfRole` Component navigates from a Role to its Context, so it gives access to a Context, just as the `Context` Component does. `ContextOfRole` uses `Context` internally, so passes on exactly the same props as `Context` does.
 
@@ -231,7 +214,7 @@ namespace | The type of the Context.
 
 
 ### View
-Selects a View of a Role and makes the properties of that View available. A `View` Component can be used inside the `Rollen`, `ExternalRole`, `RolBinding` or `InverseRoleBinding` Component, all of which pass on a `rolinstance` value. If the embedding context is `Rollen`, it needs the `rolname` prop of the View component to select the right instance.
+Selects a View of a Role and makes the properties of that View available. A `View` Component can be used inside the `Rollen`, `ExternalRole`, `RolBinding` or `InverseRoleBinding` Component, all of which pass on a `rolinstance` value.
 
 Possible content elements: any user-defined Component that can make good use of the props that are passed on.
 
@@ -248,11 +231,10 @@ Prop | Description
 --- | ---
 namespace | The namespace that it has received (the qualified name of the Rol type).
 rolinstance | The rolinstance that it received.
-rolname | the local name of the Rol. **NOTE** `binnenRol` will be replaced by `binnenRolBeschrijving`, `buitenRol` by `buitenRolBeschrijving`.
-Property | Each Perspectives Property that is part of the View.
+rolname | the local name of the Rol.
+Property | Each Perspectives Property that is part of the View. Note that the **qualified** name of the property is used.
 
-If A child of the View Component has a prop `propertyname` (provided with an attribute), just the value of that property will be passed on as the member `value`.
-
+A view provides the function `propval`. This takes a local property name as argument, matches it against the available qualified property names and if it finds a single match, returns the value of that property. If no matches are found or if multiple matches are found, appropriate errors will be thrown so the programmer can use a correct local name or add segments to the local name to make it unique.
 
 ```
 <View role="user" viewname="FullName">
@@ -276,28 +258,8 @@ rolname | The local name of a Role. Use this when embedding the `ExternalViewOfB
 
 As this component is composed of `View`, passes the same properties on.
 
-### InternalViewOfBoundContext
-Selects the View `viewname` of an InternalRole; expects the Binding of its `role` attribute to be a ExternalRole. This Component is the Composition `ViewOnInternalRole <<< ContextOfRole <<< RolBinding`.
-
-Prop | Description
---- | ---
-namespace | The type of the bound rolinstance.
-rolinstance | The id of the bound rolinstance.
-rolname | The local name of a Role. Use this when embedding the InternalViewOfBoundContext in a `Rollen` component, to select instances of a specific Role.
-
-As this component is composed of `View`, passes the same properties on.
-
 ### ViewOnExternalRole
 Selects the View `viewname` of the ExternalRole of the Context. Use this Component directly inside a Component that provides a Context, such as `Context` of `BoundContext`.
-
-Attribute | Description
---- | ---
-viewname | The **local name** of a View.
-
-As this component is composed of `View`, passes the same properties on.
-
-### ViewOnInternalRole
-Selects the View `viewname` of the InternalRole of the Context. Use this Component directly inside a Component that provides a Context, such as `Context` of `BoundContext`.
 
 Attribute | Description
 --- | ---
@@ -313,8 +275,12 @@ Prop | Description
 namespace | The type of the rolinstance on which we will change a Property value.
 **propertyname** | The **local** name of the Property on which we will change a value.
 rolinstance | The id of the rolinstance on which we will change a Property value.
-rolname | The local name of a Role. Use this when embedding the InternalViewOfBoundContext in a `Rollen` component, to select instances of a specific Role.
+rolname | The local name of a Role.
 value | The value of the Property before changing it.
+
+**Note**.
+*  If the last segment of the qualified name does not uniquely identify a property, an alert is shown. This is meant for the programmer! Add segments before the last until it uniquely identifies a single property on the view.
+*  If the given local name does not identify a property, an alert is shown.
 
 `SetProperty` passes the following props to its children:
 
@@ -399,14 +365,24 @@ Example:
 Notice that the properties `id` and `ctype` (as given in perspectives-apitypes) miss from the example above. This is because a value for `id` is computed (by the PDR) and a value for `ctype` must be provided by passing in the attribute `contextname`.
 
 ## Screen
-The `Screen` component encapsulates the dynamic loading of a module that defines a component that displays a screen for a Role in a Context. Consequently, it needs, on its `props`, a value for `roltype`. A typical way of embedding `Screen` is this:
+The `Screen` component encapsulates the dynamic loading of a module that defines a component that displays a screen for a User Role in a Context.
+
+From the point of view of the Screen programmer, navigation is in terms of Contexts rather than user roles. We accommodate that by allowing the programmer to provide the external role of a Context Instance. The Screen component asks the PDR for the type of the role that the user plays in that Context Instance. It then uses that Role Type to retrieve a screen.
+
+Consequently, the programmer should store screens in a screen library under the varying User Role names! But Perspectives identifiers start with an upper case letter and use `$` to separate segments, while javascript function names are advised to start with a lowercase letter and cannot contain `$`. Hence the programmer should map the Role Type name as follows:
+  * let it start with a lowercase letter;
+  * replace each occurrence of `$` with `_` (underscore).
+
+A Screen component needs, on its `props`, a value for `rolinstance`. A typical way of embedding `Screen` is this:
 
 ```
 <PSRol.Consumer>
-  {value => <Screen roltype={value.roltype}/>}
+  {value => <Screen rolinstance={value.rolinstance}/>}
 </PSRol.Consumer>
 ```
 
 Prop | Description
 --- | ---
-roltype | The type of the Rol. This is used to retrieve the `screens.js` library document that should be attached to the model the screen belongs to. Then the role name is used to retrieve a component from the library.
+rolinstance | The external Role of a Context Instance. This is used to retrieve the `screens.js` library document that should be attached to the model the Context type is defined in, and a component in that library that bears the name of the Role type played by the user in the given instance.
+
+**NOTE** Actually, a User Role can have many perspectives in a Context and as many or fewer screens. In fact, a screen can visualise multiple perspectives. However, at this moment of development, we've chosen to provide just a single screen for each User Role.

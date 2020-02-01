@@ -25,6 +25,7 @@ const PSView = React.createContext(
   , rolinstance: ""
   , roltype: ""
   , viewproperties: []
+  , propval: function(){}
   // And there will be a member for each property, holding its values.
   });
 

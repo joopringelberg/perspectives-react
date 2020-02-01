@@ -1,57 +1,30 @@
 // NOTE DEPENDENCIES. Code in this section is adapted from module Perspectives.Identifiers.
 // Returns "localName" from "model:ModelName$localName" or Nothing
 
-// deconstructLocalNameFromDomeinURI_ :: String -> String
+// deconstructSegments :: String -> String
 // NOTE DEPENDENCY. This code is adapted from module Perspectives.Identifiers.
-function deconstructLocalNameFromDomeinURI_(s) {
-  // domeinURIRegex :: Regex
-  const domeinURIRegex = new RegExp("^(model:\\w*.*)\\$(\\w*)");
+function deconstructSegments(s) {
+  const localPartsRegEx = new RegExp("^model:\\w*\\$(.*)$");
   try
   {
-    return s.match(domeinURIRegex)[2];
+    return s.match(localPartsRegEx)[1];
   } catch (e)
   {
-    throw "deconstructLocalNameFromDomeinURI_: no local name in '" + s + "'.";
+    throw "deconstructSegments: no local name in '" + s + "'.";
   }
 }
 
 // A Namespace has the form "model:Name"
-function buitenRol( s )
+function externalRole( s )
 {
   const modelRegEx = new RegExp("^model:(\\w*)$");
   if (s.match(modelRegEx))
   {
-    return s + "$_buitenRol";
+    return s + "$_External";
   }
   else
   {
-    return s + "_buitenRol";
-  }
-}
-
-function binnenRol( s )
-{
-  const modelRegEx = new RegExp("^model:(\\w*)$");
-  if (s.match(modelRegEx))
-  {
-    return s + "$_binnenRol";
-  }
-  else
-  {
-    return s + "_binnenRol";
-  }
-}
-
-function deconstructNamespace( s )
-{
-  const domeinURIRegex = new RegExp("^(model:\\w*.*)\\$(\\w*)");
-  const m = s.match(domeinURIRegex);
-  if ( m )
-  {
-    return m[1];
-  }
-  else {
-    throw "deconstructNamespace: the string '" + s + "' is not a well-formed domeinURI";
+    return s + "_External";
   }
 }
 
@@ -60,24 +33,40 @@ function deconstructNamespace( s )
 // It is the composition of "model:" and the name proper.
 // So all we need do to create a directoryname is to get the first fragment, i.e.
 // the part after "model:" and before the first "$".
-function getModelName( s )
+function deconstructModelName( s )
 {
-  const modelRegExp = new RegExp("^(model:)(\\w*).*");
-  const m = s.match(modelRegExp);
+  const namespaceRegex = new RegExp("^(model:\\w*)");
+  const m = s.match(namespaceRegex);
   if ( m )
   {
-    return m[2];
+    return m[1];
   }
   else {
-    throw "getModelName: the string '" + s + "' is not a well-formed domeinURI";
+    throw "deconstructModelName: the string '" + s + "' is not a well-formed domeinURI";
   }
 }
 
+function getQualifiedPropertyName (localName, qualifiedNames)
+{
+    // Match the local propertyname given as a prop with the qualified names in context.
+    const r = new RegExp(".*" + localName + "$");
+    const n = qualifiedNames.filter( qn => qn.match(r));
+    if (n.length > 1) {
+      throw "PROGRAMMER WARNING: '" + localName + "' does not uniquely identify a property. Choose one of: " + n;
+      }
+    else if (n == undefined) {
+      throw "PROGRAMMER WARNING: '" + localName + "' does not match of the properties " + qualifiedNames;
+    }
+    else {
+      return n[0];
+    }
+}
+
+
 module.exports =
   {
-      deconstructLocalNameFromDomeinURI_: deconstructLocalNameFromDomeinURI_,
-      buitenRol: buitenRol,
-      binnenRol: binnenRol,
-      deconstructNamespace: deconstructNamespace,
-      getModelName: getModelName
+      deconstructSegments: deconstructSegments,
+      externalRole: externalRole,
+      deconstructModelName: deconstructModelName,
+      getQualifiedPropertyName: getQualifiedPropertyName
   }

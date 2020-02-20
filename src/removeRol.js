@@ -15,7 +15,7 @@ class RemoveRol extends PerspectivesComponent
           child,
           {
             // Can be applied to a PSRol context type.
-            removeBinding: function({contextinstance, roltype, rolinstance})
+            removeRol: function({contextinstance, roltype, rolinstance})
             {
               Perspectives.then(
                 function (pproxy)

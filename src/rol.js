@@ -3,7 +3,7 @@ const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 const PerspectivesComponent = require("./perspectivescomponent.js");
 import {PSRol, PSContext} from "./reactcontexts";
-
+// Force build 1.
 class Rol extends PerspectivesComponent
 {
   constructor (props)
@@ -48,6 +48,10 @@ class Rol extends PerspectivesComponent
                           , contexttype: component.context.contexttype
                           , rolinstance: rolInstance
                           , roltype: rolType
+                          , removeRol: function()
+                            {
+                              pproxy.removeRol( component.context.contextinstance, rolType, rolInstance)
+                            }
                           }
                       });
                     component.setState(updater);

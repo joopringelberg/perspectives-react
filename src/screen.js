@@ -8,7 +8,7 @@ import {PSContext} from "./reactcontexts";
 // TODO. Even though PerspectivesGlobals has been declared external, we cannot import it here.
 // Doing so will cause a runtime error if the calling program has not put it on the global scope in time.
 
-function importRoleScreen( roleName )
+function importRoleScreen( roleName, useridentifier )
 {
   // Make the identifier start with lowercase and replace '$' with _ (underscore).
   function mapName (s)
@@ -25,7 +25,7 @@ function importRoleScreen( roleName )
   const screenName = mapName( deconstructSegments(roleName) );
 
   // PerspectivesGlobals should be available on the global scope of the program that uses this library.
-  const url = PerspectivesGlobals.host + "perspect_models/" + modelName + "/screens.js"
+  const url = PerspectivesGlobals.host + useridentifier + "_models/" + modelName + "/screens.js"
 
   // importModule should be available on the global scope of the program that uses this library.
   return importModule( url ).then(
@@ -48,12 +48,14 @@ function Loading(props) {
   }
 }
 
+// Screen loads the component in the context of the role `rolinstance` that it receives on its props.
 class Screen extends PerspectivesComponent
 {
   constructor (props)
   {
     super(props);
     this.state.myroletype = undefined;
+    this.state.useridentifier = undefined;
   }
 
   componentDidMount ()
@@ -67,6 +69,12 @@ class Screen extends PerspectivesComponent
           {
             component.setState({myroletype: userRoles[0]});
           })
+        pproxy.getUserIdentifier(
+          function(userIdentifier)
+          {
+            component.setState({useridentifier: userIdentifier[0]});
+          }
+        );
       }
     );
   }
@@ -78,7 +86,7 @@ class Screen extends PerspectivesComponent
     if (component.stateIsComplete())
     {
       const LoadableScreen = Loadable({
-        loader: () => importRoleScreen( component.state.myroletype ),
+        loader: () => importRoleScreen( component.state.myroletype, component.state.useridentifier ),
         loading: Loading,
       });
       return <ContextOfRole rolinstance={component.props.rolinstance}><LoadableScreen/></ContextOfRole>;

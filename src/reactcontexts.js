@@ -10,6 +10,8 @@ const PSRol = React.createContext(
   , contexttype: ""
   , rolinstance: ""
   , roltype: ""
+  , bindrol: function(){}
+  , checkbinding: function(){}
   });
 
 const PSRolBinding = React.createContext(
@@ -17,6 +19,7 @@ const PSRolBinding = React.createContext(
   , contexttype: ""
   , roltype: ""
   , bindrol: function(){}
+  , checkbinding: function(){}
   });
 
 const PSView = React.createContext(

@@ -20,6 +20,7 @@ const {deconstructModelName, deconstructSegments} = require("./urifunctions.js")
 const Screen = require("./screen.js");
 const RemoveBinding = require("./removeBinding.js");
 const RemoveRol = require( "./removeRol.js")
+const MySystem = require( "./mysystem.js")
 
 
 // TODO
@@ -51,5 +52,6 @@ module.exports = {
   deconstructSegments: deconstructSegments,
   Screen: Screen,
   RemoveBinding: RemoveBinding,
-  RemoveRol: RemoveRol
+  RemoveRol: RemoveRol,
+  MySystem: MySystem
 };

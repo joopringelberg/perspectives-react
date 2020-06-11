@@ -11,8 +11,9 @@ const ViewOnInternalRole = require("./views.js").ViewOnInternalRole;
 const SetProperty = require("./setproperty.js");
 const BoundContext = require("./boundcontext.js");
 const CreateContext = require("./createcontext.js");
+const importContexts = require("./importContexts.js")
 const DeleteContext = require("./deletecontext.js");
-import {PSContext, PSRol, PSView, PSRolBinding} from "./reactcontexts";
+import {PSContext, PSRol, PSView, PSRolBinding, PSProperty} from "./reactcontexts";
 const ExternalRole = require("./externalrole.js");
 const InternalRole = require("./externalrole.js");
 const CreateContextInExistingRol = require("./createcontextinexistingrol.js");
@@ -40,11 +41,13 @@ module.exports = {
   SetProperty: SetProperty,
   BoundContext: BoundContext,
   CreateContext: CreateContext,
+  importContexts: importContexts,
   DeleteContext: DeleteContext,
   PSView: PSView,
   PSRol: PSRol,
   PSContext: PSContext,
   PSRolBinding: PSRolBinding,
+  PSProperty: PSProperty,
   ExternalRole: ExternalRole,
   InternalRole: InternalRole,
   CreateContextInExistingRol: CreateContextInExistingRol,

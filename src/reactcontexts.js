@@ -32,10 +32,17 @@ const PSView = React.createContext(
   // And there will be a member for each property, holding its values.
   });
 
+const PSProperty = React.createContext(
+  { defaultValue: ""
+  , setvalue: function(val){}
+  }
+);
+
 module.exports =
   {
     PSContext: PSContext,
     PSRol: PSRol,
     PSView: PSView,
-    PSRolBinding: PSRolBinding
+    PSRolBinding: PSRolBinding,
+    PSProperty: PSProperty
   }

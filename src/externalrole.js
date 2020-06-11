@@ -20,7 +20,7 @@ class ExternalRole extends PerspectivesComponent
       {
         component.addUnsubscriber(
           pproxy.getRolType(
-            externalRole( component.context.contextinstance),
+            externalRole( component.context.contextinstance ),
             function(rolType)
             {
               const updater = {value:

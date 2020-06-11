@@ -21,7 +21,7 @@ class ContextOfRole extends PerspectivesComponent
         // The context of the rol will be bound to the state prop 'contextInstance'.
         component.addUnsubscriber(
           pproxy.getRolContext(
-            component.context.rolinstance,
+            component.props.rolinstance ? component.props.rolinstance : component.context.rolinstance,
             function (contextId)
             {
               component.addUnsubscriber(

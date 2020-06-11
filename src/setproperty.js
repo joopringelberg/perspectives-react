@@ -3,7 +3,7 @@ const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 const PerspectivesComponent = require("./perspectivescomponent.js");
 const getQualifiedPropertyName = require("./urifunctions.js").getQualifiedPropertyName
-const {PSView} = require("./reactcontexts.js");
+const {PSView, PSProperty} = require("./reactcontexts.js");
 
 class SetProperty extends PerspectivesComponent
 {
@@ -27,30 +27,27 @@ class SetProperty extends PerspectivesComponent
   render ()
   {
     const component = this;
-
-    function cloneChild (child)
-    {
-      return React.cloneElement(
-        child,
-        {
-          defaultvalue: component.context[getQualifiedPropertyName(component.props.propertyname, component.context.viewproperties)],
-          setvalue: function(val)
-          {
-            component.changeValue(val);
-          }
-        });
+    const childProps = {
+      defaultvalue: component.context[getQualifiedPropertyName(component.props.propertyname, component.context.viewproperties)],
+      setvalue: function(val)
+      {
+        component.changeValue(val);
+      }
     }
-
+    let children;
     if (Array.isArray(component.props.children))
     {
-      return React.Children.map(
-        component.props.children,
-        cloneChild);
+      children = component.props.children;
     }
     else
     {
-      return cloneChild(component.props.children);
+      children = [component.props.children];
     }
+    // We provide the children with props, AND we give them a React Context with the same props.
+    // Hence for a child we can choose to use a Consumer, or a function with an argument to receive the props.
+    return <PSProperty.Provider value={childProps}>
+            { React.Children.map( children, child => React.cloneElement( child, childProps) ) }
+          </PSProperty.Provider>
   }
 }
 

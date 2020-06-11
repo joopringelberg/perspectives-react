@@ -20,7 +20,7 @@ class RolBinding extends PerspectivesComponent
       {
         component.addUnsubscriber(
           pproxy.getBinding(
-            component.context.rolinstance,
+            component.props.rolinstance ? component.props.rolinstance : component.context.rolinstance,
             function (binding)
             {
               if (binding[0])

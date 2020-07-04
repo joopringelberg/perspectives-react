@@ -28,13 +28,21 @@ module.exports = {
       }]
   },
   externals: {
-    "PerspectivesGlobals": "PerspectivesGlobals"
-    , "react": "React"
+    "react":
+      { commonjs: "react"
+      , commonjs2: "react"
+    }
+    , "prop-types":
+      {
+        commonjs: "prop-types"
+      , commonjs2: "prop-types"
+      }
     , "perspectives-proxy":
       { commonjs: 'perspectives-proxy'
       , commonjs2: 'perspectives-proxy'
       , amd: 'perspectives-proxy'
       , root: "perspectivesProxy"
-    }
+      }
+    , "PerspectivesGlobals": "PerspectivesGlobals"
   }
 };

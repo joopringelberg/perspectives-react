@@ -1,3 +1,4 @@
+const React = require("react");
 import { deconstructModelName, deconstructSegments } from "./urifunctions.js";
 import Loadable from 'react-loadable';
 const Perspectives = require("perspectives-proxy").Perspectives;

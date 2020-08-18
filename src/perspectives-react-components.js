@@ -20,8 +20,10 @@ const CreateContextInExistingRol = require("./createcontextinexistingrol.js");
 const {deconstructModelName, deconstructSegments} = require("./urifunctions.js");
 const Screen = require("./screen.js");
 const RemoveBinding = require("./removeBinding.js");
-const RemoveRol = require( "./removeRol.js")
-const MySystem = require( "./mysystem.js")
+const RemoveRol = require( "./removeRol.js");
+const MySystem = require( "./mysystem.js");
+const Role_ = require("./role_.js");
+const RoleInstanceIterator = require("./roleinstanceiterator.js");
 
 
 // TODO
@@ -56,5 +58,7 @@ module.exports = {
   Screen: Screen,
   RemoveBinding: RemoveBinding,
   RemoveRol: RemoveRol,
-  MySystem: MySystem
+  MySystem: MySystem,
+  Role_: Role_,
+  RoleInstanceIterator: RoleInstanceIterator
 };

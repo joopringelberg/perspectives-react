@@ -28,6 +28,7 @@ class RolBinding extends PerspectivesComponent
                 // Retrieve the type of the binding.
                 // This will be the namespace that its properties are defined in.
                 component.addUnsubscriber(
+                  // TODO. Vraag het type van binding[0] op. (onderstaande faalt als de rol via de props kwam)
                   pproxy.getBindingType(
                     component.context.rolinstance,
                     function (bindingType)
@@ -35,10 +36,14 @@ class RolBinding extends PerspectivesComponent
                       component.setState(
                         {
                           value:
-                          { contextinstance: component.context.contextinstance
-                          , contexttype: component.context.contexttype
-                          , rolinstance: binding[0]
+                          { contextinstance: component.context.contextinstance // LET OP: context van de bindende rol
+                          , contexttype: component.context.contexttype // IDEM, type van de context van de bindende rol.
                           , roltype: bindingType[0]
+                          // bindrol
+                          // checkbinding
+                          // removerol
+                          , rolinstance: binding[0]
+                          // isselected
                           }
                         }
                       );

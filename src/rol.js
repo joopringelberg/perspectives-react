@@ -1,11 +1,14 @@
+const PropTypes = require("prop-types");
 const RoleInstanceIterator = require("./roleinstanceiterator.js");
-const Role_ = require("./role_.js");
+const RoleInstances = require("./roleinstances.js");
 
 function Rol(props)
 {
-  return (<Role_ rol={props.rol}>
+  return (<RoleInstances rol={props.rol}>
       <RoleInstanceIterator>{props.children}</RoleInstanceIterator>
-    </Role_>)
+    </RoleInstances>)
 }
+
+Rol.propTypes = { "rol": PropTypes.string.isRequired };
 
 module.exports = Rol;

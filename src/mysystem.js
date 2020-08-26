@@ -1,7 +1,6 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const Component = React.Component;
 const PerspectivesComponent = require("./perspectivescomponent.js");
 const PSContext = require("./reactcontexts.js").PSContext;
 

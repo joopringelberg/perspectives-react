@@ -24,16 +24,22 @@ class SetProperty extends PerspectivesComponent
     }
   }
 
-  render ()
+  componentDidMount ()
   {
     const component = this;
-    const childProps = {
+    const updater = {
       defaultvalue: component.context[getQualifiedPropertyName(component.props.propertyname, component.context.viewproperties)],
       setvalue: function(val)
       {
         component.changeValue(val);
       }
-    }
+    };
+    component.setState(updater);
+  }
+
+  render ()
+  {
+    const component = this;
     let children;
     if (Array.isArray(component.props.children))
     {
@@ -45,8 +51,8 @@ class SetProperty extends PerspectivesComponent
     }
     // We provide the children with props, AND we give them a React Context with the same props.
     // Hence for a child we can choose to use a Consumer, or a function with an argument to receive the props.
-    return <PSProperty.Provider value={childProps}>
-            { React.Children.map( children, child => React.cloneElement( child, childProps) ) }
+    return <PSProperty.Provider value={component.state}>
+            { React.Children.map( children, child => React.cloneElement( child, component.state) ) }
           </PSProperty.Provider>
   }
 }

@@ -13,7 +13,7 @@ const BoundContext = require("./boundcontext.js");
 const CreateContext = require("./createcontext.js");
 const importContexts = require("./importContexts.js")
 const DeleteContext = require("./deletecontext.js");
-import {PSContext, PSRol, PSView, PSRolBinding, PSProperty} from "./reactcontexts";
+import {PSContext, PSRol, PSRoleInstances, PSView, PSRolBinding, PSProperty, AppContext} from "./reactcontexts";
 const ExternalRole = require("./externalrole.js");
 const InternalRole = require("./externalrole.js");
 const CreateContextInExistingRol = require("./createcontextinexistingrol.js");
@@ -22,8 +22,9 @@ const Screen = require("./screen.js");
 const RemoveBinding = require("./removeBinding.js");
 const RemoveRol = require( "./removeRol.js");
 const MySystem = require( "./mysystem.js");
-const Role_ = require("./role_.js");
+const RoleInstances = require("./roleinstances.js");
 const RoleInstanceIterator = require("./roleinstanceiterator.js");
+const PerspectivesComponent = require("./perspectivescomponent.js");
 
 
 // TODO
@@ -47,9 +48,11 @@ module.exports = {
   DeleteContext: DeleteContext,
   PSView: PSView,
   PSRol: PSRol,
+  PSRoleInstances: PSRoleInstances,
   PSContext: PSContext,
   PSRolBinding: PSRolBinding,
   PSProperty: PSProperty,
+  AppContext: AppContext,
   ExternalRole: ExternalRole,
   InternalRole: InternalRole,
   CreateContextInExistingRol: CreateContextInExistingRol,
@@ -59,6 +62,7 @@ module.exports = {
   RemoveBinding: RemoveBinding,
   RemoveRol: RemoveRol,
   MySystem: MySystem,
-  Role_: Role_,
-  RoleInstanceIterator: RoleInstanceIterator
+  RoleInstances: RoleInstances,
+  RoleInstanceIterator: RoleInstanceIterator,
+  PerspectivesComponent: PerspectivesComponent
 };

@@ -53,6 +53,7 @@ class View extends PerspectivesComponent
                     pproxy.getProperty(
                       component.context.rolinstance,
                       propertyName,
+                      component.context.roltype,
                       function (propertyValues)
                       {
                         const updater = {};
@@ -70,7 +71,7 @@ class View extends PerspectivesComponent
   render ()
   {
     const component = this;
-    
+
     if (!component.stateIsEmpty() && component.stateIsComplete())
     {
       return (<PSView.Provider value={component.state}>

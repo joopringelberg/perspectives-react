@@ -60,10 +60,7 @@ class BindRol extends PerspectivesComponent
                 rolinstance,
                 function(psbool)
                 {
-                  if ( psbool[0] === "true" )
-                  {
-                    callback();
-                  }
+                  callback( psbool[0] === "true" );
                 });
             }
         }
@@ -76,6 +73,7 @@ class BindRol extends PerspectivesComponent
     const component = this;
     let rolBindingContext;
 
+    // TODO. Deze opzet leidt altijd tot een render van de consumers.
     if (component.stateIsComplete())
     {
       rolBindingContext =

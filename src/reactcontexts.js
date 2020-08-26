@@ -5,21 +5,14 @@ const PSContext = React.createContext(
   , contexttype: ""
   });
 
-const PSRole_ = React.createContext(
+const PSRoleInstances = React.createContext(
   { contextinstance: ""
   , contexttype: ""
   , rol: ""
   , roltype: ""
   , instances: []
-  });
-
-const PSRol = React.createContext(
-  { contextinstance: ""
-  , contexttype: ""
-  , rolinstance: ""
-  , roltype: ""
-  , bindrol: function(){}
-  , checkbinding: function(){}
+  , cursor: ""
+  , setcursor: function(){}
   });
 
 const PSRolBinding = React.createContext(
@@ -28,6 +21,17 @@ const PSRolBinding = React.createContext(
   , roltype: ""
   , bindrol: function(){}
   , checkbinding: function(){}
+  });
+
+const PSRol = React.createContext(
+  { contextinstance: ""
+  , contexttype: ""
+  , roltype: ""
+  , bindrol: function(){}
+  , checkbinding: function(){}
+  , removerol: function(){}
+  , rolinstance: ""
+  , isselected: false
   });
 
 const PSView = React.createContext(
@@ -46,12 +50,19 @@ const PSProperty = React.createContext(
   }
 );
 
+const AppContext = React.createContext(
+  { setSelectedCard: function(val){}
+  , selectedCard: undefined
+  , selectedRole: undefined  
+  });
+
 module.exports =
   {
     PSContext: PSContext,
     PSRol: PSRol,
-    PSRole_: PSRole_,
+    PSRoleInstances: PSRoleInstances,
     PSView: PSView,
     PSRolBinding: PSRolBinding,
-    PSProperty: PSProperty
+    PSProperty: PSProperty,
+    AppContext: AppContext
   }

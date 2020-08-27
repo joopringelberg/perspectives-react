@@ -23,8 +23,11 @@ const RemoveBinding = require("./removeBinding.js");
 const RemoveRol = require( "./removeRol.js");
 const MySystem = require( "./mysystem.js");
 const RoleInstances = require("./roleinstances.js");
+const {roleInstance} = require("./roleinstance.js")
 const RoleInstanceIterator = require("./roleinstanceiterator.js");
 const PerspectivesComponent = require("./perspectivescomponent.js");
+const {CardList} = require("./cardlist.js")
+const {roleBindingCardHolder, SimpleCard, SimpleCardForRoleBinding, SimpleCardForRole} = require("./cards.js")
 
 
 // TODO
@@ -64,5 +67,11 @@ module.exports = {
   MySystem: MySystem,
   RoleInstances: RoleInstances,
   RoleInstanceIterator: RoleInstanceIterator,
-  PerspectivesComponent: PerspectivesComponent
+  PerspectivesComponent: PerspectivesComponent,
+  roleInstance: roleInstance,
+  CardList: CardList,
+  roleBindingCardHolder: roleBindingCardHolder,
+  SimpleCard: SimpleCard,
+  SimpleCardForRoleBinding: SimpleCardForRoleBinding,
+  SimpleCardForRole: SimpleCardForRole
 };

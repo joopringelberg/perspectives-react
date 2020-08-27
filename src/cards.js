@@ -10,6 +10,10 @@ import {roleInstance} from "./roleinstance.js"
 
 import {Card} from "react-bootstrap";
 
+window.ReactCards = React;
+
+console.log( "Does react-dom import the same react as perspectives-react? " + (window.ReactOfReactDom === window.ReactCards));
+
 ///////////////////////////////////////////////////////////////////////////////
 // ROLEBINDINGCARDHOLDER
 ////////////////////////////////////////////////////////////////////////////////

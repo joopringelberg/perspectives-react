@@ -28,45 +28,15 @@ module.exports = {
         ]
       }]
   },
-  externals: {
-    "react":
-      { commonjs: "react"
-      , commonjs2: "react"
-      , root: "React"
-    }
-    , "prop-types":
-      {
-        commonjs: "prop-types"
-      , commonjs2: "prop-types"
-      , root: "PropTypes"
-      }
-    , "perspectives-proxy":
-      { commonjs: 'perspectives-proxy'
-      , commonjs2: 'perspectives-proxy'
-      , amd: 'perspectives-proxy'
-      , root: "perspectivesProxy"
-      }
+  externals:
+    { "react": "commonjs2 react"
+    , "react-dom": "commonjs2 react-dom"
+    , "react-bootstrap": "commonjs2 react-bootstrap"
+    , "@primer/octicons-react": "PrimerOcticonsReact"
+    , "prop-types": "commonjs2 prop-types"
+    , "perspectives-proxy": "commonjs2 perspectives-proxy"
     , "PerspectivesGlobals":
       { root: "PerspectivesGlobals"
-      }
-
-    , "react-dom":
-      { commonjs: "react-dom"
-      , commonjs2: "react-dom"
-      , amd: "react-dom"
-      , root: "ReactDOM"
-      }
-    , "react-bootstrap":
-      { commonjs: "react-bootstrap"
-      , commonjs2: "react-bootstrap"
-      , amd: "react-bootstrap"
-      , root: "ReactBootstrap"
-      }
-    , "@primer/octicons-react":
-      { commonjs: "@primer/octicons-react"
-      , commonjs2: "@primer/octicons-react"
-      , amd: "@primer/octicons-react"
-      , root: "PrimerOcticonsReact"
       }
   }
 };

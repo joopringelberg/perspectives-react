@@ -143,7 +143,7 @@ eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\nexports.SimpleCardForRole = exports.SimpleCardForRoleBinding = exports.SimpleCard = undefined;\nexports.roleBindingCardHolder = roleBindingCardHolder;\n\nvar _view = __webpack_require__(/*! ./view.js */ \"./src/view.js\");\n\nvar _view2 = _interopRequireDefault(_view);\n\nvar _reactcontexts = __webpack_require__(/*! ./reactcontexts.js */ \"./src/reactcontexts.js\");\n\nvar _rolbinding = __webpack_require__(/*! ./rolbinding.js */ \"./src/rolbinding.js\");\n\nvar _rolbinding2 = _interopRequireDefault(_rolbinding);\n\nvar _roleinstance = __webpack_require__(/*! ./roleinstance.js */ \"./src/roleinstance.js\");\n\nvar _reactBootstrap = __webpack_require__(/*! react-bootstrap */ \"react-bootstrap\");\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar React = __webpack_require__(/*! react */ \"react\");\n\n///////////////////////////////////////////////////////////////////////////////\n// ROLEBINDINGCARDHOLDER\n////////////////////////////////////////////////////////////////////////////////\n// CardComponent should be constructed with React.forwardRef.\nfunction roleBindingCardHolder(CardComponent) {\n  return React.forwardRef(function (props, ref) {\n    return React.createElement(\n      _rolbinding2.default,\n      null,\n      React.createElement(CardComponent, { ref: ref })\n    );\n  });\n}\n\n///////////////////////////////////////////////////////////////////////////////\n// SIMPLECARD\n////////////////////////////////////////////////////////////////////////////////\nvar SimpleCard = exports.SimpleCard = React.forwardRef(function (props, ref) {\n  return React.createElement(\n    _view2.default,\n    { viewname: \"allProperties\" },\n    React.createElement(\n      _reactcontexts.PSView.Consumer,\n      null,\n      function (value) {\n        return React.createElement(\n          _reactBootstrap.Card,\n          { ref: ref },\n          React.createElement(\n            _reactBootstrap.Card.Body,\n            null,\n            React.createElement(\n              \"p\",\n              null,\n              value.propval(\"Name\")\n            ),\n            React.createElement(\n              \"p\",\n              null,\n              value.propval(\"Description\")\n            )\n          )\n        );\n      }\n    )\n  );\n});\n\nvar SimpleCardForRoleBinding = exports.SimpleCardForRoleBinding = (0, _roleinstance.roleInstance)(roleBindingCardHolder(SimpleCard));\n\nvar SimpleCardForRole = exports.SimpleCardForRole = (0, _roleinstance.roleInstance)(SimpleCard);\n\n//# sourceURL=webpack://perspectives-react/./src/cards.js?");
+eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\nexports.SimpleCardForRole = exports.SimpleCardForRoleBinding = exports.SimpleCard = undefined;\nexports.roleBindingCardHolder = roleBindingCardHolder;\n\nvar _view = __webpack_require__(/*! ./view.js */ \"./src/view.js\");\n\nvar _view2 = _interopRequireDefault(_view);\n\nvar _reactcontexts = __webpack_require__(/*! ./reactcontexts.js */ \"./src/reactcontexts.js\");\n\nvar _rolbinding = __webpack_require__(/*! ./rolbinding.js */ \"./src/rolbinding.js\");\n\nvar _rolbinding2 = _interopRequireDefault(_rolbinding);\n\nvar _roleinstance = __webpack_require__(/*! ./roleinstance.js */ \"./src/roleinstance.js\");\n\nvar _reactBootstrap = __webpack_require__(/*! react-bootstrap */ \"react-bootstrap\");\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar React = __webpack_require__(/*! react */ \"react\");\n\nwindow.ReactCards = React;\n\nconsole.log(\"Does react-dom import the same react as perspectives-react? \" + (window.ReactOfReactDom === window.ReactCards));\n\n///////////////////////////////////////////////////////////////////////////////\n// ROLEBINDINGCARDHOLDER\n////////////////////////////////////////////////////////////////////////////////\n// CardComponent should be constructed with React.forwardRef.\nfunction roleBindingCardHolder(CardComponent) {\n  return React.forwardRef(function (props, ref) {\n    return React.createElement(\n      _rolbinding2.default,\n      null,\n      React.createElement(CardComponent, { ref: ref })\n    );\n  });\n}\n\n///////////////////////////////////////////////////////////////////////////////\n// SIMPLECARD\n////////////////////////////////////////////////////////////////////////////////\nvar SimpleCard = exports.SimpleCard = React.forwardRef(function (props, ref) {\n  return React.createElement(\n    _view2.default,\n    { viewname: \"allProperties\" },\n    React.createElement(\n      _reactcontexts.PSView.Consumer,\n      null,\n      function (value) {\n        return React.createElement(\n          _reactBootstrap.Card,\n          { ref: ref },\n          React.createElement(\n            _reactBootstrap.Card.Body,\n            null,\n            React.createElement(\n              \"p\",\n              null,\n              value.propval(\"Name\")\n            ),\n            React.createElement(\n              \"p\",\n              null,\n              value.propval(\"Description\")\n            )\n          )\n        );\n      }\n    )\n  );\n});\n\nvar SimpleCardForRoleBinding = exports.SimpleCardForRoleBinding = (0, _roleinstance.roleInstance)(roleBindingCardHolder(SimpleCard));\n\nvar SimpleCardForRole = exports.SimpleCardForRole = (0, _roleinstance.roleInstance)(SimpleCard);\n\n//# sourceURL=webpack://perspectives-react/./src/cards.js?");
 
 /***/ }),
 
@@ -424,46 +424,46 @@ eval("\n\nvar React = __webpack_require__(/*! react */ \"react\");\nvar PropType
 /***/ }),
 
 /***/ "perspectives-proxy":
-/*!*****************************************************************************************************************************************!*\
-  !*** external {"commonjs":"perspectives-proxy","commonjs2":"perspectives-proxy","amd":"perspectives-proxy","root":"perspectivesProxy"} ***!
-  \*****************************************************************************************************************************************/
+/*!*************************************!*\
+  !*** external "perspectives-proxy" ***!
+  \*************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"perspectives-proxy\");\n\n//# sourceURL=webpack://perspectives-react/external_%7B%22commonjs%22:%22perspectives-proxy%22,%22commonjs2%22:%22perspectives-proxy%22,%22amd%22:%22perspectives-proxy%22,%22root%22:%22perspectivesProxy%22%7D?");
+eval("module.exports = require(\"perspectives-proxy\");\n\n//# sourceURL=webpack://perspectives-react/external_%22perspectives-proxy%22?");
 
 /***/ }),
 
 /***/ "prop-types":
-/*!**************************************************************************************!*\
-  !*** external {"commonjs":"prop-types","commonjs2":"prop-types","root":"PropTypes"} ***!
-  \**************************************************************************************/
+/*!*****************************!*\
+  !*** external "prop-types" ***!
+  \*****************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"prop-types\");\n\n//# sourceURL=webpack://perspectives-react/external_%7B%22commonjs%22:%22prop-types%22,%22commonjs2%22:%22prop-types%22,%22root%22:%22PropTypes%22%7D?");
+eval("module.exports = require(\"prop-types\");\n\n//# sourceURL=webpack://perspectives-react/external_%22prop-types%22?");
 
 /***/ }),
 
 /***/ "react":
-/*!************************************************************************!*\
-  !*** external {"commonjs":"React","commonjs2":"React","root":"React"} ***!
-  \************************************************************************/
+/*!************************!*\
+  !*** external "react" ***!
+  \************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"React\");\n\n//# sourceURL=webpack://perspectives-react/external_%7B%22commonjs%22:%22React%22,%22commonjs2%22:%22React%22,%22root%22:%22React%22%7D?");
+eval("module.exports = require(\"react\");\n\n//# sourceURL=webpack://perspectives-react/external_%22react%22?");
 
 /***/ }),
 
 /***/ "react-bootstrap":
-/*!*****************************************************************************************************************************!*\
-  !*** external {"commonjs":"react-bootstrap","commonjs2":"react-bootstrap","amd":"react-bootstrap","root":"ReactBootstrap"} ***!
-  \*****************************************************************************************************************************/
+/*!**********************************!*\
+  !*** external "react-bootstrap" ***!
+  \**********************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"react-bootstrap\");\n\n//# sourceURL=webpack://perspectives-react/external_%7B%22commonjs%22:%22react-bootstrap%22,%22commonjs2%22:%22react-bootstrap%22,%22amd%22:%22react-bootstrap%22,%22root%22:%22ReactBootstrap%22%7D?");
+eval("module.exports = require(\"react-bootstrap\");\n\n//# sourceURL=webpack://perspectives-react/external_%22react-bootstrap%22?");
 
 /***/ })
 

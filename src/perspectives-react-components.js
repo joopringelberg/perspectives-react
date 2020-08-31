@@ -1,77 +1,28 @@
-const Context = require("./context.js");
-const Rol = require("./rol.js");
-const BindRol = require("./bindRol.js");
-const RolBinding = require("./rolbinding.js");
-const View = require("./view.js");
-const ContextOfRole = require("./contextofrole.js");
-const ExternalViewOfBoundContext = require("./views.js").ExternalViewOfBoundContext;
-const InternalViewOfBoundContext = require("./views.js").InternalViewOfBoundContext;
-const ViewOnExternalRole = require("./views.js").ViewOnExternalRole;
-const ViewOnInternalRole = require("./views.js").ViewOnInternalRole;
-const SetProperty = require("./setproperty.js");
-const BoundContext = require("./boundcontext.js");
-const CreateContext = require("./createcontext.js");
-const importContexts = require("./importContexts.js")
-const DeleteContext = require("./deletecontext.js");
-import {PSContext, PSRol, PSRoleInstances, PSView, PSRolBinding, PSProperty, AppContext} from "./reactcontexts";
-const ExternalRole = require("./externalrole.js");
-const InternalRole = require("./externalrole.js");
-const CreateContextInExistingRol = require("./createcontextinexistingrol.js");
-const {deconstructModelName, deconstructSegments} = require("./urifunctions.js");
-const Screen = require("./screen.js");
-const RemoveBinding = require("./removeBinding.js");
-const RemoveRol = require( "./removeRol.js");
-const MySystem = require( "./mysystem.js");
-const RoleInstances = require("./roleinstances.js");
-const {roleInstance} = require("./roleinstance.js")
-const RoleInstanceIterator = require("./roleinstanceiterator.js");
-const PerspectivesComponent = require("./perspectivescomponent.js");
-const {CardList} = require("./cardlist.js")
-const {roleBindingCardHolder, SimpleCard, SimpleCardForRoleBinding, SimpleCardForRole} = require("./cards.js")
 
-
-// TODO
-// InverseRoleBinding
-
-module.exports = {
-  Context: Context,
-  Rol: Rol,
-  BindRol: BindRol,
-  RolBinding: RolBinding,
-  View: View,
-  ContextOfRole: ContextOfRole,
-  ExternalViewOfBoundContext: ExternalViewOfBoundContext,
-  InternalViewOfBoundContext: InternalViewOfBoundContext,
-  ViewOnExternalRole: ViewOnExternalRole,
-  ViewOnInternalRole: ViewOnInternalRole,
-  SetProperty: SetProperty,
-  BoundContext: BoundContext,
-  CreateContext: CreateContext,
-  importContexts: importContexts,
-  DeleteContext: DeleteContext,
-  PSView: PSView,
-  PSRol: PSRol,
-  PSRoleInstances: PSRoleInstances,
-  PSContext: PSContext,
-  PSRolBinding: PSRolBinding,
-  PSProperty: PSProperty,
-  AppContext: AppContext,
-  ExternalRole: ExternalRole,
-  InternalRole: InternalRole,
-  CreateContextInExistingRol: CreateContextInExistingRol,
-  deconstructModelName: deconstructModelName,
-  deconstructSegments: deconstructSegments,
-  Screen: Screen,
-  RemoveBinding: RemoveBinding,
-  RemoveRol: RemoveRol,
-  MySystem: MySystem,
-  RoleInstances: RoleInstances,
-  RoleInstanceIterator: RoleInstanceIterator,
-  PerspectivesComponent: PerspectivesComponent,
-  roleInstance: roleInstance,
-  CardList: CardList,
-  roleBindingCardHolder: roleBindingCardHolder,
-  SimpleCard: SimpleCard,
-  SimpleCardForRoleBinding: SimpleCardForRoleBinding,
-  SimpleCardForRole: SimpleCardForRole
-};
+export {default as Context} from "./context.js";
+export {default as Rol} from "./rol.js";
+export {default as BindRol} from "./bindRol.js";
+export {default as RolBinding} from "./rolbinding.js";
+export {default as View} from "./view.js";
+export {default as ContextOfRole} from "./contextofrole.js";
+export {ExternalViewOfBoundContext, ViewOnExternalRole, InternalViewOfBoundContext} from "./views.js";
+export {default as SetProperty} from "./setproperty.js";
+export {default as BoundContext} from "./boundcontext.js";
+export {default as CreateContext} from "./createcontext.js";
+export {default as importContexts} from "./importContexts.js";
+export {default as DeleteContext} from "./deletecontext.js";
+export {default as PSContext, PSRol, PSRoleInstances, PSView, PSRolBinding, PSProperty, AppContext} from "./reactcontexts";
+export {default as ExternalRole} from "./externalrole.js";
+export {default as CreateContextInExistingRol} from "./createcontextinexistingrol.js";
+export {deconstructModelName, deconstructSegments} from "./urifunctions.js";
+export {default as Screen} from "./screen.js";
+export {default as RemoveBinding} from "./removeBinding.js";
+export {default as RemoveRol} from  "./removeRol.js";
+export {default as MySystem} from  "./mysystem.js";
+export {default as RoleInstances} from "./roleinstances.js";
+export {default as roleInstance} from "./roleinstance.js";
+export {default as RoleInstanceIterator} from "./roleinstanceiterator.js";
+export {default as PerspectivesComponent} from "./perspectivescomponent.js";
+export {default as CardList} from "./cardlist.js";
+export {roleBindingCardHolder, SimpleCard, SimpleCardForRoleBinding, SimpleCardForRole} from "./cards.js";
+export {default as SetBoolAsCheckbox} from "./setboolascheckbox.js";

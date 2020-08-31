@@ -1,10 +1,11 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("./perspectivescomponent.js");
+
+import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRoleInstances, PSContext} from "./reactcontexts";
 
-class RoleInstances extends PerspectivesComponent
+export default class RoleInstances extends PerspectivesComponent
 {
   constructor (props)
   {
@@ -90,5 +91,3 @@ RoleInstances.propTypes = {};
 // rol
 // roltype
 // instances
-
-module.exports = RoleInstances;

@@ -1,10 +1,11 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("./perspectivescomponent.js");
+
+import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRol} from "./reactcontexts";
 
-class CreateContextInExistingRol extends PerspectivesComponent
+export default class CreateContextInExistingRol extends PerspectivesComponent
 {
   create (contextDescription)
   {
@@ -73,5 +74,3 @@ CreateContextInExistingRol.propTypes = {
 
 // CreateContext passes on:
 // create
-
-module.exports = CreateContextInExistingRol;

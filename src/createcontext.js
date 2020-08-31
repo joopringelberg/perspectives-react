@@ -1,10 +1,11 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("./perspectivescomponent.js");
+
+import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext} from "./reactcontexts";
 
-class CreateContext extends PerspectivesComponent
+export default class CreateContext extends PerspectivesComponent
 {
   // This function returns a promise that will resolve to the identifier of the external role of the new context.
   create (contextDescription)
@@ -98,5 +99,3 @@ CreateContext.propTypes = {
 
 // CreateContext passes on:
 // create
-
-module.exports = CreateContext;

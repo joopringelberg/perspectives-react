@@ -1,10 +1,11 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("./perspectivescomponent.js");
+
+import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRol} from "./reactcontexts";
 
-class RolBinding extends PerspectivesComponent
+export default class RolBinding extends PerspectivesComponent
 {
   constructor (props)
   {
@@ -94,5 +95,3 @@ RolBinding.propTypes = {
   rolname: PropTypes.string
 };
 // RolBinding passes on a PSRol.
-
-module.exports = RolBinding;

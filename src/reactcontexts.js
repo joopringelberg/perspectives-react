@@ -1,11 +1,11 @@
-const React = require("react");
+export const React = require("react");
 
-const PSContext = React.createContext(
+export const PSContext = React.createContext(
   { contextinstance: ""
   , contexttype: ""
   });
 
-const PSRoleInstances = React.createContext(
+export const PSRoleInstances = React.createContext(
   { contextinstance: ""
   , contexttype: ""
   , rol: ""
@@ -15,7 +15,7 @@ const PSRoleInstances = React.createContext(
   , setcursor: function(){}
   });
 
-const PSRolBinding = React.createContext(
+export const PSRolBinding = React.createContext(
   { contextinstance: ""
   , contexttype: ""
   , roltype: ""
@@ -23,7 +23,7 @@ const PSRolBinding = React.createContext(
   , checkbinding: function(){}
   });
 
-const PSRol = React.createContext(
+export const PSRol = React.createContext(
   { contextinstance: ""
   , contexttype: ""
   , roltype: ""
@@ -34,7 +34,7 @@ const PSRol = React.createContext(
   , isselected: false
   });
 
-const PSView = React.createContext(
+export const PSView = React.createContext(
   { contextinstance: ""
   , contexttype: ""
   , rolinstance: ""
@@ -44,25 +44,14 @@ const PSView = React.createContext(
   // And there will be a member for each property, holding its values.
   });
 
-const PSProperty = React.createContext(
+export const PSProperty = React.createContext(
   { defaultValue: ""
   , setvalue: function(val){}
   }
 );
 
-const AppContext = React.createContext(
+export const AppContext = React.createContext(
   { setSelectedCard: function(val){}
   , selectedCard: undefined
-  , selectedRole: undefined  
+  , selectedRole: undefined
   });
-
-module.exports =
-  {
-    PSContext: PSContext,
-    PSRol: PSRol,
-    PSRoleInstances: PSRoleInstances,
-    PSView: PSView,
-    PSRolBinding: PSRolBinding,
-    PSProperty: PSProperty,
-    AppContext: AppContext
-  }

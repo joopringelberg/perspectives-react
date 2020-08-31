@@ -1,10 +1,9 @@
 const React = require("react"); //1
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-
 const Component = React.PureComponent;
 
-class PerspectivesComponent extends Component
+export default class PerspectivesComponent extends Component
 {
   constructor(props)
   {
@@ -59,5 +58,3 @@ class PerspectivesComponent extends Component
   }
 
 }
-
-module.exports = PerspectivesComponent;

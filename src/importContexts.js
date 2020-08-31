@@ -1,6 +1,6 @@
 const Perspectives = require("perspectives-proxy").Perspectives;
 
-function importContexts(fileList)
+export default function importContexts(fileList)
 {
   function isContextSerialisation (t)
   {
@@ -48,5 +48,3 @@ function importContexts(fileList)
     alert("No file present!")
   }
 }
-
-module.exports = importContexts;

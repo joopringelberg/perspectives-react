@@ -3,7 +3,7 @@
 
 // deconstructSegments :: String -> String
 // NOTE DEPENDENCY. This code is adapted from module Perspectives.Identifiers.
-function deconstructSegments(s) {
+export function deconstructSegments(s) {
   const localPartsRegEx = new RegExp("^model:\\w*\\$(.*)$");
   try
   {
@@ -15,7 +15,7 @@ function deconstructSegments(s) {
 }
 
 // A Namespace has the form "model:Name"
-function externalRole( s )
+export function externalRole( s )
 {
   const modelRegEx = new RegExp("^model:(\\w*)$");
   if (s.match(modelRegEx))
@@ -33,7 +33,7 @@ function externalRole( s )
 // It is the composition of "model:" and the name proper.
 // So all we need do to create a directoryname is to get the first fragment, i.e.
 // the part after "model:" and before the first "$".
-function deconstructModelName( s )
+export function deconstructModelName( s )
 {
   const namespaceRegex = new RegExp("^(model:\\w*)");
   const m = s.match(namespaceRegex);
@@ -46,7 +46,7 @@ function deconstructModelName( s )
   }
 }
 
-function getQualifiedPropertyName (localName, qualifiedNames)
+export function getQualifiedPropertyName (localName, qualifiedNames)
 {
     // Match the local propertyname given as a prop with the qualified names in context.
     const r = new RegExp(".*" + localName + "$");
@@ -61,12 +61,3 @@ function getQualifiedPropertyName (localName, qualifiedNames)
       return n[0];
     }
 }
-
-
-module.exports =
-  {
-      deconstructSegments: deconstructSegments,
-      externalRole: externalRole,
-      deconstructModelName: deconstructModelName,
-      getQualifiedPropertyName: getQualifiedPropertyName
-  }

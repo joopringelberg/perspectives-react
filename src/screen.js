@@ -1,10 +1,11 @@
 const React = require("react");
-import { deconstructModelName, deconstructSegments } from "./urifunctions.js";
 import Loadable from 'react-loadable';
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("./perspectivescomponent.js");
-const ContextOfRole = require("./contextofrole.js");
+
+import PerspectivesComponent from "./perspectivescomponent.js";
+import ContextOfRole from "./contextofrole.js";
 import {PSContext} from "./reactcontexts";
+import { deconstructModelName, deconstructSegments } from "./urifunctions.js";
 
 // TODO. Even though PerspectivesGlobals has been declared external, we cannot import it here.
 // Doing so will cause a runtime error if the calling program has not put it on the global scope in time.
@@ -50,7 +51,7 @@ function Loading(props) {
 }
 
 // Screen loads the component in the context of the role `rolinstance` that it receives on its props.
-class Screen extends PerspectivesComponent
+export default class Screen extends PerspectivesComponent
 {
   constructor (props)
   {
@@ -100,5 +101,3 @@ class Screen extends PerspectivesComponent
 Screen.contextType = PSContext;
 
 Screen.propTypes = {};
-
-module.exports = Screen;

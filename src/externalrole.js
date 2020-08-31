@@ -1,11 +1,12 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("./perspectivescomponent.js");
-const {externalRole} = require("./urifunctions.js");
+
+import PerspectivesComponent from "./perspectivescomponent.js";
+import {externalRole} from "./urifunctions.js";
 import {PSRol, PSContext} from "./reactcontexts";
 
-class ExternalRole extends PerspectivesComponent
+export default class ExternalRole extends PerspectivesComponent
 {
   constructor (props)
   {
@@ -56,5 +57,3 @@ class ExternalRole extends PerspectivesComponent
 ExternalRole.contextType = PSContext;
 
 // ExternalRole passes on a PSRol ReactContext.
-
-module.exports = ExternalRole;

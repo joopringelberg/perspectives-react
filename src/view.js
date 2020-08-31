@@ -1,14 +1,15 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("./perspectivescomponent.js");
-const getQualifiedPropertyName = require("./urifunctions.js").getQualifiedPropertyName;
-const {PSRol, PSView} = require("./reactcontexts.js");
+
+import PerspectivesComponent from "./perspectivescomponent.js";
+import {getQualifiedPropertyName} from "./urifunctions.js";
+import {PSRol, PSView} from "./reactcontexts.js";
 
 // NOTE. If a view contains two properties whose local names are equal (even while their qualified names are unique),
 // the state of the View component will have the value of the property that was last fetched for that local name.
 // To solve this problem, use the localName rolProperty of the View (however, this has not yet been implemented).
-class View extends PerspectivesComponent
+export default class View extends PerspectivesComponent
 {
   componentDidMount ()
   {
@@ -93,5 +94,3 @@ View.contextType = PSRol;
 View.propTypes = {
   viewname: PropTypes.string.isRequired
 };
-
-module.exports = View;

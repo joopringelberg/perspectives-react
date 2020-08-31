@@ -1,14 +1,15 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("./perspectivescomponent.js");
-const RolBinding = require("./rolbinding.js");
-const View = require("./view.js");
-const ContextOfRole = require("./contextofrole.js");
-const ExternalRole = require("./externalrole.js");
+import PerspectivesComponent from "./perspectivescomponent.js";
+
+import RolBinding from "./rolbinding.js";
+import View from "./view.js";
+import ContextOfRole from "./contextofrole.js";
+import ExternalRole from "./externalrole.js";
 
 // Access a View on the BuitenRol bound to a Rol of the surrounding context.
-function ExternalViewOfBoundContext(props)
+export function ExternalViewOfBoundContext(props)
 {
   return (<RolBinding>
     <View viewname={props.viewname}>{props.children}</View>
@@ -20,7 +21,7 @@ ExternalViewOfBoundContext.propTypes = {
 };
 
 // Access a View on the BinnenRol bound to a Rol of the surrounding context.
-function InternalViewOfBoundContext(props)
+export function InternalViewOfBoundContext(props)
 {
   return (
     <RolBinding>
@@ -35,7 +36,7 @@ InternalViewOfBoundContext.propTypes = {
 };
 
 // Access a View on the BuitenRol of a Context.
-function ViewOnExternalRole(props)
+export function ViewOnExternalRole(props)
 {
   return (<ExternalRole>
       <View viewname={props.viewname}>{props.children}</View>
@@ -45,23 +46,3 @@ function ViewOnExternalRole(props)
 ViewOnExternalRole.propTypes = {
   viewname: PropTypes.string.isRequired
 };
-
-// Access a View on the BinnenRol of a Context.
-function ViewOnInternalRole(props)
-{
-  return (<InternalRole>
-      <View viewname={props.viewname}>{props.children}</View>
-    </InternalRole>)
-}
-
-ViewOnInternalRole.propTypes = {
-  viewname: PropTypes.string.isRequired
-};
-
-module.exports =
-  {
-    ExternalViewOfBoundContext: ExternalViewOfBoundContext,
-    InternalViewOfBoundContext: InternalViewOfBoundContext,
-    ViewOnExternalRole: ViewOnExternalRole,
-    ViewOnInternalRole: ViewOnInternalRole
-  }

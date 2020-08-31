@@ -8,13 +8,12 @@ import RoleInstances from "./roleinstances.js";
 
 import RoleInstanceIterator from "./roleinstanceiterator.js"
 
-// import {PropTypes} from "prop-types";
 const PropTypes = require("prop-types");
 
 ////////////////////////////////////////////////////////////////////////////////
 // CARDLIST
 ////////////////////////////////////////////////////////////////////////////////
-export function CardList (props)
+export default function CardList (props)
 {
   return (<RoleInstances rol={props.rol}>
       <CardList_>{props.children}</CardList_>

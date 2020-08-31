@@ -1,11 +1,11 @@
-const React = require("react"); 
+const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("./perspectivescomponent.js");
-const RolBinding = require("./rolbinding.js");
-const ContextOfRole = require("./contextofrole.js");
+import PerspectivesComponent from "./perspectivescomponent.js";
+import RolBinding from "./rolbinding.js";
+import ContextOfRole from "./contextofrole.js";
 
-function BoundContext(props)
+export default function BoundContext(props)
 {
   return (<RolBinding>
       <ContextOfRole>{props.children}</ContextOfRole>
@@ -13,5 +13,3 @@ function BoundContext(props)
 }
 
 // BoundContext passes on the PSContext that comes from ContextOfRole:
-
-module.exports = BoundContext;

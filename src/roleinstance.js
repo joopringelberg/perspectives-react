@@ -13,7 +13,7 @@ import {Container, Form, Row, Col, Card} from "react-bootstrap";
 // The result of roleInstance is a Component that wraps a displaying component with behaviour.
 // The displaying component is draggable and selectable.
 // CardComponent should be constructed with React.forwardRef.
-export function roleInstance (CardComponent)
+export default function roleInstance (CardComponent)
 {
   class RoleInstance extends PerspectivesComponent
   {

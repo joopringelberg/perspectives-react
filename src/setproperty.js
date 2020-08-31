@@ -1,17 +1,24 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("./perspectivescomponent.js");
-const getQualifiedPropertyName = require("./urifunctions.js").getQualifiedPropertyName
-const {PSView, PSProperty} = require("./reactcontexts.js");
 
-class SetProperty extends PerspectivesComponent
+import PerspectivesComponent from "./perspectivescomponent.js";
+import {getQualifiedPropertyName} from "./urifunctions.js";
+import {PSView, PSProperty} from "./reactcontexts.js";
+
+export default class SetProperty extends PerspectivesComponent
 {
+  constructor (props)
+  {
+    super(props);
+    this.state = { defaultvalue: undefined, setvalue: undefined };
+  }
+
   changeValue (val)
   {
     const component = this;
     const oldValue = component.context[getQualifiedPropertyName(component.props.propertyname, component.context.viewproperties)];
-    if ( val != oldValue)
+    if (oldValue.length != 1 || oldValue[0] != val)
     {
       Perspectives.then(
         function(pproxy)
@@ -31,7 +38,14 @@ class SetProperty extends PerspectivesComponent
       defaultvalue: component.context[getQualifiedPropertyName(component.props.propertyname, component.context.viewproperties)],
       setvalue: function(val)
       {
-        component.changeValue(val);
+        if ( Array.isArray( val ) )
+        {
+          throw "Perspectives-react, SetProperty: supply a single string value to the function 'setvalue'."
+        }
+        else
+        {
+          component.changeValue(val);
+        }
       }
     };
     component.setState(updater);
@@ -41,19 +55,26 @@ class SetProperty extends PerspectivesComponent
   {
     const component = this;
     let children;
-    if (Array.isArray(component.props.children))
+    if ( component.stateIsComplete() )
     {
-      children = component.props.children;
+      if (Array.isArray(component.props.children))
+      {
+        children = component.props.children;
+      }
+      else
+      {
+        children = [component.props.children];
+      }
+      // We provide the children with props, AND we give them a React Context with the same props.
+      // Hence for a child we can choose to use a Consumer, or a function with an argument to receive the props.
+      return <PSProperty.Provider value={component.state}>
+              { React.Children.map( children, child => React.cloneElement( child, component.state) ) }
+            </PSProperty.Provider>
     }
     else
     {
-      children = [component.props.children];
+      return <div/>;
     }
-    // We provide the children with props, AND we give them a React Context with the same props.
-    // Hence for a child we can choose to use a Consumer, or a function with an argument to receive the props.
-    return <PSProperty.Provider value={component.state}>
-            { React.Children.map( children, child => React.cloneElement( child, component.state) ) }
-          </PSProperty.Provider>
   }
 }
 
@@ -67,5 +88,3 @@ SetProperty.propTypes = {
 // SetProperty passes on:
 // defaultvalue
 // setvalue
-
-module.exports = SetProperty

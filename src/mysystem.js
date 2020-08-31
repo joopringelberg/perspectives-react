@@ -1,10 +1,11 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("./perspectivescomponent.js");
-const PSContext = require("./reactcontexts.js").PSContext;
 
-class MySystem extends PerspectivesComponent
+import PerspectivesComponent from "./perspectivescomponent.js";
+import {PSContext} from "./reactcontexts.js";
+
+export default class MySystem extends PerspectivesComponent
 {
   constructor (props)
   {
@@ -50,5 +51,3 @@ MySystem.propTypes = {};
 // Context passes on through PSContext:
 // contextinstance
 // contexttype
-
-module.exports = MySystem;

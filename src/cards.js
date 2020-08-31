@@ -6,7 +6,7 @@ import {PSView} from "./reactcontexts.js";
 
 import RolBinding from "./rolbinding.js"
 
-import {roleInstance} from "./roleinstance.js"
+import roleInstance from "./roleinstance.js"
 
 import {Card} from "react-bootstrap";
 

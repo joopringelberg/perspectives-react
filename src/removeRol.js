@@ -1,8 +1,9 @@
 const React = require("react");
 const Perspectives = require("perspectives-proxy").Perspectives;
-const PerspectivesComponent = require("./perspectivescomponent.js");
 
-class RemoveRol extends PerspectivesComponent
+import PerspectivesComponent from "./perspectivescomponent.js";
+
+export default class RemoveRol extends PerspectivesComponent
 {
   render ()
   {
@@ -31,5 +32,3 @@ class RemoveRol extends PerspectivesComponent
 
 // RemoveBinding passes on to the props of its children:
 // removeBinding
-
-module.exports = RemoveRol;

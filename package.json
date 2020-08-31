@@ -28,8 +28,12 @@
     "perspectives-proxy": "https://github.com/joopringelberg/perspectives-proxy.git#v1.4.0",
     "prop-types": "^15.6.2",
     "react-loadable": "^5.5.0",
-    "react-bootstrap": "^1.3.0",
     "@primer/octicons-react": "^9.0.0"
+  },
+  "peerDependencies": {
+    "react": "^16.13.1",
+    "react-bootstrap": "^1.3.0",
+    "react-dom": "^16.13.1"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

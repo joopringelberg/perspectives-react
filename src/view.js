@@ -17,6 +17,10 @@ export default class View extends PerspectivesComponent
     Perspectives.then(
       function(pproxy)
       {
+        if (component.props.viewname == "allproperties")
+        {
+          console.warn( "Warning: View receives prop viewname=`allproperties`. Do you mean 'allProperties'?");
+        }
         component.addUnsubscriber(
           pproxy.getViewProperties(
             component.context.roltype,

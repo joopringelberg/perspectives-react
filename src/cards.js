@@ -10,10 +10,6 @@ import roleInstance from "./roleinstance.js"
 
 import {Card} from "react-bootstrap";
 
-window.ReactCards = React;
-
-console.log( "Does react-dom import the same react as perspectives-react? " + (window.ReactOfReactDom === window.ReactCards));
-
 ///////////////////////////////////////////////////////////////////////////////
 // ROLEBINDINGCARDHOLDER
 ////////////////////////////////////////////////////////////////////////////////
@@ -27,19 +23,33 @@ export function roleBindingCardHolder( CardComponent )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// SIMPLECARD
+// EMPTYCARD
 ////////////////////////////////////////////////////////////////////////////////
-export const SimpleCard = React.forwardRef((props, ref) =>
-  <View viewname="allProperties">
-    <PSView.Consumer>
-      {value => <Card ref={ref}>
-        <Card.Body>
-          <p>{value.propval("Name")}</p>
-          <p>{value.propval("Description")}</p>
-        </Card.Body>
-      </Card>}
-    </PSView.Consumer>
-  </View>);
+export function emptyCard (viewname, Content)
+  {
+    return React.forwardRef((props, ref) =>
+            <View viewname={viewname}>
+              <PSView.Consumer>
+                {value => <Card ref={ref}>
+                  <Card.Body>
+                    {Content(value)}
+                  </Card.Body>
+                </Card>}
+              </PSView.Consumer>
+            </View>);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SIMPLECARD
+// Use like this:
+// const ContactCard = PR.emptyCard( "allProperties", value => <p>{value.propval("Voornaam")}</p>);
+// <CardList rol="User"><ContactCard/></CardList>
+////////////////////////////////////////////////////////////////////////////////
+export const SimpleCard = emptyCard( "allProperties",
+  props => <div>
+            <p>{props.propval("Name")}</p>
+            <p>{props.propval("Description")}</p>
+          </div> )
 
 export const SimpleCardForRoleBinding = roleInstance ( roleBindingCardHolder( SimpleCard ) );
 

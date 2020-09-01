@@ -1,6 +1,6 @@
 import React from "react";
 
-import {PSRol, AppContext} from "./reactcontexts.js";
+import {AppContext, PSRolBinding} from "./reactcontexts.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 // DROPZONE
@@ -89,7 +89,7 @@ export default class DropZone extends React.PureComponent
                 onFocus={ ev => component.checkBinding( ev, selectedRole, setSelectedCard )}
                 onDragLeave={ ev => ev.target.classList.remove("border-danger", "border", "border-success")}
 
-                onDrop={ ev => { component.handleDrop( JSON.parse( ev.dataTransfer.getData("PSRol") ) ) }
+                onDrop={ ev => component.handleDrop( JSON.parse( ev.dataTransfer.getData("PSRol") ) ) }
                 onKeyDown={ ev => component.handleKeyDown( ev, selectedRole, setSelectedCard, setPositionToMoveTo )}
 
                 style={ {flexGrow: 1} }

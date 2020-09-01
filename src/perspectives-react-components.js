@@ -24,5 +24,6 @@ export {default as roleInstance} from "./roleinstance.js";
 export {default as RoleInstanceIterator} from "./roleinstanceiterator.js";
 export {default as PerspectivesComponent} from "./perspectivescomponent.js";
 export {default as CardList} from "./cardlist.js";
-export {roleBindingCardHolder, SimpleCard, SimpleCardForRoleBinding, SimpleCardForRole} from "./cards.js";
+export {roleBindingCardHolder, SimpleCard, SimpleCardForRoleBinding, SimpleCardForRole, emptyCard} from "./cards.js";
 export {default as SetBoolAsCheckbox} from "./setboolascheckbox.js";
+export {default as DropZone} from "./dropzone.js";

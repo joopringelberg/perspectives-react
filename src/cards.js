@@ -14,6 +14,7 @@ import {Card} from "react-bootstrap";
 // ROLEBINDINGCARDHOLDER
 ////////////////////////////////////////////////////////////////////////////////
 // CardComponent should be constructed with React.forwardRef.
+// The Card will be coupled to the *binding* of the Role rather than its instance itself.
 export function roleBindingCardHolder( CardComponent )
 {
   return React.forwardRef((props, ref) =>

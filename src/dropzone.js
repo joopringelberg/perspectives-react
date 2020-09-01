@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 import {AppContext, PSRolBinding} from "./reactcontexts.js";
 
@@ -94,11 +95,19 @@ export default class DropZone extends React.PureComponent
 
                 style={ {flexGrow: 1} }
                 className="p-2"
+
+                aria-dropeffect="execute"
+                aria-label={component.props.ariaLabel}
               >
                 {component.props.children}
               </div>}
             </AppContext.Consumer>
   }
 }
+
+DropZone.propTypes =
+  {
+    ariaLabel: PropTypes.string.isRequired
+  };
 
 DropZone.contextType = PSRolBinding;

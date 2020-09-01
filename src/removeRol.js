@@ -16,7 +16,7 @@ export default class RemoveRol extends PerspectivesComponent
           child,
           {
             // Can be applied to a PSRol context type.
-            removeRol: function({contextinstance, roltype, rolinstance})
+            removerol: function({contextinstance, roltype, rolinstance})
             {
               Perspectives.then(
                 function (pproxy)

@@ -14,16 +14,17 @@ export default class RoleInstanceIterator extends PerspectivesComponent
     this.state.cursor = undefined;
   }
 
-  computeInstanceData (rolInstance)
+  // Compute a PSRol instance for the rolInstance.
+  computeInstanceData (rolInstance, rolBindingContext)
   {
     const component = this;
     const currentCursor = component.context.cursor
     return (
       { contextinstance: component.context.contextinstance
       , contexttype: component.context.contexttype
-      , rolinstance: rolInstance
       , roltype: component.context.roltype
-      , isselected: currentCursor === rolInstance
+      , bindrol: rolBindingContext.bindrol
+      , checkbinding: rolBindingContext.checkbinding
       , removerol: function()
         {
           Perspectives.then(
@@ -32,6 +33,8 @@ export default class RoleInstanceIterator extends PerspectivesComponent
               pproxy.removeRol( component.context.contextinstance, component.context.roltype, rolInstance)
             });
         }
+      , rolinstance: rolInstance
+      , isselected: currentCursor === rolInstance
       });
   }
 
@@ -53,7 +56,7 @@ export default class RoleInstanceIterator extends PerspectivesComponent
                   {
                     pproxy.checkBinding(
                       component.context.contexttype,
-                      component.context.rol, // component.context.roltype ??
+                      component.context.rol,
                       rolinstance,
                       function(psbool)
                       {
@@ -100,7 +103,7 @@ export default class RoleInstanceIterator extends PerspectivesComponent
       };
     component.context.instances.forEach( function (rolInstance)
       {
-        updater[rolInstance] = component.computeInstanceData(rolInstance);
+        updater[rolInstance] = component.computeInstanceData(rolInstance, updater.rolBindingContext);
       });
     component.setState(updater);
   }
@@ -121,15 +124,15 @@ export default class RoleInstanceIterator extends PerspectivesComponent
       updater = { instances: component.context.instances }
       component.context.instances.forEach( function (rolInstance)
         {
-          updater[rolInstance] = component.computeInstanceData(rolInstance);
+          updater[rolInstance] = component.computeInstanceData(rolInstance, component.state.rolBindingContext);
         });
       component.setState( updater );
     }
     // If only the cursor has changed, we just recompute the corresponding element.
     if ( currentCursor !== previousCursor )
     {
-      updater[previousCursor] = component.computeInstanceData( previousCursor );
-      updater[currentCursor] = component.computeInstanceData( currentCursor );
+      updater[previousCursor] = component.computeInstanceData( previousCursor, component.state.rolBindingContext );
+      updater[currentCursor] = component.computeInstanceData( currentCursor, component.state.rolBindingContext );
       updater.cursor = currentCursor
       component.setState( updater );
     }
@@ -185,9 +188,3 @@ export default class RoleInstanceIterator extends PerspectivesComponent
 RoleInstanceIterator.contextType = PSRoleInstances;
 
 RoleInstanceIterator.propTypes = {};
-
-// Rol passes on through PSRol:
-// contextinstance
-// contexttype
-// roltype
-// rolinstance

@@ -1,4 +1,4 @@
-
+// Compents that are not in use in InPlace or in perspectives-screens are commented out.
 export {default as Context} from "./context.js";
 export {default as Rol} from "./rol.js";
 export {default as BindRol} from "./bindRol.js";
@@ -7,7 +7,7 @@ export {default as View} from "./view.js";
 export {default as ContextOfRole} from "./contextofrole.js";
 export {ExternalViewOfBoundContext, ViewOnExternalRole, InternalViewOfBoundContext} from "./views.js";
 export {default as SetProperty} from "./setproperty.js";
-export {default as BoundContext} from "./boundcontext.js";
+// export {default as BoundContext} from "./boundcontext.js";
 export {default as CreateContext} from "./createcontext.js";
 export {default as importContexts} from "./importContexts.js";
 export {default as DeleteContext} from "./deletecontext.js";

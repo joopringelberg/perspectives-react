@@ -10,7 +10,7 @@ export default class BindRol extends PerspectivesComponent
   {
     super(props);
     const component = this;
-    component.state.bindRol = undefined;
+    component.state.rolBindingContext = undefined;
   }
 
   componentDidMount ()
@@ -21,47 +21,50 @@ export default class BindRol extends PerspectivesComponent
       function (pproxy)
       {
         const updater = {
-          // Can be applied to a PSRol context.
-          bindRol: function({rolinstance})
-          {
-            if (rolinstance)
-            {
-              // checkBinding( typeOfRolToBindTo, valueToBind )
-              pproxy.checkBinding(
-                component.context.contexttype,
-                component.props.rol,
-                rolinstance,
-                function(psbool)
+          rolBindingContext:
+            { bindrol: function({rolinstance})
                 {
-                  if ( psbool[0] === "true" )
+                  if (rolinstance)
                   {
-                    // We use 'createRolWithLocalName' rather than 'bindInNewRol' because we only have the local rol name, not its qualified name.
-                    pproxy.createRolWithLocalName(
-                      component.context.contextinstance,
-                      component.props.rol,
+                    // checkBinding( typeOfRolToBindTo, valueToBind )
+                    pproxy.checkBinding(
                       component.context.contexttype,
-                      {properties: {}, binding: rolinstance},
-                      function( rolId ){});
+                      component.props.rol,
+                      rolinstance,
+                      function(psbool)
+                      {
+                        if ( psbool[0] === "true" )
+                        {
+                          // We use 'createRolWithLocalName' rather than 'bindInNewRol' because we only have the local rol name, not its qualified name.
+                          pproxy.createRolWithLocalName(
+                            component.context.contextinstance,
+                            component.props.rol,
+                            component.context.contexttype,
+                            {properties: {}, binding: rolinstance},
+                            function( rolId ){});
+                        }
+                        else
+                        {
+                          alert("Cannot bind!")
+                        }
+                      });
                   }
-                  else
-                  {
-                    alert("Cannot bind!")
-                  }
-                });
-            }
-          },
-          // Can be applied to a PSRol context.
-          checkBinding: function({rolinstance}, callback)
-            {
-              // checkBinding( typeOfRolToBindTo, valueToBind )
-              pproxy.checkBinding(
-                component.context.contexttype,
-                component.props.rol,
-                rolinstance,
-                function(psbool)
+                }
+                // Can be applied to a PSRol context.
+            , checkbinding: function({rolinstance}, callback)
                 {
-                  callback( psbool[0] === "true" );
-                });
+                  // checkBinding( typeOfRolToBindTo, valueToBind )
+                  pproxy.checkBinding(
+                    component.context.contexttype,
+                    component.props.rol,
+                    rolinstance,
+                    function(psbool)
+                    {
+                      callback( psbool[0] === "true" );
+                    });
+                }
+            , contextinstance: component.context.contextinstance
+            , contexttype: component.context.contexttype
             }
         }
         component.setState(updater);
@@ -71,18 +74,10 @@ export default class BindRol extends PerspectivesComponent
   render ()
   {
     const component = this;
-    let rolBindingContext;
 
-    // TODO. Deze opzet leidt altijd tot een render van de consumers.
     if (component.stateIsComplete())
     {
-      rolBindingContext =
-        { contextinstance: component.context.contextinstance
-        , contexttype: component.context.contexttype
-        , bindrol: component.state.bindRol
-        , checkbinding: component.state.checkBinding
-      }
-      return (<PSRolBinding.Provider value={rolBindingContext}>{component.props.children}</PSRolBinding.Provider>);
+      return (<PSRolBinding.Provider value={component.state.rolBindingContext}>{component.props.children}</PSRolBinding.Provider>);
     }
     else
     {

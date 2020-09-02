@@ -14,13 +14,14 @@ export default function SetBoolAsCheckbox ({propertyname, label, val})
                 <Col>
                   <Form.Check
                     inline
-                    aria-label={label}
+                    aria-labelledby={propertyname + "_BoolAsCheckbox"}
                     checked={val ? "checked" : null}
+                    aria-checked={!!val}
                     disabled={val ? "disabled" : null}
                     // We start out with false and only allow changing once, so that must be to "true"!
                     onChange={e => sprops.setvalue( "true" )} />
                 </Col>
-                <Form.Label>{label}</Form.Label>
+                <Form.Label id={propertyname + "_BoolAsCheckbox"}>{label}</Form.Label>
               </Form.Group>}
             </PSProperty.Consumer>
           </SetProperty>

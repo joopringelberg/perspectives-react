@@ -1,5 +1,7 @@
 const React = require("react");
 
+import PropTypes from "prop-types";
+
 import PerspectivesComponent from "./perspectivescomponent.js";
 
 import {PSRol, AppContext} from "./reactcontexts";
@@ -76,6 +78,7 @@ export default function roleInstance (CardComponent)
       const component = this;
       return  <AppContext.Consumer>{ value =>
                 <div draggable
+                  aria-label={component.props.label}
                   tabIndex={component.context.isselected ? "0" : "-1"}
                   ref={component.roleInstanceRef}
                   key={this.context.rolinstance}
@@ -85,12 +88,13 @@ export default function roleInstance (CardComponent)
                   className="mb-2"
                   onFocus={component.handleClick}
                  >
-                  <CardComponent ref={component.cardRef}/>
+                  <CardComponent ref={component.cardRef} labelProperty={component.props.labelProperty}/>
                  </div>}
               </AppContext.Consumer>
     }
   }
   RoleInstance.contextType = PSRol;
+  RoleInstance.propTypes = {labelProperty: PropTypes.string.isRequired}
 
   return RoleInstance;
 }

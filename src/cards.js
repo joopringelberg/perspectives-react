@@ -31,7 +31,7 @@ export function emptyCard (viewname, Content)
     return React.forwardRef((props, ref) =>
             <View viewname={viewname}>
               <PSView.Consumer>
-                {value => <Card ref={ref}>
+                {value => <Card ref={ref} aria-label={value.propval(props.labelProperty)}>
                   <Card.Body>
                     {Content(value)}
                   </Card.Body>

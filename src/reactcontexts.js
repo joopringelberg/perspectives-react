@@ -3,6 +3,7 @@ export const React = require("react");
 export const PSContext = React.createContext(
   { contextinstance: ""
   , contexttype: ""
+  , myroletype: ""
   });
 
 export const PSRoleInstances = React.createContext(

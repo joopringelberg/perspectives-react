@@ -18,10 +18,11 @@ export default class ContextOfRole extends PerspectivesComponent
     Perspectives.then(
       function (pproxy)
       {
+        const role = component.props.rolinstance ? component.props.rolinstance : component.context.rolinstance;
         // The context of the rol will be bound to the state prop 'contextInstance'.
         component.addUnsubscriber(
           pproxy.getRolContext(
-            component.props.rolinstance ? component.props.rolinstance : component.context.rolinstance,
+            role,
             function (contextId)
             {
               component.addUnsubscriber(
@@ -29,9 +30,23 @@ export default class ContextOfRole extends PerspectivesComponent
                   contextId[0],
                   function (contextType)
                   {
+                    if ( !component.props.myroletype )
+                    {
+                      // Get it from the core.
+                      pproxy.getMeForContext( role,
+                        function(myroletype)
+                        {
+                          component.setState({ value:
+                            { contextinstance: contextId[0]
+                            , contexttype: contextType[0]
+                            , myroletype: myroletype[0]
+                            }})
+                        })
+                    }
                     component.setState({ value:
                       { contextinstance: contextId[0]
                       , contexttype: contextType[0]
+                      , myroletype: component.props.myroletype
                       }})
                   }
                 ));
@@ -62,7 +77,8 @@ export default class ContextOfRole extends PerspectivesComponent
 ContextOfRole.contextType = PSRol;
 
 ContextOfRole.propTypes = {
-  rolinstance: PropTypes.string
+  rolinstance: PropTypes.string,
+  myroletype: PropTypes.string
 };
 // ContextOfRole passes on:
 // contextinstance

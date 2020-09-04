@@ -12,7 +12,8 @@ export default class Context extends Component
     super(props);
     this.state = { value: {
       contextinstance: this.props.contextinstance,
-      contexttype: this.props.contexttype
+      contexttype: this.props.contexttype,
+      myroletype: "model:System$PerspectivesSystem$User"
     }};
   }
   render ()

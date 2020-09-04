@@ -10,6 +10,7 @@ export {default as SetProperty} from "./setproperty.js";
 // export {default as BoundContext} from "./boundcontext.js";
 export {default as CreateContext} from "./createcontext.js";
 export {default as importContexts} from "./importContexts.js";
+export {default as importTransaction} from "./importTransaction.js";
 export {default as DeleteContext} from "./deletecontext.js";
 export {default as PSContext, PSRol, PSRoleInstances, PSView, PSRolBinding, PSProperty, AppContext} from "./reactcontexts";
 export {default as ExternalRole} from "./externalrole.js";

@@ -56,8 +56,11 @@ export default class Screen extends PerspectivesComponent
   constructor (props)
   {
     super(props);
-    this.state.myroletype = undefined;
+    // This represents 'me': the 'own' user.
     this.state.useridentifier = undefined;
+    // The role that 'me' plays in the current context. We pass it on to ContextOfRole
+    // and that component includes it in the PSContext it provides to descendants.
+    this.state.myroletype = undefined;
   }
 
   componentDidMount ()
@@ -91,7 +94,7 @@ export default class Screen extends PerspectivesComponent
         loader: () => importRoleScreen( component.state.myroletype, component.state.useridentifier ),
         loading: Loading,
       });
-      return <ContextOfRole rolinstance={component.props.rolinstance}><LoadableScreen/></ContextOfRole>;
+      return <ContextOfRole rolinstance={component.props.rolinstance} myroletype={component.state.myroletype}><LoadableScreen/></ContextOfRole>;
     }
     else
       return <div></div>

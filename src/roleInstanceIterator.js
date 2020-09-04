@@ -5,7 +5,12 @@ const Perspectives = require("perspectives-proxy").Perspectives;
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRol, PSRoleInstances, PSRolBinding} from "./reactcontexts";
 
-export default class RoleInstanceIterator extends PerspectivesComponent
+export default function RoleInstanceIterator (props)
+{
+  return <PSContext.Consumer>{ pscontext => <RoleInstanceIterator_ myroletype={pscontext.myroletype}/> }</PSContext.Consumer>;
+}
+
+class RoleInstanceIterator_ extends PerspectivesComponent
 {
   constructor (props)
   {
@@ -30,7 +35,7 @@ export default class RoleInstanceIterator extends PerspectivesComponent
           Perspectives.then(
             function (pproxy)
             {
-              pproxy.removeRol( component.context.contextinstance, component.context.roltype, rolInstance)
+              pproxy.removeRol( component.context.contextinstance, component.context.roltype, rolInstance, component.props.myroletype )
             });
         }
       , rolinstance: rolInstance
@@ -68,6 +73,7 @@ export default class RoleInstanceIterator extends PerspectivesComponent
                             component.context.rol,
                             component.context.contexttype,
                             {properties: {}, binding: rolinstance},
+                            component.props.myroletype,
                             function( rolId ){});
                         }
                         else
@@ -185,6 +191,6 @@ export default class RoleInstanceIterator extends PerspectivesComponent
   }
 }
 
-RoleInstanceIterator.contextType = PSRoleInstances;
+RoleInstanceIterator_.contextType = PSRoleInstances;
 
-RoleInstanceIterator.propTypes = {};
+RoleInstanceIterator_.propTypes = {};

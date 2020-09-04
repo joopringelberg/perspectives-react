@@ -33,6 +33,7 @@ export default class CreateContext extends PerspectivesComponent
       {
         pproxy.createContext(
           defaultContextDescription,
+          component.context.myroletype,
           function( buitenRolId )
           {
             // Don't try to bind the context in a new role if props.donotbind is true!
@@ -45,9 +46,10 @@ export default class CreateContext extends PerspectivesComponent
                 component.props.rolname,
                 component.context.contexttype,
                 {properties: {}},
+                component.context.myroletype,
                 function( rolId )
                 {
-                  pproxy.setBinding( rolId[0], buitenRolId[0] );
+                  pproxy.setBinding( rolId[0], buitenRolId[0], component.context.myroletype );
                 });
             }
             // Resolve the promise returned by calling create.

@@ -3,7 +3,12 @@ const Perspectives = require("perspectives-proxy").Perspectives;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 
-export default class RemoveBinding extends PerspectivesComponent
+export default RemoveRol (props)
+{
+  return <PSContext.Consumer>{ pscontext => <RemoveBinding_ myroletype={pscontext.myroletype}/> }</PSContext.Consumer>;
+}
+
+class RemoveBinding_ extends PerspectivesComponent
 {
   render ()
   {
@@ -21,7 +26,7 @@ export default class RemoveBinding extends PerspectivesComponent
               Perspectives.then(
                 function (pproxy)
                 {
-                  pproxy.removeBinding( rolinstance );
+                  pproxy.removeBinding( rolinstance, component.props.myroletype );
                 }
               );
             }

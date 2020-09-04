@@ -6,7 +6,12 @@ import PerspectivesComponent from "./perspectivescomponent.js";
 import {getQualifiedPropertyName} from "./urifunctions.js";
 import {PSView, PSProperty} from "./reactcontexts.js";
 
-export default class SetProperty extends PerspectivesComponent
+export default SetProperty (props)
+{
+  return <PSContext.Consumer>{ pscontext => <SetProperty_ myroletype={pscontext.myroletype}/> }</PSContext.Consumer>;
+}
+
+class SetProperty_ extends PerspectivesComponent
 {
   constructor (props)
   {
@@ -26,7 +31,8 @@ export default class SetProperty extends PerspectivesComponent
           pproxy.setProperty(
             component.context.rolinstance,
             getQualifiedPropertyName(component.props.propertyname, component.context.viewproperties),
-            val);
+            val,
+            component.props.myroletype );
         });
     }
   }
@@ -78,9 +84,9 @@ export default class SetProperty extends PerspectivesComponent
   }
 }
 
-SetProperty.contextType = PSView;
+SetProperty_.contextType = PSView;
 
-SetProperty.propTypes = {
+SetProperty_.propTypes = {
   propertyname: PropTypes.string.isRequired,
   value: PropTypes.array
 };

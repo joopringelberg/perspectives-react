@@ -18,6 +18,7 @@ export default class DeleteContext extends PerspectivesComponent
         if (component.props.contextinstance) {c = component.props.contextinstance} else {c = component.context.contextinstance}
         pproxy.deleteContext(
           c,
+          component.context.myroletype,
           function()
           {}
         );

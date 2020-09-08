@@ -25,6 +25,11 @@ export function roleBindingCardHolder( CardComponent )
 
 ///////////////////////////////////////////////////////////////////////////////
 // EMPTYCARD
+// Bind the result of emptyCard to a name, then use that name as a component:
+//   const ContactCard = emptyCard( "allProperties", value => <p>Contact card of {value.propval("Voornaam")}.</p>);
+//   <ContactCard/>
+// Use roleInstance to make it draggable:
+//   const ContactCard = roleInstance( emptyCard( "allProperties", value => <p>Contact card of {value.propval("Voornaam")}.</p>) );
 ////////////////////////////////////////////////////////////////////////////////
 export function emptyCard (viewname, Content)
   {

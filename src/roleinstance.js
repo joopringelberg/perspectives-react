@@ -54,6 +54,7 @@ export default function roleInstance (CardComponent)
             setSelectedCard(component.cardRef.current, component.context.rolinstance);
           }
           event.preventDefault();
+          event.stopPropagation();
           break;
       }
     }
@@ -61,6 +62,7 @@ export default function roleInstance (CardComponent)
     handleClick( event )
     {
       event.preventDefault();
+      event.stopPropagation();
       this.roleInstanceRef.current.dispatchEvent( new CustomEvent('RoleInstanceClicked', { detail: this.context.rolinstance, bubbles: true }) );
     }
 

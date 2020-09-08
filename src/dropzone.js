@@ -22,15 +22,12 @@ export default class DropZone extends React.PureComponent
     component.context.checkbinding( {rolinstance: roleId},
       function( bindingAllowed )
       {
-        if ( bindingAllowed )
+        if ( bindingAllowed)
         {
-          // component.eventDiv.classList.add("border-success", "border");
-          // component.eventDiv.focus(); // verstoort dit niet de drag?
           component.allowedInstance = roleId;
         }
         else {
-          component.eventDiv.classList.add("border-danger", "border");
-          component.eventDiv.blur(); //???? Waar gaat de focus heen?
+          component.eventDiv.current.classList.add("border-danger", "border");
         }
       } );
     event.preventDefault();
@@ -39,23 +36,29 @@ export default class DropZone extends React.PureComponent
   handleDrop (event, rolData )
   {
     const component = this;
-    if ( component.allowedInstance === rolData.rolinstance )
-    {
-      component.context.bindrol( rolData );
-      component.eventDiv.current.blur();
-    }
+    component.context.checkbinding( rolData,
+      function( bindingAllowed )
+      {
+        if ( bindingAllowed)
+        {
+          component.context.bindrol( rolData );
+        }
+        else {
+          component.eventDiv.current.classList.add("border-danger", "border");
+        }
+      } );
   }
 
   // The dropzone only captures keys when a Card is on the CardClipboard
   // (and when it has focus).
-  handleKeyDown ( event, roleId )
+  handleKeyDown ( event, roleId, setSelectedCard, setPositionToMoveTo )
   {
     const component = this;
     const eventDivRect = component.eventDiv.current.getBoundingClientRect()
     switch(event.keyCode){
       case 13: // Enter
       case 32: // space
-        if ( component.allowedInstance === rolData.rolinstance )
+        if ( component.allowedInstance === roleId )
         {
           // Animate the movement of the card to the dropzone.
           setPositionToMoveTo( {x: eventDivRect.x + "px", y: eventDivRect.y + "px"} );
@@ -66,12 +69,18 @@ export default class DropZone extends React.PureComponent
             {
               setSelectedCard();
               setPositionToMoveTo();
-              component.eventDiv.current.blur();
             },
             900)
         }
         else {
-          //Do what?
+          setPositionToMoveTo( {x: eventDivRect.x + "px", y: eventDivRect.y + "px"} );
+          // Wait for the animation to end.
+          setTimeout( function()
+            {
+              //move back!
+              setPositionToMoveTo({x: "-1px", y: "-1px"});
+            },
+            900)
         }
         event.preventDefault();
         break;
@@ -85,12 +94,22 @@ export default class DropZone extends React.PureComponent
               <div
                 ref={component.eventDiv}
                 tabIndex={ selectedRole ? 0 : null }
-                // onDragEnter={ ev => component.checkBinding( ev, selectedRole, setSelectedCard )}
-                onDragEnter={ ev => ev.target.focus() }
-                onFocus={ ev => component.checkBinding( ev, selectedRole, setSelectedCard )}
+
+                onDragEnter={ ev => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  component.eventDiv.current.tabIndex = 0;
+                  component.eventDiv.current.focus();
+                } }
+                // No drop without this...
+                onDragOver ={ ev => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }}
+                onFocus={ ev => { if (!!selectedRole) { component.checkBinding( ev, selectedRole, setSelectedCard ) } } }
                 onDragLeave={ ev => ev.target.classList.remove("border-danger", "border", "border-success")}
 
-                onDrop={ ev => component.handleDrop( JSON.parse( ev.dataTransfer.getData("PSRol") ) ) }
+                onDrop={ ev => component.handleDrop( ev, JSON.parse( ev.dataTransfer.getData("PSRol") ) ) }
                 onKeyDown={ ev => component.handleKeyDown( ev, selectedRole, setSelectedCard, setPositionToMoveTo )}
 
                 style={ {flexGrow: 1} }

@@ -98,10 +98,7 @@ class RoleInstanceIterator_ extends PerspectivesComponent
                     rolinstance,
                     function(psbool)
                     {
-                      if ( psbool[0] === "true" )
-                      {
-                        callback();
-                      }
+                      callback (psbool[0] === "true");
                     });
                 });
             }

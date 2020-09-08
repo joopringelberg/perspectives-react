@@ -41,6 +41,7 @@ export const PSView = React.createContext(
   , roltype: ""
   , viewproperties: []
   , propval: function(){}
+  , propset: function(){}
   // And there will be a member for each property, holding its values.
   });
 

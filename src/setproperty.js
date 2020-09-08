@@ -65,6 +65,15 @@ class SetProperty_ extends PerspectivesComponent
     component.setState(updater);
   }
 
+  componentDidUpdate ()
+  {
+    const component = this;
+    const updater = {
+      defaultvalue: component.context[getQualifiedPropertyName(component.props.propertyname, component.context.viewproperties)]
+    };
+    component.setState( updater );
+  }
+
   render ()
   {
     const component = this;

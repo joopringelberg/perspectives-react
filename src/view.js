@@ -11,6 +11,25 @@ import {PSRol, PSView} from "./reactcontexts.js";
 // To solve this problem, use the localName rolProperty of the View (however, this has not yet been implemented).
 export default class View extends PerspectivesComponent
 {
+  changeValue (ln, val)
+  {
+    const component = this;
+    const qualifiedPropertyName = getQualifiedPropertyName(ln, component.state.viewproperties);
+    const oldValue = component.state[qualifiedPropertyName];
+    if (oldValue.length != 1 || oldValue[0] != val)
+    {
+      Perspectives.then(
+        function(pproxy)
+        {
+          pproxy.setProperty(
+            component.state.rolinstance,
+            qualifiedPropertyName,
+            val,
+            component.state.roltype );
+        });
+    }
+  }
+
   componentDidMount ()
   {
     const component = this;
@@ -48,7 +67,19 @@ export default class View extends PerspectivesComponent
                 , rolinstance: component.context.rolinstance
                 , roltype: component.context.roltype
                 , viewproperties: propertyNames
-                , propval: function(ln){ return component.state[ getQualifiedPropertyName(ln, propertyNames) ]; }
+                , propval: ln => component.state[ getQualifiedPropertyName(ln, propertyNames) ]
+                , propset: function(ln, val)
+                    {
+                      if ( Array.isArray( val ) )
+                      {
+                        throw "Perspectives-react, View: supply a single string value to the function 'setvalue'."
+                      }
+                      else
+                      {
+                        component.changeValue(ln, val);
+                      }
+
+                    }
                 });
               // Then fetch the values of the properties, to complete the state.
               propertyNames.forEach(

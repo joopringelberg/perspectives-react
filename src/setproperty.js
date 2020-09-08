@@ -1,14 +1,22 @@
 const React = require("react");
+
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {getQualifiedPropertyName} from "./urifunctions.js";
-import {PSView, PSProperty} from "./reactcontexts.js";
+import {PSView, PSProperty, PSContext} from "./reactcontexts.js";
 
-export default SetProperty (props)
+export default function SetProperty (props)
 {
-  return <PSContext.Consumer>{ pscontext => <SetProperty_ myroletype={pscontext.myroletype}/> }</PSContext.Consumer>;
+  return <PSContext.Consumer>{ pscontext =>
+      <SetProperty_
+        id={props.id}
+        propertyname={props.propertyname}
+        myroletype={pscontext.myroletype}>
+          {props.children}
+      </SetProperty_>
+        }</PSContext.Consumer>
 }
 
 class SetProperty_ extends PerspectivesComponent

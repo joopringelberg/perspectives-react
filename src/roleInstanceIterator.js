@@ -3,11 +3,13 @@ const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
-import {PSRol, PSRoleInstances, PSRolBinding} from "./reactcontexts";
+import {PSRol, PSRoleInstances, PSRolBinding, PSContext} from "./reactcontexts";
 
 export default function RoleInstanceIterator (props)
 {
-  return <PSContext.Consumer>{ pscontext => <RoleInstanceIterator_ myroletype={pscontext.myroletype}/> }</PSContext.Consumer>;
+  return <PSContext.Consumer>{ pscontext => <RoleInstanceIterator_
+      myroletype={pscontext.myroletype}
+    >{props.children}</RoleInstanceIterator_> }</PSContext.Consumer>;
 }
 
 class RoleInstanceIterator_ extends PerspectivesComponent

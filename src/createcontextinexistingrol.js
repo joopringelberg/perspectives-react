@@ -3,11 +3,14 @@ const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
-import {PSRol} from "./reactcontexts";
+import {PSRol, PSContext} from "./reactcontexts";
 
-export default function CreateContextInExistingRol()
+export default function CreateContextInExistingRol(props)
 {
-  return <PSContext.Consumer>{ pscontext => <CreateContextInExistingRol_ myroletype={pscontext.myroletype}/> }<PSContext.Consumer>
+  return <PSContext.Consumer>{ pscontext => <CreateContextInExistingRol_
+        contextname={props.contextname}
+        myroletype={pscontext.myroletype}
+      >{props.children}</CreateContextInExistingRol_> }</PSContext.Consumer>
 }
 
 class CreateContextInExistingRol_ extends PerspectivesComponent
@@ -75,7 +78,7 @@ class CreateContextInExistingRol_ extends PerspectivesComponent
 CreateContextInExistingRol_.contextType = PSRol;
 
 CreateContextInExistingRol_.propTypes = {
-  contextname: PropTypes.string.isRequired // fully qualified name
+  contextname: PropTypes.string.isRequired, // fully qualified name
   myroletype: PropTypes.string.isRequired
 };
 

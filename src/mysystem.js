@@ -12,7 +12,7 @@ export default class MySystem extends PerspectivesComponent
     super(props);
     this.state = {
       contextinstance: undefined,
-      contexttype: "model:System$PerspectivesSystem"
+      contexttype: "model:System$PerspectivesSystem",
       myroletype:  "model:System$PerspectivesSystem$User"
     };
   }

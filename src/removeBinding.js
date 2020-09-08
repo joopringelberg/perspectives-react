@@ -3,9 +3,11 @@ const Perspectives = require("perspectives-proxy").Perspectives;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 
-export default RemoveRol (props)
+import {PSContext} from "./reactcontexts.js"
+
+export default function RemoveRol (props)
 {
-  return <PSContext.Consumer>{ pscontext => <RemoveBinding_ myroletype={pscontext.myroletype}/> }</PSContext.Consumer>;
+  return <PSContext.Consumer>{ pscontext => <RemoveBinding_ myroletype={pscontext.myroletype}>{props.children}</RemoveBinding_> }</PSContext.Consumer>;
 }
 
 class RemoveBinding_ extends PerspectivesComponent

@@ -9,7 +9,9 @@ export default class ContextOfRole extends PerspectivesComponent
   constructor (props)
   {
     super(props);
-    this.state.value = undefined;
+    this.state.contextinstance = undefined;
+    this.state.contexttype = undefined;
+    this.state.myroletype = undefined;
   }
 
   componentDidMount ()
@@ -33,26 +35,43 @@ export default class ContextOfRole extends PerspectivesComponent
                     if ( !component.props.myroletype )
                     {
                       // Get it from the core.
-                      pproxy.getMeForContext( role,
-                        function(myroletype)
-                        {
-                          component.setState({ value:
-                            { contextinstance: contextId[0]
-                            , contexttype: contextType[0]
-                            , myroletype: myroletype[0]
-                            }})
+                      component.addUnsubscriber(
+                        pproxy.getMeForContext( role,
+                          function(myroletype)
+                          {
+                            component.setState(
+                              { contextinstance: contextId[0]
+                              , contexttype: contextType[0]
+                              , myroletype: myroletype[0]
+                              })
+                          }))
+                    }
+                    else {
+                      component.setState(
+                        { contextinstance: contextId[0]
+                        , contexttype: contextType[0]
+                        , myroletype: component.props.myroletype
                         })
                     }
-                    component.setState({ value:
-                      { contextinstance: contextId[0]
-                      , contexttype: contextType[0]
-                      , myroletype: component.props.myroletype
-                      }})
                   }
                 ));
             }));
       }
     );
+  }
+
+  componentDidUpdate (prevProps)
+  {
+    const component = this;
+    const updater = {};
+    if (component.props.rolinstance !== prevProps.rolinstance)
+    {
+      component.componentDidMount();
+    }
+    else if (component.props.myroletype !== component.state.myroletype )
+    {
+      component.setState( {myroletype: component.props.myroletype } );
+    }
   }
 
   render ()
@@ -62,7 +81,7 @@ export default class ContextOfRole extends PerspectivesComponent
     if (component.stateIsComplete())
     {
       const component = this;
-      return (<PSContext.Provider value={component.state.value}>
+      return (<PSContext.Provider value={component.state}>
           {component.props.children}
         </PSContext.Provider>)
     }

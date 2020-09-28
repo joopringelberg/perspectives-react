@@ -5,6 +5,8 @@ const Perspectives = require("perspectives-proxy").Perspectives;
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRol} from "./reactcontexts";
 
+//////// TODO. De PSRol.Provider is onvolledig!
+
 export default class RolBinding extends PerspectivesComponent
 {
   constructor (props)
@@ -40,7 +42,7 @@ export default class RolBinding extends PerspectivesComponent
                           { contextinstance: component.context.contextinstance // LET OP: context van de bindende rol
                           , contexttype: component.context.contexttype // IDEM, type van de context van de bindende rol.
                           , roltype: bindingType[0]
-                          // bindrol
+                          // bind_
                           // checkbinding
                           // removerol
                           , rolinstance: binding[0]

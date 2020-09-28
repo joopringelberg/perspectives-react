@@ -4,12 +4,24 @@ const Perspectives = require("perspectives-proxy").Perspectives;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {getQualifiedPropertyName} from "./urifunctions.js";
-import {PSRol, PSView} from "./reactcontexts.js";
+import {PSRol, PSView, PSContext} from "./reactcontexts.js";
+
+export default function View (props)
+{
+  return <PSContext.Consumer>{ pscontext =>
+      <View_
+        myroletype = { pscontext.myroletype }
+        viewname = { props.viewname }
+      >
+      { props.children}
+      </View_>
+    }</PSContext.Consumer>;
+}
 
 // NOTE. If a view contains two properties whose local names are equal (even while their qualified names are unique),
 // the state of the View component will have the value of the property that was last fetched for that local name.
 // To solve this problem, use the localName rolProperty of the View (however, this has not yet been implemented).
-export default class View extends PerspectivesComponent
+class View_ extends PerspectivesComponent
 {
   changeValue (ln, val)
   {
@@ -25,7 +37,7 @@ export default class View extends PerspectivesComponent
             component.state.rolinstance,
             qualifiedPropertyName,
             val,
-            component.state.roltype );
+            component.props.myroletype );
         });
     }
   }
@@ -122,7 +134,7 @@ export default class View extends PerspectivesComponent
 
 }
 
-View.contextType = PSRol;
+View_.contextType = PSRol;
 
 // View passes on a PSView:
 

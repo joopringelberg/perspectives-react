@@ -83,8 +83,8 @@ export default function roleInstance (CardComponent)
                   aria-label={component.props.label}
                   tabIndex={component.context.isselected ? "0" : "-1"}
                   ref={component.roleInstanceRef}
-                  key={this.context.rolinstance}
-                  onDragStart={ev => ev.dataTransfer.setData("PSRol", JSON.stringify(this.context))}
+                  key={component.context.rolinstance}
+                  onDragStart={ev => ev.dataTransfer.setData("PSRol", JSON.stringify(component.context))}
                   onKeyDown={ev => component.handleKeyDown(ev, value.setSelectedCard)}
                   onClick={component.handleClick}
                   className="mb-2"

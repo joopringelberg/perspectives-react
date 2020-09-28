@@ -19,15 +19,16 @@ export const PSRoleInstances = React.createContext(
 export const PSRolBinding = React.createContext(
   { contextinstance: ""
   , contexttype: ""
-  , bindrol: function(){console.warn("Default (no-op) bindrol called. You likely miss a PSRolBinding.Provider!")}
+  , bind: function(){console.warn("Default (no-op) bind called. You likely miss a PSRolBinding.Provider!")}
   , checkbinding: function(){console.warn("Default (no-op) checkbinding called. You likely miss a PSRolBinding.Provider!")}
+  , getUnqualifiedRoleBinders: function(){ console.warn("Default (no-op) getUnqualifiedRoleBinders called. You likely miss a PSRolBinding.Provider!")}
   });
 
 export const PSRol = React.createContext(
   { contextinstance: ""
   , contexttype: ""
   , roltype: ""
-  , bindrol: function(){console.warn("Default (no-op) bindrol called. You likely miss a PSRol.Provider!")}
+  , bind_: function(){console.warn("Default (no-op) bind_ called. You likely miss a PSRol.Provider!")}
   , checkbinding: function(){console.warn("Default (no-op) checkbinding called. You likely miss a PSRol.Provider!")}
   , removerol: function(){console.warn("Default (no-op) removerol called. You likely miss a PSRol.Provider!")}
   , rolinstance: ""

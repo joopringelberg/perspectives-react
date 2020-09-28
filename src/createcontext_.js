@@ -3,9 +3,9 @@ const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
-import {PSContext} from "./reactcontexts";
+import {PSRol} from "./reactcontexts";
 
-export default class CreateContext extends PerspectivesComponent
+export default class CreateContext_ extends PerspectivesComponent
 {
   // This function returns a promise that will resolve to the identifier of the external role of the new context.
   create (contextDescription)
@@ -31,11 +31,10 @@ export default class CreateContext extends PerspectivesComponent
     Perspectives.then(
       function(pproxy)
       {
-        pproxy.createContext(
+        pproxy.createContext_(
           defaultContextDescription,
           component.props.rolname, // local role name
-          component.context.contextinstance,
-          component.context.contexttype,
+          component.context.rolinstance,
           component.context.myroletype,
           function( buitenRolId )
           {
@@ -78,11 +77,10 @@ export default class CreateContext extends PerspectivesComponent
   }
 }
 
-CreateContext.contextType = PSContext;
+CreateContext_.contextType = PSRol;
 
-CreateContext.propTypes = {
+CreateContext_.propTypes = {
   contextname: PropTypes.string.isRequired, // fully qualified name: the type of Context to create.
-  rolname: PropTypes.string.isRequired // (local) name of the role type the context should be bound in.
 };
 
 // CreateContext passes on:

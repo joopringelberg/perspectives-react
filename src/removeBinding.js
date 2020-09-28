@@ -5,7 +5,7 @@ import PerspectivesComponent from "./perspectivescomponent.js";
 
 import {PSContext} from "./reactcontexts.js"
 
-export default function RemoveRol (props)
+export default function RemoveBinding (props)
 {
   return <PSContext.Consumer>{ pscontext => <RemoveBinding_ myroletype={pscontext.myroletype}>{props.children}</RemoveBinding_> }</PSContext.Consumer>;
 }

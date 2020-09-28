@@ -5,6 +5,9 @@ const Perspectives = require("perspectives-proxy").Perspectives;
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRol, PSRoleInstances, PSRolBinding, PSContext} from "./reactcontexts";
 
+// WHen there is more than one child, the first child is taken to be the default one.
+// If there are no role instances, the default child is rendered in a PSRolBinding context that has bind.
+// If there are instances, the other children are rendered in a PSRol context that has both bind and bind_.
 export default function RoleInstanceIterator (props)
 {
   return <PSContext.Consumer>{ pscontext => <RoleInstanceIterator_
@@ -26,18 +29,52 @@ class RoleInstanceIterator_ extends PerspectivesComponent
   {
     const component = this;
     const currentCursor = component.context.cursor
+    function bind_(rolInstance)
+    {
+      return function({rolinstance})
+        {
+          if (rolinstance)
+          {
+            // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
+            Perspectives.then(
+              function (pproxy)
+              {
+                pproxy.checkBinding(
+                  component.context.contexttype,
+                  component.context.roltype,
+                  rolinstance,
+                  function(psbool)
+                  {
+                    if ( psbool[0] === "true" )
+                    {
+                      pproxy.bind_(
+                        rolInstance,
+                        rolinstance,
+                        component.props.myroletype,
+                        function( rolId ){});
+                    }
+                    else
+                    {
+                      alert("Cannot bind_!")
+                    }
+                  });
+            });
+          }
+        };
+    }
     return (
       { contextinstance: component.context.contextinstance
       , contexttype: component.context.contexttype
       , roltype: component.context.roltype
-      , bindrol: rolBindingContext.bindrol
+      , bind: rolBindingContext.bind
+      , bind_: bind_( rolInstance )
       , checkbinding: rolBindingContext.checkbinding
       , removerol: function()
         {
           Perspectives.then(
             function (pproxy)
             {
-              pproxy.removeRol( component.context.contextinstance, component.context.roltype, rolInstance, component.props.myroletype )
+              pproxy.removeRol( component.context.contexttype, component.context.roltype, rolInstance, component.props.myroletype )
             });
         }
       , rolinstance: rolInstance
@@ -52,49 +89,47 @@ class RoleInstanceIterator_ extends PerspectivesComponent
       { rolBindingContext:
           { contextinstance: component.context.contextinstance
           , contexttype: component.context.contexttype
-           // Can be applied to a PSRol context.
-          , bindrol: function({rolinstance})
-            {
-              if (rolinstance)
+          , bind: function({rolinstance})
               {
-                // checkBinding( typeOfRolToBindTo, valueToBind )
-                Perspectives.then(
-                  function (pproxy)
-                  {
-                    pproxy.checkBinding(
-                      component.context.contexttype,
-                      component.context.rol,
-                      rolinstance,
-                      function(psbool)
-                      {
-                        if ( psbool[0] === "true" )
+                if (rolinstance)
+                {
+                  Perspectives.then(
+                    function (pproxy)
+                    {
+                      pproxy.checkBinding(
+                        component.context.contexttype,
+                        component.context.roltype,
+                        rolinstance,
+                        function(psbool)
                         {
-                          // We use 'createRolWithLocalName' rather than 'bindInNewRol' because we only have the local rol name, not its qualified name.
-                          pproxy.createRolWithLocalName(
-                            component.context.contextinstance,
-                            component.context.rol,
-                            component.context.contexttype,
-                            {properties: {}, binding: rolinstance},
-                            component.props.myroletype,
-                            function( rolId ){});
-                        }
-                        else
-                        {
-                          alert("Cannot bind!")
-                        }
-                      });
-                });
+                          if ( psbool[0] === "true" )
+                          {
+                            pproxy.bind(
+                              component.context.contextinstance,
+                              component.context.roltype,
+                              component.context.contexttype,
+                              {properties: {}, binding: rolinstance},
+                              component.context.myroletype,
+                              function( rolId ){});
+                          }
+                          else
+                          {
+                            alert("Cannot bind!")
+                          }
+                        });
+                    });
+                  // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
+                }
               }
-            }
           , checkbinding: function({rolinstance}, callback)
             {
               Perspectives.then(
                 function (pproxy)
                 {
-                  // checkBinding( typeOfRolToBindTo, valueToBind )
+                  // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
                   pproxy.checkBinding(
                     component.context.contexttype,
-                    component.context.rol,
+                    component.context.roltype,
                     rolinstance,
                     function(psbool)
                     {

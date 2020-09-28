@@ -69,17 +69,18 @@ export default class Screen extends PerspectivesComponent
     Perspectives.then(
       function(pproxy)
       {
-        pproxy.getMeForContext( component.props.rolinstance,
-          function(userRoles)
-          {
-            component.setState({myroletype: userRoles[0]});
-          })
-        pproxy.getUserIdentifier(
-          function(userIdentifier)
-          {
-            component.setState({useridentifier: userIdentifier[0]});
-          }
-        );
+        component.addUnsubscriber(
+          pproxy.getUserIdentifier(
+            function(userIdentifier)
+            {
+              component.addUnsubscriber(
+                pproxy.getMeForContext( component.props.rolinstance,
+                  function(userRoles)
+                  {
+                    component.setState({myroletype: userRoles[0], useridentifier: userIdentifier[0]});
+                  }
+                ));
+            }))
       }
     );
   }

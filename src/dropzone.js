@@ -41,7 +41,7 @@ export default class DropZone extends React.PureComponent
       {
         if ( bindingAllowed)
         {
-          component.context.bindrol( rolData );
+          component.context.bind( rolData );
         }
         else {
           component.eventDiv.current.classList.add("border-danger", "border");
@@ -63,7 +63,7 @@ export default class DropZone extends React.PureComponent
           // Animate the movement of the card to the dropzone.
           setPositionToMoveTo( {x: eventDivRect.x + "px", y: eventDivRect.y + "px"} );
           // Bind the role.
-          component.context.bindrol( {rolinstance: roleId} );
+          component.context.bind( {rolinstance: roleId} );
           // Wait for the animation to end.
           setTimeout( function()
             {

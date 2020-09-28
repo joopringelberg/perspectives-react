@@ -23,13 +23,13 @@ class RemoveRol_ extends PerspectivesComponent
         return React.cloneElement(
           child,
           {
-            // Can be applied to a PSRol context type.
-            removerol: function({contextinstance, roltype, rolinstance})
+            // Should be applied to a PSRol object.
+            removerol: function({contexttype, roltype, rolinstance})
             {
               Perspectives.then(
                 function (pproxy)
                 {
-                  pproxy.removeRol( contextinstance, roltype, rolinstance, component.props.myroletype );
+                  pproxy.removeRol( contexttype, roltype, rolinstance, component.props.myroletype );
                 }
               );
             }

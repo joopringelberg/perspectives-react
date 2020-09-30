@@ -51,7 +51,11 @@ export default function roleInstance (CardComponent)
           }
           else
           {
-            setSelectedCard(component.cardRef.current, component.context.rolinstance);
+            setSelectedCard(
+              component.cardRef.current,
+              component.context.rolinstance,
+              component.context.roltype,
+              component.context.contexttype);
           }
           event.preventDefault();
           event.stopPropagation();

@@ -12,6 +12,8 @@ export default class RoleInstances extends PerspectivesComponent
     super(props);
     const component = this;
     component.state.instances = undefined;
+    this.eventDiv = React.createRef();
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   componentDidMount ()
@@ -56,7 +58,22 @@ export default class RoleInstances extends PerspectivesComponent
                                 , cursor: nextCursor
                                 , setcursor: function(cr)
                                   {
-                                    component.setState( {cursor: cr} );
+                                    if (cr !== component.state.cursor )
+                                    {
+                                      component.setState( {cursor: cr} );
+                                    }
+                                  }
+                                , createRole: function (receiveResponse)
+                                  {
+                                    pproxy.createRole (
+                                      component.context.contextinstance,
+                                      rolType,
+                                      component.context.myroletype,
+                                      function(newRoleId_)
+                                      {
+                                        receiveResponse( newRoleId_[0] );
+                                      }
+                                      );
                                   }
                                 };
                       }
@@ -66,6 +83,65 @@ export default class RoleInstances extends PerspectivesComponent
             }
         ))
       });
+      if (component.stateIsComplete())
+      {
+        component.eventDiv.current.addEventListener('SetCursor',
+          function (e)
+          {
+            component.state.setcursor( e.detail );
+            e.stopPropagation();
+          },
+          false);
+      }
+  }
+
+  componentDidUpdate (prevProps, prevState)
+  {
+    const component = this;
+    if ( component.stateIsComplete() && !prevState.instances )
+    {
+      component.eventDiv.current.addEventListener('SetCursor',
+        function (e)
+        {
+          component.state.setcursor( e.detail );
+          e.stopPropagation();
+        },
+        false);
+    }
+  }
+
+  // -1 if not found.
+  indexOfCurrentRole ()
+  {
+    return this.state.instances.indexOf(this.state.cursor);
+  }
+
+  handleKeyPress (event)
+    {
+      const component = this;
+      const i = component.indexOfCurrentRole();
+
+      // keydown only occurs after the component received focus, hence if there are instances, there is a value for currentRole.
+      if (component.state.cursor)
+      {
+        // Check for up/down key presses
+        switch(event.keyCode){
+          case 40: // Down arrow
+            if ( i < component.state.instances.length - 1 )
+            {
+              component.state.setcursor( component.state.instances[i + 1] );
+            }
+            event.preventDefault();
+            break;
+          case 38: // Up arrow
+            if (i > 0)
+            {
+              component.state.setcursor( component.state.instances[i - 1] );
+            }
+            event.preventDefault();
+            break;
+        }
+      }
   }
 
   render ()
@@ -74,7 +150,12 @@ export default class RoleInstances extends PerspectivesComponent
     if (component.stateIsComplete())
     {
       return (<PSRoleInstances.Provider value={component.state}>
-        {component.props.children}
+          <div
+            ref={component.eventDiv}
+            onKeyDown={ component.handleKeyPress }
+          >
+            {component.props.children}
+          </div>
         </PSRoleInstances.Provider>)
     }
     else return null;
@@ -83,7 +164,7 @@ export default class RoleInstances extends PerspectivesComponent
 
 RoleInstances.contextType = PSContext;
 
-RoleInstances.propTypes = {};
+RoleInstances.propTypes = { rol: PropTypes.string.isRequired };
 
 // Rol_ passes on through PSRol_:
 // contextinstance

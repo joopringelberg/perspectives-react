@@ -30,7 +30,7 @@ export default function roleInstance (CardComponent)
       this.cardRef = React.createRef();
       this.roleInstanceRef = React.createRef();
       this.handleKeyDown = this.handleKeyDown.bind(this);
-      this.handleClick = this.handleClick.bind(this);
+      this.setCursor = this.setCursor.bind(this);
     }
 
     handleKeyDown (event, setSelectedCard)
@@ -39,9 +39,10 @@ export default function roleInstance (CardComponent)
       switch(event.keyCode){
         case 13: // Enter
         case 32: // space
-          // shift-click: dispatch click event op de kaart zelf?!
           if ( event.shiftKey )
           {
+            // Click card to trigger custom behaviour associated with it,
+            // like opening a context.
             this.cardRef.current.dispatchEvent( new MouseEvent("click",
               {
                 bubbles: true,
@@ -63,11 +64,11 @@ export default function roleInstance (CardComponent)
       }
     }
 
-    handleClick( event )
+    setCursor( event )
     {
       event.preventDefault();
       event.stopPropagation();
-      this.roleInstanceRef.current.dispatchEvent( new CustomEvent('RoleInstanceClicked', { detail: this.context.rolinstance, bubbles: true }) );
+      this.roleInstanceRef.current.dispatchEvent( new CustomEvent('SetCursor', { detail: this.context.rolinstance, bubbles: true }) );
     }
 
     componentDidUpdate ()
@@ -90,9 +91,9 @@ export default function roleInstance (CardComponent)
                   key={component.context.rolinstance}
                   onDragStart={ev => ev.dataTransfer.setData("PSRol", JSON.stringify(component.context))}
                   onKeyDown={ev => component.handleKeyDown(ev, value.setSelectedCard)}
-                  onClick={component.handleClick}
+                  onClick={component.setCursor}
                   className="mb-2"
-                  onFocus={component.handleClick}
+                  onFocus={component.setCursor}
                  >
                   <CardComponent ref={component.cardRef} labelProperty={component.props.labelProperty}/>
                  </div>}

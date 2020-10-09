@@ -28,3 +28,5 @@ export {default as CardList} from "./cardlist.js";
 export {roleBindingCardHolder, SimpleCard, SimpleCardForRoleBinding, SimpleCardForRole, emptyCard} from "./cards.js";
 export {default as SetBoolAsCheckbox} from "./setboolascheckbox.js";
 export {default as DropZone} from "./dropzone.js";
+export {default as RoleTable} from "./roletable.js";
+ 

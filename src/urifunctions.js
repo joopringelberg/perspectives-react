@@ -14,6 +14,17 @@ export function deconstructSegments(s) {
   }
 }
 
+export function deconstructLocalName(s){
+  const localNameRegEx = new RegExp(".*\\$(\\w+)");
+  try
+  {
+    return s.match(localNameRegEx)[1];
+  } catch (e)
+  {
+    throw "deconstructLocalName: no local name in '" + s + "'.";
+  }
+}
+
 // A Namespace has the form "model:Name"
 export function externalRole( s )
 {

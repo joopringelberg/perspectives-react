@@ -28,7 +28,6 @@ class RoleInstanceIterator_ extends PerspectivesComponent
   computeInstanceData (rolInstance, rolBindingContext)
   {
     const component = this;
-    const currentCursor = component.context.cursor
     function bind_(rolInstance)
     {
       return function({rolinstance})
@@ -78,7 +77,7 @@ class RoleInstanceIterator_ extends PerspectivesComponent
             });
         }
       , rolinstance: rolInstance
-      , isselected: currentCursor === rolInstance
+      , isselected: component.context.cursor === rolInstance
       });
   }
 
@@ -220,7 +219,7 @@ class RoleInstanceIterator_ extends PerspectivesComponent
     }
     else
     {
-      return <div/>
+      return null;
     }
   }
 }

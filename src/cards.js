@@ -44,6 +44,7 @@ export function emptyCard (viewname, Content)
               </PSView.Consumer>
             </View>);
 }
+// TODO. Onderzoek de mogelijkheid om propTypes te gebruiken voor het resultaat van emptyCard.
 
 ///////////////////////////////////////////////////////////////////////////////
 // SIMPLECARD

@@ -26,13 +26,17 @@ module.exports = {
             }
           }
         ]
+      },
+      {
+        test: /\.css$/,
+        use: [ 'style-loader', 'css-loader' ]
       }]
   },
   externals:
     { "react": "commonjs2 react"
     , "react-dom": "commonjs2 react-dom"
     , "react-bootstrap": "commonjs2 react-bootstrap"
-    , "@primer/octicons-react": "PrimerOcticonsReact"
+    , "@primer/octicons-react": "commonjs2 @primer/octicons-react"
     , "prop-types": "commonjs2 prop-types"
     , "perspectives-proxy": "commonjs2 perspectives-proxy"
     , "PerspectivesGlobals":

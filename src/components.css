@@ -1,0 +1,5 @@
+/* Custom styles for Perspectives React components */
+.mediumDotted{
+  border-width: medium!important;
+  border-style: dotted!important;
+}

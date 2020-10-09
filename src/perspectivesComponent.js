@@ -45,7 +45,8 @@ export default class PerspectivesComponent extends Component
     Object.keys(component.state).forEach(
       function (prop)
       {
-        if (!component.state[prop])
+        if (!component.state[prop] && (typeof component.state[prop]) != "boolean")
+        // if ( !component.state.hasOwnProperty(prop) )
         {isComplete = false;}
       });
 

@@ -398,9 +398,15 @@ class TableCell extends PerspectivesComponent
             event.preventDefault();
             event.stopPropagation();
             break;
+          case 8: // backspace
+            if (component.props.rowSelected)
+            {
+              component.props.psrol.removerol();
+              event.stopPropagation();
+              event.preventDefault();
+            }
           default:
             // any other key will deselect the card.
-            // The event is passed on, so arrow keys can move the selection etc.
             component.inputRef.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: false, bubbles: true }) );
           }
       }
@@ -418,6 +424,9 @@ class TableCell extends PerspectivesComponent
             // Make the Form.Control display the original value.
             ReactDOM.findDOMNode(component.inputRef.current).value = component.state.value;
             event.preventDefault();
+            event.stopPropagation();
+          default:
+            // Let all other keys be handled by the control.
             event.stopPropagation();
         }
       }

@@ -348,8 +348,20 @@ class TableCell extends PerspectivesComponent
       {
         switch(event.keyCode){
           case 13: // Return
-            component.setState({editable:true});
-            component.inputRef.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: false, bubbles: true }) );
+            if (component.props.rowSelected)
+            {
+              // card to clipboard
+              setSelectedCard(
+                component.inputRef.current,
+                component.props.psrol.rolinstance,
+                component.props.psrol.roltype,
+                component.props.psrol.contexttype);
+            }
+            else
+            {
+              component.setState({editable:true});
+              component.inputRef.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: false, bubbles: true }) );
+            }
             event.preventDefault();
             event.stopPropagation();
             break;

@@ -27,7 +27,13 @@ export default function roleInstance (CardComponent)
     constructor (props)
     {
       super(props);
+      // This is a reference to the DOM element that displays the card itself.
+      // It will be passed on to CardComponent through its `ref` prop.
+      // We need it to send a click to the card to trigger its custom behaviour such as opening a context.
+      // We need it to select the card (so it moves to the clipboard).
       this.cardRef = React.createRef();
+      // This is the reference to the div DOM element that will be dragged and dropped.
+      // It receives focus and is used to dispatch the SetCursor custom event.
       this.roleInstanceRef = React.createRef();
       this.handleKeyDown = this.handleKeyDown.bind(this);
       this.setCursor = this.setCursor.bind(this);
@@ -83,6 +89,7 @@ export default function roleInstance (CardComponent)
     render ()
     {
       const component = this;
+      const props = Object.assign({ref: component.cardRef}, component.props);
       return  <AppContext.Consumer>{ value =>
                 <div draggable
                   aria-label={component.props.label}
@@ -94,9 +101,7 @@ export default function roleInstance (CardComponent)
                   onClick={component.setCursor}
                   className="mb-2"
                   onFocus={component.setCursor}
-                 >
-                  <CardComponent ref={component.cardRef} labelProperty={component.props.labelProperty}/>
-                 </div>}
+                 ><CardComponent {...props}/></div>}
               </AppContext.Consumer>
     }
   }

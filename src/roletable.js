@@ -6,7 +6,7 @@ import PerspectivesComponent from "./perspectivescomponent.js";
 
 const Perspectives = require("perspectives-proxy").Perspectives;
 
-import {PSRoleInstances, PSRol, PSContext} from "./reactcontexts";
+import {PSRoleInstances, PSRol, PSContext, AppContext} from "./reactcontexts";
 
 import RoleInstances from "./roleinstances.js";
 
@@ -14,7 +14,7 @@ import roleInstance from "./roleinstance.js";
 
 import RoleInstanceIterator from "./roleinstanceiterator.js";
 
-import {deconstructLocalName} from "./urifunctions.js";
+import {deconstructLocalName, getQualifiedPropertyName} from "./urifunctions.js";
 
 import {PlusIcon} from '@primer/octicons-react'
 
@@ -23,6 +23,7 @@ import
   , Navbar
   , Table
   , Form
+  , Card
   } from "react-bootstrap";
 
 import "./components.css";
@@ -32,13 +33,14 @@ const PropTypes = require("prop-types");
 ////////////////////////////////////////////////////////////////////////////////
 // ROLETABLE
 ////////////////////////////////////////////////////////////////////////////////
+// Context type of RoleTable is PSContext
 export default class RoleTable extends PerspectivesComponent
 {
   render ()
   {
     const component = this;
     return (<RoleInstances rol={component.props.roletype}>
-        <RoleTable_ viewname={component.props.viewname}/>
+        <RoleTable_ viewname={component.props.viewname} cardcolumn={component.props.cardcolumn}/>
         <TableControls/>
       </RoleInstances>)
   }
@@ -46,10 +48,12 @@ export default class RoleTable extends PerspectivesComponent
 
 RoleTable.propTypes =
   { "viewname": PropTypes.string.isRequired
+  , "cardcolumn": PropTypes.string.isRequired
   };
 
 RoleTable.contextType = PSContext;
 
+// Context type of RoleTable_ is PSRoleInstances.
 class RoleTable_ extends PerspectivesComponent
 {
   constructor (props)
@@ -58,9 +62,10 @@ class RoleTable_ extends PerspectivesComponent
     this.state.propertyNames = undefined;
     this.state.column = undefined;
     this.state.active = false;
+    this.state.rowSelected = false;
     this.eventDiv = React.createRef();
     this.activateTable = this.activateTable.bind( this );
-    this.handleKeyPress = this.handleKeyPress.bind( this );
+    this.handleKeyDown = this.handleKeyDown.bind( this );
   }
 
   componentDidMount ()
@@ -100,6 +105,23 @@ class RoleTable_ extends PerspectivesComponent
           e.stopPropagation();
         },
         false);
+      component.eventDiv.current.addEventListener('SetSelectRow',
+        function (e)
+        {
+          // e.detail must be a boolean value.
+          if ( e.detail )
+          {
+            component.setState(
+              { rowSelected: e.detail
+              , column: getQualifiedPropertyName( component.props.cardcolumn, component.state.propertyNames)});
+          }
+          else
+          {
+            component.setState( { rowSelected: e.detail } );
+          }
+          e.stopPropagation();
+        },
+        false);
     }
   }
 
@@ -109,23 +131,40 @@ class RoleTable_ extends PerspectivesComponent
     component.setState( { active: true});
   }
 
-  handleKeyPress (event)
+  handleKeyDown (event)
   {
     const component = this;
-      switch(event.keyCode){
-        case 9: // Horizontal Tab
-        case 11: // Vertical Tab
-          component.setState({active: false});
-          break;
+    const i = component.state.propertyNames.indexOf( component.state.column );
+
+    switch(event.keyCode){
+      case 9: // Horizontal Tab
+      case 11: // Vertical Tab
+        component.setState({active: false});
+        break;
+      case 39: // Right arrow
+        if (i < component.state.propertyNames.length - 1)
+        {
+          component.setState({column: component.state.propertyNames[i + 1]});
         }
+        event.stopPropagation();
+        break;
+      case 37: // Left arrow
+        if (i > 0)
+        {
+          component.setState({column: component.state.propertyNames[i - 1]});
+        }
+        event.stopPropagation();
+        break;
+      }
   }
 
   render()
   {
     const component = this;
-
+    var qualifiedColumnName;
     if (component.stateIsComplete())
     {
+      qualifiedColumnName = getQualifiedPropertyName( component.props.cardcolumn, component.state.propertyNames);
       return (<PSContext.Consumer>{
                 pscontext =>
                   <Table striped bordered hover size="sm">
@@ -139,7 +178,7 @@ class RoleTable_ extends PerspectivesComponent
                       tabIndex="0"
                       ref={component.eventDiv}
                       onFocus={ component.activateTable }
-                      onKeyDown={ component.handleKeyPress }
+                      onKeyDown={ component.handleKeyDown }
                     >
                       <RoleInstanceIterator>
                         <TableRow
@@ -147,6 +186,8 @@ class RoleTable_ extends PerspectivesComponent
                           myroletype={pscontext.myroletype}
                           column={component.state.column}
                           tableisactive = {component.state.active}
+                          cardcolumn = {qualifiedColumnName}
+                          rowSelected = {component.state.rowSelected}
                           />
                       </RoleInstanceIterator>
                     </tbody>
@@ -170,57 +211,24 @@ class TableRow extends PerspectivesComponent
   {
     super(props);
     const component = this;
-    component.state.propertyNames = props.propertynames;
-    this.handleKeyPress = this.handleKeyPress.bind(this);
-    this.ref = React.createRef();
-  }
-
-  indexOfCurrentColumn()
-  {
-    return this.state.propertyNames.indexOf( this.props.column );
-  }
-
-  handleKeyPress (event)
-  {
-    const component = this;
-    const i = component.indexOfCurrentColumn();
-
-    if (component.props.tableisactive)
-    {
-      switch(event.keyCode){
-        case 39: // Right arrow
-          if (i < component.state.propertyNames.length - 1)
-          {
-            component.ref.current.dispatchEvent( new CustomEvent('SetColumn', { detail: component.props.propertynames[i + 1], bubbles: true }) );
-          }
-          event.stopPropagation();
-          break;
-        case 37: // Left arrow
-          if (i > 0)
-          {
-            component.ref.current.dispatchEvent( new CustomEvent('SetColumn', { detail: component.props.propertynames[i - 1], bubbles: true }) );
-          }
-          event.stopPropagation();
-          break;
-        }
-    }
   }
 
   render()
   {
     const component = this;
     return  <PSContext.Consumer>{
-              pscontext =>  <tr onKeyDown={ component.handleKeyPress} ref={component.ref}
-                            >{ component.props.propertynames.map( pn =>
-                              <TableCell
-                                key = {pn}
-                                propertyname = {pn}
-                                roleinstance = {component.context.rolinstance}
-                                roletype = {component.context.roltype}
-                                myroletype = {pscontext.myroletype}
-                                isselected = { component.props.tableisactive && !!component.context.isselected && (component.props.column == pn) }
-                              /> ) }
-                            </tr>
+              pscontext =>  <tr>{
+                              component.props.propertynames.map( pn =>
+                                <TableCell
+                                  key = {pn}
+                                  propertyname = {pn}
+                                  iscard = {pn == component.props.cardcolumn}
+                                  psrol= {component.context}
+                                  myroletype = {pscontext.myroletype}
+                                  isselected = { component.props.tableisactive && !!component.context.isselected && (component.props.column == pn) }
+                                  rowSelected = {component.props.rowSelected}
+                                /> )
+                            }</tr>
             }</PSContext.Consumer>
   }
 }
@@ -232,6 +240,8 @@ TableRow.propTypes =
   , myroletype: PropTypes.string.isRequired
   , column: PropTypes.string.isRequired
   , tableisactive: PropTypes.bool.isRequired
+  , cardcolumn: PropTypes.string.isRequired
+  , rowSelected: PropTypes.bool.isRequired
   };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -250,9 +260,13 @@ class TableCell extends PerspectivesComponent
     // value is an array of strings.
     this.state.value = undefined;
     this.state.editable = false;
+    this.state.cardIsSelected = false;
     this.select = this.select.bind(this);
-    this.handleKeyPress = this.handleKeyPress.bind(this);
-    this.ref = React.createRef();
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+    // A reference to the Form.Control that handles input.
+    // It is used to dispatch the custom SetCursor and SetColumn events.
+    // It also receives focus.
+    this.inputRef = React.createRef();
   }
 
   componentDidMount ()
@@ -263,9 +277,9 @@ class TableCell extends PerspectivesComponent
       {
         component.addUnsubscriber(
           pproxy.getProperty(
-            component.props.roleinstance,
+            component.props.psrol.rolinstance,
             component.props.propertyname,
-            component.props.roletype,
+            component.props.psrol.roltype,
             function (propertyValues)
             {
               component.setState({value: propertyValues});
@@ -287,7 +301,7 @@ class TableCell extends PerspectivesComponent
         function(pproxy)
         {
           pproxy.setProperty(
-            component.props.roleinstance,
+            component.props.psrol.rolinstance,
             component.props.propertyname,
             val,
             component.props.myroletype );
@@ -297,34 +311,74 @@ class TableCell extends PerspectivesComponent
 
   // Set the cursor in the surrounding RoleInstances, set the column in the RoleTable_.
   // React will then re-render, giving TableCell the value true for the isselected prop.
-  select ()
+  // Only called in click handlers.
+  // When used with shift, selects the card instead.
+  select (event)
   {
     event.preventDefault();
     event.stopPropagation();
-    this.ref.current.dispatchEvent( new CustomEvent('SetCursor', { detail: this.props.roleinstance, bubbles: true }) );
-    this.ref.current.dispatchEvent( new CustomEvent('SetColumn', { detail: this.props.propertyname, bubbles: true }) );
+    if ( event.shiftKey )
+    {
+      this.inputRef.current.dispatchEvent( new CustomEvent('SetCursor', { detail: this.props.psrol.rolinstance, bubbles: true }) );
+      this.inputRef.current.dispatchEvent( new CustomEvent('SetColumn', { detail: this.props.propertyname, bubbles: true }) );
+      this.inputRef.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: true, bubbles: true }) );
+    }
+    else
+    {
+      this.inputRef.current.dispatchEvent( new CustomEvent('SetCursor', { detail: this.props.psrol.rolinstance, bubbles: true }) );
+      this.inputRef.current.dispatchEvent( new CustomEvent('SetColumn', { detail: this.props.propertyname, bubbles: true }) );
+    }
   }
 
   componentDidUpdate(prevProps, prevState)
   {
     const component = this;
-    if (!prevProps.isselected && component.props.isselected)
+    if (component.props.isselected && (!prevProps.isselected || component.props.iscard))
     {
-      component.ref.current.focus();
+      // Gives the Form.Control the focus, activating it.
+      component.inputRef.current.focus();
     }
   }
 
-  handleKeyPress (event)
+  // NOTE. setSelectedCard is only bound when (component.props.isselected && component.props.iscard).
+  handleKeyDown (event, setSelectedCard)
     {
       const component = this;
       if (component.props.isselected && !component.state.editable)
       {
         switch(event.keyCode){
           case 13: // Return
-          case 32: // Space
-            component.setState({editable:true})
+            component.setState({editable:true});
+            component.inputRef.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: false, bubbles: true }) );
             event.preventDefault();
+            event.stopPropagation();
             break;
+          case 32: // Space
+            if (component.props.rowSelected)
+            {
+              // card to clipboard
+              setSelectedCard(
+                component.inputRef.current,
+                component.props.psrol.rolinstance,
+                component.props.psrol.roltype,
+                component.props.psrol.contexttype);
+            }
+            else if (event.shiftKey)
+            {
+              component.inputRef.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: true, bubbles: true }) );
+            }
+            else
+            {
+              component.setState({editable:true})
+              component.inputRef.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: false, bubbles: true }) );
+            }
+            event.preventDefault();
+            event.stopPropagation();
+            break;
+          default:
+            // any other key will deselect the card.
+            // The event is passed on, so arrow keys can move the selection etc.
+            component.inputRef.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: false, bubbles: true }) );
           }
       }
       else if (component.props.isselected && component.state.editable)
@@ -334,13 +388,14 @@ class TableCell extends PerspectivesComponent
             component.changeValue(event.target.value);
             component.setState({editable: false})
             event.preventDefault();
-            event.stopPropagation()
+            event.stopPropagation();
             break;
           case 27: // Escape
             component.setState({editable: false})
-            ReactDOM.findDOMNode(component.ref.current).value = component.state.value;
+            // Make the Form.Control display the original value.
+            ReactDOM.findDOMNode(component.inputRef.current).value = component.state.value;
             event.preventDefault();
-            event.stopPropagation()
+            event.stopPropagation();
         }
       }
     }
@@ -348,15 +403,16 @@ class TableCell extends PerspectivesComponent
   render ()
   {
     const component = this;
+    ////// EDITABLE
     if (component.props.isselected && component.state.editable)
     {
       return (
         <td className="mediumDotted border-primary">
           <Form.Control
-            ref={ component.ref }
+            ref={ component.inputRef }
             aria-label={deconstructLocalName(component.props.propertyname)}
             defaultValue={component.state.value}
-            onKeyDown={ component.handleKeyPress }
+            onKeyDown={ component.handleKeyDown }
             onBlur={function(e)
               {
                 component.changeValue(e.target.value);
@@ -366,35 +422,81 @@ class TableCell extends PerspectivesComponent
           />
         </td>)
     }
+    ///// SELECTED
     else if (component.props.isselected)
     {
-      return (
-        <td className="mediumDotted border-primary">
-          <Form.Control readOnly plaintext
-            ref={ component.ref }
-            tabIndex="-1"
-            aria-label={deconstructLocalName(component.props.propertyname)}
-            defaultValue={component.state.value}
-            onKeyDown={ component.handleKeyPress }
-            onClick={ component.select }
-            onFocus={ component.select }
-          />
-        </td>)
+      if ( component.props.iscard )
+      {
+        return (
+          <td className="mediumDotted border-primary">
+            <AppContext.Consumer>{ appcontext =>
+              <div
+                ref={component.inputRef}
+                tabIndex="-1"
+                aria-label={component.state.value}
+                onKeyDown={ ev => component.handleKeyDown(ev, appcontext.setSelectedCard ) }
+                onClick={component.select}
+
+                draggable
+                onDragStart={ev => ev.dataTransfer.setData("PSRol", JSON.stringify(component.props.psrol))}
+              >
+                <Card className="bg-light">
+                  <p>{component.state.value}</p>
+                </Card>
+             </div>}
+            </AppContext.Consumer>
+          </td>)
+      }
+      else
+      {
+        return (
+          <td className="mediumDotted border-primary">
+            <Form.Control readOnly plaintext
+              ref={ component.inputRef }
+              tabIndex="-1"
+              aria-label={deconstructLocalName(component.props.propertyname)}
+              onKeyDown={ component.handleKeyDown }
+              onClick={ component.select }
+
+              defaultValue={component.state.value}
+            />
+          </td>)
+      }
     }
+    ///// NEITHER EDITABLE NOR SELECTED
     else
     {
-      return (
-        <td
-        >
-          <Form.Control readOnly plaintext
-            ref={ component.ref }
-            tabIndex="-1"
-            aria-label={deconstructLocalName(component.props.propertyname)}
-            defaultValue={component.state.value}
-            onClick={ component.select }
-            onFocus={ component.select }
-          />
-        </td>)
+      if ( component.props.iscard )
+      {
+        return (
+          <td>
+            <AppContext.Consumer>{ value =>
+              <div
+                ref={component.inputRef}
+                tabIndex="-1"
+                aria-label={component.state.value}
+                onClick={component.select}
+              >
+                <Card className="bg-light">
+                  <p>{component.state.value}</p>
+                </Card>
+              </div>}
+            </AppContext.Consumer>
+          </td>)
+      }
+      else
+      {
+        return (
+          <td>
+            <Form.Control readOnly plaintext
+              ref={ component.inputRef }
+              tabIndex="-1"
+              aria-label={deconstructLocalName(component.props.propertyname)}
+              onClick={ component.select }
+              defaultValue={component.state.value}
+            />
+          </td>)
+      }
     }
 
   }
@@ -402,11 +504,45 @@ class TableCell extends PerspectivesComponent
 
 TableCell.propTypes =
   { propertyname: PropTypes.string.isRequired
-  , roleinstance: PropTypes.string.isRequired
-  , roletype: PropTypes.string.isRequired
   , myroletype: PropTypes.string.isRequired
   , isselected: PropTypes.bool.isRequired
+  , rowSelected: PropTypes.bool.isRequired
+  , iscard: PropTypes.bool.isRequired
+  , psrol: PropTypes.shape(PSRol).isRequired
   }
+
+////////////////////////////////////////////////////////////////////////////////
+// ROWCARD
+////////////////////////////////////////////////////////////////////////////////
+// class RowCard extends PerspectivesComponent
+// {
+//   render ()
+//   {
+//     const component = this;
+//     return  <AppContext.Consumer>{ appcontext =>
+//               <div draggable
+//                 aria-label={component.props.val}
+//                 tabIndex={component.props.tabIndex}
+//
+//
+//             }</AppContext.Consumer>
+//   }
+// }
+//
+// RowCard.propTypes = { val: PropTypes.arrayOf(PropTypes.string) };
+
+
+// const RowCard_ = React.forwardRef((props, ref) =>
+//   <Card ref={ref} aria-label={props.val}>
+//     <Card.Body>
+//       <p>{props.val}</p>
+//     </Card.Body>
+//   </Card>);
+//
+// const RowCard = roleInstance( RowCard_ );
+//
+// // `val` is not required, as the role may not yet have a value for the property.
+// RowCard.propTypes = { val: PropTypes.arrayOf(PropTypes.string) };
 
 ////////////////////////////////////////////////////////////////////////////////
 // TABLECONTROLS

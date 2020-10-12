@@ -125,7 +125,7 @@ class RoleTable_ extends PerspectivesComponent
     }
   }
 
-  activateTable ()
+  activateTable (event)
   {
     const component = this;
     component.setState( { active: true});
@@ -139,6 +139,16 @@ class RoleTable_ extends PerspectivesComponent
     switch(event.keyCode){
       case 9: // Horizontal Tab
       case 11: // Vertical Tab
+        if (event.shiftKey)
+        {
+          // TODO. DIT WERKT NIET.
+          // If shift-tab, stop the event and throw another shift-tab.
+          // event.stopPropagation();
+          // event.preventDefault();
+          // See: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/KeyboardEvent
+          // component.eventDiv.current.dispatchEvent( new KeyboardEvent("keypress", {key: "\t", shiftKey: true}) );
+        }
+        // Leaving the table.
         component.setState({active: false});
         break;
       case 39: // Right arrow
@@ -368,6 +378,7 @@ class TableCell extends PerspectivesComponent
           case 32: // Space
             if (component.props.rowSelected)
             {
+              // TODO: If shift, emulate click.
               // card to clipboard
               setSelectedCard(
                 component.inputRef.current,
@@ -419,7 +430,7 @@ class TableCell extends PerspectivesComponent
     if (component.props.isselected && component.state.editable)
     {
       return (
-        <td className="mediumDotted border-primary">
+        <td >
           <Form.Control
             ref={ component.inputRef }
             aria-label={deconstructLocalName(component.props.propertyname)}
@@ -440,36 +451,35 @@ class TableCell extends PerspectivesComponent
       if ( component.props.iscard )
       {
         return (
-          <td className="mediumDotted border-primary">
+          <td >
             <AppContext.Consumer>{ appcontext =>
-              <div
+              <Form.Control
+                readOnly
+                plaintext
                 ref={component.inputRef}
                 tabIndex="-1"
                 aria-label={component.state.value}
                 onKeyDown={ ev => component.handleKeyDown(ev, appcontext.setSelectedCard ) }
                 onClick={component.select}
+                defaultValue={component.state.value}
 
+                className="shadow"
                 draggable
                 onDragStart={ev => ev.dataTransfer.setData("PSRol", JSON.stringify(component.props.psrol))}
-              >
-                <Card className="bg-light">
-                  <p>{component.state.value}</p>
-                </Card>
-             </div>}
+              />}
             </AppContext.Consumer>
           </td>)
       }
       else
       {
         return (
-          <td className="mediumDotted border-primary">
+          <td>
             <Form.Control readOnly plaintext
               ref={ component.inputRef }
               tabIndex="-1"
               aria-label={deconstructLocalName(component.props.propertyname)}
               onKeyDown={ component.handleKeyDown }
               onClick={ component.select }
-
               defaultValue={component.state.value}
             />
           </td>)
@@ -478,39 +488,20 @@ class TableCell extends PerspectivesComponent
     ///// NEITHER EDITABLE NOR SELECTED
     else
     {
-      if ( component.props.iscard )
-      {
-        return (
-          <td>
-            <AppContext.Consumer>{ value =>
-              <div
-                ref={component.inputRef}
-                tabIndex="-1"
-                aria-label={component.state.value}
-                onClick={component.select}
-              >
-                <Card className="bg-light">
-                  <p>{component.state.value}</p>
-                </Card>
-              </div>}
-            </AppContext.Consumer>
-          </td>)
-      }
-      else
-      {
-        return (
-          <td>
-            <Form.Control readOnly plaintext
-              ref={ component.inputRef }
-              tabIndex="-1"
-              aria-label={deconstructLocalName(component.props.propertyname)}
-              onClick={ component.select }
-              defaultValue={component.state.value}
-            />
-          </td>)
-      }
+      return (
+        <td>
+          <Form.Control
+            readOnly
+            plaintext
+            className={component.props.iscard ? "shadow" : null}
+            ref={component.inputRef}
+            tabIndex="-1"
+            aria-label={component.state.value}
+            onClick={component.select}
+            defaultValue={component.state.value}
+          />
+        </td>)
     }
-
   }
 }
 
@@ -520,47 +511,36 @@ TableCell.propTypes =
   , isselected: PropTypes.bool.isRequired
   , rowSelected: PropTypes.bool.isRequired
   , iscard: PropTypes.bool.isRequired
-  , psrol: PropTypes.shape(PSRol).isRequired
+  , psrol: PropTypes.shape(
+    { contextinstance: PropTypes.string.isRequired
+    , contexttype: PropTypes.string.isRequired
+    , roltype: PropTypes.string.isRequired
+    , bind_: PropTypes.func
+    , checkbinding: PropTypes.func
+    , removerol: PropTypes.func
+    , rolinstance: PropTypes.string.isRequired
+    , isselected: PropTypes.bool.isRequired
+    }
+  ).isRequired
   }
-
-////////////////////////////////////////////////////////////////////////////////
-// ROWCARD
-////////////////////////////////////////////////////////////////////////////////
-// class RowCard extends PerspectivesComponent
-// {
-//   render ()
-//   {
-//     const component = this;
-//     return  <AppContext.Consumer>{ appcontext =>
-//               <div draggable
-//                 aria-label={component.props.val}
-//                 tabIndex={component.props.tabIndex}
-//
-//
-//             }</AppContext.Consumer>
-//   }
-// }
-//
-// RowCard.propTypes = { val: PropTypes.arrayOf(PropTypes.string) };
-
-
-// const RowCard_ = React.forwardRef((props, ref) =>
-//   <Card ref={ref} aria-label={props.val}>
-//     <Card.Body>
-//       <p>{props.val}</p>
-//     </Card.Body>
-//   </Card>);
-//
-// const RowCard = roleInstance( RowCard_ );
-//
-// // `val` is not required, as the role may not yet have a value for the property.
-// RowCard.propTypes = { val: PropTypes.arrayOf(PropTypes.string) };
 
 ////////////////////////////////////////////////////////////////////////////////
 // TABLECONTROLS
 ////////////////////////////////////////////////////////////////////////////////
 class TableControls extends PerspectivesComponent
 {
+  handleKeyDown (event)
+    {
+      const component = this;
+        switch(event.keyCode){
+          case 13: // Return
+          case 32: // Space
+            component.context.createRole( function() {});
+            event.preventDefault();
+            event.stopPropagation();
+            break;
+        }
+  }
   render ()
   {
     const component = this;
@@ -569,6 +549,7 @@ class TableControls extends PerspectivesComponent
                 className="ml-3 mr-3"
                 tabIndex="0"
                 onClick={ ev => component.context.createRole( function() {}) }
+                onKeyDown={ ev => component.handleKeyDown(ev)}
               >
                 <PlusIcon alt="Add row" aria-label="Click to add a row" size='medium'/>
               </div>

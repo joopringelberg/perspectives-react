@@ -27,8 +27,12 @@ export default class ExternalRole extends PerspectivesComponent
               const updater = {value:
                 { contextinstance: component.context.contextinstance
                 , contexttype: component.context.contexttype
-                , rolinstance: externalRole( component.context.contextinstance)
                 , roltype: rolType[0]
+                , rolinstance: externalRole( component.context.contextinstance)
+                , bind_: function(){}
+                , checkbinding: function(ignore, callback){ callback(true)}
+                , removerol: function(){}
+                , isselected: false
                 }}
               component.setState( updater );
             }

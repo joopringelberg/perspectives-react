@@ -39,6 +39,12 @@ export function externalRole( s )
   }
 }
 
+export function isExternalRole( s )
+{
+  const r = new RegExp("External$");
+  return !!s.match(r);
+}
+
 // Construct a directoryname from a modelname.
 // Each modelname must be unique.
 // It is the composition of "model:" and the name proper.

@@ -5,7 +5,7 @@ const Perspectives = require("perspectives-proxy").Perspectives;
 import PerspectivesComponent from "./perspectivescomponent.js";
 import ContextOfRole from "./contextofrole.js";
 import {PSContext} from "./reactcontexts";
-import { deconstructModelName, deconstructSegments } from "./urifunctions.js";
+import { deconstructModelName, deconstructSegments, isExternalRole } from "./urifunctions.js";
 
 // TODO. Even though PerspectivesGlobals has been declared external, we cannot import it here.
 // Doing so will cause a runtime error if the calling program has not put it on the global scope in time.
@@ -61,6 +61,7 @@ export default class Screen extends PerspectivesComponent
     // The role that 'me' plays in the current context. We pass it on to ContextOfRole
     // and that component includes it in the PSContext it provides to descendants.
     this.state.myroletype = undefined;
+    this.state.rolinstance = undefined;
   }
 
   componentDidMount ()
@@ -73,16 +74,42 @@ export default class Screen extends PerspectivesComponent
           pproxy.getUserIdentifier(
             function(userIdentifier)
             {
-              component.addUnsubscriber(
-                pproxy.getMeForContext( component.props.rolinstance,
-                  function(userRoles)
-                  {
-                    component.setState({myroletype: userRoles[0], useridentifier: userIdentifier[0]});
-                  }
-                ));
-            }))
-      }
-    );
+              if ( isExternalRole (component.props.rolinstance ))
+              {
+                component.addUnsubscriber(
+                  pproxy.getMeForContext( component.props.rolinstance,
+                    function(userRoles)
+                    {
+                      component.setState(
+                        { myroletype: userRoles[0]
+                        , useridentifier: userIdentifier[0]
+                        , rolinstance: component.props.rolinstance
+                        });
+                    }
+                  ));
+              }
+              else
+              {
+                component.addUnsubscriber(
+                  pproxy.getBinding(
+                    component.props.rolinstance,
+                    function( externalRole )
+                    {
+                      component.addUnsubscriber(
+                        pproxy.getMeForContext( externalRole[0],
+                          function(userRoles)
+                          {
+                            component.setState(
+                              { myroletype: userRoles[0]
+                              , useridentifier: userIdentifier[0]
+                              , rolinstance: externalRole[0]
+                              });
+                          }
+                        ));
+                      }));
+              }
+            }));
+      });
   }
 
   render ()
@@ -95,7 +122,8 @@ export default class Screen extends PerspectivesComponent
         loader: () => importRoleScreen( component.state.myroletype, component.state.useridentifier ),
         loading: Loading,
       });
-      return <ContextOfRole rolinstance={component.props.rolinstance} myroletype={component.state.myroletype}><LoadableScreen/></ContextOfRole>;
+      // gaat fout indien component.props.rolinstance een contextrol is.
+      return <ContextOfRole rolinstance={component.state.rolinstance} myroletype={component.state.myroletype}><LoadableScreen/></ContextOfRole>;
     }
     else
       return <div></div>

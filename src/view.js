@@ -42,6 +42,21 @@ class View_ extends PerspectivesComponent
     }
   }
 
+  deleteProperty (ln)
+  {
+    const component = this;
+    const qualifiedPropertyName = getQualifiedPropertyName(ln, component.state.viewproperties);
+    Perspectives.then(
+      function(pproxy)
+      {
+        pproxy.deleteProperty(
+          component.state.rolinstance,
+          qualifiedPropertyName,
+          component.props.myroletype);
+      }
+    );
+  }
+
   componentDidMount ()
   {
     const component = this;
@@ -90,8 +105,8 @@ class View_ extends PerspectivesComponent
                       {
                         component.changeValue(ln, val);
                       }
-
                     }
+                , propdel: (ln) => component.deleteProperty( ln )
                 });
               // Then fetch the values of the properties, to complete the state.
               propertyNames.forEach(

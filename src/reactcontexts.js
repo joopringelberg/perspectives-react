@@ -44,6 +44,7 @@ export const PSView = React.createContext(
   , viewproperties: []
   , propval: function(){}
   , propset: function(){}
+  , propdel: function(){}
   // And there will be a member for each property, holding its values.
   });
 

@@ -472,7 +472,7 @@ class TableCell extends PerspectivesComponent
                 onClick={component.select}
                 defaultValue={component.state.value}
 
-                className="shadow"
+                className={component.props.rowSelected ? "bg-info shadow" : "shadow"}
                 draggable
                 onDragStart={ev => ev.dataTransfer.setData("PSRol", JSON.stringify(component.props.psrol))}
               />}

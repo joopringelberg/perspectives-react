@@ -29,4 +29,4 @@ export {roleBindingCardHolder, SimpleCard, SimpleCardForRoleBinding, SimpleCardF
 export {default as SetBoolAsCheckbox} from "./setboolascheckbox.js";
 export {default as DropZone} from "./dropzone.js";
 export {default as RoleTable} from "./roletable.js";
- 
+export {default as FileDropZone} from "./filedropzone.js"

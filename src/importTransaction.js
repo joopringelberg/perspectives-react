@@ -1,6 +1,6 @@
 const Perspectives = require("perspectives-proxy").Perspectives;
 
-export default function importContexts(fileList)
+export default function importTransaction(theFile)
 {
   // A slight check.
   function isTransaction (t)
@@ -10,7 +10,6 @@ export default function importContexts(fileList)
     if ( !t.contents.deltas ) { return false; }
     return true;
   }
-  const theFile = fileList.item(0)
   if (theFile)
   {
     if (theFile.type == "application/json")

@@ -48,7 +48,6 @@ export default function FileDropZone(props)
                     overlay={renderTooltip}
                   >
                   <div onDragOver={ev => ev.preventDefault()}
-                      className="ml-3 mr-3"
                       aria-dropeffect="execute"
                       aria-describedby="Select a file"
                       tabIndex="0"
@@ -65,7 +64,6 @@ export default function FileDropZone(props)
   else
   {
     return  <div onDragOver={ev => ev.preventDefault()}
-              className="ml-3 mr-3"
               aria-dropeffect="execute"
               aria-describedby="Select a file"
               tabIndex="0"

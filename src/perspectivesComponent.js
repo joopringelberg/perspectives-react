@@ -10,11 +10,19 @@ export default class PerspectivesComponent extends Component
     super(props);
     this.state = {};
     this.unsubscribers = [];
+    this.__mounted__ = true;
   }
+
+  // componentDidMount ()
+  // {
+  //   this.__mounted__ = true;
+  //   super.componentDidMount();
+  // }
 
   componentWillUnmount ()
   {
     const component = this;
+    this.__mounted__ = false;
     Perspectives.then(
       function(pproxy)
       {
@@ -25,6 +33,14 @@ export default class PerspectivesComponent extends Component
             pproxy.send(unsubscriber, function(){});
           });
       });
+  }
+
+  setState (updater, optionalCallback)
+  {
+    if (this.__mounted__)
+    {
+      super.setState(updater, optionalCallback)
+    }
   }
 
   // A single component may perform multiple calls through the API. All of these may connect a callback

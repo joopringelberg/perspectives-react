@@ -8,19 +8,22 @@ export default function SetBoolAsCheckbox ({propertyname, label})
 {
   return  <PSView.Consumer>
             {sprops => {
-              const val = sprops.propval(propertyname)[0] == ["true"];
-              return <Form.Group as={Row}>
+              // If the value is [], val will be false;
+              // If the value is ["true"], val will be true;
+              // If the value is ["false"], val will be false.
+              // So we have negation by failure (to have a value).
+              const val = sprops.propval(propertyname)[0] == "true";
+              return <Form.Group as={Row} controlId={propertyname + "_BoolAsCheckbox"}>
                 <Col>
-                  <Form.Check
-                    inline
-                    aria-labelledby={propertyname + "_BoolAsCheckbox"}
-                    checked={val ? "checked" : null}
-                    aria-checked={!!val}
+                  <input
+                    id={propertyname + "_BoolAsCheckbox"}
+                    type="checkbox"
+                    defaultChecked={val ? "checked" : null}
                     disabled={val ? "disabled" : null}
                     // We start out with false and only allow changing once, so that must be to "true"!
                     onChange={e => sprops.propset(propertyname, "true" )} />
                 </Col>
-                <Form.Label id={propertyname + "_BoolAsCheckbox"}>{label}</Form.Label>
+                <Form.Label>{label}</Form.Label>
               </Form.Group>}}
           </PSView.Consumer>
 

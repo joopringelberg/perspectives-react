@@ -67,6 +67,11 @@ export default function roleInstance (CardComponent)
           event.preventDefault();
           event.stopPropagation();
           break;
+        case 8: // Backspace
+          component.context.removerol();
+          event.preventDefault();
+          event.stopPropagation();
+          break;
       }
     }
 

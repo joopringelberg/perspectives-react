@@ -27,9 +27,10 @@ export function roleBindingCardHolder( CardComponent )
 // EMPTYCARD
 // Bind the result of emptyCard to a name, then use that name as a component:
 //   const ContactCard = emptyCard( "allProperties", value => <p>Contact card of {value.propval("Voornaam")}.</p>);
-//   <ContactCard/>
+//   <ContactCard labelProperty="Voornaam"/>
 // Use roleInstance to make it draggable:
 //   const ContactCard = roleInstance( emptyCard( "allProperties", value => <p>Contact card of {value.propval("Voornaam")}.</p>) );
+// This component should supply a prop `labelProperty` that will be read as property value from the view, functioning as the ARIA-label.
 ////////////////////////////////////////////////////////////////////////////////
 export function emptyCard (viewname, Content)
   {

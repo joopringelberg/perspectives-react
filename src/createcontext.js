@@ -37,10 +37,10 @@ export default class CreateContext extends PerspectivesComponent
           component.context.contextinstance,
           component.context.contexttype,
           component.context.myroletype,
-          function( buitenRolId )
+          function( contextAndExternalRole )
           {
-            // Resolve the promise returned by calling create.
-            resolver( buitenRolId[0] );
+            // Resolve the promise returned by calling create; return the new external role identifier.
+            resolver( contextAndExternalRole[0] );
           });
       });
     return p;

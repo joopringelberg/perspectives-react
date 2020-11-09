@@ -1,4 +1,5 @@
 const React = require("react");
+const PropTypes = require("prop-types");
 import Loadable from 'react-loadable';
 const Perspectives = require("perspectives-proxy").Perspectives;
 
@@ -122,7 +123,6 @@ export default class Screen extends PerspectivesComponent
         loader: () => importRoleScreen( component.state.myroletype, component.state.useridentifier ),
         loading: Loading,
       });
-      // gaat fout indien component.props.rolinstance een contextrol is.
       return <ContextOfRole rolinstance={component.state.rolinstance} myroletype={component.state.myroletype}><LoadableScreen/></ContextOfRole>;
     }
     else
@@ -132,4 +132,4 @@ export default class Screen extends PerspectivesComponent
 
 Screen.contextType = PSContext;
 
-Screen.propTypes = {};
+Screen.propTypes = {rolinstance: PropTypes.string.isRequired};

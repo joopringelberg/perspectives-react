@@ -39,9 +39,9 @@ export default class RoleTable extends PerspectivesComponent
   render ()
   {
     const component = this;
-    return (<RoleInstances rol={component.props.roletype}>
+    return (<RoleInstances rol={component.props.roletype} contexttocreate={component.props.contexttocreate}>
         <RoleTable_ viewname={component.props.viewname} cardcolumn={component.props.cardcolumn}/>
-        <TableControls/>
+        <TableControls createButton={ component.props.createButton }/>
       </RoleInstances>)
   }
 }
@@ -49,6 +49,7 @@ export default class RoleTable extends PerspectivesComponent
 RoleTable.propTypes =
   { "viewname": PropTypes.string.isRequired
   , "cardcolumn": PropTypes.string.isRequired
+  , "contexttocreate": PropTypes.string
   };
 
 RoleTable.contextType = PSContext;
@@ -177,7 +178,7 @@ class RoleTable_ extends PerspectivesComponent
       qualifiedColumnName = getQualifiedPropertyName( component.props.cardcolumn, component.state.propertyNames);
       return (<PSContext.Consumer>{
                 pscontext =>
-                  <Table striped bordered hover size="sm">
+                  <Table striped bordered hover size="sm" className="mb-0">
                     <caption>Table for the role { deconstructLocalName( component.context.roltype )}</caption>
                     <thead>
                       <tr>
@@ -360,12 +361,20 @@ class TableCell extends PerspectivesComponent
           case 13: // Return
             if (component.props.rowSelected)
             {
-              // card to clipboard
-              setSelectedCard(
-                component.inputRef.current,
-                component.props.psrol.rolinstance,
-                component.props.psrol.roltype,
-                component.props.psrol.contexttype);
+              if (event.shiftKey)
+              {
+                // Open context.
+                component.inputRef.current.dispatchEvent( new CustomEvent('OpenContext', { detail: component.props.psrol.rolinstance, bubbles: true }) );
+              }
+              else
+              {
+                // card to clipboard
+                setSelectedCard(
+                  component.inputRef.current,
+                  component.props.psrol.rolinstance,
+                  component.props.psrol.roltype,
+                  component.props.psrol.contexttype);
+              }
             }
             else
             {
@@ -378,13 +387,20 @@ class TableCell extends PerspectivesComponent
           case 32: // Space
             if (component.props.rowSelected)
             {
-              // TODO: If shift, emulate click.
-              // card to clipboard
-              setSelectedCard(
-                component.inputRef.current,
-                component.props.psrol.rolinstance,
-                component.props.psrol.roltype,
-                component.props.psrol.contexttype);
+              if (event.shiftKey)
+              {
+                // Open context.
+                component.inputRef.current.dispatchEvent( new CustomEvent('OpenContext', { detail: component.props.psrol.rolinstance, bubbles: true }) );
+              }
+              else
+              {
+                // card to clipboard
+                setSelectedCard(
+                  component.inputRef.current,
+                  component.props.psrol.rolinstance,
+                  component.props.psrol.roltype,
+                  component.props.psrol.contexttype);
+              }
             }
             else if (event.shiftKey)
             {
@@ -553,7 +569,9 @@ class TableControls extends PerspectivesComponent
   render ()
   {
     const component = this;
-    return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for table">
+    if ( component.props.createButton == undefined || component.props.createButton )
+    {
+      return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for table" className="mb-5">
               <div
                 className="ml-3 mr-3"
                 tabIndex="0"
@@ -563,7 +581,14 @@ class TableControls extends PerspectivesComponent
                 <PlusIcon alt="Add row" aria-label="Click to add a row" size='medium'/>
               </div>
           	</Navbar>
+    }
+    else
+    {
+      return null;
+    }
   }
 }
 
 TableControls.contextType = PSRoleInstances;
+TableControls.propTypes =
+  { createButton: PropTypes.bool }

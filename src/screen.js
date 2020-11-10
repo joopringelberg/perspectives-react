@@ -7,6 +7,14 @@ import PerspectivesComponent from "./perspectivescomponent.js";
 import ContextOfRole from "./contextofrole.js";
 import {PSContext} from "./reactcontexts";
 import { deconstructModelName, deconstructSegments, isExternalRole } from "./urifunctions.js";
+import {PerspectivesContainer, BackButton} from "./perspectivescontainer.js";
+
+import
+  { Col
+  , Row
+  , Card
+  } from "react-bootstrap";
+
 
 // TODO. Even though PerspectivesGlobals has been declared external, we cannot import it here.
 // Doing so will cause a runtime error if the calling program has not put it on the global scope in time.
@@ -126,7 +134,21 @@ export default class Screen extends PerspectivesComponent
       return <ContextOfRole rolinstance={component.state.rolinstance} myroletype={component.state.myroletype}><LoadableScreen/></ContextOfRole>;
     }
     else
-      return <div></div>
+      return  <PerspectivesContainer>
+                <Row>
+                  <Col>
+                  <Card>
+                    <Card.Body>
+                      <Card.Title>No access</Card.Title>
+                      <Card.Text>
+                        You have no role in this context. Please move back!
+                      </Card.Text>
+                      <BackButton buttontext="Back"/>
+                    </Card.Body>
+                    </Card>
+                  </Col>
+                </Row>
+              </PerspectivesContainer>
   }
 }
 

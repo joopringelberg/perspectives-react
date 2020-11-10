@@ -326,9 +326,16 @@ class TableCell extends PerspectivesComponent
   // When used with shift, selects the card instead.
   select (event)
   {
+    const component = this;
     event.preventDefault();
     event.stopPropagation();
-    if ( event.shiftKey )
+    // If selected, open the context.
+    if (component.props.rowSelected)
+    {
+      // Open context.
+      component.inputRef.current.dispatchEvent( new CustomEvent('OpenContext', { detail: component.props.psrol.rolinstance, bubbles: true }) );
+    }
+    else if ( event.shiftKey )
     {
       this.inputRef.current.dispatchEvent( new CustomEvent('SetCursor', { detail: this.props.psrol.rolinstance, bubbles: true }) );
       this.inputRef.current.dispatchEvent( new CustomEvent('SetColumn', { detail: this.props.propertyname, bubbles: true }) );

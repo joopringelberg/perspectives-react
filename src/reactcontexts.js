@@ -1,4 +1,4 @@
-export const React = require("react");
+const React = require("react");
 
 export const PSContext = React.createContext(
   { contextinstance: ""

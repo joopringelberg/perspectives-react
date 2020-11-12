@@ -1,7 +1,7 @@
-const React = require("react");
+import React, { Suspense } from 'react';
+
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
-
 import PerspectivesComponent from "./perspectivescomponent.js";
 import ContextOfRole from "./contextofrole.js";
 import {PSContext} from "./reactcontexts";
@@ -18,7 +18,20 @@ import
 // TODO. Even though PerspectivesGlobals has been declared external, we cannot import it here.
 // Doing so will cause a runtime error if the calling program has not put it on the global scope in time.
 
-function importRoleScreen( roleName, useridentifier )
+// Returns a promise that resolves to a module with a default export containing a React component.
+function importScreens( roleName, useridentifier )
+{
+  // modelName = model part of the roleName
+  const modelName = deconstructModelName( roleName );
+
+  // PerspectivesGlobals should be available on the global scope of the program that uses this library.
+  const url = PerspectivesGlobals.host + useridentifier + "_models/" + modelName + "/screens.js";
+
+  // importModule should be available on the global scope of the program that uses this library.
+  return importModule( url );
+}
+
+function computeScreenName( roleName )
 {
   // Make the identifier start with lowercase and replace '$' with _ (underscore).
   function mapName (s)
@@ -28,36 +41,10 @@ function importRoleScreen( roleName, useridentifier )
     return s.replace(regex1, '_').replace(regex2, s.charAt(0).toLowerCase());
   }
 
-  // modelName = model part of the roleName
-  const modelName = deconstructModelName( roleName );
-
   // screenName = local part of the roleName
-  const screenName = mapName( deconstructSegments(roleName) );
+  return mapName( deconstructSegments(roleName) );
 
-  // PerspectivesGlobals should be available on the global scope of the program that uses this library.
-  const url = PerspectivesGlobals.host + useridentifier + "_models/" + modelName + "/screens.js"
-
-  // importModule should be available on the global scope of the program that uses this library.
-  return importModule( url ).then(
-    function(r)
-    {
-      if (!r[ screenName ])
-      {
-        throw "importRoleScreen: no screen is defined for '" + screenName + "' in model '" + modelName + "'!";
-      }
-      return r[ screenName ];
-    }
-  );
 }
-
-function Loading(props) {
-  if (props.error) {
-    return <div>Error! <button onClick={ props.retry }>Retry</button></div>;
-  } else {
-    return <div>Loading...</div>;
-  }
-}
-
 // Screen loads the component in the context of the role `rolinstance` that it receives on its props.
 export default class Screen extends PerspectivesComponent
 {
@@ -123,14 +110,16 @@ export default class Screen extends PerspectivesComponent
   render ()
   {
     const component = this;
+    var Screens;
 
     if (component.stateIsComplete())
     {
-      const LoadableScreen = Loadable({
-        loader: () => importRoleScreen( component.state.myroletype, component.state.useridentifier ),
-        loading: Loading,
-      });
-      return <ContextOfRole rolinstance={component.state.rolinstance} myroletype={component.state.myroletype}><LoadableScreen/></ContextOfRole>;
+      Screens = React.lazy(() => importScreens( component.state.myroletype, component.state.useridentifier ) );
+      return  <Suspense fallback={<div>Loading...</div>}>
+                <ContextOfRole rolinstance={component.state.rolinstance} myroletype={component.state.myroletype}>
+                  <Screens screenName={ computeScreenName( component.state.myroletype ) }/>
+                </ContextOfRole>
+              </Suspense>;
     }
     else
       return  <PerspectivesContainer>

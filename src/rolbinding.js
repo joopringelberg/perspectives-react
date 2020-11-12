@@ -61,7 +61,7 @@ export default class RolBinding extends PerspectivesComponent
                     , contexttype: component.context.contexttype
                     }
                   }
-                )
+                );
               }
             }));
       }
@@ -79,7 +79,7 @@ export default class RolBinding extends PerspectivesComponent
     {
       return (<PSRol.Provider value={component.state.value}>
         {component.props.children}
-        </PSRol.Provider>)
+        </PSRol.Provider>);
     }
     else
     {

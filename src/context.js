@@ -1,11 +1,9 @@
 const React = require("react");
 const PropTypes = require("prop-types");
-const Perspectives = require("perspectives-proxy").Perspectives;
 const Component = React.Component;
-import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext} from "./reactcontexts.js";
 
-export default class Context extends Component
+export class Context extends Component
 {
   constructor (props)
   {
@@ -21,7 +19,7 @@ export default class Context extends Component
     const component = this;
     return (<PSContext.Provider value={component.state.value}>
         {component.props.children}
-      </PSContext.Provider>)
+      </PSContext.Provider>);
   }
 }
 Context.propTypes = {

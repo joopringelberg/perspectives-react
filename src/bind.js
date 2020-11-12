@@ -1,8 +1,7 @@
 const React = require("react");
-const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 import PerspectivesComponent from "./perspectivescomponent.js";
-import {PSRol, PSContext, PSRolBinding} from "./reactcontexts";
+import {PSContext, PSRolBinding} from "./reactcontexts";
 
 export default class Bind extends PerspectivesComponent
 {
@@ -16,7 +15,6 @@ export default class Bind extends PerspectivesComponent
   componentDidMount ()
   {
     const component = this;
-    let rolinstance
     Perspectives.then(
       function (pproxy)
       {
@@ -39,11 +37,11 @@ export default class Bind extends PerspectivesComponent
                     component.context.contexttype,
                     {properties: {}, binding: rolinstance},
                     component.context.myroletype,
-                    function( rolId ){});
+                    function( /*rolId*/ ){});
                 }
                 else
                 {
-                  alert("Cannot bind!")
+                  alert("Cannot bind!");
                 }
               });
           }
@@ -52,9 +50,9 @@ export default class Bind extends PerspectivesComponent
         // Returns a promise with the binders.
         function getUnqualifiedRoleBinders({rolinstance})
         {
-          var resolver, rejecter;
+          var resolver;
           // Create a promise
-          const promisedBinders = new Promise( (resolve, reject) => {resolver = resolve; rejecter = reject;} )
+          const promisedBinders = new Promise( (resolve) => {resolver = resolve;} );
           Perspectives.then(
             function (pproxy)
             {
@@ -73,7 +71,7 @@ export default class Bind extends PerspectivesComponent
               }
             });
           // return the promise
-          return promisedBinders
+          return promisedBinders;
         }
         function checkbinding({rolinstance}, callback)
             {
@@ -97,7 +95,7 @@ export default class Bind extends PerspectivesComponent
             , contextinstance: component.context.contextinstance
             , contexttype: component.context.contexttype
             }
-        }
+        };
         component.setState(updater);
       });
   }

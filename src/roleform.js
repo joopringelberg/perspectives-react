@@ -1,5 +1,4 @@
 const React = require("react");
-import PerspectivesComponent from "./perspectivescomponent.js";
 import {deconstructLocalName, getQualifiedPropertyName} from "./urifunctions.js";
 import Rol from "./rol.js";
 import View from "./view.js";
@@ -9,7 +8,6 @@ import
   { Row
   , Col
   , Form
-  , Card
   } from "react-bootstrap";
 const PropTypes = require("prop-types");
 

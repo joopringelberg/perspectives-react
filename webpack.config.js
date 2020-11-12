@@ -5,7 +5,8 @@ module.exports = {
   output: {
     library: "perspectives-react",
     // Type "umd" seems attractive but will break the system for perspectives-proxy!
-    libraryTarget: "commonjs2",
+    // Desalniettemin is het nu een optie die werkt voor InPlace.
+    libraryTarget: "umd",
     filename: "perspectives-react.js",
     path: path.join(__dirname, "dist")
   },

@@ -272,7 +272,7 @@ class TableCell extends PerspectivesComponent
     this.state.value = undefined;
     this.state.editable = false;
     this.state.cardIsSelected = false;
-    this.select = this.select.bind(this);
+    this.handleClick = this.handleClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     // A reference to the Form.Control that handles input.
     // It is used to dispatch the custom SetCursor and SetColumn events.
@@ -324,7 +324,7 @@ class TableCell extends PerspectivesComponent
   // React will then re-render, giving TableCell the value true for the isselected prop.
   // Only called in click handlers.
   // When used with shift, selects the card instead.
-  select (event)
+  handleClick (event)
   {
     const component = this;
     event.preventDefault();
@@ -473,7 +473,7 @@ class TableCell extends PerspectivesComponent
                 component.changeValue(e.target.value);
                 component.setState({editable: false})
               }}
-            onClick={ component.select }
+            onClick={ component.handleClick }
           />
         </td>)
     }
@@ -492,7 +492,7 @@ class TableCell extends PerspectivesComponent
                 tabIndex="-1"
                 aria-label={component.state.value}
                 onKeyDown={ ev => component.handleKeyDown(ev, appcontext.setSelectedCard ) }
-                onClick={component.select}
+                onClick={component.handleClick}
                 defaultValue={component.state.value}
 
                 className={component.props.rowSelected ? "bg-info shadow" : "shadow"}
@@ -511,7 +511,7 @@ class TableCell extends PerspectivesComponent
               tabIndex="-1"
               aria-label={deconstructLocalName(component.props.propertyname)}
               onKeyDown={ component.handleKeyDown }
-              onClick={ component.select }
+              onClick={ component.handleClick }
               defaultValue={component.state.value}
             />
           </td>)
@@ -529,7 +529,7 @@ class TableCell extends PerspectivesComponent
             ref={component.inputRef}
             tabIndex="-1"
             aria-label={component.state.value}
-            onClick={component.select}
+            onClick={component.handleClick}
             defaultValue={component.state.value}
           />
         </td>)

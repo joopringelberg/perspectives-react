@@ -1,6 +1,5 @@
 const React = require("react");
 const PropTypes = require("prop-types");
-import Loadable from 'react-loadable';
 const Perspectives = require("perspectives-proxy").Perspectives;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
@@ -148,7 +147,7 @@ export default class Screen extends PerspectivesComponent
                     </Card>
                   </Col>
                 </Row>
-              </PerspectivesContainer>
+              </PerspectivesContainer>;
   }
 }
 

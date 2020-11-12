@@ -1,7 +1,5 @@
 const React = require("react"); // 2
 
-import ReactDOM from 'react-dom';
-
 import PerspectivesComponent from "./perspectivescomponent.js";
 
 const Perspectives = require("perspectives-proxy").Perspectives;
@@ -10,20 +8,16 @@ import {PSRoleInstances, PSRol, PSContext, AppContext} from "./reactcontexts";
 
 import RoleInstances from "./roleinstances.js";
 
-import roleInstance from "./roleinstance.js";
-
 import RoleInstanceIterator from "./roleinstanceiterator.js";
 
 import {deconstructLocalName, getQualifiedPropertyName} from "./urifunctions.js";
 
-import {PlusIcon} from '@primer/octicons-react'
+import {PlusIcon} from '@primer/octicons-react';
 
 import
-  { Row
-  , Navbar
+  { Navbar
   , Table
   , Form
-  , Card
   } from "react-bootstrap";
 
 import "./components.css";
@@ -42,7 +36,7 @@ export default class RoleTable extends PerspectivesComponent
     return (<RoleInstances rol={component.props.roletype} contexttocreate={component.props.contexttocreate}>
         <RoleTable_ viewname={component.props.viewname} cardcolumn={component.props.cardcolumn}/>
         <TableControls createButton={ component.props.createButton }/>
-      </RoleInstances>)
+      </RoleInstances>);
   }
 }
 
@@ -126,7 +120,7 @@ class RoleTable_ extends PerspectivesComponent
     }
   }
 
-  activateTable (event)
+  activateTable ()
   {
     const component = this;
     component.setState( { active: true});
@@ -221,7 +215,6 @@ class TableRow extends PerspectivesComponent
   constructor (props)
   {
     super(props);
-    const component = this;
   }
 
   render()
@@ -240,7 +233,7 @@ class TableRow extends PerspectivesComponent
                                   rowSelected = {component.props.rowSelected}
                                 /> )
                             }</tr>
-            }</PSContext.Consumer>
+            }</PSContext.Consumer>;
   }
 }
 
@@ -348,7 +341,7 @@ class TableCell extends PerspectivesComponent
     }
   }
 
-  componentDidUpdate(prevProps, prevState)
+  componentDidUpdate(prevProps/*, prevState*/)
   {
     const component = this;
     if (component.props.isselected && (!prevProps.isselected || component.props.iscard))
@@ -415,7 +408,7 @@ class TableCell extends PerspectivesComponent
             }
             else
             {
-              component.setState({editable:true})
+              component.setState({editable:true});
               component.inputRef.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: false, bubbles: true }) );
             }
             event.preventDefault();
@@ -428,6 +421,7 @@ class TableCell extends PerspectivesComponent
               event.stopPropagation();
               event.preventDefault();
             }
+            break;
           default:
             // any other key will deselect the card.
             component.inputRef.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: false, bubbles: true }) );
@@ -438,16 +432,18 @@ class TableCell extends PerspectivesComponent
         switch( event.keyCode ){
           case 13: // Return
             component.changeValue(event.target.value);
-            component.setState({editable: false})
+            component.setState({editable: false});
             event.preventDefault();
             event.stopPropagation();
             break;
           case 27: // Escape
-            component.setState({editable: false})
+            component.setState({editable: false});
             // Make the Form.Control display the original value.
-            ReactDOM.findDOMNode(component.inputRef.current).value = component.state.value;
+            // ReactDOM.findDOMNode(component.inputRef.current).value = component.state.value;
+            component.inputRef.current.value = component.state.value;
             event.preventDefault();
             event.stopPropagation();
+            break;
           default:
             // Let all other keys be handled by the control.
             event.stopPropagation();
@@ -471,11 +467,11 @@ class TableCell extends PerspectivesComponent
             onBlur={function(e)
               {
                 component.changeValue(e.target.value);
-                component.setState({editable: false})
+                component.setState({editable: false});
               }}
             onClick={ component.handleClick }
           />
-        </td>)
+        </td>);
     }
     ///// SELECTED
     else if (component.props.isselected)
@@ -500,7 +496,7 @@ class TableCell extends PerspectivesComponent
                 onDragStart={ev => ev.dataTransfer.setData("PSRol", JSON.stringify(component.props.psrol))}
               />}
             </AppContext.Consumer>
-          </td>)
+          </td>);
       }
       else
       {
@@ -514,7 +510,7 @@ class TableCell extends PerspectivesComponent
               onClick={ component.handleClick }
               defaultValue={component.state.value}
             />
-          </td>)
+          </td>);
       }
     }
     ///// NEITHER EDITABLE NOR SELECTED
@@ -532,7 +528,7 @@ class TableCell extends PerspectivesComponent
             onClick={component.handleClick}
             defaultValue={component.state.value}
           />
-        </td>)
+        </td>);
     }
   }
 }
@@ -554,7 +550,7 @@ TableCell.propTypes =
     , isselected: PropTypes.bool.isRequired
     }
   ).isRequired
-  }
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // TABLECONTROLS
@@ -579,15 +575,15 @@ class TableControls extends PerspectivesComponent
     if ( component.props.createButton == undefined || component.props.createButton )
     {
       return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for table" className="mb-5">
-              <div
-                className="ml-3 mr-3"
-                tabIndex="0"
-                onClick={ ev => component.context.createRole( function() {}) }
-                onKeyDown={ ev => component.handleKeyDown(ev)}
-              >
-                <PlusIcon alt="Add row" aria-label="Click to add a row" size='medium'/>
-              </div>
-          	</Navbar>
+                <div
+                  className="ml-3 mr-3"
+                  tabIndex="0"
+                  onClick={ () => component.context.createRole( function() {}) }
+                  onKeyDown={ ev => component.handleKeyDown(ev)}
+                >
+                  <PlusIcon alt="Add row" aria-label="Click to add a row" size='medium'/>
+                </div>
+              </Navbar>;
     }
     else
     {
@@ -598,4 +594,4 @@ class TableControls extends PerspectivesComponent
 
 TableControls.contextType = PSRoleInstances;
 TableControls.propTypes =
-  { createButton: PropTypes.bool }
+  { createButton: PropTypes.bool };

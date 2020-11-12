@@ -14,24 +14,24 @@ export const PSRoleInstances = React.createContext(
   , instances: []
   , cursor: ""
   , setcursor: function(){}
-  , createRole: function(){ console.warn("Default (no-op) createRole called. You likely miss a PSRoleInstances.Provider!")}
+  , createRole: function(){ console.warn("Default (no-op) createRole called. You likely miss a PSRoleInstances.Provider!");}
   });
 
 export const PSRolBinding = React.createContext(
   { contextinstance: ""
   , contexttype: ""
-  , bind: function(){console.warn("Default (no-op) bind called. You likely miss a PSRolBinding.Provider!")}
-  , checkbinding: function(){console.warn("Default (no-op) checkbinding called. You likely miss a PSRol.Provider or PSRolBinding.Provider!")}
-  , getUnqualifiedRoleBinders: function(){ console.warn("Default (no-op) getUnqualifiedRoleBinders called. You likely miss a PSRolBinding.Provider!")}
+  , bind: function(){console.warn("Default (no-op) bind called. You likely miss a PSRolBinding.Provider!");}
+  , checkbinding: function(){console.warn("Default (no-op) checkbinding called. You likely miss a PSRol.Provider or PSRolBinding.Provider!");}
+  , getUnqualifiedRoleBinders: function(){ console.warn("Default (no-op) getUnqualifiedRoleBinders called. You likely miss a PSRolBinding.Provider!");}
   });
 
 export const PSRol = React.createContext(
   { contextinstance: ""
   , contexttype: ""
   , roltype: ""
-  , bind_: function(){console.warn("Default (no-op) bind_ called. You likely miss a PSRol.Provider!")}
-  , checkbinding: function(){console.warn("Default (no-op) checkbinding called. You likely miss a PSRolBinding.Provider or PSRol.Provider!")}
-  , removerol: function(){console.warn("Default (no-op) removerol called. You likely miss a PSRol.Provider!")}
+  , bind_: function(){console.warn("Default (no-op) bind_ called. You likely miss a PSRol.Provider!");}
+  , checkbinding: function(){console.warn("Default (no-op) checkbinding called. You likely miss a PSRolBinding.Provider or PSRol.Provider!");}
+  , removerol: function(){console.warn("Default (no-op) removerol called. You likely miss a PSRol.Provider!");}
   , rolinstance: ""
   , isselected: false
   });
@@ -50,12 +50,12 @@ export const PSView = React.createContext(
 
 export const PSProperty = React.createContext(
   { defaultValue: ""
-  , setvalue: function(val){}
+  , setvalue: function(){}
   }
 );
 
 export const AppContext = React.createContext(
-  { setSelectedCard: function(val){}
+  { setSelectedCard: function(){}
   , selectedCard: undefined
   , selectedRole: undefined
   });

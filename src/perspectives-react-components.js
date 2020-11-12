@@ -31,3 +31,4 @@ export {default as DropZone} from "./dropzone.js";
 export {default as RoleTable} from "./roletable.js";
 export {default as FileDropZone} from "./filedropzone.js"
 export {PerspectivesContainer, BackButton} from "./perspectivescontainer.js"
+export {default as RoleForm} from "./roleform.js";

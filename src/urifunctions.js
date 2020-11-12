@@ -68,10 +68,14 @@ export function getQualifiedPropertyName (localName, qualifiedNames)
     // Match the local propertyname given as a prop with the qualified names in context.
     const r = new RegExp(".*" + localName + "$");
     const n = qualifiedNames.filter( qn => qn.match(r));
+    if (qualifiedNames.indexOf(localName) > -1)
+    {
+      return localName;
+    }
     if (n.length > 1) {
       throw "PROGRAMMER WARNING: '" + localName + "' does not uniquely identify a property. Choose one of: " + n;
       }
-    else if (n == undefined) {
+    else if (n == undefined || n.length == 0) {
       throw "PROGRAMMER WARNING: '" + localName + "' does not match of the properties " + qualifiedNames;
     }
     else {

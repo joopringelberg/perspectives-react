@@ -31,6 +31,7 @@ export class PerspectivesContainer extends Component
       function(e)
       {
         component.setState( {selectedSubContext: e.detail });
+        e.stopPropagation();
       });
     this.containerRef.current.addEventListener( "BackToEnclosingContext",
       function(e)

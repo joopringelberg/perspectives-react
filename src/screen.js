@@ -90,18 +90,23 @@ export default class Screen extends PerspectivesComponent
                     component.props.rolinstance,
                     function( externalRole )
                     {
-                      component.addUnsubscriber(
-                        pproxy.getMeForContext( externalRole[0],
-                          function(userRoles)
-                          {
-                            component.setState(
-                              { myroletype: userRoles[0]
-                              , useridentifier: userIdentifier[0]
-                              , rolinstance: externalRole[0]
-                              });
-                          }
-                        ));
-                      }));
+                      // If no externalRole, there is no binding.
+                      // Leave the state incomplete.
+                      if (externalRole[0])
+                      {
+                        component.addUnsubscriber(
+                          pproxy.getMeForContext( externalRole[0],
+                            function(userRoles)
+                            {
+                              component.setState(
+                                { myroletype: userRoles[0]
+                                , useridentifier: userIdentifier[0]
+                                , rolinstance: externalRole[0]
+                                });
+                            }
+                          ));
+                      }
+                    }));
               }
             }));
       });
@@ -129,7 +134,7 @@ export default class Screen extends PerspectivesComponent
                     <Card.Body>
                       <Card.Title>No access</Card.Title>
                       <Card.Text>
-                        You have no role in this context. Please move back!
+                        Either there is no context, or you have no role in it. Please move back!
                       </Card.Text>
                       <BackButton buttontext="Back"/>
                     </Card.Body>

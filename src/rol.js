@@ -3,12 +3,34 @@ const PropTypes = require("prop-types");
 
 import RoleInstanceIterator from "./roleinstanceiterator.js";
 import RoleInstances from "./roleinstances.js";
+import CreateDropZone from "./createdropzone.js";
+import NoInstancesSwitcher from "./noinstancesswitcher";
 
 export default function Rol(props)
 {
-  return (<RoleInstances rol={props.rol}>
-      <RoleInstanceIterator>{props.children}</RoleInstanceIterator>
-    </RoleInstances>);
+  if (props.allowExtension)
+  {
+    return (<RoleInstances rol={props.rol}>
+        <CreateDropZone>
+          <NoInstancesSwitcher>
+            <p>Drop a role here</p>
+            <RoleInstanceIterator>
+              {/*eslint-disable-next-line react/prop-types*/}
+              {props.children}
+            </RoleInstanceIterator>
+          </NoInstancesSwitcher>
+        </CreateDropZone>
+      </RoleInstances>);
+  }
+  else
+  {
+    return (<RoleInstances rol={props.rol}>
+            <RoleInstanceIterator>
+              {/*eslint-disable-next-line react/prop-types*/}
+              {props.children}
+            </RoleInstanceIterator>
+      </RoleInstances>);    
+  }
 }
 
 Rol.propTypes = { "rol": PropTypes.string.isRequired };

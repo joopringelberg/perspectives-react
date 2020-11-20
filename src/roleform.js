@@ -22,18 +22,18 @@ export default function RoleForm (props)
     var cardProperty;
     if (props.cardprop)
     {
-      cardProperty = getQualifiedPropertyName(props.cardprop, psview.viewproperties)
+      cardProperty = getQualifiedPropertyName(props.cardprop, psview.viewproperties);
     }
     return psview.viewproperties.map(
       function( propName )
         {
           const localName = deconstructLocalName (propName);
-          return  <Form.Group as={Row}>
+          return  <Form.Group as={Row} key={propName}>
                     <Form.Label column sm="3">{ localName }</Form.Label>
                     <Col sm="9">
                       <Form.Control aria-label={ localName } defaultValue={psview.propval(propName)} onBlur={e => psview.propset(propName, e.target.value)}/>
                     </Col>
-                  </Form.Group>
+                  </Form.Group>;
         }
     );
   }
@@ -45,7 +45,7 @@ export default function RoleForm (props)
                 { roleForm }
                 </PSView.Consumer>
               </View>
-            </ExternalRole>
+            </ExternalRole>;
   }
   else
   {
@@ -55,7 +55,7 @@ export default function RoleForm (props)
                 { roleForm }
                 </PSView.Consumer>
               </View>
-            </Rol>
+            </Rol>;
   }
 }
 

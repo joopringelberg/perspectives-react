@@ -1,5 +1,4 @@
 const React = require("react");
-const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
@@ -30,10 +29,10 @@ export default class ExternalRole extends PerspectivesComponent
                 , roltype: rolType[0]
                 , rolinstance: externalRole( component.context.contextinstance)
                 , bind_: function(){}
-                , checkbinding: function(ignore, callback){ callback(true)}
+                , checkbinding: function(ignore, callback){ callback(true);}
                 , removerol: function(){}
                 , isselected: false
-                }}
+                }};
               component.setState( updater );
             }
           )
@@ -49,7 +48,7 @@ export default class ExternalRole extends PerspectivesComponent
     {
       return (<PSRol.Provider value={component.state.value}>
         {component.props.children}
-        </PSRol.Provider>)
+        </PSRol.Provider>);
     }
     else
     {

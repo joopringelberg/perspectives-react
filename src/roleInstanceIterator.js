@@ -1,17 +1,14 @@
 const React = require("react");
-const PropTypes = require("prop-types");
-const Perspectives = require("perspectives-proxy").Perspectives;
+const Perspectives = require("perspectives-proxy").Perspectives;//3
 
 import PerspectivesComponent from "./perspectivescomponent.js";
-import {PSRol, PSRoleInstances, PSRolBinding, PSContext} from "./reactcontexts";
+import {PSRol, PSRoleInstances, PSContext} from "./reactcontexts";
 
-// WHen there is more than one child, the first child is taken to be the default one.
-// If there are no role instances, the default child is rendered in a PSRolBinding context that has bind.
-// If there are instances, the other children are rendered in a PSRol context that has both bind and bind_.
 export default function RoleInstanceIterator (props)
 {
   return <PSContext.Consumer>{ pscontext => <RoleInstanceIterator_
       myroletype={pscontext.myroletype}
+      /*eslint-disable-next-line react/prop-types*/
     >{props.children}</RoleInstanceIterator_> }</PSContext.Consumer>;
 }
 
@@ -50,11 +47,11 @@ class RoleInstanceIterator_ extends PerspectivesComponent
                         rolInstance,
                         rolinstance,
                         component.props.myroletype,
-                        function( rolId ){});
+                        function( /*rolId*/ ){});
                     }
                     else
                     {
-                      alert("Cannot bind_!")
+                      alert("Cannot bind_!");
                     }
                   });
             });
@@ -73,7 +70,7 @@ class RoleInstanceIterator_ extends PerspectivesComponent
           Perspectives.then(
             function (pproxy)
             {
-              pproxy.removeRol( component.context.contexttype, component.context.roltype, rolInstance, component.props.myroletype )
+              pproxy.removeRol( component.context.contexttype, component.context.roltype, rolInstance, component.props.myroletype );
             });
         }
       , rolinstance: rolInstance
@@ -109,11 +106,11 @@ class RoleInstanceIterator_ extends PerspectivesComponent
                               component.context.contexttype,
                               {properties: {}, binding: rolinstance},
                               component.context.myroletype,
-                              function( rolId ){});
+                              function( /*rolId*/ ){});
                           }
                           else
                           {
-                            alert("Cannot bind!")
+                            alert("Cannot bind!");
                           }
                         });
                     });
@@ -147,11 +144,11 @@ class RoleInstanceIterator_ extends PerspectivesComponent
     component.setState(updater);
   }
 
-  componentDidUpdate (prevProps, prevState)
+  componentDidUpdate (/*prevProps, prevState*/)
   {
     function equalArrays (array1, array2)
     {
-      return array1.length === array2.length && array1.every(function(value, index) { return value === array2[index]})
+      return array1.length === array2.length && array1.every(function(value, index) { return value === array2[index];});
     }
     const component = this,
       previousCursor = component.state.cursor,
@@ -160,7 +157,7 @@ class RoleInstanceIterator_ extends PerspectivesComponent
 
     if ( !equalArrays( component.context.instances, component.state.instances ) )
     {
-      updater = { instances: component.context.instances }
+      updater = { instances: component.context.instances };
       component.context.instances.forEach( function (rolInstance)
         {
           updater[rolInstance] = component.computeInstanceData(rolInstance, component.state.rolBindingContext);
@@ -172,7 +169,7 @@ class RoleInstanceIterator_ extends PerspectivesComponent
     {
       updater[previousCursor] = component.computeInstanceData( previousCursor, component.state.rolBindingContext );
       updater[currentCursor] = component.computeInstanceData( currentCursor, component.state.rolBindingContext );
-      updater.cursor = currentCursor
+      updater.cursor = currentCursor;
       component.setState( updater );
     }
   }
@@ -180,43 +177,17 @@ class RoleInstanceIterator_ extends PerspectivesComponent
   render ()
   {
     const component = this;
-    let defaultElement, children;
     if (component.stateIsComplete())
     {
-      if (React.Children.count( component.props.children ) == 1)
-      {
-        children = component.props.children
-      }
-      else
-      {
-        children = React.Children.toArray( component.props.children );
-        defaultElement = children[0];
-        children = children.slice(1);
-      }
-      // By using the previous instances, we make sure React does not update the children.
-      if (component.state.instances.length == 0 )
-      {
-        if (defaultElement)
+      return component.state.instances.map(
+        function( rolInstance )
         {
-          return (<PSRolBinding.Provider value={component.state.rolBindingContext}>{defaultElement}</PSRolBinding.Provider>);
+          return (<PSRol.Provider key={rolInstance} value={component.state[rolInstance]}>
+            {component.props.children}
+            </PSRol.Provider>);
         }
-        else
-        {
-          return null;
+      );
         }
-      }
-      else
-      {
-        return component.state.instances.map(
-          function( rolInstance )
-          {
-            return (<PSRol.Provider key={rolInstance} value={component.state[rolInstance]}>
-              {children}
-              </PSRol.Provider>)
-          }
-        );
-      }
-    }
     else
     {
       return null;

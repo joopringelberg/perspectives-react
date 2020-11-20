@@ -16,7 +16,7 @@ import {Container, Form, Row, Col, Card} from "react-bootstrap";
 // The displaying component is draggable and selectable.
 // It can also be selected with tab.
 // Once it has focus, 'enter' and 'space' will select this element as the cursor
-// of a surrounding CardList.
+// of a surrounding Rol.
 // Use shift in combination with 'enter' and 'space' instead to simulate a click on
 // the CardComponent.
 // CardComponent should be constructed with React.forwardRef.

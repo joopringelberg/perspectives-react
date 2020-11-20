@@ -4,24 +4,9 @@ import View from "./view.js";
 
 import {PSView} from "./reactcontexts.js";
 
-import RolBinding from "./rolbinding.js"
-
-import roleInstance from "./roleinstance.js"
+import roleInstance from "./roleinstance.js";
 
 import {Card} from "react-bootstrap";
-
-///////////////////////////////////////////////////////////////////////////////
-// ROLEBINDINGCARDHOLDER
-////////////////////////////////////////////////////////////////////////////////
-// CardComponent should be constructed with React.forwardRef.
-// The Card will be coupled to the *binding* of the Role rather than its instance itself.
-export function roleBindingCardHolder( CardComponent )
-{
-  return React.forwardRef((props, ref) =>
-    (<RolBinding>
-      <CardComponent ref={ref}/>
-    </RolBinding>));
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 // EMPTYCARD
@@ -51,14 +36,12 @@ export function emptyCard (viewname, Content)
 // SIMPLECARD
 // Use like this:
 // const ContactCard = PR.emptyCard( "allProperties", value => <p>{value.propval("Voornaam")}</p>);
-// <CardList rol="User"><ContactCard/></CardList>
+// <Rol rol="User"><ContactCard/></Rol>
 ////////////////////////////////////////////////////////////////////////////////
 export const SimpleCard = emptyCard( "allProperties",
   props => <div>
             <p>{props.propval("Name")}</p>
             <p>{props.propval("Description")}</p>
-          </div> )
-
-export const SimpleCardForRoleBinding = roleInstance ( roleBindingCardHolder( SimpleCard ) );
+          </div> );
 
 export const SimpleCardForRole = roleInstance ( SimpleCard );

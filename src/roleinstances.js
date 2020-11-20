@@ -19,10 +19,51 @@ export default class RoleInstances extends PerspectivesComponent
   componentDidMount ()
   {
     const component = this;
-    let rolinstance
     Perspectives.then(
       function (pproxy)
       {
+        function bind ({rolinstance})
+        {
+          if (rolinstance)
+          {
+            // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
+            pproxy.checkBinding(
+              component.context.contexttype,
+              component.props.rol,
+              rolinstance,
+              function(psbool)
+              {
+                if ( psbool[0] === "true" )
+                {
+                  pproxy.bind(
+                    component.context.contextinstance,
+                    component.props.rol,
+                    component.context.contexttype,
+                    {properties: {}, binding: rolinstance},
+                    component.context.myroletype,
+                    function( /*rolId*/ ){});
+                }
+                else
+                {
+                  alert("Cannot bind!");
+                }
+              });
+          }
+        }
+
+        function checkbinding({rolinstance}, callback)
+        {
+          // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
+          pproxy.checkBinding(
+            component.context.contexttype,
+            component.props.rol,
+            rolinstance,
+            function(psbool)
+            {
+              callback( psbool[0] === "true" );
+            });
+        }
+
         component.addUnsubscriber(
           pproxy.getUnqualifiedRolType(
             component.context.contexttype,
@@ -105,14 +146,16 @@ export default class RoleInstances extends PerspectivesComponent
                                             });
                                         }
                                       }
+                                    , bind: bind
+                                    , checkbinding: checkbinding
                                     };
                           }
-                        )
+                        );
                       }
                   ));
-                })
+                });
             }
-        ))
+        ));
       });
       if (component.stateIsComplete())
       {
@@ -187,7 +230,7 @@ export default class RoleInstances extends PerspectivesComponent
           >
             {component.props.children}
           </div>
-        </PSRoleInstances.Provider>)
+        </PSRoleInstances.Provider>);
     }
     else return null;
   }
@@ -198,10 +241,3 @@ RoleInstances.contextType = PSContext;
 RoleInstances.propTypes =
   { rol: PropTypes.string.isRequired
   , contexttocreate: PropTypes.string };
-
-// Rol_ passes on through PSRol_:
-// contextinstance
-// contexttype
-// rol
-// roltype
-// instances

@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 
 const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
@@ -18,18 +18,53 @@ import
 // TODO. Even though PerspectivesGlobals has been declared external, we cannot import it here.
 // Doing so will cause a runtime error if the calling program has not put it on the global scope in time.
 
-// Returns a promise that resolves to a module with a default export containing a React component.
-function importScreens( roleName, useridentifier )
+// Returns a promise that resolves to an array of modules with a default export containing a React component.
+// function importScreens( roleNames, useridentifier )
+// {
+//   // modelName = model part of the roleName
+//   const modelName = deconstructModelName( roleName );
+//
+//   // PerspectivesGlobals should be available on the global scope of the program that uses this library.
+//   const url = PerspectivesGlobals.host + useridentifier + "_models/" + modelName + "/screens.js";
+//
+//   // importModule should be available on the global scope of the program that uses this library.
+//   return importModule( url );
+// }
+
+// Returns a promise that resolves to an array, possibly empty, of objects of the form {roleName :: String, module :: <A React Component> }.
+function importScreens( roleNames, useridentifier )
 {
-  // modelName = model part of the roleName
-  const modelName = deconstructModelName( roleName );
+  const promises = roleNames.map( function(roleName)
+    {
+      // modelName = model part of the roleName
+      const modelName = deconstructModelName( roleName );
 
-  // PerspectivesGlobals should be available on the global scope of the program that uses this library.
-  const url = PerspectivesGlobals.host + useridentifier + "_models/" + modelName + "/screens.js";
+      // PerspectivesGlobals should be available on the global scope of the program that uses this library.
+      const url = PerspectivesGlobals.host + useridentifier + "_models/" + modelName + "/screens.js";
 
-  // importModule should be available on the global scope of the program that uses this library.
-  return importModule( url );
+      // importModule should be available on the global scope of the program that uses this library.
+      // return importModule( url ).then( result => {result.roleName = roleName; return result; });
+      return importModule (url ).then( function(module)
+        {
+          return {module: module, roleName: roleName }; // this will be bound to the "value" key of the Promise.allSettled result.
+        });
+    });
+  return Promise.allSettled(promises).then(
+      function (outcomes)
+      {
+        return outcomes.filter( ({status, value}) => status == "fulfilled" && value.module[computeScreenName( value.roleName )]);
+      }
+    ).then(function (outcomesWithScreen)
+    {
+      return outcomesWithScreen.map( function({value})
+      {
+        return {"roleName": value.roleName, "module": value.module[computeScreenName( value.roleName )]};
+      });
+    });
 }
+
+// > Object { status: "fulfilled", value: 3 }
+// > Object { status: "rejected", reason: "foo" }
 
 function computeScreenName( roleName )
 {
@@ -55,8 +90,9 @@ export default class Screen extends PerspectivesComponent
     this.state.useridentifier = undefined;
     // The role that 'me' plays in the current context. We pass it on to ContextOfRole
     // and that component includes it in the PSContext it provides to descendants.
-    this.state.myroletype = undefined;
+    this.state.myroletypes = undefined;
     this.state.rolinstance = undefined;
+    this.state.modules = undefined;
   }
 
   componentDidMount ()
@@ -75,11 +111,13 @@ export default class Screen extends PerspectivesComponent
                   pproxy.getMeForContext( component.props.rolinstance,
                     function(userRoles)
                     {
-                      component.setState(
-                        { myroletype: userRoles[0]
-                        , useridentifier: userIdentifier[0]
-                        , rolinstance: component.props.rolinstance
-                        });
+                      importScreens( userRoles, userIdentifier[0]).then( screenModules =>
+                        component.setState(
+                          { myroletypes: userRoles
+                          , useridentifier: userIdentifier[0]
+                          , rolinstance: component.props.rolinstance
+                          , modules: screenModules
+                          }));
                     }
                   ));
               }
@@ -98,11 +136,13 @@ export default class Screen extends PerspectivesComponent
                           pproxy.getMeForContext( externalRole[0],
                             function(userRoles)
                             {
-                              component.setState(
-                                { myroletype: userRoles[0]
-                                , useridentifier: userIdentifier[0]
-                                , rolinstance: externalRole[0]
-                                });
+                              importScreens( userRoles, userIdentifier[0]).then( screenModules =>
+                                component.setState(
+                                  { myroletypes: userRoles
+                                  , useridentifier: userIdentifier[0]
+                                  , rolinstance: externalRole[0]
+                                  , modules: screenModules
+                                  }));
                             }
                           ));
                       }
@@ -115,16 +155,22 @@ export default class Screen extends PerspectivesComponent
   render ()
   {
     const component = this;
-    var Screens;
+    var Screen, myroletype;
 
     if (component.stateIsComplete())
     {
-      Screens = React.lazy(() => importScreens( component.state.myroletype, component.state.useridentifier ) );
-      return  <Suspense fallback={<div>Loading...</div>}>
-                <ContextOfRole rolinstance={component.state.rolinstance} myroletype={component.state.myroletype}>
-                  <Screens screenName={ computeScreenName( component.state.myroletype ) }/>
-                </ContextOfRole>
-              </Suspense>;
+      if (component.state.modules.length == 1)
+      {
+        Screen = component.state.modules[0]["module"];
+        myroletype = component.state.modules[0]["roleName"];
+        return  <ContextOfRole rolinstance={component.state.rolinstance} myroletype={myroletype}>
+                  <Screen/>
+                </ContextOfRole>;
+      }
+      else
+      {
+        return <p>You must choose a role from {component.state.modules.map( ({roleName}) => roleName ).toString()}</p>;
+      }
     }
     else
       return  <PerspectivesContainer>

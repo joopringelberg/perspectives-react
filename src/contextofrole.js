@@ -43,15 +43,15 @@ export default class ContextOfRole extends PerspectivesComponent
                               { contextinstance: contextId[0]
                               , contexttype: contextType[0]
                               , myroletype: myroletype[0]
-                              })
-                          }))
+                              });
+                          }));
                     }
                     else {
                       component.setState(
                         { contextinstance: contextId[0]
                         , contexttype: contextType[0]
                         , myroletype: component.props.myroletype
-                        })
+                        });
                     }
                   }
                 ));
@@ -63,7 +63,6 @@ export default class ContextOfRole extends PerspectivesComponent
   componentDidUpdate (prevProps)
   {
     const component = this;
-    const updater = {};
     if (component.props.rolinstance !== prevProps.rolinstance)
     {
       component.componentDidMount();
@@ -83,7 +82,7 @@ export default class ContextOfRole extends PerspectivesComponent
       const component = this;
       return (<PSContext.Provider value={component.state}>
           {component.props.children}
-        </PSContext.Provider>)
+        </PSContext.Provider>);
     }
     else
     {
@@ -99,5 +98,3 @@ ContextOfRole.propTypes = {
   rolinstance: PropTypes.string,
   myroletype: PropTypes.string
 };
-// ContextOfRole passes on:
-// contextinstance

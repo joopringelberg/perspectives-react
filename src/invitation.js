@@ -5,13 +5,26 @@ import
   , Form
   , Row
   , Col
+  , Card
   } from "react-bootstrap";
 
 import {PSView} from "./reactcontexts.js";
 import {ViewOnExternalRole} from "./views.js";
 import SetBoolAsCheckbox from "./setboolascheckbox.js";
+import roleInstance from "./roleinstance.js";
+import Rol from "./rol.js";
+import {emptyCard} from "./cards.js";
+import ExternalRole from "./externalrole.js";
+import View from "./view.js";
+import RoleInstances from "./roleinstances.js";
+import NoInstancesSwitcher from "./noinstancesswitcher.js";
+import CreateDropZone from "./createdropzone.js";
+import BindDropZone from "./binddropzone.js";
+import RoleInstanceIterator from "./roleinstanceiterator.js";
 
-export default function Invitation()
+import {ArrowRightIcon} from '@primer/octicons-react';
+
+export function Invitation()
 {
   function InvitationCard(props)
   {
@@ -75,4 +88,62 @@ export default function Invitation()
             </PSView.Consumer>
           </ViewOnExternalRole>;
 
+}
+
+function Message()
+{
+  return <Form.Group as={Row}>
+            <Form.Label column sm="3">You are invited:</Form.Label>
+            <Col sm="9">
+              <ExternalRole>
+                <View viewname="allProperties">
+                  <PSView.Consumer>
+                    {props => <Form.Control className="font-italic" plaintext readOnly defaultValue={props.propval("Message")}/>}
+                  </PSView.Consumer>
+                </View>
+              </ExternalRole>
+            </Col>
+          </Form.Group>;
+}
+
+export function viewIncomingInvitation()
+{
+  const ContactCard = roleInstance( emptyCard( "allProperties", value => <p>Contact card of {value.propval("Voornaam")}.</p>) );
+  return (<>
+    <Message/>
+    <section aria-label="Received invitation">
+      <Form.Group as={Row} controlId="initiator" className="align-items-center">
+        <Col sm="4">
+          <Rol rol="Guest">
+            <ContactCard labelProperty="Voornaam"/>
+          </Rol>
+        </Col>
+        <Col sm="4 text-center">
+          <ArrowRightIcon alt="ArrowRight" size="large"/>
+        </Col>
+        <Col sm="4">
+        <RoleInstances rol="Invitee">
+          <RoleInstanceIterator>
+            <NoInstancesSwitcher>
+              <CreateDropZone ariaLabel="To accept the invitation, drag your own contact card over here and drop it.">
+                <Card>
+                  <Card.Body>
+                    <p>To accept the invitation, drag your own contact card over here and drop it.</p>
+                  </Card.Body>
+                </Card>
+              </CreateDropZone>
+              <BindDropZone ariaLabel="To accept the invitation, drag your own contact card over here and drop it.">
+                <Card>
+                  <Card.Body>
+                    <p>To accept the invitation, drag your own contact card over here and drop it.</p>
+                  </Card.Body>
+                </Card>
+              </BindDropZone>
+              </NoInstancesSwitcher>
+            </RoleInstanceIterator>
+          </RoleInstances>
+        </Col>
+      </Form.Group>
+    </section>
+  </>);
 }

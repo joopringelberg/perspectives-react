@@ -1,12 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import {AppContext, PSRolBinding} from "./reactcontexts.js";
+import {AppContext, PSRol} from "./reactcontexts.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 // DROPZONE
 ////////////////////////////////////////////////////////////////////////////////
-export default class DropZone extends React.PureComponent
+export default class BindDropZone extends React.PureComponent
 {
   constructor (props)
   {
@@ -15,10 +15,10 @@ export default class DropZone extends React.PureComponent
   }
 
   // The dropzone only captures keys when a Card is on the CardClipboard.
-  checkBinding ( event, roleId, setSelectedCard, setPositionToMoveTo )
+  checkBinding ( event, roleId /*, setSelectedCard, setPositionToMoveTo*/ )
   {
     const component = this;
-    const eventDivRect = component.eventDiv.current.getBoundingClientRect()
+    // const eventDivRect = component.eventDiv.current.getBoundingClientRect()
     component.context.checkbinding( {rolinstance: roleId},
       function( bindingAllowed )
       {
@@ -41,7 +41,8 @@ export default class DropZone extends React.PureComponent
       {
         if ( bindingAllowed)
         {
-          component.context.bind( rolData );
+          // bind_ (binder, binding, myroletype)
+          component.context.bind_( rolData );
         }
         else {
           component.eventDiv.current.classList.add("border-danger", "border");
@@ -54,7 +55,7 @@ export default class DropZone extends React.PureComponent
   handleKeyDown ( event, roleId, setSelectedCard, setPositionToMoveTo )
   {
     const component = this;
-    const eventDivRect = component.eventDiv.current.getBoundingClientRect()
+    const eventDivRect = component.eventDiv.current.getBoundingClientRect();
     switch(event.keyCode){
       case 13: // Enter
       case 32: // space
@@ -63,14 +64,15 @@ export default class DropZone extends React.PureComponent
           // Animate the movement of the card to the dropzone.
           setPositionToMoveTo( {x: eventDivRect.x + "px", y: eventDivRect.y + "px"} );
           // Bind the role.
-          component.context.bind( {rolinstance: roleId} );
+          // bind_ (binder, binding, myroletype)
+          component.context.bind_( {rolinstance: roleId} );
           // Wait for the animation to end.
           setTimeout( function()
             {
               setSelectedCard();
               setPositionToMoveTo();
             },
-            900)
+            900);
         }
         else {
           setPositionToMoveTo( {x: eventDivRect.x + "px", y: eventDivRect.y + "px"} );
@@ -80,7 +82,7 @@ export default class DropZone extends React.PureComponent
               //move back!
               setPositionToMoveTo({x: "-1px", y: "-1px"});
             },
-            900)
+            900);
         }
         event.preventDefault();
         break;
@@ -95,18 +97,18 @@ export default class DropZone extends React.PureComponent
                 ref={component.eventDiv}
                 tabIndex={ selectedRole ? 0 : null }
 
-                onDragEnter={ ev => {
+                onDragEnter={ event => {
                   event.preventDefault();
                   event.stopPropagation();
                   component.eventDiv.current.tabIndex = 0;
                   component.eventDiv.current.focus();
                 } }
                 // No drop without this...
-                onDragOver ={ ev => {
+                onDragOver ={ event => {
                   event.preventDefault();
                   event.stopPropagation();
                 }}
-                onFocus={ ev => { if (!!selectedRole) { component.checkBinding( ev, selectedRole, setSelectedCard ) } } }
+                onFocus={ ev => { if (selectedRole) { component.checkBinding( ev, selectedRole, setSelectedCard ); } } }
                 onDragLeave={ ev => ev.target.classList.remove("border-danger", "border", "border-success")}
 
                 onDrop={ ev => component.handleDrop( ev, JSON.parse( ev.dataTransfer.getData("PSRol") ) ) }
@@ -120,13 +122,14 @@ export default class DropZone extends React.PureComponent
               >
                 {component.props.children}
               </div>}
-            </AppContext.Consumer>
+            </AppContext.Consumer>;
   }
 }
 
-DropZone.propTypes =
+BindDropZone.propTypes =
   {
     ariaLabel: PropTypes.string.isRequired
   };
 
-DropZone.contextType = PSRolBinding;
+BindDropZone.contextType = PSRol;
+// we use bind and checkBinding.

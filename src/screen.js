@@ -40,10 +40,12 @@ function importScreens( roleNames, useridentifier )
       const modelName = deconstructModelName( roleName );
 
       // PerspectivesGlobals should be available on the global scope of the program that uses this library.
+      // eslint-disable-next-line no-undef
       const url = PerspectivesGlobals.host + useridentifier + "_models/" + modelName + "/screens.js";
 
       // importModule should be available on the global scope of the program that uses this library.
       // return importModule( url ).then( result => {result.roleName = roleName; return result; });
+      // eslint-disable-next-line no-undef
       return importModule (url ).then( function(module)
         {
           return {module: module, roleName: roleName }; // this will be bound to the "value" key of the Promise.allSettled result.

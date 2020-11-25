@@ -8,12 +8,13 @@ import NoInstancesSwitcher from "./noinstancesswitcher";
 
 export default function Rol(props)
 {
+  const ariaLabel = props.ariaLabel ? props.ariaLabel : "Drop a role here";
   if (props.allowExtension)
   {
     return (<RoleInstances rol={props.rol}>
-        <CreateDropZone>
+        <CreateDropZone ariaLabel={ariaLabel}>
           <NoInstancesSwitcher>
-            <p>Drop a role here</p>
+            <p>{ariaLabel}</p>
             <RoleInstanceIterator>
               {/*eslint-disable-next-line react/prop-types*/}
               {props.children}
@@ -29,8 +30,11 @@ export default function Rol(props)
               {/*eslint-disable-next-line react/prop-types*/}
               {props.children}
             </RoleInstanceIterator>
-      </RoleInstances>);    
+      </RoleInstances>);
   }
 }
 
-Rol.propTypes = { "rol": PropTypes.string.isRequired };
+Rol.propTypes =
+  { "rol": PropTypes.string.isRequired
+  , ariaLabel: PropTypes.string
+  };

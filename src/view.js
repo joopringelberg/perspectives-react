@@ -99,7 +99,7 @@ class View_ extends PerspectivesComponent
                     {
                       if ( Array.isArray( val ) )
                       {
-                        throw "Perspectives-react, View: supply a single string value to the function 'setvalue'."
+                        throw "Perspectives-react, View: supply a single string value to the function 'setvalue'.";
                       }
                       else
                       {

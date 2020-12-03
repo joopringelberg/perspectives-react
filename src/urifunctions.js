@@ -82,3 +82,10 @@ export function getQualifiedPropertyName (localName, qualifiedNames)
       return n[0];
     }
 }
+
+// Is the identifier of the form `model:Domain$atLeastOneSegment`?
+export function isQualifiedName(s)
+{
+  const qualifiedNameRegex = new RegExp( "^model:(\\w*)\\$(.*)$" );
+  return s.match(qualifiedNameRegex);
+}

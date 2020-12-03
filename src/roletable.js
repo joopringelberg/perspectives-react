@@ -172,7 +172,7 @@ class RoleTable_ extends PerspectivesComponent
       qualifiedColumnName = getQualifiedPropertyName( component.props.cardcolumn, component.state.propertyNames);
       return (<PSContext.Consumer>{
                 pscontext =>
-                  <Table striped bordered hover size="sm" className="mb-0">
+                  <Table responsive striped bordered hover size="sm" className="mb-0">
                     <caption>Table for the role { deconstructLocalName( component.context.roltype )}</caption>
                     <thead>
                       <tr>

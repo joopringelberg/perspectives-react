@@ -1,4 +1,5 @@
 import React from "react";
+const PropTypes = require("prop-types");
 
 import
   { Button
@@ -21,6 +22,7 @@ import NoInstancesSwitcher from "./noinstancesswitcher.js";
 import CreateDropZone from "./createdropzone.js";
 import BindDropZone from "./binddropzone.js";
 import RoleInstanceIterator from "./roleinstanceiterator.js";
+import { BackButton } from "./perspectivescontainer.js";
 
 import {ArrowRightIcon} from '@primer/octicons-react';
 
@@ -106,10 +108,11 @@ function Message()
           </Form.Group>;
 }
 
-export function viewIncomingInvitation()
+export function ViewIncomingInvitation(props)
 {
   const ContactCard = roleInstance( emptyCard( "allProperties", value => <p>Contact card of {value.propval("Voornaam")}.</p>) );
   return (<>
+    <Row><Col className="pb-3" ><BackButton buttontext="Back to all chats"/></Col></Row>
     <Message/>
     <section aria-label="Received invitation">
       <Form.Group as={Row} controlId="initiator" className="align-items-center">
@@ -122,28 +125,30 @@ export function viewIncomingInvitation()
           <ArrowRightIcon alt="ArrowRight" size="large"/>
         </Col>
         <Col sm="4">
-        <RoleInstances rol="Invitee">
-          <RoleInstanceIterator>
-            <NoInstancesSwitcher>
-              <CreateDropZone ariaLabel="To accept the invitation, drag your own contact card over here and drop it.">
-                <Card>
-                  <Card.Body>
-                    <p>To accept the invitation, drag your own contact card over here and drop it.</p>
-                  </Card.Body>
-                </Card>
-              </CreateDropZone>
+        <RoleInstances rol={props.specialisedRole}>
+          <NoInstancesSwitcher>
+            <CreateDropZone ariaLabel="To accept the invitation, drag your own contact card over here and drop it.">
+              <Card>
+                <Card.Body>
+                  <p>To accept the invitation, drag your own contact card over here and drop it. create</p>
+                </Card.Body>
+              </Card>
+            </CreateDropZone>
+            <RoleInstanceIterator>
               <BindDropZone ariaLabel="To accept the invitation, drag your own contact card over here and drop it.">
                 <Card>
                   <Card.Body>
-                    <p>To accept the invitation, drag your own contact card over here and drop it.</p>
+                    <p>To accept the invitation, drag your own contact card over here and drop it. bind</p>
                   </Card.Body>
                 </Card>
               </BindDropZone>
-              </NoInstancesSwitcher>
             </RoleInstanceIterator>
+          </NoInstancesSwitcher>
           </RoleInstances>
         </Col>
       </Form.Group>
     </section>
   </>);
 }
+
+ViewIncomingInvitation.propTypes = {specialisedRole: PropTypes.string};

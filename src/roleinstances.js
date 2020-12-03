@@ -4,6 +4,7 @@ const Perspectives = require("perspectives-proxy").Perspectives;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRoleInstances, PSContext} from "./reactcontexts";
+import {isQualifiedName} from "./urifunctions.js";
 
 export default class RoleInstances extends PerspectivesComponent
 {
@@ -64,98 +65,106 @@ export default class RoleInstances extends PerspectivesComponent
             });
         }
 
-        component.addUnsubscriber(
-          pproxy.getUnqualifiedRolType(
-            component.context.contexttype,
-            component.props.rol,
-            function(rolTypeArr)
+        function getRol(rolTypeArr)
+        {
+          const rolType = rolTypeArr[0];
+          if (!rolType)
+          {
+            throw("Rol: could not establish qualified name of Rol '" + component.props.rol + "' for Context '" + component.context.contexttype + "'.");
+          }
+          // Get the role kind. No need to unsubscribe: the result won't change.
+          pproxy.getRoleKind( rolType,
+            function(roleKindArr)
             {
-              const rolType = rolTypeArr[0];
-              if (!rolType)
-              {
-                throw("Rol: could not establish qualified name of Rol '" + component.props.rol + "' for Context '" + component.context.contexttype + "'.");
-              }
-              // Get the role kind. No need to unsubscribe: the result won't change.
-              pproxy.getRoleKind( rolType,
-                function(roleKindArr)
-                {
-                  // Get role instances.
-                  component.addUnsubscriber(
-                    pproxy.getRol(
-                      component.context.contextinstance,
-                      rolType,
-                      function(rolIdArr)
+              // Get role instances.
+              component.addUnsubscriber(
+                pproxy.getRol(
+                  component.context.contextinstance,
+                  rolType,
+                  function(rolIdArr)
+                  {
+                    component.setState( function( oldState )
                       {
-                        component.setState( function( oldState )
-                          {
-                            let nextCursor;
-                            if ( rolIdArr.indexOf(oldState.cursor) < 0 )
-                            {
-                              nextCursor = nextCursor = rolIdArr[0] || -1;
-                            }
-                            else {
-                              nextCursor = oldState.cursor;
-                            }
-                            return  { contextinstance: component.context.contextinstance
-                                    , contexttype: component.context.contexttype
-                                    , rol: component.props.rol
-                                    , roltype: rolType
-                                    , instances: rolIdArr.sort()
-                                    , cursor: nextCursor
-                                    , setcursor: function(cr)
-                                      {
-                                        if (cr !== component.state.cursor )
+                        let nextCursor;
+                        if ( rolIdArr.indexOf(oldState.cursor) < 0 )
+                        {
+                          nextCursor = nextCursor = rolIdArr[0] || -1;
+                        }
+                        else {
+                          nextCursor = oldState.cursor;
+                        }
+                        return  { contextinstance: component.context.contextinstance
+                                , contexttype: component.context.contexttype
+                                , rol: component.props.rol
+                                , roltype: rolType
+                                , instances: rolIdArr.sort()
+                                , cursor: nextCursor
+                                , setcursor: function(cr)
+                                  {
+                                    if (cr !== component.state.cursor )
+                                    {
+                                      component.setState( {cursor: cr} );
+                                    }
+                                  }
+                                , createRole: function (receiveResponse)
+                                  {
+                                    const roleKind = roleKindArr[0];
+                                    // If a ContextRole Kind, create a new context, too.
+                                    if (roleKind == "ContextRole" && component.props.contexttocreate)
+                                    {
+                                      pproxy.createContext (
                                         {
-                                          component.setState( {cursor: cr} );
-                                        }
-                                      }
-                                    , createRole: function (receiveResponse)
-                                      {
-                                        const roleKind = roleKindArr[0];
-                                        // If a ContextRole Kind, create a new context, too.
-                                        if (roleKind == "ContextRole" && component.props.contexttocreate)
+                                          id: "", // will be set in the core.
+                                          prototype : undefined,
+                                          ctype: component.props.contexttocreate,
+                                          rollen: {},
+                                          interneProperties: {},
+                                          externeProperties: {}
+                                        },
+                                        component.props.rol,
+                                        component.context.contextinstance,
+                                        component.context.contexttype,
+                                        component.context.myroletype,
+                                        function(contextAndExternalRole)
                                         {
-                                          pproxy.createContext (
-                                            {
-                                              id: "", // will be set in the core.
-                                              prototype : undefined,
-                                              ctype: component.props.contexttocreate,
-                                              rollen: {},
-                                              interneProperties: {},
-                                              externeProperties: {}
-                                            },
-                                            component.props.rol,
-                                            component.context.contextinstance,
-                                            component.context.contexttype,
-                                            component.context.myroletype,
-                                            function(contextAndExternalRole)
-                                            {
-                                              // Return the new context role identifier!
-                                              receiveResponse( contextAndExternalRole[1] );
-                                            });
-                                        }
-                                        else
+                                          // Return the new context role identifier!
+                                          receiveResponse( contextAndExternalRole[1] );
+                                        });
+                                    }
+                                    else
+                                    {
+                                      pproxy.createRole (
+                                        component.context.contextinstance,
+                                        rolType,
+                                        component.context.myroletype,
+                                        function(newRoleId_)
                                         {
-                                          pproxy.createRole (
-                                            component.context.contextinstance,
-                                            rolType,
-                                            component.context.myroletype,
-                                            function(newRoleId_)
-                                            {
-                                              receiveResponse( newRoleId_[0] );
-                                            });
-                                        }
-                                      }
-                                    , bind: bind
-                                    , checkbinding: checkbinding
-                                    };
-                          }
-                        );
+                                          receiveResponse( newRoleId_[0] );
+                                        });
+                                    }
+                                  }
+                                , bind: bind
+                                , checkbinding: checkbinding
+                                };
                       }
-                  ));
-                });
-            }
-        ));
+                    );
+                  }
+              ));
+            });
+        }
+        if (isQualifiedName( component.props.rol ))
+        {
+          getRol( [component.props.rol] );
+        }
+        else
+        {
+          component.addUnsubscriber(
+            pproxy.getUnqualifiedRolType(
+              component.context.contexttype,
+              component.props.rol,
+              getRol
+          ));
+        }
       });
       if (component.stateIsComplete())
       {

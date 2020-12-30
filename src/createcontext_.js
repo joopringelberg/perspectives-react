@@ -36,6 +36,7 @@ export default class CreateContext_ extends PerspectivesComponent
           component.props.rolname, // local role name
           component.context.rolinstance,
           component.context.myroletype,
+          // [<externalRoleId>(, <contextRoleId>)?]
           function( buitenRolId )
           {
             // Resolve the promise returned by calling create.

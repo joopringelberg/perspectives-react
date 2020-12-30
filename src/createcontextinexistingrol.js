@@ -36,9 +36,10 @@ class CreateContextInExistingRol_ extends PerspectivesComponent
         pproxy.createContext(
           defaultContextDescription,
           component.props.myroletype,
-          function( buitenRolId )
+          // [<externalRoleId>(, <contextRoleId>)?]
+          function( contextAndExternalRole )
           {
-            pproxy.setBinding( component.context.rolinstance, buitenRolId[0], component.props.myroletype );
+            pproxy.setBinding( component.context.rolinstance, contextAndExternalRole[0], component.props.myroletype );
           });
       });
   }

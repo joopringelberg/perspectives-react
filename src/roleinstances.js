@@ -118,13 +118,13 @@ export default class RoleInstances extends PerspectivesComponent
                                           prototype : undefined,
                                           ctype: component.props.contexttocreate,
                                           rollen: {},
-                                          interneProperties: {},
                                           externeProperties: {}
                                         },
                                         component.props.rol,
                                         component.context.contextinstance,
                                         component.context.contexttype,
                                         component.context.myroletype,
+                                        // [<externalRoleId>(, <contextRoleId>)?]
                                         function(contextAndExternalRole)
                                         {
                                           // Return the new context role identifier!

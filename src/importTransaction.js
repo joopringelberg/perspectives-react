@@ -25,25 +25,26 @@ export default function importTransaction(theFile)
             function(pproxy)
             {
               pproxy.importTransaction( json,
-                  function( buitenRolId )
+                  function( /*buitenRolId*/ )
                   {
                    // nothing to do here.
+                   // if an error arises in the PDR, the proxy for the Api will handle it.
                  } );
             });
         }
         else
         {
-          alert("Not a valid Perspectives serialisation!")
+          alert("Not a valid Perspectives serialisation!");
         }
       });
     }
     else
     {
-      alert("Not JSON!")
+      alert("Not JSON!");
     }
   }
   else
   {
-    alert("No file present!")
+    alert("No file present!");
   }
 }

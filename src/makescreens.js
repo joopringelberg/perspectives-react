@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+////// THIS COMPONENT IS PROBABLY OBSOLETE: IT IS NEVER USED.
+
 export default function makeScreens (screenObj)
 {
   function Screens(props)

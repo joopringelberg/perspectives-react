@@ -30,6 +30,6 @@ export {default as FileDropZone} from "./filedropzone.js";
 export {PerspectivesContainer, BackButton} from "./perspectivescontainer.js";
 export {default as RoleForm} from "./roleform.js";
 export * from "./invitation.js";
-export {default as makeScreens} from "./makescreens.js";
+// export {default as makeScreens} from "./makescreens.js";
 export {default as NoInstancesSwitcher} from "./noinstancesswitcher.js";
 export {default as LocalRoleSpecialisation} from "./localrolespecialisation.js";

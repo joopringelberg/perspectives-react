@@ -1,5 +1,4 @@
 const React = require("react");
-const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
@@ -20,7 +19,6 @@ export default class MySystem extends PerspectivesComponent
   componentDidMount ()
   {
     const component = this;
-    let rolinstance
     Perspectives.then(
       function (pproxy)
       {
@@ -40,15 +38,10 @@ export default class MySystem extends PerspectivesComponent
     {
       return (<PSContext.Provider value={component.state}>
         {component.props.children}
-      </PSContext.Provider>)
+      </PSContext.Provider>);
     }
     else {
       return <div/>;
     }
   }
 }
-
-MySystem.propTypes = {};
-// Context passes on through PSContext:
-// contextinstance
-// contexttype

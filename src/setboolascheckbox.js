@@ -1,3 +1,4 @@
+const React = require("react");
 import PropTypes from "prop-types";
 
 import {PSView} from "./reactcontexts.js";
@@ -21,11 +22,11 @@ export default function SetBoolAsCheckbox ({propertyname, label})
                     defaultChecked={val ? "checked" : null}
                     disabled={val ? "disabled" : null}
                     // We start out with false and only allow changing once, so that must be to "true"!
-                    onChange={e => sprops.propset(propertyname, "true" )} />
+                    onChange={() => sprops.propset(propertyname, "true" )} />
                 </Col>
                 <Form.Label>{label}</Form.Label>
-              </Form.Group>}}
-          </PSView.Consumer>
+              </Form.Group>;}}
+          </PSView.Consumer>;
 
 }
 

@@ -7,6 +7,8 @@ import PerspectivesComponent from "./perspectivescomponent.js";
 import {getQualifiedPropertyName} from "./urifunctions.js";
 import {PSView, PSProperty, PSContext} from "./reactcontexts.js";
 
+/////// THIS COMPONENT IS NEVER USED.
+
 export default function SetProperty (props)
 {
   return <PSContext.Consumer>{ pscontext =>
@@ -18,6 +20,11 @@ export default function SetProperty (props)
       </SetProperty_>
         }</PSContext.Consumer>
 }
+
+SetProperty.propTypes = {
+  propertyname: PropTypes.string.isRequired,
+  value: PropTypes.array
+};
 
 class SetProperty_ extends PerspectivesComponent
 {

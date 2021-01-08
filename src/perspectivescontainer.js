@@ -50,7 +50,7 @@ export class PerspectivesContainer extends Component
     const component = this;
     // Move all props given to PerspectivesContainer, except for the children, to Container.
     const props = {};
-    Object.assign(props, component.props)
+    Object.assign(props, component.props);
     props.children = undefined;
 
     return  <Container ref={component.containerRef} {...props}>
@@ -73,7 +73,7 @@ export function BackButton(props)
   {
     ref.current.dispatchEvent( new CustomEvent( "BackToEnclosingContext", {bubbles: true}) );
   }
-  return <Button ref={ref} href="#" onClick={e => back()}>{ props.buttontext }</Button>
+  return <Button ref={ref} href="#" onClick={() => back()}>{ props.buttontext }</Button>;
 }
 
 BackButton.propTypes = {buttontext: PropTypes.string.isRequired};

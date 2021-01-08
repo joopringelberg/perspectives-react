@@ -1,5 +1,4 @@
 const React = require("react"); //1
-const PropTypes = require("prop-types");
 const Perspectives = require("perspectives-proxy").Perspectives;
 const Component = React.PureComponent;
 
@@ -39,7 +38,7 @@ export default class PerspectivesComponent extends Component
   {
     if (this.__mounted__)
     {
-      super.setState(updater, optionalCallback)
+      super.setState(updater, optionalCallback);
     }
   }
 

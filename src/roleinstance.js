@@ -6,8 +6,6 @@ import PerspectivesComponent from "./perspectivescomponent.js";
 
 import {PSRol, AppContext} from "./reactcontexts";
 
-import {Container, Form, Row, Col, Card} from "react-bootstrap";
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // ROLEINSTANCE
@@ -107,11 +105,11 @@ export default function roleInstance (CardComponent)
                   className="mb-2"
                   onFocus={component.setCursor}
                  ><CardComponent {...props}/></div>}
-              </AppContext.Consumer>
+              </AppContext.Consumer>;
     }
   }
   RoleInstance.contextType = PSRol;
-  RoleInstance.propTypes = {labelProperty: PropTypes.string.isRequired}
+  RoleInstance.propTypes = {labelProperty: PropTypes.string.isRequired};
 
   return RoleInstance;
 }

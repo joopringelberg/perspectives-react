@@ -95,6 +95,8 @@ export default class Screen extends PerspectivesComponent
     this.state.myroletypes = undefined;
     this.state.rolinstance = undefined;
     this.state.modules = undefined;
+    // Will become true if building the child component tree fails.
+    this.state.hasError = false;
   }
 
   componentDidMount ()
@@ -154,12 +156,35 @@ export default class Screen extends PerspectivesComponent
       });
   }
 
+  static getDerivedStateFromError(/*error*/) {
+    // Update state so the next render will show the fallback UI.
+    return { hasError: true };
+  }
+
   render ()
   {
     const component = this;
     var Screen, myroletype;
 
-    if (component.stateIsComplete())
+    if (component.state.hasError)
+    {
+      return  <PerspectivesContainer>
+                <Row>
+                  <Col>
+                  <Card>
+                    <Card.Body>
+                      <Card.Title>An error condition occurred</Card.Title>
+                      <Card.Text>
+                        Due to some error, InPlace could not build the screen that shows the context you requested. More information may be available on the console.
+                      </Card.Text>
+                      <BackButton buttontext="Back"/>
+                    </Card.Body>
+                    </Card>
+                  </Col>
+                </Row>
+              </PerspectivesContainer>;
+    }
+    else if (component.stateIsComplete())
     {
       if (component.state.modules.length == 1)
       {

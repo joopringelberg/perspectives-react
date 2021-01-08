@@ -21,7 +21,7 @@ export default class CreateContext extends PerspectivesComponent
     };
     var resolver;
     var p = new Promise(
-      function (resolve, reject)
+      function (resolve/*, reject*/)
       {
         resolver = resolve;
       });

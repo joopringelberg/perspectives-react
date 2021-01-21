@@ -4,14 +4,14 @@ module.exports = {
   entry: path.join(__dirname, "src/perspectives-react-components.js" ),
   output: {
     library: "perspectives-react",
-    // Type "umd" seems attractive but will break the system for perspectives-proxy!
+    // Type "umd" seems attractive but will break the system for react-bootstrap!
     // Desalniettemin is het nu een optie die werkt voor InPlace.
     libraryTarget: "umd",
     filename: "perspectives-react.js",
     path: path.join(__dirname, "dist")
   },
   mode: "development",
-  target: "electron-renderer",
+  target: "web",
   module: {
     rules: [{
         test: /.jsx?$/,
@@ -35,12 +35,37 @@ module.exports = {
       }]
   },
   externals:
-    { "react": "commonjs2 react"
-    , "react-dom": "commonjs2 react-dom"
-    , "react-bootstrap": "commonjs2 react-bootstrap"
-    , "@primer/octicons-react": "commonjs2 @primer/octicons-react"
-    , "prop-types": "commonjs2 prop-types"
-    , "perspectives-proxy": "commonjs2 perspectives-proxy"
+    {
+    "react": {
+      amd: "react",
+      commonjs: "react",
+      commonjs2: "react",
+      root: "react"
+    },
+    "react-bootstrap": {
+      amd: "react-bootstrap",
+      commonjs: "react-bootstrap",
+      commonjs2: "react-bootstrap",
+      root: "react-bootstrap"
+    },
+    "@primer/octicons-react": {
+      amd: "@primer/octicons-react",
+      commonjs: "@primer/octicons-react",
+      commonjs2: "@primer/octicons-react",
+      root: "@primer/octicons-react"
+    }
+    ,"prop-types": {
+       amd: "prop-types",
+       commonjs: "prop-types",
+       commonjs2: "prop-types",
+       root: "prop-types"
+     }
+    ,"perspectives-proxy": {
+      amd: "perspectives-proxy",
+      commonjs: "perspectives-proxy",
+      commonjs2: "perspectives-proxy",
+      root: "perspectives-proxy"
+    }
     , "PerspectivesGlobals":
       { root: "PerspectivesGlobals"
       }

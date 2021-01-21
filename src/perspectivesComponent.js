@@ -1,5 +1,5 @@
-const React = require("react"); //1
-const Perspectives = require("perspectives-proxy").Perspectives;
+const React = require("react"); //3
+const PDRproxy = require("perspectives-proxy").PDRproxy;
 const Component = React.PureComponent;
 
 export default class PerspectivesComponent extends Component
@@ -22,7 +22,7 @@ export default class PerspectivesComponent extends Component
   {
     const component = this;
     this.__mounted__ = false;
-    Perspectives.then(
+    PDRproxy.then(
       function(pproxy)
       {
         component.unsubscribers.forEach(

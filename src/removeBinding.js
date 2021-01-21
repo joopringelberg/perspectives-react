@@ -1,5 +1,5 @@
 const React = require("react");
-const Perspectives = require("perspectives-proxy").Perspectives;
+const PDRproxy = require("perspectives-proxy").PDRproxy;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 
@@ -25,7 +25,7 @@ class RemoveBinding_ extends PerspectivesComponent
             // Can be applied to a PSRol context type.
             removeBinding: function({rolinstance})
             {
-              Perspectives.then(
+              PDRproxy.then(
                 function (pproxy)
                 {
                   pproxy.removeBinding( rolinstance, component.props.myroletype );

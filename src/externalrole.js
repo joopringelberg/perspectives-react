@@ -1,5 +1,5 @@
 const React = require("react");
-const Perspectives = require("perspectives-proxy").Perspectives;
+const PDRproxy = require("perspectives-proxy").PDRproxy;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {externalRole} from "./urifunctions.js";
@@ -15,7 +15,7 @@ export default class ExternalRole extends PerspectivesComponent
   componentDidMount()
   {
     const component = this;
-    Perspectives.then(
+    PDRproxy.then(
       function (pproxy)
       {
         component.addUnsubscriber(

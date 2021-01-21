@@ -1,6 +1,6 @@
 const React = require("react");
 const PropTypes = require("prop-types");
-const Perspectives = require("perspectives-proxy").Perspectives;
+const PDRproxy = require("perspectives-proxy").PDRproxy;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {getQualifiedPropertyName} from "./urifunctions.js";
@@ -30,7 +30,7 @@ class View_ extends PerspectivesComponent
     const oldValue = component.state[qualifiedPropertyName];
     if (oldValue.length != 1 || oldValue[0] != val)
     {
-      Perspectives.then(
+      PDRproxy.then(
         function(pproxy)
         {
           pproxy.setProperty(
@@ -46,7 +46,7 @@ class View_ extends PerspectivesComponent
   {
     const component = this;
     const qualifiedPropertyName = getQualifiedPropertyName(ln, component.state.viewproperties);
-    Perspectives.then(
+    PDRproxy.then(
       function(pproxy)
       {
         pproxy.deleteProperty(
@@ -60,7 +60,7 @@ class View_ extends PerspectivesComponent
   componentDidMount ()
   {
     const component = this;
-    Perspectives.then(
+    PDRproxy.then(
       function(pproxy)
       {
         if (component.props.viewname == "allproperties")

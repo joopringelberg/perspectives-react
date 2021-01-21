@@ -1,5 +1,5 @@
 const React = require("react");
-const Perspectives = require("perspectives-proxy").Perspectives;
+const PDRproxy = require("perspectives-proxy").PDRproxy;
 import {PSContext} from "./reactcontexts.js";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
@@ -26,7 +26,7 @@ class RemoveRol_ extends PerspectivesComponent
             // Should be applied to a PSRol object.
             removerol: function({contexttype, roltype, rolinstance})
             {
-              Perspectives.then(
+              PDRproxy.then(
                 function (pproxy)
                 {
                   pproxy.removeRol( contexttype, roltype, rolinstance, component.props.myroletype );

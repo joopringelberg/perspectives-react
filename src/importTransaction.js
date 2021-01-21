@@ -1,4 +1,4 @@
-const Perspectives = require("perspectives-proxy").Perspectives;
+const PDRproxy = require("perspectives-proxy").PDRproxy;
 
 export default function importTransaction(theFile)
 {
@@ -21,7 +21,7 @@ export default function importTransaction(theFile)
         {
           // debugger;
           // Now send to the PDR.
-          Perspectives.then(
+          PDRproxy.then(
             function(pproxy)
             {
               pproxy.importTransaction( json,

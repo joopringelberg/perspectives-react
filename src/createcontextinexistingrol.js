@@ -1,6 +1,6 @@
 const React = require("react");
 const PropTypes = require("prop-types");
-const Perspectives = require("perspectives-proxy").Perspectives;
+const PDRproxy = require("perspectives-proxy").PDRproxy;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRol, PSContext} from "./reactcontexts";
@@ -29,7 +29,7 @@ class CreateContextInExistingRol_ extends PerspectivesComponent
     // Move all properties to the default context description to ensure we send a complete description.
     Object.assign(contextDescription, defaultContextDescription);
 
-    Perspectives.then(
+    PDRproxy.then(
       function(pproxy)
       {
         const component = this;

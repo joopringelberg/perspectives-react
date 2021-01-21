@@ -2,7 +2,7 @@ const React = require("react"); // 2
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 
-const Perspectives = require("perspectives-proxy").Perspectives;
+const PDRproxy = require("perspectives-proxy").PDRproxy;
 
 import {PSRoleInstances, PSRol, PSContext, AppContext} from "./reactcontexts";
 
@@ -66,7 +66,7 @@ class RoleTable_ extends PerspectivesComponent
   componentDidMount ()
   {
     const component = this;
-    Perspectives.then(
+    PDRproxy.then(
       function (pproxy)
       {
         component.addUnsubscriber(
@@ -276,7 +276,7 @@ class TableCell extends PerspectivesComponent
   componentDidMount ()
   {
     const component = this;
-    Perspectives.then(
+    PDRproxy.then(
       function( pproxy )
       {
         component.addUnsubscriber(
@@ -301,7 +301,7 @@ class TableCell extends PerspectivesComponent
     const component = this;
     if (component.state.value.length != 1 || component.state.value[0] != val)
     {
-      Perspectives.then(
+      PDRproxy.then(
         function(pproxy)
         {
           pproxy.setProperty(

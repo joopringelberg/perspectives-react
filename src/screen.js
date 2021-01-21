@@ -1,7 +1,7 @@
-import React from 'react';
+import React from 'react'; 
 
 const PropTypes = require("prop-types");
-const Perspectives = require("perspectives-proxy").Perspectives;
+const PDRproxy = require("perspectives-proxy").PDRproxy;
 import PerspectivesComponent from "./perspectivescomponent.js";
 import ContextOfRole from "./contextofrole.js";
 import {PSContext} from "./reactcontexts";
@@ -102,7 +102,7 @@ export default class Screen extends PerspectivesComponent
   componentDidMount ()
   {
     const component = this;
-    Perspectives.then(
+    PDRproxy.then(
       function(pproxy)
       {
         component.addUnsubscriber(

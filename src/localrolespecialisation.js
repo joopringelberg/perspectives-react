@@ -2,7 +2,7 @@ const React = require("react");
 const PropTypes = require("prop-types");
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext} from "./reactcontexts.js";
-const Perspectives = require("perspectives-proxy").Perspectives;
+const PDRproxy = require("perspectives-proxy").PDRproxy;
 
 // LocalRoleSpecialisation requires a PSContext as context and a prop
 // `ofrole` that names a role name that is an aspect role of a local role.
@@ -19,7 +19,7 @@ export default class LocalRoleSpecialisation extends PerspectivesComponent
   componentDidMount()
   {
     const component = this;
-    Perspectives.then(
+    PDRproxy.then(
       function (pproxy)
       {
         pproxy.getLocalRoleSpecialisation(

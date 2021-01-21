@@ -1,7 +1,7 @@
 const React = require("react");
 
 const PropTypes = require("prop-types");
-const Perspectives = require("perspectives-proxy").Perspectives;
+const PDRproxy = require("perspectives-proxy").PDRproxy;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {getQualifiedPropertyName} from "./urifunctions.js";
@@ -40,7 +40,7 @@ class SetProperty_ extends PerspectivesComponent
     const oldValue = component.context[getQualifiedPropertyName(component.props.propertyname, component.context.viewproperties)];
     if (oldValue.length != 1 || oldValue[0] != val)
     {
-      Perspectives.then(
+      PDRproxy.then(
         function(pproxy)
         {
           pproxy.setProperty(

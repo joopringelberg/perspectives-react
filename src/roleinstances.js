@@ -1,6 +1,6 @@
 const React = require("react");
 const PropTypes = require("prop-types");
-const Perspectives = require("perspectives-proxy").Perspectives;
+const PDRproxy = require("perspectives-proxy").PDRproxy;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRoleInstances, PSContext} from "./reactcontexts";
@@ -20,7 +20,7 @@ export default class RoleInstances extends PerspectivesComponent
   componentDidMount ()
   {
     const component = this;
-    Perspectives.then(
+    PDRproxy.then(
       function (pproxy)
       {
         function bind ({rolinstance})

@@ -1,5 +1,5 @@
 const React = require("react");
-const Perspectives = require("perspectives-proxy").Perspectives;//3
+const PDRproxy = require("perspectives-proxy").PDRproxy;//3
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRol, PSRoleInstances, PSContext} from "./reactcontexts";
@@ -32,7 +32,7 @@ class RoleInstanceIterator_ extends PerspectivesComponent
           if (rolinstance)
           {
             // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
-            Perspectives.then(
+            PDRproxy.then(
               function (pproxy)
               {
                 pproxy.checkBinding(
@@ -67,7 +67,7 @@ class RoleInstanceIterator_ extends PerspectivesComponent
       , checkbinding: rolBindingContext.checkbinding
       , removerol: function()
         {
-          Perspectives.then(
+          PDRproxy.then(
             function (pproxy)
             {
               pproxy.removeRol( component.context.contexttype, component.context.roltype, rolInstance, component.props.myroletype );
@@ -89,7 +89,7 @@ class RoleInstanceIterator_ extends PerspectivesComponent
               {
                 if (rolinstance)
                 {
-                  Perspectives.then(
+                  PDRproxy.then(
                     function (pproxy)
                     {
                       pproxy.checkBinding(
@@ -119,7 +119,7 @@ class RoleInstanceIterator_ extends PerspectivesComponent
               }
           , checkbinding: function({rolinstance}, callback)
             {
-              Perspectives.then(
+              PDRproxy.then(
                 function (pproxy)
                 {
                   // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )

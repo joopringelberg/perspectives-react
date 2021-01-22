@@ -45,11 +45,11 @@ export default class PerspectivesComponent extends Component
   // A single component may perform multiple calls through the API. All of these may connect a callback
   // to the dependency network in the core. When the component unmounts, it should inform the core that
   // these callbacks can be unsubscribed. This is what we use the unsubscriber for.
-  addUnsubscriber(unsubscriber)
+  addUnsubscriber(unsubscriberPromise)
   {
-    if (unsubscriber)
+    if (unsubscriberPromise)
     {
-      this.unsubscribers.push(unsubscriber);
+      unsubscriberPromise.then(unsubscriber => this.unsubscribers.push(unsubscriber));
     }
   }
 

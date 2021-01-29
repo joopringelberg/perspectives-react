@@ -43,6 +43,7 @@ export default class RoleTable extends PerspectivesComponent
 RoleTable.propTypes =
   { "viewname": PropTypes.string.isRequired
   , "cardcolumn": PropTypes.string.isRequired
+  , "roletype": PropTypes.string.isRequired
   , "contexttocreate": PropTypes.string
   };
 
@@ -65,6 +66,7 @@ class RoleTable_ extends PerspectivesComponent
 
   componentDidMount ()
   {
+    // TODO. Find out whether the roletype is a context role type.
     const component = this;
     PDRproxy.then(
       function (pproxy)
@@ -326,6 +328,7 @@ class TableCell extends PerspectivesComponent
     if (component.props.rowSelected)
     {
       // Open context.
+      // TODO. We may have a table of roles that are not context roles! We should not try to open a context in such cases.
       component.inputRef.current.dispatchEvent( new CustomEvent('OpenContext', { detail: component.props.psrol.rolinstance, bubbles: true }) );
     }
     else if ( event.shiftKey )

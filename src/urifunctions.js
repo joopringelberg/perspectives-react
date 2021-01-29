@@ -45,6 +45,19 @@ export function isExternalRole( s )
   return !!s.match(r);
 }
 
+export function deconstructContext( s )
+{
+  const matches = s.match(/(.*)_External/);
+  if ( matches )
+  {
+    return matches[1];
+  }
+  else
+  {
+    return s;
+  }
+}
+
 // Construct a directoryname from a modelname.
 // Each modelname must be unique.
 // It is the composition of "model:" and the name proper.

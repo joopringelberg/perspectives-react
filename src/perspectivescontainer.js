@@ -13,7 +13,8 @@ import
 // Embed the React component that embodies a users' perspectives on a context type in a PerspectivesContainer
 // to add functionality to open a subcontext and navigate back to it again.
 // Navigating is event-based:
-//  - Dispatch `OpenContext` with a payload that identifies the context instance to open
+//  - Dispatch `OpenContext` with a payload that identifies the context instance to open.
+//    It will be opened in a Screen component and Screen opens a new - and thus embedded - PerspectivesContainer.
 //  - Dispatch `BackToEnclosingContext` without payload to navigate back.
 export class PerspectivesContainer extends Component
 {
@@ -30,18 +31,18 @@ export class PerspectivesContainer extends Component
     this.containerRef.current.addEventListener( "OpenContext",
       function(e)
       {
+        const oldHandler = window.onpopstate;
+        // Save in the history object.
+        history.pushState({ nextContext: e.detail }, "");
+        window.onpopstate = function()
+          {
+              component.setState( {selectedSubContext: undefined });
+              window.onpopstate = oldHandler;
+              e.stopPropagation();
+          };
+
         component.setState( {selectedSubContext: e.detail });
         e.stopPropagation();
-      });
-    this.containerRef.current.addEventListener( "BackToEnclosingContext",
-      function(e)
-      {
-        if ( component.state.selectedSubContext )
-        {
-          component.setState( {selectedSubContext: undefined });
-          e.stopPropagation();
-        }
-        // If this component had not already opened a subcontext, this event is targeted for its parent.
       });
   }
 
@@ -69,11 +70,7 @@ export class PerspectivesContainer extends Component
 export function BackButton(props)
 {
   const ref = React.createRef();
-  function back()
-  {
-    ref.current.dispatchEvent( new CustomEvent( "BackToEnclosingContext", {bubbles: true}) );
-  }
-  return <Button ref={ref} href="#" onClick={() => back()}>{ props.buttontext }</Button>;
+  return <Button ref={ref} href="#" onClick={() => history.back()}>{ props.buttontext }</Button>;
 }
 
 BackButton.propTypes = {buttontext: PropTypes.string.isRequired};

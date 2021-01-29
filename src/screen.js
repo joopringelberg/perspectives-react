@@ -1,4 +1,4 @@
-import React from 'react'; 
+import React from 'react';
 
 const PropTypes = require("prop-types");
 const PDRproxy = require("perspectives-proxy").PDRproxy;
@@ -17,19 +17,6 @@ import
 
 // TODO. Even though PerspectivesGlobals has been declared external, we cannot import it here.
 // Doing so will cause a runtime error if the calling program has not put it on the global scope in time.
-
-// Returns a promise that resolves to an array of modules with a default export containing a React component.
-// function importScreens( roleNames, useridentifier )
-// {
-//   // modelName = model part of the roleName
-//   const modelName = deconstructModelName( roleName );
-//
-//   // PerspectivesGlobals should be available on the global scope of the program that uses this library.
-//   const url = PerspectivesGlobals.host + useridentifier + "_models/" + modelName + "/screens.js";
-//
-//   // importModule should be available on the global scope of the program that uses this library.
-//   return importModule( url );
-// }
 
 // Returns a promise that resolves to an array, possibly empty, of objects of the form {roleName :: String, module :: <A React Component> }.
 function importScreens( roleNames, useridentifier )

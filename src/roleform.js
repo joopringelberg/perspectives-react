@@ -54,7 +54,7 @@ export default function RoleForm (props)
                     })
                 }
                 {
-                  cardProp !== undefined ? <Row><DraggableCard labelProperty="cardProp"/></Row> : <div/>
+                  cardProp !== undefined ? <Row><DraggableCard labelProperty={cardProp}/></Row> : <div/>
                 }
 
             </BindDropZone>;

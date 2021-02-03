@@ -49,7 +49,5 @@ export const PSProperty = React.createContext(
 );
 
 export const AppContext = React.createContext(
-  { setSelectedCard: function(){}
-  , selectedCard: undefined
-  , selectedRole: undefined
+  { systemExternalRole: undefined
   });

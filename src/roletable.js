@@ -354,8 +354,7 @@ class TableCell extends PerspectivesComponent
     }
   }
 
-  // NOTE. setSelectedCard is only bound when (component.props.isselected && component.props.iscard).
-  handleKeyDown (event, setSelectedCard)
+  handleKeyDown (event, systemExternalRole)
     {
       const component = this;
       if (component.props.isselected && !component.state.editable)
@@ -372,11 +371,16 @@ class TableCell extends PerspectivesComponent
               else
               {
                 // card to clipboard
-                setSelectedCard(
-                  component.inputRef.current,
-                  component.props.psrol.rolinstance,
-                  component.props.psrol.roltype,
-                  component.props.psrol.contexttype);
+                PDRproxy.then( pproxy => pproxy.setProperty(
+                  systemExternalRole,
+                  "model:System$PerspectivesSystem$External$CardClipBoard",
+                  JSON.stringify(
+                    { selectedRole: component.props.psrol.rolinstance
+                    , cardTitle: component.state.value
+                    , roleType: component.props.psrol.roltype
+                    , contextType: component.props.psrol.contexttype
+                    }),
+                  component.props.myroletype));
               }
             }
             else
@@ -398,11 +402,16 @@ class TableCell extends PerspectivesComponent
               else
               {
                 // card to clipboard
-                setSelectedCard(
-                  component.inputRef.current,
-                  component.props.psrol.rolinstance,
-                  component.props.psrol.roltype,
-                  component.props.psrol.contexttype);
+                PDRproxy.then( pproxy => pproxy.setProperty(
+                  systemExternalRole,
+                  "model:System$PerspectivesSystem$External$CardClipBoard",
+                  JSON.stringify(
+                    { selectedRole: component.props.psrol.rolinstance
+                    , cardTitle: component.state.value
+                    , roleType: component.props.psrol.roltype
+                    , contextType: component.props.psrol.contexttype
+                    }),
+                  component.props.myroletype));
               }
             }
             else if (event.shiftKey)
@@ -490,7 +499,7 @@ class TableCell extends PerspectivesComponent
                 ref={component.inputRef}
                 tabIndex="-1"
                 aria-label={component.state.value}
-                onKeyDown={ ev => component.handleKeyDown(ev, appcontext.setSelectedCard ) }
+                onKeyDown={ ev => component.handleKeyDown(ev, appcontext.systemExternalRole ) }
                 onClick={component.handleClick}
                 defaultValue={component.state.value}
 

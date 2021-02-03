@@ -4,7 +4,9 @@ import PropTypes from "prop-types";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 
-import {PSRol, AppContext} from "./reactcontexts";
+import {PSRol, AppContext, PSContext} from "./reactcontexts";
+
+const PDRproxy = require("perspectives-proxy").PDRproxy;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,7 +39,7 @@ export default function roleInstance (CardComponent)
       this.setCursor = this.setCursor.bind(this);
     }
 
-    handleKeyDown (event, setSelectedCard)
+    handleKeyDown (event, systemExternalRole, myroletype)
     {
       const component = this;
       switch(event.keyCode){
@@ -56,11 +58,27 @@ export default function roleInstance (CardComponent)
           }
           else
           {
-            setSelectedCard(
-              component.cardRef.current,
-              component.context.rolinstance,
-              component.context.roltype,
-              component.context.contexttype);
+            // Set information in the CardClipboard external property of model:System$PerspectivesSystem.
+            PDRproxy.then( pproxy =>
+              pproxy.getPropertyFromLocalName(
+                component.context.rolinstance,
+                component.props.labelProperty,
+                component.context.roltype,
+                function(valArr)
+                {
+                  pproxy.setProperty(
+                    systemExternalRole,
+                    "model:System$PerspectivesSystem$External$CardClipBoard",
+                    JSON.stringify(
+                      { selectedRole: component.context.rolinstance
+                      , cardTitle: valArr[0]
+                      , roleType: component.context.roltype
+                      , contextType: component.context.contexttype
+                      }),
+                    myroletype);
+                }
+              )
+            );
           }
           event.preventDefault();
           event.stopPropagation();
@@ -93,19 +111,23 @@ export default function roleInstance (CardComponent)
     {
       const component = this;
       const props = Object.assign({ref: component.cardRef}, component.props);
-      return  <AppContext.Consumer>{ value =>
-                <div draggable
-                  aria-label={component.props.label}
-                  tabIndex={component.context.isselected ? "0" : "-1"}
-                  ref={component.roleInstanceRef}
-                  key={component.context.rolinstance}
-                  onDragStart={ev => ev.dataTransfer.setData("PSRol", JSON.stringify(component.context))}
-                  onKeyDown={ev => component.handleKeyDown(ev, value.setSelectedCard)}
-                  onClick={component.setCursor}
-                  className="mb-2"
-                  onFocus={component.setCursor}
-                 ><CardComponent {...props}/></div>}
-              </AppContext.Consumer>;
+      return  <PSContext.Consumer>{ pscontext =>
+                <AppContext.Consumer>{ appcontext =>
+                  <div draggable
+                    aria-label={component.props.label}
+                    tabIndex={component.context.isselected ? "0" : "-1"}
+                    ref={component.roleInstanceRef}
+                    key={component.context.rolinstance}
+                    onDragStart={ev => ev.dataTransfer.setData("PSRol", JSON.stringify(component.context))}
+                    onKeyDown={ev => component.handleKeyDown(ev, appcontext.systemExternalRole, pscontext.myroletype)}
+                    onClick={component.setCursor}
+                    className="mb-2"
+                    onFocus={component.setCursor}
+                   >
+                    <CardComponent {...props}/>
+                   </div>}
+                </AppContext.Consumer>
+              }</PSContext.Consumer>;
     }
   }
   RoleInstance.contextType = PSRol;

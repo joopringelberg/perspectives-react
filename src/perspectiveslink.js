@@ -1,24 +1,63 @@
 const React = require("react");
 const PropTypes = require("prop-types");
 
-export default function PerspectivesLink(props)
+import {PSRol} from "./reactcontexts";
+
+export default class PerspectivesLink extends React.PureComponent
 {
-  function handleClick(e, rolinstance)
+  constructor(props)
   {
-    if (e.shiftKey || e.ctrlKey || e.metaKey)
-    {
-      window.open("/?" + rolinstance);
-    }
-    else
-    {
-      props.handler(rolinstance);
-    }
+    super(props);
+    // A ref to dispatch an event from.
+    this.ref = React.createRef();
+
   }
-  return <span onClick={ e => handleClick(e, props.rolinstance) }><a href={"/?" + props.rolinstance} tabIndex="-1">{props.linktext}</a></span>;
+  render()
+  {
+    const component = this;
+    function handleClick(e)
+    {
+      if (e.shiftKey || e.ctrlKey || e.metaKey)
+      {
+        window.open("/?" + component.context.rolinstance);
+      }
+      else
+      {
+        component.ref.current.dispatchEvent( new CustomEvent('OpenContext', { detail: component.context.rolinstance, bubbles: true }) );
+      }
+    }
+    // function handleKeyDown(e)
+    // {
+    //   switch (event.keyCode)
+    //   {
+    //     case 32: // space
+    //     case 13: // enter
+    //       if (event.shiftKey)
+    //       {
+    //         window.open("/?" + props.rolinstance);
+    //       }
+    //       else
+    //       {
+    //
+    //       }
+    //   }
+    // }
+
+    return  <span ref={component.ref} onClick={ e => handleClick(e) }
+              // onKeyDown={ e => handleKeyDown(e) }
+            >
+              <a href={"/?" + component.context.rolinstance}
+                tabIndex="-1"
+              >
+                {component.props.linktext}
+              </a>
+            </span>;
+
+  }
 }
 
+PerspectivesLink.contextType = PSRol;
+
 PerspectivesLink.propTypes =
-  { rolinstance: PropTypes.string.isRequired
-  , linktext: PropTypes.string.isRequired
-  , handler: PropTypes.func.isRequired
+  { linktext: PropTypes.string.isRequired
   };

@@ -10,22 +10,31 @@ export default class PerspectivesLink extends React.PureComponent
     super(props);
     // A ref to dispatch an event from.
     this.ref = React.createRef();
-
+    this.handleClick = this.handleClick.bind(this);
   }
+
+  handleClick(e)
+  {
+    const component = this;
+    if (e.shiftKey || e.ctrlKey || e.metaKey)
+    {
+      window.open("/?" + component.context.rolinstance);
+    }
+    else
+    {
+      component.ref.current.dispatchEvent( new CustomEvent('OpenContext', { detail: component.context.rolinstance, bubbles: true }) );
+    }
+  }
+
+  componentDidMount()
+  {
+    this.ref.current.addEventListener("click", this.handleClick); // dblclick
+  }
+
   render()
   {
     const component = this;
-    function handleClick(e)
-    {
-      if (e.shiftKey || e.ctrlKey || e.metaKey)
-      {
-        window.open("/?" + component.context.rolinstance);
-      }
-      else
-      {
-        component.ref.current.dispatchEvent( new CustomEvent('OpenContext', { detail: component.context.rolinstance, bubbles: true }) );
-      }
-    }
+
     // function handleKeyDown(e)
     // {
     //   switch (event.keyCode)
@@ -43,7 +52,8 @@ export default class PerspectivesLink extends React.PureComponent
     //   }
     // }
 
-    return  <span ref={component.ref} onClick={ e => handleClick(e) }
+    return  <span ref={component.ref}
+              onClick={ e => e.target.focus() }
               // onKeyDown={ e => handleKeyDown(e) }
             >
               <a href={"/?" + component.context.rolinstance}

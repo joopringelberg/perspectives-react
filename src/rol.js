@@ -5,23 +5,30 @@ import RoleInstanceIterator from "./roleinstanceiterator.js";
 import RoleInstances from "./roleinstances.js";
 import CreateDropZone from "./createdropzone.js";
 import NoInstancesSwitcher from "./noinstancesswitcher";
+import {PSRoleInstances} from "./reactcontexts.js";
 
 export default function Rol(props)
 {
   const ariaLabel = props.ariaLabel ? props.ariaLabel : "Drop a role here";
   if (props.allowExtension)
   {
-    return (<RoleInstances rol={props.rol}>
-        <CreateDropZone ariaLabel={ariaLabel}>
-          <NoInstancesSwitcher>
-            <p>{ariaLabel}</p>
-            <RoleInstanceIterator>
-              {/*eslint-disable-next-line react/prop-types*/}
-              {props.children}
-            </RoleInstanceIterator>
-          </NoInstancesSwitcher>
-        </CreateDropZone>
-      </RoleInstances>);
+    return  <RoleInstances rol={props.rol}>
+              <PSRoleInstances.Consumer>{ psroleinstances =>
+                <CreateDropZone
+                  ariaLabel={ariaLabel}
+                  bind={psroleinstances.bind}
+                  checkbinding={psroleinstances.checkbinding}
+                >
+                  <NoInstancesSwitcher>
+                    <p>{ariaLabel}</p>
+                    <RoleInstanceIterator>
+                      {/*eslint-disable-next-line react/prop-types*/}
+                      {props.children}
+                    </RoleInstanceIterator>
+                  </NoInstancesSwitcher>
+                </CreateDropZone>
+            }</PSRoleInstances.Consumer>
+            </RoleInstances>;
   }
   else
   {

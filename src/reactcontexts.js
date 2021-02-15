@@ -11,9 +11,9 @@ export const PSRoleInstances = React.createContext(
   , contexttype: ""
   , rol: ""
   , roltype: ""
+  , roleKind: ""
   , instances: []
   , cursor: ""
-  , setcursor: function(){}
   , createRole: function(){ console.warn("Default (no-op) createRole called. You likely miss a PSRoleInstances.Provider!");}
   , bind: function(){console.warn("Default (no-op) bind called. You likely miss a PSRoleInstances.Provider!");}
   , checkbinding: function(){console.warn("Default (no-op) checkbinding called. You likely miss a PSRol.Provider or PSRoleInstances.Provider!");}
@@ -23,7 +23,9 @@ export const PSRol = React.createContext(
   { contextinstance: ""
   , contexttype: ""
   , roltype: ""
+  , roleKind: "" // RoleInContext | ContextRole | ExternalRole | UserRole | BotRole
   , bind_: function(){console.warn("Default (no-op) bind_ called. You likely miss a PSRol.Provider!");}
+  , bind:  function(){console.warn("Default (no-op) bind called. You likely miss a PSRol.Provider!");}
   , checkbinding: function(){console.warn("Default (no-op) checkbinding called. You likely miss a PSRoleInstances.Provider or PSRol.Provider!");}
   , removerol: function(){console.warn("Default (no-op) removerol called. You likely miss a PSRol.Provider!");}
   , rolinstance: ""
@@ -50,4 +52,6 @@ export const PSProperty = React.createContext(
 
 export const AppContext = React.createContext(
   { systemExternalRole: undefined
+  , systemUser: undefined
+  , setEventDispatcher: function(){}
   });

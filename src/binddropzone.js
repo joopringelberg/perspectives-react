@@ -10,11 +10,13 @@ const PDRproxy = require("perspectives-proxy").PDRproxy;
 ////////////////////////////////////////////////////////////////////////////////
 // DROPZONE
 ////////////////////////////////////////////////////////////////////////////////
-export default function CreateDropZone(props)
+export default function BindDropZone(props)
 {
   return  <AppContext.Consumer>
           {
-            appcontext => <BindDropZone_ systemExternalRole={appcontext.systemExternalRole} {...props}>{props.children}</BindDropZone_>
+            appcontext => <BindDropZone_ systemExternalRole={appcontext.systemExternalRole} {...props}>{
+              //eslint-disable-next-line react/prop-types
+              props.children}</BindDropZone_>
           }
           </AppContext.Consumer>;
 }

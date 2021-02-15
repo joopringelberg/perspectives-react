@@ -36,6 +36,7 @@ export default function FileDropZone(props)
   function handleFileWithExtension(fileList)
   {
     const theFile = fileList.item(0);
+    //eslint-disable-next-line no-useless-escape
     const r = props.extension.match( /\./ ) ? new RegExp( "\\" + props.extension) : new RegExp( "\." + props.extension);
     // const r = new RegExp( "\." + props.extension);
     if ( theFile && theFile.name.match(r) )
@@ -55,7 +56,12 @@ export default function FileDropZone(props)
                       aria-dropeffect="execute"
                       aria-describedby="Select a file"
                       tabIndex="0"
-                      onDrop={ev => {handleFileWithExtension(ev.dataTransfer.files); ev.target.classList.remove("border", "p-3", "border-primary");}}
+                      onDrop={ev => {
+                        handleFileWithExtension(ev.dataTransfer.files);
+                        ev.target.classList.remove("border", "p-3", "border-primary");
+                        ev.preventDefault();
+                        ev.stopPropagation();
+                      }}
                       onDragEnter={ev => ev.target.classList.add("border", "border-primary") }
                       onDragLeave={ev => ev.target.classList.remove("border", "border-primary")}
                       onKeyDown={ev => handleKeyDown(ev)}
@@ -71,7 +77,12 @@ export default function FileDropZone(props)
               aria-dropeffect="execute"
               aria-describedby="Select a file"
               tabIndex="0"
-              onDrop={ev => {handleFileWithExtension(ev.dataTransfer.files); ev.target.classList.remove("border", "p-3", "border-primary");}}
+              onDrop={ev => {
+                handleFileWithExtension(ev.dataTransfer.files);
+                ev.target.classList.remove("border", "p-3", "border-primary");
+                ev.preventDefault();
+                ev.stopPropagation();
+              }}
               onDragEnter={ev => ev.target.classList.add("border", "border-primary") }
               onDragLeave={ev => ev.target.classList.remove("border", "border-primary")}
               onKeyDown={ev => handleKeyDown(ev)}

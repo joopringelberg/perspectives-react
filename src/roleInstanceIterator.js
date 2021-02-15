@@ -4,6 +4,16 @@ const PDRproxy = require("perspectives-proxy").PDRproxy;//3
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRol, PSRoleInstances, PSContext} from "./reactcontexts";
 
+// This component requires a PSRoleInstances context and iterates over its instances.
+// It provides the PSRol context to each role instance. PSRol contains the functions:
+//  - bind_ (fill the existing role instance)
+//  - checkbinding (passed on from PSRoleInstances)
+//  - removerol
+// It provides the following interesting properties to each PSRol:
+//  - isselected: a boolean that is true if the instance is the current value of the
+//    cursor of the RoleInstances context.
+//  - roleKind.
+
 export default function RoleInstanceIterator (props)
 {
   return <PSContext.Consumer>{ pscontext => <RoleInstanceIterator_
@@ -18,6 +28,9 @@ class RoleInstanceIterator_ extends PerspectivesComponent
   {
     super(props);
     this.state.instances = undefined;
+    // We keep a copy of the cursor to provide an optimisation in componentDidUpdate.
+    // It allows us to recompute only two instances instead of all of them.
+    // This copy has no role in instance selection and moving.
     this.state.cursor = undefined;
   }
 
@@ -62,8 +75,9 @@ class RoleInstanceIterator_ extends PerspectivesComponent
       { contextinstance: component.context.contextinstance
       , contexttype: component.context.contexttype
       , roltype: component.context.roltype
-      , bind: rolBindingContext.bind
+      , roleKind: component.context.roleKind
       , bind_: bind_( rolInstance )
+      , bind: function(){} // A stub: we should not call this function in a MultiRole context.
       , checkbinding: rolBindingContext.checkbinding
       , removerol: function()
         {
@@ -117,22 +131,7 @@ class RoleInstanceIterator_ extends PerspectivesComponent
                   // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
                 }
               }
-          , checkbinding: function({rolinstance}, callback)
-            {
-              PDRproxy.then(
-                function (pproxy)
-                {
-                  // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
-                  pproxy.checkBinding(
-                    component.context.contexttype,
-                    component.context.roltype,
-                    rolinstance,
-                    function(psbool)
-                    {
-                      callback (psbool[0] === "true");
-                    });
-                });
-            }
+          , checkbinding: component.context.checkbinding
           }
       , instances: component.context.instances
       , cursor: component.context.cursor

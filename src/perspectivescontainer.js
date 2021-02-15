@@ -5,6 +5,12 @@ import PropTypes from "prop-types";
 
 import Screen from "./screen.js";
 
+import {RoleFormInView} from "./roleform.js";
+
+import View from "./view.js";
+
+import RoleInstance from "./roleinstance.js";
+
 import
   { Button
   , Container
@@ -15,13 +21,23 @@ import
 // Navigating is event-based:
 //  - Dispatch `OpenContext` with a payload that identifies the context instance to open.
 //    It will be opened in a Screen component and Screen opens a new - and thus embedded - PerspectivesContainer.
-//  - Dispatch `BackToEnclosingContext` without payload to navigate back.
+//  - Use the history.back function to close the Screen and re-open the other content.
+
+// TODO:
+// * If a RoleForm is open, it is possible to open a context in this component; however, not the other way around.
+//   This is because when a subcontext is selected, it adds a PerspectivesComponent to the tree that will catch
+//   the OpenRoleForm event. Hence this component will not catch OpenRoleForm events!
 export class PerspectivesContainer extends Component
 {
   constructor(props)
   {
     super(props);
-    this.state = {selectedSubContext: undefined};
+    this.state =
+      { selectedSubContext: undefined
+      , rolinstance: undefined
+      , viewname: undefined
+      , cardprop: undefined
+      };
     this.containerRef = React.createRef();
   }
 
@@ -44,6 +60,23 @@ export class PerspectivesContainer extends Component
         component.setState( {selectedSubContext: e.detail });
         e.stopPropagation();
       });
+    this.containerRef.current.addEventListener( "OpenRoleForm",
+      function(e)
+      {
+        const oldHandler = window.onpopstate;
+        const {rolinstance, viewname, cardprop} = e.detail;
+        // Save in the history object.
+        history.pushState({ roleOnForm: rolinstance }, "");
+        window.onpopstate = function()
+          {
+              component.setState( {rolinstance: undefined });
+              window.onpopstate = oldHandler;
+              e.stopPropagation();
+          };
+
+        component.setState( {rolinstance, viewname, cardprop });
+        e.stopPropagation();
+      });
   }
 
   render ()
@@ -60,7 +93,16 @@ export class PerspectivesContainer extends Component
               ?
               <Screen rolinstance={component.state.selectedSubContext}/>
               :
-              component.props.children
+              (component.state.rolinstance
+                ?
+                <RoleInstance roleinstance={component.state.rolinstance}>
+                  <View viewname={component.state.viewname}>
+                    <RoleFormInView cardprop={component.state.cardprop ? component.state.cardprop : null}/>
+                  </View>
+                </RoleInstance>
+                :
+                component.props.children
+)
            }</Container>;
   }
 }

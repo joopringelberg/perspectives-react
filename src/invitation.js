@@ -9,12 +9,11 @@ import
   , Card
   } from "react-bootstrap";
 
-import {PSView} from "./reactcontexts.js";
+import {PSView, PSRoleInstances} from "./reactcontexts.js";
 import {ViewOnExternalRole} from "./views.js";
 import SetBoolAsCheckbox from "./setboolascheckbox.js";
-import roleInstance from "./roleinstance.js";
-import Rol from "./rol.js";
-import {emptyCard} from "./cards.js";
+import RolInstance from "./roleinstance.js";
+import {makeRoleInListPresentation} from "./cards.js";
 import ExternalRole from "./externalrole.js";
 import View from "./view.js";
 import RoleInstances from "./roleinstances.js";
@@ -23,6 +22,8 @@ import CreateDropZone from "./createdropzone.js";
 import BindDropZone from "./binddropzone.js";
 import RoleInstanceIterator from "./roleinstanceiterator.js";
 import { BackButton } from "./perspectivescontainer.js";
+import { addFillARole } from "./cardbehaviour.js";
+import {addBehaviour} from "./behaviourcomponent.js";
 
 import {ArrowRightIcon} from '@primer/octicons-react';
 
@@ -110,16 +111,22 @@ function Message()
 
 export function ViewIncomingInvitation(props)
 {
-  const ContactCard = roleInstance( emptyCard( "allProperties", value => <p>Contact card of {value.propval("Voornaam")}.</p>) );
+  const ContactCard = addBehaviour( makeRoleInListPresentation(
+    function(psview)
+    {
+      return <Card><Card.Text>Contact card of {psview.propval("Voornaam")}.</Card.Text></Card>;
+    })
+    , [addFillARole]);
+
   return (<>
     <Row><Col className="pb-3" ><BackButton buttontext="Back to all chats"/></Col></Row>
     <Message/>
     <section aria-label="Received invitation">
       <Form.Group as={Row} controlId="initiator" className="align-items-center">
         <Col sm="4">
-          <Rol rol="Guest">
+          <RolInstance role="Guest">
             <ContactCard labelProperty="Voornaam"/>
-          </Rol>
+          </RolInstance>
         </Col>
         <Col sm="4 text-center">
           <ArrowRightIcon alt="ArrowRight" size="large"/>
@@ -127,13 +134,19 @@ export function ViewIncomingInvitation(props)
         <Col sm="4">
         <RoleInstances rol={props.specialisedRole}>
           <NoInstancesSwitcher>
-            <CreateDropZone ariaLabel="To accept the invitation, drag your own contact card over here and drop it.">
-              <Card>
-                <Card.Body>
-                  <p>To accept the invitation, drag your own contact card over here and drop it. create</p>
-                </Card.Body>
-              </Card>
-            </CreateDropZone>
+            <PSRoleInstances.Consumer>{ psroleinstances =>
+              <CreateDropZone
+                ariaLabel="To accept the invitation, drag your own contact card over here and drop it."
+                bind={psroleinstances.bind}
+                checkBinding={psroleinstances.checkbinding}
+              >
+                <Card>
+                  <Card.Body>
+                    <p>To accept the invitation, drag your own contact card over here and drop it. create</p>
+                  </Card.Body>
+                </Card>
+              </CreateDropZone>
+            }</PSRoleInstances.Consumer>
             <RoleInstanceIterator>
               <BindDropZone ariaLabel="To accept the invitation, drag your own contact card over here and drop it.">
                 <Card>

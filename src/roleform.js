@@ -1,11 +1,13 @@
 const React = require("react");
 import {deconstructLocalName} from "./urifunctions.js";
-import Rol from "./rol.js";
+import RoleInstance from "./roleinstance.js";
 import View from "./view.js";
 import {PSView} from "./reactcontexts.js";
 import ExternalRole from "./externalrole.js";
 import BindDropZone from "./binddropzone.js";
-import roleInstance from "./roleinstance.js";
+import {makeSingleRolePresentation} from "./cards.js";
+import {addBehaviour} from "./behaviourcomponent.js";
+import {addFillARole, addOpenContextOrRoleForm} from "./cardbehaviour.js";
 
 import
   { Row
@@ -19,26 +21,58 @@ const PropTypes = require("prop-types");
 // ROLEFORM
 ////////////////////////////////////////////////////////////////////////////////
 
-export default function RoleForm (props)
+export function RoleForm (props)
+{
+
+  if (props.rolename == "External")
+  {
+    return  <ExternalRole>
+              <View viewname={props.viewname}>
+                <RoleFormInView cardprop={props.cardprop}/>
+              </View>
+            </ExternalRole>;
+  }
+  else
+  {
+    return  <RoleInstance role={props.rolename}>
+              <View viewname={props.viewname}>
+                <RoleFormInView cardprop={props.cardprop}/>
+              </View>
+            </RoleInstance>;
+  }
+}
+
+RoleForm.propTypes =
+  { viewname: PropTypes.string.isRequired
+  , rolename: PropTypes.string.isRequired
+  , cardprop: PropTypes.string
+};
+
+
+export function RoleFormInView(props)
 {
   function roleForm (psview)
   {
-    var DraggableCard;
     const cardProp = props.cardprop;
-    if (cardProp)
-    {
-      DraggableCard = roleInstance(
-        React.forwardRef((props, ref) =>
-          <PSView.Consumer>
-            {
-              value => <Card ref={ref} aria-label={value.propval(cardProp)}>
-                <Card.Body>
-                  <p>{value.propval(cardProp)}</p>
-                </Card.Body>
-              </Card>
-          }
-          </PSView.Consumer>));
-    }
+
+    const DraggableCard = addBehaviour(
+      makeSingleRolePresentation(
+        // eslint-disable-next-line react/display-name
+        React.forwardRef( function(props, ref)
+        {
+          // eslint-disable-next-line react/prop-types
+          return  <Card ref={ref} tabIndex={props.tabIndex} aria-label={props["aria-label"]}>
+                    <Card.Body>
+                      <Card.Text>{
+                        // eslint-disable-next-line react/prop-types
+                        props.propval(cardProp)
+                      }</Card.Text>
+                    </Card.Body>
+                  </Card>;
+        })),
+      [addFillARole, addOpenContextOrRoleForm]
+      );
+
     return  <BindDropZone ariaLabel="To set this contract to a particular user, drag his or her card over here and drop it.">
               {
                 psview.viewproperties.map(
@@ -54,35 +88,16 @@ export default function RoleForm (props)
                     })
                 }
                 {
-                  cardProp !== undefined ? <Row><DraggableCard labelProperty={cardProp}/></Row> : <div/>
+                  cardProp ? <Row><DraggableCard labelProperty={cardProp}/></Row> : <div/>
                 }
 
             </BindDropZone>;
   }
-  if (props.rolename == "External")
-  {
-    return  <ExternalRole>
-              <View viewname={props.viewname}>
-                <PSView.Consumer>
-                { roleForm }
-                </PSView.Consumer>
-              </View>
-            </ExternalRole>;
-  }
-  else
-  {
-    return  <Rol rol={props.rolename}>
-              <View viewname={props.viewname}>
-                <PSView.Consumer>
-                { roleForm }
-                </PSView.Consumer>
-              </View>
-            </Rol>;
-  }
-}
 
-RoleForm.propTypes =
-  { viewname: PropTypes.string.isRequired
-  , rolename: PropTypes.string.isRequired
-  , cardprop: PropTypes.string
+  return  <PSView.Consumer>
+          { roleForm }
+          </PSView.Consumer>;
+}
+RoleFormInView.propTypes =
+  { cardprop: PropTypes.string
 };

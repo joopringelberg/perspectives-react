@@ -2,9 +2,9 @@ const React = require("react");
 import {deconstructLocalName} from "./urifunctions.js";
 import RoleInstance from "./roleinstance.js";
 import View from "./view.js";
-import {PSView} from "./reactcontexts.js";
+import {PSView, PSRol} from "./reactcontexts.js";
 import ExternalRole from "./externalrole.js";
-import BindDropZone from "./binddropzone.js";
+import RoleDropZone from "./roledropzone.js";
 import {makeSingleRolePresentation} from "./cards.js";
 import {addBehaviour} from "./behaviourcomponent.js";
 import {addFillARole, addOpenContextOrRoleForm} from "./cardbehaviour.js";
@@ -73,25 +73,31 @@ export function RoleFormInView(props)
       [addFillARole, addOpenContextOrRoleForm]
       );
 
-    return  <BindDropZone ariaLabel="To set this contract to a particular user, drag his or her card over here and drop it.">
-              {
-                psview.viewproperties.map(
-                  function( propName )
-                    {
-                      const localName = deconstructLocalName (propName);
-                      return  <Form.Group as={Row} key={propName}>
-                                <Form.Label column sm="3">{ localName }</Form.Label>
-                                <Col sm="9">
-                                  <Form.Control aria-label={ localName } defaultValue={psview.propval(propName)} onBlur={e => psview.propset(propName, e.target.value)}/>
-                                </Col>
-                              </Form.Group>;
-                    })
-                }
+    return  <PSRol.Consumer>{ psrol =>
+              <RoleDropZone
+                bind={psrol.bind_}
+                checkbinding={psrol.checkbinding}
+                ariaLabel="To set this contract to a particular user, drag his or her card over here and drop it."
+              >
                 {
-                  cardProp ? <Row><DraggableCard labelProperty={cardProp}/></Row> : <div/>
-                }
+                  psview.viewproperties.map(
+                    function( propName )
+                      {
+                        const localName = deconstructLocalName (propName);
+                        return  <Form.Group as={Row} key={propName}>
+                                  <Form.Label column sm="3">{ localName }</Form.Label>
+                                  <Col sm="9">
+                                    <Form.Control aria-label={ localName } defaultValue={psview.propval(propName)} onBlur={e => psview.propset(propName, e.target.value)}/>
+                                  </Col>
+                                </Form.Group>;
+                      })
+                  }
+                  {
+                    cardProp ? <Row><DraggableCard labelProperty={cardProp}/></Row> : <div/>
+                  }
 
-            </BindDropZone>;
+              </RoleDropZone>
+            }</PSRol.Consumer>;
   }
 
   return  <PSView.Consumer>

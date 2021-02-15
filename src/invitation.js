@@ -9,18 +9,15 @@ import
   , Card
   } from "react-bootstrap";
 
-import {PSView, PSRoleInstances} from "./reactcontexts.js";
+import {PSView, PSRol} from "./reactcontexts.js";
 import {ViewOnExternalRole} from "./views.js";
 import SetBoolAsCheckbox from "./setboolascheckbox.js";
 import RolInstance from "./roleinstance.js";
 import {makeRoleInListPresentation} from "./cards.js";
 import ExternalRole from "./externalrole.js";
 import View from "./view.js";
-import RoleInstances from "./roleinstances.js";
-import NoInstancesSwitcher from "./noinstancesswitcher.js";
-import CreateDropZone from "./createdropzone.js";
-import BindDropZone from "./binddropzone.js";
-import RoleInstanceIterator from "./roleinstanceiterator.js";
+import RoleInstance from "./roleinstance.js";
+import RoleDropZone from "./roledropzone.js";
 import { BackButton } from "./perspectivescontainer.js";
 import { addFillARole } from "./cardbehaviour.js";
 import {addBehaviour} from "./behaviourcomponent.js";
@@ -132,32 +129,34 @@ export function ViewIncomingInvitation(props)
           <ArrowRightIcon alt="ArrowRight" size="large"/>
         </Col>
         <Col sm="4">
-        <RoleInstances rol={props.specialisedRole}>
-          <NoInstancesSwitcher>
-            <PSRoleInstances.Consumer>{ psroleinstances =>
-              <CreateDropZone
-                ariaLabel="To accept the invitation, drag your own contact card over here and drop it."
-                bind={psroleinstances.bind}
-                checkBinding={psroleinstances.checkbinding}
-              >
-                <Card>
-                  <Card.Body>
-                    <p>To accept the invitation, drag your own contact card over here and drop it. create</p>
-                  </Card.Body>
-                </Card>
-              </CreateDropZone>
-            }</PSRoleInstances.Consumer>
-            <RoleInstanceIterator>
-              <BindDropZone ariaLabel="To accept the invitation, drag your own contact card over here and drop it.">
-                <Card>
-                  <Card.Body>
-                    <p>To accept the invitation, drag your own contact card over here and drop it. bind</p>
-                  </Card.Body>
-                </Card>
-              </BindDropZone>
-            </RoleInstanceIterator>
-          </NoInstancesSwitcher>
-          </RoleInstances>
+          <RoleInstance role={props.specialisedRole}>
+            <PSRol.Consumer>{ psrol =>
+              <>
+                <RoleDropZone
+                  ariaLabel="To accept the invitation, drag your own contact card over here and drop it."
+                  bind={psrol.bind /* In case there is no role yet, create it on dropping the binding.*/}
+                  checkBinding={psrol.checkbinding}
+                >
+                  <Card>
+                    <Card.Body>
+                      <p>To accept the invitation, drag your own contact card over here and drop it. create</p>
+                    </Card.Body>
+                  </Card>
+                </RoleDropZone>
+                <RoleDropZone
+                  ariaLabel="To accept the invitation, drag your own contact card over here and drop it."
+                  bind={psrol.bind_ /* As we have a role, just bind the role we drop.*/}
+                  checkBinding={psrol.checkbinding}
+                >
+                  <Card>
+                    <Card.Body>
+                      <p>To accept the invitation, drag your own contact card over here and drop it. create</p>
+                    </Card.Body>
+                  </Card>
+                </RoleDropZone>
+              </>
+            }</PSRol.Consumer>
+          </RoleInstance>
         </Col>
       </Form.Group>
     </section>

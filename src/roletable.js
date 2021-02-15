@@ -375,10 +375,13 @@ class TableCell extends PerspectivesComponent
                   systemExternalRole,
                   "model:System$PerspectivesSystem$External$CardClipBoard",
                   JSON.stringify(
-                    { selectedRole: component.props.psrol.rolinstance
-                    , cardTitle: component.state.value
-                    , roleType: component.props.psrol.roltype
-                    , contextType: component.props.psrol.contexttype
+                    { roleData:
+                      { rolinstance: component.props.psrol.rolinstance
+                      , cardTitle: component.state.value
+                      , roleType: component.props.psrol.roltype
+                      , contextType: component.props.psrol.contexttype
+                      }
+                    , addedBehaviour: [ "fillARole", "removeFiller", "removeRoleFromContext"]
                     }),
                   component.props.myroletype));
               }
@@ -406,10 +409,13 @@ class TableCell extends PerspectivesComponent
                   systemExternalRole,
                   "model:System$PerspectivesSystem$External$CardClipBoard",
                   JSON.stringify(
-                    { selectedRole: component.props.psrol.rolinstance
-                    , cardTitle: component.state.value
-                    , roleType: component.props.psrol.roltype
-                    , contextType: component.props.psrol.contexttype
+                    { roleData:
+                      { rolinstance: component.props.psrol.rolinstance
+                      , cardTitle: component.state.value
+                      , roleType: component.props.psrol.roltype
+                      , contextType: component.props.psrol.contexttype
+                      }
+                    , addedBehaviour: [ "fillARole", "removeFiller", "removeRoleFromContext"]
                     }),
                   component.props.myroletype));
               }

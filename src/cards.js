@@ -43,6 +43,7 @@ export function makeRoleInListPresentation (RoleRep)
       super(props);
       this.ref = React.createRef();
     }
+
     componentDidMount()
     {
       if (this.props.setSelf)
@@ -50,6 +51,7 @@ export function makeRoleInListPresentation (RoleRep)
         this.props.setSelf(this);
       }
     }
+
     componentDidUpdate ()
     {
       const component = this;
@@ -64,14 +66,16 @@ export function makeRoleInListPresentation (RoleRep)
       return <View viewname={component.props.viewname ? component.props.viewname : "allProperties"}>
                  <PSView.Consumer>
                    {psview =>
-                     <RoleRep
-                      ref={component.ref}
-                      aria-label={psview.propval(component.props.labelProperty)}
-                      tabIndex={component.context.isselected ? "0" : "-1"}
-                      propval={psview.propval}
-                      onClick={ () => component.ref.current.dispatchEvent( new CustomEvent('SetCursor', { detail: component.context.rolinstance, bubbles: true }) ) }
-                      >
-                     </RoleRep>}
+                     <div onClick={() => component.ref.current.dispatchEvent(
+                         new CustomEvent('SetCursor', { detail: component.context.rolinstance, bubbles: true }) )}>
+                       <RoleRep
+                        ref={component.ref}
+                        aria-label={psview.propval(component.props.labelProperty)}
+                        tabIndex={component.context.isselected ? "0" : "-1"}
+                        propval={psview.propval}
+                        >
+                       </RoleRep>
+                    </div>}
                  </PSView.Consumer>
                </View>;
     }

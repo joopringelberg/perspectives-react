@@ -3,7 +3,7 @@ const PropTypes = require("prop-types");
 
 import RoleInstanceIterator from "./roleinstanceiterator.js";
 import RoleInstances from "./roleinstances.js";
-import CreateDropZone from "./createdropzone.js";
+import RoleDropZone from "./roledropzone.js";
 import NoInstancesSwitcher from "./noinstancesswitcher";
 import {PSRoleInstances} from "./reactcontexts.js";
 
@@ -14,7 +14,7 @@ export default function Rol(props)
   {
     return  <RoleInstances rol={props.rol}>
               <PSRoleInstances.Consumer>{ psroleinstances =>
-                <CreateDropZone
+                <RoleDropZone
                   ariaLabel={ariaLabel}
                   bind={psroleinstances.bind}
                   checkbinding={psroleinstances.checkbinding}
@@ -26,7 +26,7 @@ export default function Rol(props)
                       {props.children}
                     </RoleInstanceIterator>
                   </NoInstancesSwitcher>
-                </CreateDropZone>
+                </RoleDropZone>
             }</PSRoleInstances.Consumer>
             </RoleInstances>;
   }

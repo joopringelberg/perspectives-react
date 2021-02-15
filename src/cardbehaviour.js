@@ -3,13 +3,27 @@ const PDRproxy = require("perspectives-proxy").PDRproxy;
 /*
 This module gives functions that add behaviour to a component that represents a role.
 The functions built on the assumption that the role component has a PSRol context.
-We we will call that component a `Card` here, though there is no reason to use a Reactbootstrap.Card component.
+We will call that component a `Card` here, though there is no reason to use a Reactbootstrap.Card component.
 However, it must be class based (implemented by extending React.Component).
-Add these behaviours to the Card using the collectBehaviour function; prepare the Card by extending BehaviourReceivingComponent
-or by adding to the method componentDidMount the following line:
+Add these behaviours to the Card using the collectBehaviour or addBehaviour function; prepare the Card
+by extending BehaviourReceivingComponent or by adding to the method componentDidMount the following line:
 
   this.props.setSelf(this);
 
+IMPLEMENTATION NOTES.
+1. The behaviours stack handlers. However, for the dragstart event that is not possible. Hence
+we check whether a handler exists before installing one and will call the old one if appropriate.
+
+2. As soon as one behaviour allows dragging, this would unlock all behaviours accessible by dropping the target, e.g.
+on a tool in the bar or on a dropzone. To prevent this, we annotate the React element with the behaviours added to it.
+On dropping, we check those annotations to prevent behaviour that was not added (e.g. when dropping on the Trash we make sure
+that the removerolefromcontext behaviour was added to the origin component).
+The behaviour annotations are kept in an array of strings in the member "addedBehaviour". Possible values are:
+  - openContextOrRoleForm
+  - fillWithARole
+  - fillARole
+  - removeFiller
+  - removeRoleFromContext
 */
 
 // adds a doubleclick handler and a keydown handler.
@@ -28,6 +42,7 @@ or by adding to the method componentDidMount the following line:
 //    from the OpenRoleForm tool in App.
 export function addOpenContextOrRoleForm(domEl, component)
 {
+  // Open the role as a context or in the RoleForm.
   function handle(onNewTab)
   {
     const roleKind = component.context.roleKind;
@@ -74,6 +89,7 @@ export function addOpenContextOrRoleForm(domEl, component)
   function handleClick(e)
   {
     handle( (e.shiftKey || e.ctrlKey || e.metaKey) );
+    e.stopPropagation();
   }
 
   function handleKeyDown(e)
@@ -87,6 +103,10 @@ export function addOpenContextOrRoleForm(domEl, component)
           {
             handle( e.altKey );
           }
+          {
+            component.props.setEventDispatcher(eventDispatcher);
+          }
+          e.stopPropagation();
         }
       }
     }
@@ -94,9 +114,9 @@ export function addOpenContextOrRoleForm(domEl, component)
   const previousOnDragStart = domEl.ondragstart;
 
   // This function is provided as the value of the App member
-  function eventDispatcher ( roleinstance )
+  function eventDispatcher ( {roleData, addedBehaviour} )
   {
-    if (roleinstance == component.context.rolinstance)
+    if (roleData.rolinstance == component.context.rolinstance && addedBehaviour.includes("openContextOrRoleForm"))
     {
       domEl.dispatchEvent( new CustomEvent('OpenRoleForm',
         { detail:
@@ -111,6 +131,7 @@ export function addOpenContextOrRoleForm(domEl, component)
   domEl.addEventListener( "keydown", handleKeyDown);
   domEl.addEventListener( "dblclick", handleClick);
 
+  addBehaviourAnnotation( component, "openContextOrRoleForm");
   // Notice that this code is highly contextual.
   // It may have to change if the other behaviours that add dragstart methods
   // change.
@@ -126,7 +147,11 @@ export function addOpenContextOrRoleForm(domEl, component)
   {
     domEl.ondragstart = function(ev)
     {
-      ev.dataTransfer.setData("PSRol", JSON.stringify(component.context));
+      const payload = JSON.stringify(
+        { roleData: component.context
+        , addedBehaviour: component.addedBehaviour }
+      );
+      ev.dataTransfer.setData("PSRol", payload);
       component.props.setEventDispatcher(eventDispatcher);
     };
   }
@@ -141,7 +166,7 @@ export function addFillWithRole(domEl, component)
     PDRproxy.then(
       function(pproxy)
       {
-        component.addUnsubscriber(
+        component.fireAndForget(
           pproxy.getProperty(
             component.props.systemExternalRole,
             "model:System$PerspectivesSystem$External$CardClipBoard",
@@ -150,9 +175,7 @@ export function addFillWithRole(domEl, component)
             {
               if (valArr[0])
               {
-                const {selectedRole} = JSON.parse( valArr[0]);
-                receiveResults( {rolinstance: selectedRole} );
-
+                receiveResults( JSON.parse( valArr[0]) );
               }
               else
               {
@@ -167,36 +190,41 @@ export function addFillWithRole(domEl, component)
     switch(event.keyCode){
       case 13: // Enter
       case 32: // space
-      readClipBoard( function( roleData )
+      readClipBoard( function( roleDataAndBehaviour )
         {
-          if (roleData.rolinstance)
+          if (roleDataAndBehaviour.roleData.rolinstance)
           {
-            tryToBind( event, roleData );
+            tryToBind( event, roleDataAndBehaviour );
           }
         });
         event.preventDefault();
       }
   }
 
-  function tryToBind (event, rolData )
+  function tryToBind (event, {roleData, addedBehaviour} )
   {
-    component.context.checkbinding( rolData,
-      function( bindingAllowed )
-      {
-        if ( bindingAllowed)
+    if ( addedBehaviour.includes("fillARole"))
+    {
+      component.context.checkbinding( roleData,
+        function( bindingAllowed )
         {
-          component.context.bind_( rolData );
-          // Empty clipboard.
-          PDRproxy.then( pproxy => pproxy.deleteProperty(
-            component.props.systemExternalRole,
-            "model:System$PerspectivesSystem$External$CardClipBoard",
-            "model:System$PerspectivesSystem$User") );
-        }
-        else {
-          component.eventDiv.current.classList.add("border-danger", "border");
-        }
-      } );
+          if ( bindingAllowed)
+          {
+            component.context.bind_( roleData );
+            // Empty clipboard.
+            PDRproxy.then( pproxy => pproxy.deleteProperty(
+              component.props.systemExternalRole,
+              "model:System$PerspectivesSystem$External$CardClipBoard",
+              "model:System$PerspectivesSystem$User") );
+          }
+          else {
+            component.eventDiv.current.classList.add("border-danger", "border");
+          }
+        } );
+      }
   }
+
+  addBehaviourAnnotation( component, "fillWithARole");
 
   domEl.dragenter = event => {
       event.preventDefault();
@@ -239,10 +267,13 @@ export function addFillARole(domEl, component)
                 component.props.systemExternalRole,
                 "model:System$PerspectivesSystem$External$CardClipBoard",
                 JSON.stringify(
-                  { selectedRole: component.context.rolinstance
-                  , cardTitle: valArr[0]
-                  , roleType: component.context.roltype
-                  , contextType: component.context.contexttype
+                  { roleData:
+                    { rolinstance: component.context.rolinstance
+                    , cardTitle: valArr[0]
+                    , roleType: component.context.roltype
+                    , contextType: component.context.contexttype
+                    }
+                  , addedBehaviour: component.addedBehaviour
                   }),
                 component.props.myroletype );
             }
@@ -253,12 +284,21 @@ export function addFillARole(domEl, component)
     }
   }
 
+  addBehaviourAnnotation( component, "fillARole");
+
   // Notice that this code is highly contextual.
   // It may have to change if the other behaviours that add dragstart methods
   // change.
   if (!domEl.ondragstart)
   {
-    domEl.ondragstart = ev => ev.dataTransfer.setData("PSRol", JSON.stringify(component.context));
+    domEl.ondragstart = ev =>
+    {
+      const payload = JSON.stringify(
+        { roleData: component.context
+        , addedBehaviour: component.addedBehaviour }
+      );
+      ev.dataTransfer.setData("PSRol", payload);
+    };
   }
   domEl.draggable = true;
   domEl.addEventListener( "keydown", handleKeyDown);
@@ -290,12 +330,21 @@ export function addRemoveFiller(domEl, component)
   domEl.addEventListener( "keydown", handleKeyDown);
   domEl.draggable = true;
 
+  addBehaviourAnnotation( component, "removeFiller");
+
   // Notice that this code is highly contextual.
   // It may have to change if the other behaviours that add dragstart methods
   // change.
   if (!domEl.ondragstart)
   {
-    domEl.ondragstart = ev => ev.dataTransfer.setData("PSRol", JSON.stringify(component.context));
+    domEl.ondragstart = ev =>
+      {
+        const payload = JSON.stringify(
+          { roleData: component.context
+          , addedBehaviour: component.addedBehaviour }
+        );
+        ev.dataTransfer.setData("PSRol", payload);
+      };
   }
 }
 
@@ -312,6 +361,9 @@ export function addRemoveRoleFromContext(domEl, component)
         event.stopPropagation();
       }
     }
+
+  addBehaviourAnnotation( component, "removeRoleFromContext");
+
   domEl.addEventListener( "keydown", handleKeyDown);
   domEl.draggable = true;
   // Notice that this code is highly contextual.
@@ -319,6 +371,25 @@ export function addRemoveRoleFromContext(domEl, component)
   // change.
   if (!domEl.ondragstart)
   {
-    domEl.ondragstart = ev => ev.dataTransfer.setData("PSRol", JSON.stringify(component.context));
+    domEl.ondragstart = ev =>
+      {
+        const payload = JSON.stringify(
+          { roleData: component.context
+          , addedBehaviour: component.addedBehaviour }
+        );
+        ev.dataTransfer.setData("PSRol", payload);
+      };
+  }
+}
+
+function addBehaviourAnnotation( component, behaviour )
+{
+  if (component.addedBehaviour)
+  {
+    component.addedBehaviour.push( behaviour );
+  }
+  else
+  {
+    component.addedBehaviour = [behaviour];
   }
 }

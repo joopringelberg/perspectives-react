@@ -368,24 +368,6 @@ class TableCell extends PerspectivesComponent
                 // Open context.
                 component.inputRef.current.dispatchEvent( new CustomEvent('OpenContext', { detail: component.props.psrol.rolinstance, bubbles: true }) );
               }
-              else
-              {
-                // card to clipboard
-                PDRproxy.then( pproxy => pproxy.setProperty(
-                  systemExternalRole,
-                  "model:System$PerspectivesSystem$External$CardClipBoard",
-                  JSON.stringify(
-                    { roleData:
-                      { rolinstance: component.props.psrol.rolinstance
-                      , cardTitle: component.state.value
-                      , roleType: component.props.psrol.roltype
-                      , contextType: component.props.psrol.contexttype
-                      }
-                    , addedBehaviour: [ "fillARole", "removeFiller", "removeRoleFromContext"]
-                    , myroletype: component.props.myroletype
-                    }),
-                  component.props.myroletype));
-              }
             }
             else
             {
@@ -402,24 +384,6 @@ class TableCell extends PerspectivesComponent
               {
                 // Open context.
                 component.inputRef.current.dispatchEvent( new CustomEvent('OpenContext', { detail: component.props.psrol.rolinstance, bubbles: true }) );
-              }
-              else
-              {
-                // card to clipboard
-                PDRproxy.then( pproxy => pproxy.setProperty(
-                  systemExternalRole,
-                  "model:System$PerspectivesSystem$External$CardClipBoard",
-                  JSON.stringify(
-                    { roleData:
-                      { rolinstance: component.props.psrol.rolinstance
-                      , cardTitle: component.state.value
-                      , roleType: component.props.psrol.roltype
-                      , contextType: component.props.psrol.contexttype
-                      }
-                    , addedBehaviour: [ "fillARole", "removeFiller", "removeRoleFromContext"]
-                    , myroletype: component.props.myroletype
-                    }),
-                  component.props.myroletype));
               }
             }
             else if (event.shiftKey)
@@ -442,6 +406,28 @@ class TableCell extends PerspectivesComponent
               event.preventDefault();
             }
             break;
+          case 67: // c
+            if (event.ctrlKey)
+            {
+              // card to clipboard
+              PDRproxy.then( pproxy => pproxy.setProperty(
+                systemExternalRole,
+                "model:System$PerspectivesSystem$External$CardClipBoard",
+                JSON.stringify(
+                  { roleData:
+                    { rolinstance: component.props.psrol.rolinstance
+                    , cardTitle: component.state.value
+                    , roleType: component.props.psrol.roltype
+                    , contextType: component.props.psrol.contexttype
+                    }
+                  , addedBehaviour: [ "fillARole", "removeFiller", "removeRoleFromContext"]
+                  , myroletype: component.props.myroletype
+                  }),
+                component.props.myroletype));
+                event.stopPropagation();
+                event.preventDefault();
+              }
+              break;
           default:
             // any other key will deselect the card.
             component.inputRef.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: false, bubbles: true }) );

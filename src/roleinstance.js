@@ -205,9 +205,7 @@ export default class RoleInstance extends PerspectivesComponent
             function(roleKindArr)
             {
               const roleKind = roleKindArr[0];
-              component.setState( function()
-                {
-                  return  { contextinstance: component.context.contextinstance
+              component.setState( { contextinstance: component.context.contextinstance
                           , contexttype: component.context.contexttype
                           , roltype
                           , roleKind
@@ -217,10 +215,7 @@ export default class RoleInstance extends PerspectivesComponent
                           , removerol
                           , rolinstance
                           , isselected: true // To accommodate the PSRol definition.
-                          };
-                }
-              );
-
+                        });
             });
         }
 
@@ -285,12 +280,12 @@ export default class RoleInstance extends PerspectivesComponent
       }
       else
       {
-        return null;
+        return <div/>;
       }
     }
     else
     {
-      return null;
+      return <div/>;
     }
   }
 }

@@ -48,40 +48,32 @@ export function addOpenContextOrRoleForm(domEl, component)
   function handle(onNewTab)
   {
     const roleKind = component.context.roleKind;
+    const viewname = component.props.viewname ? component.props.viewname : "allProperties";
     if ( onNewTab )
     {
       if (roleKind == "ContextRole" || roleKind == "ExternalRole")
       {
         window.open("/?" + component.context.rolinstance);
       }
-      // We do not yet support opening a RoleForm in a new screen.
+      else
+      {
+        window.open("/?openroleform=" + component.context.rolinstance +
+          "&viewname=" + viewname +
+          (component.props.cardprop ? "&cardprop=" + component.props.cardprop : ""));
+      }
     }
     else
     {
       if (roleKind == "ContextRole" || roleKind == "ExternalRole")
       {
-        if ( component.props.formMode )
-        {
-          domEl.dispatchEvent( new CustomEvent('OpenRoleForm',
-            { detail:
-              { rolinstance: component.context.rolinstance
-              , viewname: component.props.viewname ? component.props.viewname : "allProperties"
-              , cardprop: component.props.cardprop
-              }
-            , bubbles: true
-            }) );
-        }
-        else
-        {
-          domEl.dispatchEvent( new CustomEvent('OpenContext', { detail: component.context.rolinstance, bubbles: true }) );
-        }
+        domEl.dispatchEvent( new CustomEvent('OpenContext', { detail: component.context.rolinstance, bubbles: true }) );
       }
       else
       {
         domEl.dispatchEvent( new CustomEvent('OpenRoleForm',
           { detail:
             { rolinstance: component.context.rolinstance
-            , viewname: component.props.viewname ? component.props.viewname : "allProperties"
+            , viewname
             , cardprop: component.props.cardprop
             }
           , bubbles: true }) );
@@ -90,7 +82,7 @@ export function addOpenContextOrRoleForm(domEl, component)
   }
   function handleClick(e)
   {
-    handle( (e.shiftKey || e.ctrlKey || e.metaKey) );
+    handle( (e.shiftKey || e.altKey ) );
     e.stopPropagation();
   }
 

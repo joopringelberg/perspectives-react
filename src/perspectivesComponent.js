@@ -21,7 +21,6 @@ export default class PerspectivesComponent extends Component
   componentWillUnmount ()
   {
     const component = this;
-    this.__mounted__ = false;
     PDRproxy.then(
       function(pproxy)
       {
@@ -31,6 +30,7 @@ export default class PerspectivesComponent extends Component
             unsubscriber.request = "Unsubscribe";
             pproxy.send(unsubscriber, function(){});
           });
+        component.__mounted__ = false;
       });
   }
 

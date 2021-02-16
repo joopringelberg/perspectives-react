@@ -2,7 +2,7 @@ const React = require("react");
 const PropTypes = require("prop-types");
 const PDRproxy = require("perspectives-proxy").PDRproxy;
 import PerspectivesComponent from "./perspectivescomponent.js";
-import {PSContext, PSRol} from "./reactcontexts";
+import {PSContext} from "./reactcontexts";
 
 export default class ContextOfRole extends PerspectivesComponent
 {
@@ -20,11 +20,10 @@ export default class ContextOfRole extends PerspectivesComponent
     PDRproxy.then(
       function (pproxy)
       {
-        const role = component.props.rolinstance ? component.props.rolinstance : component.context.rolinstance;
         // The context of the rol will be bound to the state prop 'contextInstance'.
         component.addUnsubscriber(
           pproxy.getRolContext(
-            role,
+            component.props.rolinstance,
             function (contextId)
             {
               component.addUnsubscriber(
@@ -36,7 +35,7 @@ export default class ContextOfRole extends PerspectivesComponent
                     {
                       // Get it from the core.
                       component.addUnsubscriber(
-                        pproxy.getMeForContext( role,
+                        pproxy.getMeForContext( component.props.rolinstance,
                           function(myroletype)
                           {
                             component.setState(
@@ -67,7 +66,7 @@ export default class ContextOfRole extends PerspectivesComponent
     {
       component.componentDidMount();
     }
-    else if (component.props.myroletype !== component.state.myroletype )
+    else if (component.props.myroletype !== prevProps.myroletype )
     {
       component.setState( {myroletype: component.props.myroletype } );
     }
@@ -92,9 +91,7 @@ export default class ContextOfRole extends PerspectivesComponent
 
 }
 
-ContextOfRole.contextType = PSRol;
-
 ContextOfRole.propTypes = {
-  rolinstance: PropTypes.string,
+  rolinstance: PropTypes.string.isRequired,
   myroletype: PropTypes.string
 };

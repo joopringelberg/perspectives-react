@@ -1,6 +1,8 @@
 import React from "react";
 const PropTypes = require("prop-types");
 
+import PerspectivesComponent from "./perspectivescomponent.js";
+
 import View from "./view.js";
 
 import {PSView, PSRol} from "./reactcontexts.js";
@@ -36,7 +38,7 @@ cursor movement like RoleInstances does.
 */
 export function makeRoleInListPresentation (RoleRep)
 {
-  class RoleInListPresentation extends React.Component
+  class RoleInListPresentation extends PerspectivesComponent
   {
     constructor(props)
     {

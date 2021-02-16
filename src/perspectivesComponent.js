@@ -53,18 +53,6 @@ export default class PerspectivesComponent extends Component
     }
   }
 
-  fireAndForget(unsubscriberPromise) 
-  {
-    if (unsubscriberPromise)
-    {
-      unsubscriberPromise.then(function(unsubscriber)
-      {
-        unsubscriber.request = "Unsubscribe";
-        PDRproxy.then( pproxy => pproxy.send(unsubscriber, function(){}));
-      });
-    }
-  }
-
   stateIsComplete ()
   {
     const component = this;

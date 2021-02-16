@@ -168,7 +168,8 @@ export function addBehaviour( Receiver, arrayOfBehaviours )
   // Provide myroletype for these behaviours:
   if (  behaviourNames.includes( "addFillARole" ) ||
         behaviourNames.includes( "addRemoveFiller" ) ||
-        behaviourNames.includes( "addRemoveRoleFromContext")
+        behaviourNames.includes( "addRemoveRoleFromContext" ||
+        behaviourNames.includes( "addOpenContextOrRoleForm" ) )
      )
   {
     supportMyRoletype = true;

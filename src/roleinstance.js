@@ -117,7 +117,7 @@ export default class RoleInstance extends PerspectivesComponent
                           pproxy.bind_(
                             rolInstance, // binder: component.state.rolinstance?
                             rolinstance, // binding
-                            component.props.myroletype,
+                            component.context.myroletype,
                             function( /*rolId*/ ){});
                         }
                         else
@@ -139,7 +139,7 @@ export default class RoleInstance extends PerspectivesComponent
               component.props.role, // may be a local name.
               component.context.contexttype,
               {properties: {}, binding: rolinstance},
-              component.props.myroletype,
+              component.context.myroletype,
               function( /*rolId*/ ){});
           }
         }
@@ -166,7 +166,7 @@ export default class RoleInstance extends PerspectivesComponent
                 component.context.contexttype,
                 component.state.roltype,
                 component.state.rolinstance,
-                component.props.myroletype );
+                component.context.myroletype );
             });
         }
 

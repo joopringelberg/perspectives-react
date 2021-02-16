@@ -382,6 +382,7 @@ class TableCell extends PerspectivesComponent
                       , contextType: component.props.psrol.contexttype
                       }
                     , addedBehaviour: [ "fillARole", "removeFiller", "removeRoleFromContext"]
+                    , myroletype: component.props.myroletype
                     }),
                   component.props.myroletype));
               }
@@ -416,6 +417,7 @@ class TableCell extends PerspectivesComponent
                       , contextType: component.props.psrol.contexttype
                       }
                     , addedBehaviour: [ "fillARole", "removeFiller", "removeRoleFromContext"]
+                    , myroletype: component.props.myroletype
                     }),
                   component.props.myroletype));
               }
@@ -511,7 +513,18 @@ class TableCell extends PerspectivesComponent
 
                 className={component.props.rowSelected ? "bg-info shadow" : "shadow"}
                 draggable
-                onDragStart={ev => ev.dataTransfer.setData("PSRol", JSON.stringify(component.props.psrol))}
+                onDragStart={ev => ev.dataTransfer.setData("PSRol",
+                  JSON.stringify(
+                    { roleData:
+                      { rolinstance: component.props.psrol.rolinstance
+                      , cardTitle: component.state.value
+                      , roleType: component.props.psrol.roltype
+                      , contextType: component.props.psrol.contexttype
+                      }
+                    , addedBehaviour: [ "fillARole", "removeFiller", "removeRoleFromContext"]
+                    , myroletype: component.props.myroletype
+                    })
+                  )}
               />}
             </AppContext.Consumer>
           </td>);

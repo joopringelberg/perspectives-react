@@ -1,4 +1,6 @@
-const PDRproxy = require("perspectives-proxy").PDRproxy;
+// const PDRproxy = require("perspectives-proxy").PDRproxy;
+
+import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
 
 /*
 This module gives functions that add behaviour to a component that represents a role.
@@ -149,7 +151,9 @@ export function addOpenContextOrRoleForm(domEl, component)
     {
       const payload = JSON.stringify(
         { roleData: component.context
-        , addedBehaviour: component.addedBehaviour }
+        , addedBehaviour: component.addedBehaviour
+        , myroletype: component.props.myroletype
+        }
       );
       ev.dataTransfer.setData("PSRol", payload);
       component.props.setEventDispatcher(eventDispatcher);
@@ -166,22 +170,22 @@ export function addFillWithRole(domEl, component)
     PDRproxy.then(
       function(pproxy)
       {
-        component.fireAndForget(
-          pproxy.getProperty(
-            component.props.systemExternalRole,
-            "model:System$PerspectivesSystem$External$CardClipBoard",
-            "model:System$PerspectivesSystem$External",
-            function (valArr)
+        pproxy.getProperty(
+          component.props.systemExternalRole,
+          "model:System$PerspectivesSystem$External$CardClipBoard",
+          "model:System$PerspectivesSystem$External",
+          function (valArr)
+          {
+            if (valArr[0])
             {
-              if (valArr[0])
-              {
-                receiveResults( JSON.parse( valArr[0]) );
-              }
-              else
-              {
-                receiveResults({});
-              }
-            }));
+              receiveResults( JSON.parse( valArr[0]) );
+            }
+            else
+            {
+              receiveResults({roleData: {}});
+            }
+          },
+          FIREANDFORGET);
       });
   }
 
@@ -253,34 +257,37 @@ export function addFillARole(domEl, component)
   function handleKeyDown (event)
   {
     switch(event.keyCode){
-      case 13: // Enter
-      case 32: // space
-        // Set information in the CardClipboard external property of model:System$PerspectivesSystem.
-        PDRproxy.then( pproxy =>
-          pproxy.getPropertyFromLocalName(
-            component.context.rolinstance,
-            component.props.labelProperty,
-            component.context.roltype,
-            function(valArr)
-            {
-              pproxy.setProperty(
-                component.props.systemExternalRole,
-                "model:System$PerspectivesSystem$External$CardClipBoard",
-                JSON.stringify(
-                  { roleData:
-                    { rolinstance: component.context.rolinstance
-                    , cardTitle: valArr[0]
-                    , roleType: component.context.roltype
-                    , contextType: component.context.contexttype
-                    }
-                  , addedBehaviour: component.addedBehaviour
-                  }),
-                component.props.myroletype );
-            }
-          )
-        );
-        event.preventDefault();
-        event.stopPropagation();
+      case 67: // 'c'
+        if (event.ctrlKey)
+        {
+          // Set information in the CardClipboard external property of model:System$PerspectivesSystem.
+          PDRproxy.then( pproxy =>
+            pproxy.getPropertyFromLocalName(
+              component.context.rolinstance,
+              component.props.labelProperty,
+              component.context.roltype,
+              function(valArr)
+              {
+                pproxy.setProperty(
+                  component.props.systemExternalRole,
+                  "model:System$PerspectivesSystem$External$CardClipBoard",
+                  JSON.stringify(
+                    { roleData:
+                      { rolinstance: component.context.rolinstance
+                      , cardTitle: valArr[0]
+                      , roleType: component.context.roltype
+                      , contextType: component.context.contexttype
+                      }
+                    , addedBehaviour: component.addedBehaviour
+                    , myroletype: component.props.myroletype
+                    }),
+                  component.props.myroletype );
+              }
+            )
+          );
+          event.preventDefault();
+          event.stopPropagation();
+        }
     }
   }
 
@@ -295,7 +302,9 @@ export function addFillARole(domEl, component)
     {
       const payload = JSON.stringify(
         { roleData: component.context
-        , addedBehaviour: component.addedBehaviour }
+        , addedBehaviour: component.addedBehaviour
+        , myroletype: component.props.myroletype
+        }
       );
       ev.dataTransfer.setData("PSRol", payload);
     };
@@ -341,7 +350,9 @@ export function addRemoveFiller(domEl, component)
       {
         const payload = JSON.stringify(
           { roleData: component.context
-          , addedBehaviour: component.addedBehaviour }
+          , addedBehaviour: component.addedBehaviour
+          , myroletype: component.props.myroletype
+          }
         );
         ev.dataTransfer.setData("PSRol", payload);
       };
@@ -375,7 +386,9 @@ export function addRemoveRoleFromContext(domEl, component)
       {
         const payload = JSON.stringify(
           { roleData: component.context
-          , addedBehaviour: component.addedBehaviour }
+          , addedBehaviour: component.addedBehaviour
+          , myroletype: component.props.myroletype
+          }
         );
         ev.dataTransfer.setData("PSRol", payload);
       };

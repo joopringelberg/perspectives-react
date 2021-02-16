@@ -5,7 +5,8 @@ import {AppContext} from "./reactcontexts.js";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 
-const PDRproxy = require("perspectives-proxy").PDRproxy;
+// const PDRproxy = require("perspectives-proxy").PDRproxy;
+import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
 
 ////////////////////////////////////////////////////////////////////////////////
 // ROLEDROPZONE
@@ -52,30 +53,28 @@ class RoleDropZone_ extends PerspectivesComponent
     this.eventDiv = React.createRef();
   }
 
-  // Subscribe to the clipboard. NOTE; do we need a subscription?
-  // rather a fireAndForget situation.
   readClipBoard( receiveResults )
   {
     const component = this;
     PDRproxy.then(
       function(pproxy)
       {
-        component.fireAndForget(
-          pproxy.getProperty(
-            component.props.systemExternalRole,
-            "model:System$PerspectivesSystem$External$CardClipBoard",
-            "model:System$PerspectivesSystem$External",
-            function (valArr)
+        pproxy.getProperty(
+          component.props.systemExternalRole,
+          "model:System$PerspectivesSystem$External$CardClipBoard",
+          "model:System$PerspectivesSystem$External",
+          function (valArr)
+          {
+            if (valArr[0])
             {
-              if (valArr[0])
-              {
-                receiveResults( JSON.parse( valArr[0]) );
-              }
-              else
-              {
-                receiveResults({});
-              }
-            }));
+              receiveResults( JSON.parse( valArr[0]) );
+            }
+            else
+            {
+              receiveResults({roleData: {}});
+            }
+          },
+          FIREANDFORGET);
       });
   }
 

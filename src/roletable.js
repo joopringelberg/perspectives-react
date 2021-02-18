@@ -60,7 +60,6 @@ class RoleTable_ extends PerspectivesComponent
     this.state.active = false;
     this.state.rowSelected = false;
     this.eventDiv = React.createRef();
-    this.activateTable = this.activateTable.bind( this );
     this.handleKeyDown = this.handleKeyDown.bind( this );
   }
 
@@ -110,7 +109,7 @@ class RoleTable_ extends PerspectivesComponent
           {
             component.setState(
               { rowSelected: e.detail
-              , column: getQualifiedPropertyName( component.props.cardcolumn, component.state.propertyNames)});
+              , column: getQualifiedPropertyName( component.props.cardcolumn, component.state.propertyNames)}); // ???
           }
           else
           {
@@ -120,12 +119,6 @@ class RoleTable_ extends PerspectivesComponent
         },
         false);
     }
-  }
-
-  activateTable ()
-  {
-    const component = this;
-    component.setState( { active: true});
   }
 
   handleKeyDown (event)
@@ -184,7 +177,7 @@ class RoleTable_ extends PerspectivesComponent
                     <tbody
                       tabIndex="0"
                       ref={component.eventDiv}
-                      onFocus={ component.activateTable }
+                      onFocus={ () => component.setState( { active: true}) }
                       onKeyDown={ component.handleKeyDown }
                     >
                       <RoleInstanceIterator>
@@ -217,13 +210,44 @@ class TableRow extends PerspectivesComponent
   constructor (props)
   {
     super(props);
+    this.handleClick = this.handleClick.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.ref = React.createRef();
+  }
+
+  handleClick (event)
+  {
+    event.preventDefault();
+    event.stopPropagation();
+    this.ref.current.dispatchEvent( new CustomEvent('SetCursor', { detail: this.context.rolinstance, bubbles: true }) );
+    // When shift is hold, select the row. Otherwise deselect it.
+    this.ref.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: event.shiftKey, bubbles: true }) );
+  }
+
+  handleKeyDown (event)
+  {
+    switch(event.keyCode){
+      case 32: // Space
+        if (event.shiftKey)
+        {
+          event.preventDefault();
+          event.stopPropagation();
+          this.ref.current.dispatchEvent( new CustomEvent('SetCursor', { detail: this.context.rolinstance, bubbles: true }) );
+        }
+        // When shift is held, select the row. Otherwise deselect it.
+        this.ref.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: event.shiftKey, bubbles: true }) );
+      }
   }
 
   render()
   {
     const component = this;
     return  <PSContext.Consumer>{
-              pscontext =>  <tr>{
+              pscontext =>  <tr
+                              onClick={component.handleClick}
+                              onKeyDown={component.handleKeyDown}
+                              ref={component.ref}
+                            >{
                               component.props.propertynames.map( pn =>
                                 <TableCell
                                   key = {pn}
@@ -266,7 +290,6 @@ class TableCell extends PerspectivesComponent
     // value is an array of strings.
     this.state.value = undefined;
     this.state.editable = false;
-    this.state.cardIsSelected = false;
     this.handleClick = this.handleClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     // A reference to the Form.Control that handles input.
@@ -322,26 +345,17 @@ class TableCell extends PerspectivesComponent
   handleClick (event)
   {
     const component = this;
-    event.preventDefault();
-    event.stopPropagation();
     // If selected, open the context.
     if (component.props.rowSelected)
     {
+      // MOVE TO CARD
       // Open context.
       // TODO. We may have a table of roles that are not context roles! We should not try to open a context in such cases.
+      event.preventDefault();
+      event.stopPropagation();
       component.inputRef.current.dispatchEvent( new CustomEvent('OpenContext', { detail: component.props.psrol.rolinstance, bubbles: true }) );
     }
-    else if ( event.shiftKey )
-    {
-      this.inputRef.current.dispatchEvent( new CustomEvent('SetCursor', { detail: this.props.psrol.rolinstance, bubbles: true }) );
-      this.inputRef.current.dispatchEvent( new CustomEvent('SetColumn', { detail: this.props.propertyname, bubbles: true }) );
-      this.inputRef.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: true, bubbles: true }) );
-    }
-    else
-    {
-      this.inputRef.current.dispatchEvent( new CustomEvent('SetCursor', { detail: this.props.psrol.rolinstance, bubbles: true }) );
-      this.inputRef.current.dispatchEvent( new CustomEvent('SetColumn', { detail: this.props.propertyname, bubbles: true }) );
-    }
+    this.inputRef.current.dispatchEvent( new CustomEvent('SetColumn', { detail: this.props.propertyname, bubbles: true }) );
   }
 
   componentDidUpdate(prevProps/*, prevState*/)
@@ -365,6 +379,7 @@ class TableCell extends PerspectivesComponent
             {
               if (event.shiftKey)
               {
+                // NAAR CARD
                 // Open context.
                 component.inputRef.current.dispatchEvent( new CustomEvent('OpenContext', { detail: component.props.psrol.rolinstance, bubbles: true }) );
               }
@@ -372,7 +387,6 @@ class TableCell extends PerspectivesComponent
             else
             {
               component.setState({editable:true});
-              component.inputRef.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: false, bubbles: true }) );
             }
             event.preventDefault();
             event.stopPropagation();
@@ -381,26 +395,24 @@ class TableCell extends PerspectivesComponent
             if (component.props.rowSelected)
             {
               if (event.shiftKey)
-              {
+              {  // NAAR CARD
                 // Open context.
                 component.inputRef.current.dispatchEvent( new CustomEvent('OpenContext', { detail: component.props.psrol.rolinstance, bubbles: true }) );
+                event.preventDefault();
+                event.stopPropagation();
               }
             }
-            else if (event.shiftKey)
-            {
-              component.inputRef.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: true, bubbles: true }) );
-            }
-            else
+            else if (!event.shiftKey) // Ensure bubbling to row handler when shift is pressed.
             {
               component.setState({editable:true});
-              component.inputRef.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: false, bubbles: true }) );
+              event.preventDefault();
+              event.stopPropagation();
             }
-            event.preventDefault();
-            event.stopPropagation();
             break;
           case 8: // backspace
             if (component.props.rowSelected)
             {
+              // NAAR CARD
               component.props.psrol.removerol();
               event.stopPropagation();
               event.preventDefault();
@@ -409,6 +421,7 @@ class TableCell extends PerspectivesComponent
           case 67: // c
             if (event.ctrlKey)
             {
+              // NAAR CARD
               // card to clipboard
               PDRproxy.then( pproxy => pproxy.setProperty(
                 systemExternalRole,
@@ -428,9 +441,6 @@ class TableCell extends PerspectivesComponent
                 event.preventDefault();
               }
               break;
-          default:
-            // any other key will deselect the card.
-            component.inputRef.current.dispatchEvent( new CustomEvent('SetSelectRow', { detail: false, bubbles: true }) );
           }
       }
       else if (component.props.isselected && component.state.editable)
@@ -460,79 +470,84 @@ class TableCell extends PerspectivesComponent
   render ()
   {
     const component = this;
-    ////// EDITABLE
-    if (component.props.isselected && component.state.editable)
+    if (component.props.isselected)
     {
-      return (
-        <td >
-          <Form.Control
-            ref={ component.inputRef }
-            aria-label={deconstructLocalName(component.props.propertyname)}
-            defaultValue={component.state.value}
-            onKeyDown={ component.handleKeyDown }
-            onBlur={function(e)
-              {
-                component.changeValue(e.target.value);
-                component.setState({editable: false});
-              }}
-            onClick={ component.handleClick }
-          />
-        </td>);
-    }
-    ///// SELECTED
-    else if (component.props.isselected)
-    {
-      if ( component.props.iscard )
+      if (component.state.editable)
       {
+        // EDITABLE
         return (
           <td >
-            <AppContext.Consumer>{ appcontext =>
-              <Form.Control
-                readOnly
-                plaintext
-                ref={component.inputRef}
-                tabIndex="-1"
-                aria-label={component.state.value}
-                onKeyDown={ ev => component.handleKeyDown(ev, appcontext.systemExternalRole ) }
-                onClick={component.handleClick}
-                defaultValue={component.state.value}
-
-                className={component.props.rowSelected ? "bg-info shadow" : "shadow"}
-                draggable
-                onDragStart={ev => ev.dataTransfer.setData("PSRol",
-                  JSON.stringify(
-                    { roleData:
-                      { rolinstance: component.props.psrol.rolinstance
-                      , cardTitle: component.state.value
-                      , roleType: component.props.psrol.roltype
-                      , contextType: component.props.psrol.contexttype
-                      }
-                    , addedBehaviour: [ "fillARole", "removeFiller", "removeRoleFromContext"]
-                    , myroletype: component.props.myroletype
-                    })
-                  )}
-              />}
-            </AppContext.Consumer>
+            <Form.Control
+              ref={ component.inputRef }
+              aria-label={deconstructLocalName(component.props.propertyname)}
+              defaultValue={component.state.value}
+              onKeyDown={ component.handleKeyDown }
+              onBlur={function(e)
+                {
+                  component.changeValue(e.target.value);
+                  component.setState({editable: false});
+                }}
+              onClick={ component.handleClick }
+            />
           </td>);
       }
       else
       {
-        return (
-          <td>
-            <Form.Control readOnly plaintext
-              ref={ component.inputRef }
-              tabIndex="-1"
-              aria-label={deconstructLocalName(component.props.propertyname)}
-              onKeyDown={ component.handleKeyDown }
-              onClick={ component.handleClick }
-              defaultValue={component.state.value}
-            />
-          </td>);
+        // SELECTED
+        if (component.props.iscard)
+        {
+          // CARD
+          return (
+            <td >
+              <AppContext.Consumer>{ appcontext =>
+                <Form.Control
+                  readOnly
+                  plaintext
+                  ref={component.inputRef}
+                  tabIndex="-1"
+                  aria-label={component.state.value}
+                  onKeyDown={ ev => component.handleKeyDown(ev, appcontext.systemExternalRole ) }
+                  onClick={component.handleClick}
+                  defaultValue={component.state.value}
+
+                  className={component.props.rowSelected ? "bg-info shadow" : "shadow"}
+                  draggable
+                  onDragStart={ev => ev.dataTransfer.setData("PSRol",
+                    JSON.stringify(
+                      { roleData:
+                        { rolinstance: component.props.psrol.rolinstance
+                        , cardTitle: component.state.value
+                        , roleType: component.props.psrol.roltype
+                        , contextType: component.props.psrol.contexttype
+                        }
+                      , addedBehaviour: [ "fillARole", "removeFiller", "removeRoleFromContext"]
+                      , myroletype: component.props.myroletype
+                      })
+                    )}
+                />}
+              </AppContext.Consumer>
+            </td>);
+        }
+        else
+        {
+          // OTHERWISE
+          return (
+            <td>
+              <Form.Control readOnly plaintext
+                ref={ component.inputRef }
+                tabIndex="-1"
+                aria-label={deconstructLocalName(component.props.propertyname)}
+                onKeyDown={ component.handleKeyDown }
+                onClick={ component.handleClick }
+                defaultValue={component.state.value}
+              />
+            </td>);
+        }
       }
     }
-    ///// NEITHER EDITABLE NOR SELECTED
     else
     {
+      // NEITHER EDITABLE NOR SELECTED, CARD OR OTHERWISE
       return (
         <td>
           <Form.Control

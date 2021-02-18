@@ -111,6 +111,7 @@ class RoleTable_ extends PerspectivesComponent
     // The first rendered cell sets this to false.
     // Each subsequent cell can than see it is not first.
     this.firstCellSet = false;
+    this.deregisterPreviousCell = {f: () => {}};
   }
 
   componentDidMount ()
@@ -238,6 +239,7 @@ class RoleTable_ extends PerspectivesComponent
                               }
                               return false;
                             }}
+                          deregisterPreviousCell={component.deregisterPreviousCell}
                           />
                       </RoleInstanceIterator>
                     </tbody>
@@ -322,6 +324,7 @@ class TableRow extends PerspectivesComponent
                                   isselected = { component.props.tableisactive && !!component.context.isselected && (component.props.column == pn) }
                                   roleRepresentation={component.props.roleRepresentation}
                                   isFirstCell={component.props.isFirstCell}
+                                  deregisterPreviousCell={component.props.deregisterPreviousCell}
                                 /> )
                             }</tr>
             }</PSContext.Consumer>;
@@ -338,6 +341,7 @@ TableRow.propTypes =
   , cardcolumn: PropTypes.string.isRequired
   , roleRepresentation: PropTypes.func.isRequired
   , isFirstCell: PropTypes.func.isRequired
+  , deregisterPreviousCell: PropTypes.object.isRequired
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -353,10 +357,20 @@ class TableCell extends PerspectivesComponent
   constructor (props)
   {
     super(props);
+    const component = this;
     // value is an array of strings.
     this.state.value = undefined;
     this.state.editable = false;
     this.state.lastCellBeforeTableInactivated = this.props.isFirstCell();
+    if (this.state.lastCellBeforeTableInactivated)
+    {
+      // Set a new deregister function that will make the current cell forget it
+      // was the last selected cell before the table inactivated.
+      this.props.deregisterPreviousCell.f = function()
+        {
+          component.setState({lastCellBeforeTableInactivated: false});
+        };
+    }
     this.handleClick = this.handleClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     // A reference to the Form.Control that handles input.
@@ -421,8 +435,17 @@ class TableCell extends PerspectivesComponent
     {
       // Gives the Form.Control the focus, activating it.
       component.inputRef.current.focus();
-      // In case we jumped back into the table, erase this memory.
-      this.setState({lastCellBeforeTableInactivated: false});
+      // Deregister the previous selected cell:
+      this.props.deregisterPreviousCell.f();
+      // In case we jump back later into the table, make the current cell think
+      // it was the last selected cell before the table inactivated.
+      this.setState({lastCellBeforeTableInactivated: true});
+      // Set a new deregister function that will make the current cell forget it
+      // was the last selected cell before the table inactivated.
+      this.props.deregisterPreviousCell.f = function()
+        {
+          component.setState({lastCellBeforeTableInactivated: false});
+        };
     }
   }
 
@@ -459,11 +482,11 @@ class TableCell extends PerspectivesComponent
           break;
       }
     }
-    if (event.keyCode == 9 || event.keyCode == 11)
-    {
-      // Make sure tabIndex = 0;
-      this.setState({lastCellBeforeTableInactivated: true});
-    }
+    // if (event.keyCode == 9 || event.keyCode == 11)
+    // {
+    //   // Make sure tabIndex = 0;
+    //   this.setState({lastCellBeforeTableInactivated: true});
+    // }
   }
 
   render ()
@@ -503,7 +526,7 @@ class TableCell extends PerspectivesComponent
             <td >
                 <RoleRepresentation
                   inputRef={component.inputRef}
-                  tabIndex="-1"
+                  tabIndex={component.state.lastCellBeforeTableInactivated ? "0" : "-1"}
                   // if we set defaultValue, the value on screen does not update.
                   defaultValue={component.state.value}
                   className="shadow bg-info"
@@ -520,7 +543,7 @@ class TableCell extends PerspectivesComponent
             <td>
               <Form.Control readOnly plaintext
                 ref={ component.inputRef }
-                tabIndex="-1"
+                tabIndex={component.state.lastCellBeforeTableInactivated ? "0" : "-1"}
                 aria-label={deconstructLocalName(component.props.propertyname)}
                 onKeyDown={ component.handleKeyDown }
                 onClick={ component.handleClick }
@@ -584,6 +607,7 @@ TableCell.propTypes =
     }
   ).isRequired
   , roleRepresentation: PropTypes.func.isRequired
+  , deregisterPreviousCell: PropTypes.object.isRequired
 };
 
 ////////////////////////////////////////////////////////////////////////////////

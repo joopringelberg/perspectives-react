@@ -26,6 +26,9 @@ import "./components.css";
 
 const PropTypes = require("prop-types");
 
+////////////////////////////////////////////////////////////////////////////////
+// CARD
+////////////////////////////////////////////////////////////////////////////////
 class Card extends React.Component
 {
   componentDidMount()
@@ -105,6 +108,9 @@ class RoleTable_ extends PerspectivesComponent
     this.state.active = false;
     this.eventDiv = React.createRef();
     this.handleKeyDown = this.handleKeyDown.bind( this );
+    // The first rendered cell sets this to false.
+    // Each subsequent cell can than see it is not first.
+    this.firstCellSet = false;
   }
 
   componentDidMount ()
@@ -223,6 +229,15 @@ class RoleTable_ extends PerspectivesComponent
                           tableisactive = {component.state.active}
                           cardcolumn = {qualifiedColumnName}
                           roleRepresentation={component.props.roleRepresentation}
+                          isFirstCell={function()
+                            {
+                              if (!component.firstCellSet)
+                              {
+                                component.firstCellSet = true;
+                                return true;
+                              }
+                              return false;
+                            }}
                           />
                       </RoleInstanceIterator>
                     </tbody>
@@ -306,6 +321,7 @@ class TableRow extends PerspectivesComponent
                                   myroletype = {pscontext.myroletype}
                                   isselected = { component.props.tableisactive && !!component.context.isselected && (component.props.column == pn) }
                                   roleRepresentation={component.props.roleRepresentation}
+                                  isFirstCell={component.props.isFirstCell}
                                 /> )
                             }</tr>
             }</PSContext.Consumer>;
@@ -321,6 +337,7 @@ TableRow.propTypes =
   , tableisactive: PropTypes.bool.isRequired
   , cardcolumn: PropTypes.string.isRequired
   , roleRepresentation: PropTypes.func.isRequired
+  , isFirstCell: PropTypes.func.isRequired
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -339,7 +356,7 @@ class TableCell extends PerspectivesComponent
     // value is an array of strings.
     this.state.value = undefined;
     this.state.editable = false;
-    this.state.lastCellBeforeTableInactivated = false;
+    this.state.lastCellBeforeTableInactivated = this.props.isFirstCell();
     this.handleClick = this.handleClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     // A reference to the Form.Control that handles input.

@@ -85,7 +85,7 @@ export default class RoleInstances extends PerspectivesComponent
                         let nextCursor;
                         if ( rolIdArr.indexOf(oldState.cursor) < 0 )
                         {
-                          nextCursor = nextCursor = rolIdArr[0] || -1;
+                          nextCursor = rolIdArr[0];
                         }
                         else {
                           nextCursor = oldState.cursor;

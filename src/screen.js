@@ -4,9 +4,10 @@ const PropTypes = require("prop-types");
 const PDRproxy = require("perspectives-proxy").PDRproxy;
 import PerspectivesComponent from "./perspectivescomponent.js";
 import ContextOfRole from "./contextofrole.js";
-import {PSContext} from "./reactcontexts";
+import {PSContext, AppContext} from "./reactcontexts";
 import { deconstructModelName, deconstructSegments, isExternalRole } from "./urifunctions.js";
 import {PerspectivesContainer, BackButton} from "./perspectivescontainer.js";
+import Pouchdb from "pouchdb-browser";
 
 import
   { Col
@@ -14,12 +15,28 @@ import
   , Card
   } from "react-bootstrap";
 
-
 // TODO. Even though PerspectivesGlobals has been declared external, we cannot import it here.
 // Doing so will cause a runtime error if the calling program has not put it on the global scope in time.
 
+// This function fetches an attachment "screens.js" from the model file that is passed in as an argument.
+// It expects that model file to be in the models database. This might be a local db (IndexedDB) or a remote Couchdb.
+// Pouchdb will handle both.
+// Returns a promise for a module.
+function fetchModuleFromPouchdb( modelName, systemUser, couchdbUrl )
+{
+  // The IndexedDB database "localUsers"
+  const modelsDatabaseName = couchdbUrl ? couchdbUrl + systemUser + "_models" : systemUser + "_models";
+  const modelsDatabase = new Pouchdb( modelsDatabaseName );
+
+  return modelsDatabase.getAttachment( modelName, "screens.js").then(
+    function(jstext)
+    {
+      return eval(jstext);
+    }).catch( e => console.log( e ));
+}
+
 // Returns a promise that resolves to an array, possibly empty, of objects of the form {roleName :: String, module :: <A React Component> }.
-function importScreens( roleNames, useridentifier )
+function importScreens( roleNames, useridentifier, couchdbUrl )
 {
   const promises = roleNames.map( function(roleName)
     {
@@ -28,12 +45,13 @@ function importScreens( roleNames, useridentifier )
 
       // PerspectivesGlobals should be available on the global scope of the program that uses this library.
       // eslint-disable-next-line no-undef
-      const url = PerspectivesGlobals.host + useridentifier + "_models/" + modelName + "/screens.js";
+      // const url = PerspectivesGlobals.host + useridentifier + "_models/" + modelName + "/screens.js";
 
       // importModule should be available on the global scope of the program that uses this library.
       // return importModule( url ).then( result => {result.roleName = roleName; return result; });
       // eslint-disable-next-line no-undef
-      return importModule (url ).then( function(module)
+      return fetchModuleFromPouchdb( modelName, userIdentifier, couchdbUrl).then( function(module)
+      // return importModule (url ).then( function(module)
         {
           return {module: module, roleName: roleName }; // this will be bound to the "value" key of the Promise.allSettled result.
         });
@@ -69,8 +87,20 @@ function computeScreenName( roleName )
   return mapName( deconstructSegments(roleName) );
 
 }
-// Screen loads the component in the context of the role `rolinstance` that it receives on its props.
-export default class Screen extends PerspectivesComponent
+
+export default function Screen(props)
+{
+  return  <AppContext.Consumer>
+          {
+            ({couchdbUrl, systemUser}) => <Screen couchdbUrl={couchdbUrl} systemUser={systemUser} {...props}/>
+          }
+          </AppContext.Consumer>;
+}
+
+Screen.propTypes = { rolinstance: PropTypes.string.isRequired };
+
+// Screen_ loads the component in the context of the role `rolinstance` that it receives on its props.
+class Screen_ extends PerspectivesComponent
 {
   constructor (props)
   {
@@ -102,7 +132,8 @@ export default class Screen extends PerspectivesComponent
                   pproxy.getMeForContext( component.props.rolinstance,
                     function(userRoles)
                     {
-                      importScreens( userRoles, userIdentifier[0]).then( screenModules =>
+                      // TODO
+                      importScreens( userRoles, userIdentifier[0], component.props.couchebUrl).then( screenModules =>
                         component.setState(
                           { myroletypes: userRoles
                           , useridentifier: userIdentifier[0]
@@ -127,7 +158,7 @@ export default class Screen extends PerspectivesComponent
                           pproxy.getMeForContext( externalRole[0],
                             function(userRoles)
                             {
-                              importScreens( userRoles, userIdentifier[0]).then( screenModules =>
+                              importScreens( userRoles, userIdentifier[0], component.props.couchebUrl).then( screenModules =>
                                 component.setState(
                                   { myroletypes: userRoles
                                   , useridentifier: userIdentifier[0]
@@ -151,7 +182,7 @@ export default class Screen extends PerspectivesComponent
   render ()
   {
     const component = this;
-    var Screen, myroletype;
+    let TheScreen, myroletype;
 
     if (component.state.hasError)
     {
@@ -175,10 +206,10 @@ export default class Screen extends PerspectivesComponent
     {
       if (component.state.modules.length == 1)
       {
-        Screen = component.state.modules[0]["module"];
+        TheScreen = component.state.modules[0]["module"];
         myroletype = component.state.modules[0]["roleName"];
         return  <ContextOfRole rolinstance={component.state.rolinstance} myroletype={myroletype}>
-                  <Screen/>
+                  <TheScreen/>
                 </ContextOfRole>;
       }
       else
@@ -205,6 +236,10 @@ export default class Screen extends PerspectivesComponent
   }
 }
 
-Screen.contextType = PSContext;
+Screen_.contextType = PSContext;
 
-Screen.propTypes = {rolinstance: PropTypes.string.isRequired};
+Screen_.propTypes =
+  { rolinstance: PropTypes.string.isRequired
+  , couchdbUrl: PropTypes.string.isRequired
+  , systemUser: PropTypes.string.isRequired
+  };

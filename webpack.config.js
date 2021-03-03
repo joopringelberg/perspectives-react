@@ -66,6 +66,12 @@ module.exports = {
       commonjs2: "perspectives-proxy",
       root: "perspectives-proxy"
     }
+    , "pouchdb-browser": {
+      amd: "pouchdb-browser",
+      commonjs: "pouchdb-browser",
+      commonjs2: "pouchdb-browser",
+      root: "pouchdb-browser"
+    }
     , "PerspectivesGlobals":
       { root: "PerspectivesGlobals"
       }

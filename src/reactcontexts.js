@@ -54,4 +54,5 @@ export const AppContext = React.createContext(
   { systemExternalRole: undefined
   , systemUser: undefined
   , setEventDispatcher: function(){}
+  , couchdbUrl: undefined
   });

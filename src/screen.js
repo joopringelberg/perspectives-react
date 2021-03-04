@@ -31,12 +31,21 @@ function fetchModuleFromPouchdb( modelName, systemUser, couchdbUrl )
   return modelsDatabase.getAttachment( modelName, "screens.js").then(
     function(jstext)
     {
-      return eval(jstext);
+      return jstext.text().then( function(t)
+      {
+        /* The module text, as produces by Webpack using "var" as libraryTarget
+        (see: https://webpack.js.org/guides/author-libraries/#expose-the-library)
+        ends on export statements.
+        By removing those lines, we obtain a text that can actually be constructed into a function
+        and then applied to obtain the module!
+        */
+        return Function('"use strict";' + t.match(/^(.*)export \{/ms)[1] + "\nreturn perspectivesScreens;")();
+      });
     }).catch( e => console.log( e ));
 }
 
 // Returns a promise that resolves to an array, possibly empty, of objects of the form {roleName :: String, module :: <A React Component> }.
-function importScreens( roleNames, useridentifier, couchdbUrl )
+function importScreens( roleNames, userIdentifier, couchdbUrl )
 {
   const promises = roleNames.map( function(roleName)
     {
@@ -92,7 +101,7 @@ export default function Screen(props)
 {
   return  <AppContext.Consumer>
           {
-            ({couchdbUrl, systemUser}) => <Screen couchdbUrl={couchdbUrl} systemUser={systemUser} {...props}/>
+            ({couchdbUrl, systemUser}) => <Screen_ couchdbUrl={couchdbUrl} systemUser={systemUser} {...props}/>
           }
           </AppContext.Consumer>;
 }
@@ -133,7 +142,7 @@ class Screen_ extends PerspectivesComponent
                     function(userRoles)
                     {
                       // TODO
-                      importScreens( userRoles, userIdentifier[0], component.props.couchebUrl).then( screenModules =>
+                      importScreens( userRoles, userIdentifier[0], component.props.couchdbUrl).then( screenModules =>
                         component.setState(
                           { myroletypes: userRoles
                           , useridentifier: userIdentifier[0]
@@ -158,7 +167,7 @@ class Screen_ extends PerspectivesComponent
                           pproxy.getMeForContext( externalRole[0],
                             function(userRoles)
                             {
-                              importScreens( userRoles, userIdentifier[0], component.props.couchebUrl).then( screenModules =>
+                              importScreens( userRoles, userIdentifier[0], component.props.couchdbUrl).then( screenModules =>
                                 component.setState(
                                   { myroletypes: userRoles
                                   , useridentifier: userIdentifier[0]
@@ -240,6 +249,6 @@ Screen_.contextType = PSContext;
 
 Screen_.propTypes =
   { rolinstance: PropTypes.string.isRequired
-  , couchdbUrl: PropTypes.string.isRequired
+  , couchdbUrl: PropTypes.string
   , systemUser: PropTypes.string.isRequired
   };

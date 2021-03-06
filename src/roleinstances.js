@@ -222,7 +222,7 @@ export default class RoleInstances extends PerspectivesComponent
 
   setcursor (cr)
   {
-    if (cr !== this.state.cursor )
+    if (cr !== this.state.cursor && cr)
     {
       this.setState( {cursor: cr} );
     }
@@ -231,7 +231,7 @@ export default class RoleInstances extends PerspectivesComponent
   render ()
   {
     const component = this;
-    if (component.stateIsComplete())
+    if (component.stateIsComplete(["cursor"]))
     {
       return (<PSRoleInstances.Provider value={component.state}>
           <div

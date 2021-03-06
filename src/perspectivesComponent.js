@@ -53,14 +53,18 @@ export default class PerspectivesComponent extends Component
     }
   }
 
-  stateIsComplete ()
+  stateIsComplete (excludedProps = [])
   {
     const component = this;
     let isComplete = true;
     Object.keys(component.state).forEach(
       function (prop)
       {
-        if (!component.state[prop] && (typeof component.state[prop]) != "boolean")
+        if (!component.state[prop]
+            && (typeof component.state[prop]) != "boolean"
+            && (!Array.isArray( component.state[prop])
+            && (excludedProps.indexOf(prop) < 0))
+          )
         // if ( !component.state.hasOwnProperty(prop) )
         {isComplete = false;}
       });

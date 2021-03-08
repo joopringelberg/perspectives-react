@@ -52,10 +52,6 @@ function importScreens( roleNames, userIdentifier, couchdbUrl )
       // modelName = model part of the roleName
       const modelName = deconstructModelName( roleName );
 
-      // PerspectivesGlobals should be available on the global scope of the program that uses this library.
-      // eslint-disable-next-line no-undef
-      // const url = PerspectivesGlobals.host + useridentifier + "_models/" + modelName + "/screens.js";
-
       // importModule should be available on the global scope of the program that uses this library.
       // return importModule( url ).then( result => {result.roleName = roleName; return result; });
       // eslint-disable-next-line no-undef

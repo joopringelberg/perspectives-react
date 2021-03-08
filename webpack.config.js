@@ -72,8 +72,5 @@ module.exports = {
       commonjs2: "pouchdb-browser",
       root: "pouchdb-browser"
     }
-    , "PerspectivesGlobals":
-      { root: "PerspectivesGlobals"
-      }
   }
 };

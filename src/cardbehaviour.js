@@ -96,11 +96,9 @@ export function addOpenContextOrRoleForm(domEl, component)
           if (event.shiftKey)
           {
             handle( e.altKey );
-          }
-          {
             component.props.setEventDispatcher(eventDispatcher);
+            e.stopPropagation();
           }
-          e.stopPropagation();
         }
       }
     }

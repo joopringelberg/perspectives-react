@@ -109,12 +109,17 @@ function Message()
 export function ViewIncomingInvitation(props)
 {
   const ContactCard = addBehaviour( makeRoleInListPresentation(
-    function(psview)
+    // eslint-disable-next-line react/display-name
+    React.forwardRef( function(props, ref)
     {
-      return <Card><Card.Text>Contact card of {psview.propval("Voornaam")}.</Card.Text></Card>;
-    })
+      // eslint-disable-next-line react/prop-types
+      return  <Card ref={ref} tabIndex={props.tabIndex} aria-label={props["aria-label"]}>
+                <Card.Text>Contact card of {
+                  // eslint-disable-next-line react/prop-types
+                  props.propval("Voornaam")}.</Card.Text>
+              </Card>;
+    }))
     , [addFillARole]);
-
   return (<>
     <Row><Col className="pb-3" ><BackButton buttontext="Back to all chats"/></Col></Row>
     <Message/>
@@ -131,30 +136,30 @@ export function ViewIncomingInvitation(props)
         <Col sm="4">
           <RoleInstance role={props.specialisedRole}>
             <PSRol.Consumer>{ psrol =>
-              <>
-                <RoleDropZone
-                  ariaLabel="To accept the invitation, drag your own contact card over here and drop it."
-                  bind={psrol.bind /* In case there is no role yet, create it on dropping the binding.*/}
-                  checkBinding={psrol.checkbinding}
-                >
-                  <Card>
-                    <Card.Body>
-                      <p>To accept the invitation, drag your own contact card over here and drop it. create</p>
-                    </Card.Body>
-                  </Card>
-                </RoleDropZone>
-                <RoleDropZone
-                  ariaLabel="To accept the invitation, drag your own contact card over here and drop it."
-                  bind={psrol.bind_ /* As we have a role, just bind the role we drop.*/}
-                  checkBinding={psrol.checkbinding}
-                >
-                  <Card>
-                    <Card.Body>
-                      <p>To accept the invitation, drag your own contact card over here and drop it. create</p>
-                    </Card.Body>
-                  </Card>
-                </RoleDropZone>
-              </>
+              <RoleDropZone
+                ariaLabel="To accept the invitation, drag your own contact card over here and drop it."
+                bind={psrol.bind_ /* As we have a role, just bind the role we drop.*/}
+                checkbinding={psrol.checkbinding}
+              >
+                <Card>
+                  <Card.Body>
+                    <p>To accept the invitation, drag your own contact card over here and drop it. create</p>
+                  </Card.Body>
+                </Card>
+              </RoleDropZone>
+            }</PSRol.Consumer>
+            <PSRol.Consumer>{ psrol =>
+              <RoleDropZone
+                ariaLabel="To accept the invitation, drag your own contact card over here and drop it."
+                bind={psrol.bind /* As we have a role, just bind the role we drop.*/}
+                checkbinding={psrol.checkbinding}
+              >
+                <Card>
+                  <Card.Body>
+                    <p>To accept the invitation, drag your own contact card over here and drop it. create</p>
+                  </Card.Body>
+                </Card>
+              </RoleDropZone>
             }</PSRol.Consumer>
           </RoleInstance>
         </Col>

@@ -138,7 +138,7 @@ export function ViewIncomingInvitation(props)
             <PSRol.Consumer>{ psrol =>
               <RoleDropZone
                 ariaLabel="To accept the invitation, drag your own contact card over here and drop it."
-                bind={psrol.bind_ /* As we have a role, just bind the role we drop.*/}
+                bind={psrol.bind /* As we have a role, just bind the role we drop.*/}
                 checkbinding={psrol.checkbinding}
               >
                 <Card>
@@ -151,7 +151,7 @@ export function ViewIncomingInvitation(props)
             <PSRol.Consumer>{ psrol =>
               <RoleDropZone
                 ariaLabel="To accept the invitation, drag your own contact card over here and drop it."
-                bind={psrol.bind /* As we have a role, just bind the role we drop.*/}
+                bind={psrol.bind_ /* As we have a role, just bind the role we drop.*/}
                 checkbinding={psrol.checkbinding}
               >
                 <Card>

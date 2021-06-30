@@ -77,7 +77,7 @@ export function RoleFormInView(props)
               <RoleDropZone
                 bind={psrol.bind_}
                 checkbinding={psrol.checkbinding}
-                ariaLabel="To set this contract to a particular user, drag his or her card over here and drop it."
+                ariaLabel="To set this form to a particular user, drag his or her card over here and drop it."
               >
                 {
                   psview.viewproperties.map(

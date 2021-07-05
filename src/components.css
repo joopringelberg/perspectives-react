@@ -17,7 +17,7 @@ for a discussion about variables and sass. */
   box-shadow: 0 0 0 5px #0dcaf0; /* $cyan */
 }
 
-.card:focus {
+.card:focus, .dropzone:focus {
 	outline-color: rgb(0, 95, 204);
 	outline-style: auto;
 	outline-width: 1px;

@@ -241,7 +241,7 @@ export function addFillWithRole(domEl, component)
 }
 
 // Makes the Card draggable.
-// Adds keydown behaviour: space and enter will put the Card on the Card clipboard.
+// Adds keydown behaviour: ctrl-c will put the Card on the Card clipboard.
 export function addFillARole(domEl, component)
 {
   function handleKeyDown (event)

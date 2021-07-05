@@ -146,7 +146,7 @@ class RoleDropZone_ extends PerspectivesComponent
               onKeyDown={ ev => component.handleKeyDown( ev )}
 
               style={ {flexGrow: 1} }
-              className="p-2"
+              className="p-2 dropzone"
 
               aria-dropeffect="execute"
               aria-label={component.props.ariaLabel}

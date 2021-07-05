@@ -56,6 +56,7 @@ export default function FileDropZone(props)
                       aria-dropeffect="execute"
                       aria-describedby="Select a file"
                       tabIndex="0"
+                      className="dropzone"
                       onDrop={ev => {
                         handleFileWithExtension(ev.dataTransfer.files);
                         ev.target.classList.remove("border", "p-3", "border-primary");
@@ -77,6 +78,7 @@ export default function FileDropZone(props)
               aria-dropeffect="execute"
               aria-describedby="Select a file"
               tabIndex="0"
+              className="dropzone"
               onDrop={ev => {
                 handleFileWithExtension(ev.dataTransfer.files);
                 ev.target.classList.remove("border", "p-3", "border-primary");

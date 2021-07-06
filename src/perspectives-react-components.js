@@ -1,6 +1,5 @@
 // Compents that are not in use in InPlace or in perspectives-screens are commented out.
 export {default as Rol} from "./rol.js";
-export {Context} from "./context.js";
 export {default as View} from "./view.js";
 export {default as ContextOfRole} from "./contextofrole.js";
 export {ViewOnExternalRole} from "./views.js";

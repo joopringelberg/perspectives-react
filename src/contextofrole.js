@@ -22,42 +22,39 @@ export default class ContextOfRole extends PerspectivesComponent
       function (pproxy)
       {
         // The context of the rol will be bound to the state prop 'contextInstance'.
-        component.addUnsubscriber(
-          pproxy.getRolContext(
-            component.props.rolinstance,
-            function (contextId)
-            {
-              component.addUnsubscriber(
-                pproxy.getContextType(
-                  contextId[0],
-                  function (contextType)
-                  {
-                    if ( !component.props.myroletype )
-                    {
-                      // Get it from the core.
-                      component.addUnsubscriber(
-                        pproxy.getMeForContext( component.props.rolinstance,
-                          function(myroletype)
-                          {
-                            component.setState(
-                              { contextinstance: contextId[0]
-                              , contexttype: contextType[0]
-                              , myroletype: myroletype[0]
-                              , children: component.props.children
-                              });
-                          }));
-                    }
-                    else {
-                      component.setState(
-                        { contextinstance: contextId[0]
-                        , contexttype: contextType[0]
-                        , myroletype: component.props.myroletype
-                        , children: component.props.children
-                        });
-                    }
-                  }
-                ));
-            }));
+        pproxy.getRolContext(
+          component.props.rolinstance,
+          function (contextId)
+          {
+            pproxy.getContextType(
+              contextId[0],
+              function (contextType)
+              {
+                if ( !component.props.myroletype )
+                {
+                  // Get it from the core.
+                  // This we subscribe to: it may change.
+                  component.addUnsubscriber(
+                    pproxy.getMeForContext( component.props.rolinstance,
+                      function(myroletype)
+                      {
+                        component.setState(
+                          { contextinstance: contextId[0]
+                          , contexttype: contextType[0]
+                          , myroletype: myroletype[0]
+                          });
+                      }));
+                }
+                else {
+                  component.setState(
+                    { contextinstance: contextId[0]
+                    , contexttype: contextType[0]
+                    , myroletype: component.props.myroletype
+                    });
+                }
+              }
+            ), true; // fireandforget: the type of the context will never change.
+          }, true); // fireandforget: the context of a role will never change.
       }
     );
   }
@@ -69,25 +66,16 @@ export default class ContextOfRole extends PerspectivesComponent
     {
       component.componentDidMount();
     }
-    else if (component.props.myroletype !== prevProps.myroletype )
-    {
-      component.setState( {myroletype: component.props.myroletype } );
-    }
   }
 
   render ()
   {
     const component = this;
 
-    // Render comes before componentDidUpdate.
-    // A new rolinstance can come with new children.
-    // If we render these new children with the previous context, errors happen.
-    // So we have to wait till the new state is computed, including the children that
-    // are meant to go with the rolinstance.
     if (component.stateIsComplete())
     {
       return (<PSContext.Provider value={component.state}>
-          {component.state.children}
+          {component.props.children}
         </PSContext.Provider>);
     }
     else
@@ -99,6 +87,5 @@ export default class ContextOfRole extends PerspectivesComponent
 }
 
 ContextOfRole.propTypes = {
-  rolinstance: PropTypes.string.isRequired,
-  myroletype: PropTypes.string
+  rolinstance: PropTypes.string.isRequired
 };

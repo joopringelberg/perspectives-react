@@ -32,11 +32,13 @@ export class PerspectivesContainer extends Component
   constructor(props)
   {
     super(props);
+    // State holds either selectedContext or selectedRoleInstance, not both.
     this.state =
-      { selectedSubContext: undefined
-      , rolinstance: undefined
+      { selectedContext: undefined
+      , selectedRoleInstance: undefined
       , viewname: undefined
       , cardprop: undefined
+      , backwardsNavigation: undefined
       };
     this.containerRef = React.createRef();
   }
@@ -44,37 +46,47 @@ export class PerspectivesContainer extends Component
   componentDidMount ()
   {
     const component = this;
+    window.onpopstate = function(e)
+      {
+        if (e.state && (e.state.selectedContext || e.state.selectedRoleInstance))
+        {
+          // console.log("Popping previous state, now on " + (e.state.selectedContext ? "context state " + e.state.selectedContext : "roleform state " + e.state.selectedRoleInstance));
+          // Restore the selectedContext or selectedRoleInstance, if any.
+          component.setState(
+            { selectedContext: e.state.selectedContext
+            , selectedRoleInstance: e.state.selectedRoleInstance
+            , viewname: e.state.viewname
+            , cardprop: e.state.cardprop
+            , backwardsNavigation: true} );
+          e.stopPropagation();
+        }
+      };
     this.containerRef.current.addEventListener( "OpenContext",
       function(e)
       {
-        const oldHandler = window.onpopstate;
-        // Save in the history object.
-        history.pushState({ nextContext: e.detail }, "");
-        window.onpopstate = function()
-          {
-              component.setState( {selectedSubContext: undefined });
-              window.onpopstate = oldHandler;
-              e.stopPropagation();
-          };
-
-        component.setState( {selectedSubContext: e.detail });
+        history.pushState({ selectedContext: e.detail }, "");
+        // console.log("Pushing context state " + e.detail);
+        component.setState(
+          { selectedContext: e.detail
+          , selectedRoleInstance: undefined
+          , viewname: undefined
+          , cardprop: undefined
+          , backwardsNavigation: false });
         e.stopPropagation();
       });
     this.containerRef.current.addEventListener( "OpenRoleForm",
       function(e)
       {
-        const oldHandler = window.onpopstate;
         const {rolinstance, viewname, cardprop} = e.detail;
         // Save in the history object.
-        history.pushState({ roleOnForm: rolinstance }, "");
-        window.onpopstate = function()
-          {
-              component.setState( {rolinstance: undefined });
-              window.onpopstate = oldHandler;
-              e.stopPropagation();
-          };
-
-        component.setState( {rolinstance, viewname, cardprop });
+        history.pushState({ selectedRoleInstance: rolinstance, viewname, cardprop }, "");
+        // console.log("Pushing roleform state " + rolinstance);
+        component.setState(
+            { selectedContext: undefined
+            , selectedRoleInstance: rolinstance
+            , viewname
+            , cardprop
+            , backwardsNavigation: false });
         e.stopPropagation();
       });
   }
@@ -89,13 +101,13 @@ export class PerspectivesContainer extends Component
 
     return  <Container ref={component.containerRef} {...props}>
             {
-              component.state.selectedSubContext
+              component.state.selectedContext
               ?
-              <Screen rolinstance={component.state.selectedSubContext}/>
+              <Screen rolinstance={component.state.selectedContext}/>
               :
-              (component.state.rolinstance
+              (component.state.selectedRoleInstance
                 ?
-                <RoleInstance roleinstance={component.state.rolinstance}>
+                <RoleInstance roleinstance={component.state.selectedRoleInstance}>
                   <View viewname={component.state.viewname}>
                     <RoleFormInView cardprop={component.state.cardprop ? component.state.cardprop : null}/>
                   </View>

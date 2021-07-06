@@ -12,6 +12,7 @@ export default class ContextOfRole extends PerspectivesComponent
     this.state.contextinstance = undefined;
     this.state.contexttype = undefined;
     this.state.myroletype = undefined;
+    this.state.children = undefined;
   }
 
   componentDidMount ()
@@ -42,6 +43,7 @@ export default class ContextOfRole extends PerspectivesComponent
                               { contextinstance: contextId[0]
                               , contexttype: contextType[0]
                               , myroletype: myroletype[0]
+                              , children: component.props.children
                               });
                           }));
                     }
@@ -50,6 +52,7 @@ export default class ContextOfRole extends PerspectivesComponent
                         { contextinstance: contextId[0]
                         , contexttype: contextType[0]
                         , myroletype: component.props.myroletype
+                        , children: component.props.children
                         });
                     }
                   }
@@ -76,11 +79,15 @@ export default class ContextOfRole extends PerspectivesComponent
   {
     const component = this;
 
+    // Render comes before componentDidUpdate.
+    // A new rolinstance can come with new children.
+    // If we render these new children with the previous context, errors happen.
+    // So we have to wait till the new state is computed, including the children that
+    // are meant to go with the rolinstance.
     if (component.stateIsComplete())
     {
-      const component = this;
       return (<PSContext.Provider value={component.state}>
-          {component.props.children}
+          {component.state.children}
         </PSContext.Provider>);
     }
     else

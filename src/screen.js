@@ -5,8 +5,8 @@ const PDRproxy = require("perspectives-proxy").PDRproxy;
 import PerspectivesComponent from "./perspectivescomponent.js";
 import ContextOfRole from "./contextofrole.js";
 import {PSContext, AppContext} from "./reactcontexts";
-import { deconstructModelName, deconstructSegments, isExternalRole } from "./urifunctions.js";
-import {PerspectivesContainer, BackButton} from "./perspectivescontainer.js";
+import { deconstructModelName, deconstructSegments, isExternalRole, deconstructLocalName } from "./urifunctions.js";
+import {BackButton} from "./perspectivescontainer.js";
 import Pouchdb from "pouchdb-browser";
 
 import
@@ -45,11 +45,11 @@ function fetchModuleFromPouchdb( modelName, systemUser, couchdbUrl )
 }
 
 // Returns a promise that resolves to an array, possibly empty, of objects of the form {roleName :: String, module :: <A React Component> }.
-function importScreens( roleNames, userIdentifier, couchdbUrl )
+function importScreens( contextType, roleNames, userIdentifier, couchdbUrl )
 {
   const promises = roleNames.map( function(roleName)
     {
-      // modelName = model part of the roleName
+      // modelName = model part of the roleName (or, arbitrarily, the contextType).
       const modelName = deconstructModelName( roleName );
 
       // importModule should be available on the global scope of the program that uses this library.
@@ -64,13 +64,13 @@ function importScreens( roleNames, userIdentifier, couchdbUrl )
   return Promise.allSettled(promises).then(
       function (outcomes)
       {
-        return outcomes.filter( ({status, value}) => status == "fulfilled" && value.module[computeScreenName( value.roleName )]);
+        return outcomes.filter( ({status, value}) => status == "fulfilled" && value.module[computeScreenName( contextType, value.roleName )]);
       }
     ).then(function (outcomesWithScreen)
     {
       return outcomesWithScreen.map( function({value})
       {
-        return {"roleName": value.roleName, "module": value.module[computeScreenName( value.roleName )]};
+        return {"roleName": value.roleName, "module": value.module[computeScreenName( contextType, value.roleName )]};
       });
     });
 }
@@ -78,7 +78,7 @@ function importScreens( roleNames, userIdentifier, couchdbUrl )
 // > Object { status: "fulfilled", value: 3 }
 // > Object { status: "rejected", reason: "foo" }
 
-function computeScreenName( roleName )
+function computeScreenName( contextType, roleName )
 {
   // Make the identifier start with lowercase and replace '$' with _ (underscore).
   function mapName (s)
@@ -88,8 +88,8 @@ function computeScreenName( roleName )
     return s.replace(regex1, '_').replace(regex2, s.charAt(0).toLowerCase());
   }
 
-  // screenName = local part of the roleName
-  return mapName( deconstructSegments(roleName) );
+  // screenName = local part of the contextType + last segment of roleName.
+  return mapName( deconstructSegments(contextType) ) + "_" + deconstructLocalName(roleName);
 
 }
 
@@ -102,7 +102,8 @@ export default function Screen(props)
           </AppContext.Consumer>;
 }
 
-Screen.propTypes = { rolinstance: PropTypes.string.isRequired };
+Screen.propTypes =
+  { rolinstance: PropTypes.string.isRequired };
 
 // Screen_ loads the component in the context of the role `rolinstance` that it receives on its props.
 class Screen_ extends PerspectivesComponent
@@ -110,73 +111,97 @@ class Screen_ extends PerspectivesComponent
   constructor (props)
   {
     super(props);
+    this.resetState();
+  }
+
+  resetState()
+  {
     // This represents 'me': the 'own' user.
     this.state.useridentifier = undefined;
     // The role that 'me' plays in the current context. We pass it on to ContextOfRole
     // and that component includes it in the PSContext it provides to descendants.
     this.state.myroletypes = undefined;
+    this.state.contextinstance = undefined;
+    this.state.contexttype = undefined;
     this.state.rolinstance = undefined;
     this.state.modules = undefined;
     // Will become true if building the child component tree fails.
     this.state.hasError = false;
   }
 
-  componentDidMount ()
+  computeState ()
   {
     const component = this;
     PDRproxy.then(
       function(pproxy)
       {
-        component.addUnsubscriber(
-          pproxy.getUserIdentifier(
-            function(userIdentifier)
+        function completeState(externalRole, userIdentifier)
+        {
+          pproxy.getRolContext (externalRole,
+            function(contextID)
             {
-              if ( isExternalRole (component.props.rolinstance ))
-              {
-                component.addUnsubscriber(
-                  pproxy.getMeForContext( component.props.rolinstance,
-                    function(userRoles)
-                    {
-                      // TODO
-                      importScreens( userRoles, userIdentifier[0], component.props.couchdbUrl).then( screenModules =>
-                        component.setState(
-                          { myroletypes: userRoles
-                          , useridentifier: userIdentifier[0]
-                          , rolinstance: component.props.rolinstance
-                          , modules: screenModules
-                          }));
-                    }
-                  ));
-              }
-              else
-              {
-                component.addUnsubscriber(
-                  pproxy.getBinding(
-                    component.props.rolinstance,
-                    function( externalRole )
-                    {
-                      // If no externalRole, there is no binding.
-                      // Leave the state incomplete.
-                      if (externalRole[0])
+              pproxy.getContextType (contextID[0],
+                function(contextTypes)
+                {
+                  component.addUnsubscriber(
+                    pproxy.getMeForContext(
+                      externalRole,
+                      function(userRoles)
                       {
-                        component.addUnsubscriber(
-                          pproxy.getMeForContext( externalRole[0],
-                            function(userRoles)
-                            {
-                              importScreens( userRoles, userIdentifier[0], component.props.couchdbUrl).then( screenModules =>
-                                component.setState(
-                                  { myroletypes: userRoles
-                                  , useridentifier: userIdentifier[0]
-                                  , rolinstance: externalRole[0]
-                                  , modules: screenModules
-                                  }));
-                            }
-                          ));
-                      }
-                    }));
-              }
-            }));
+                        importScreens( contextTypes[0], userRoles, userIdentifier[0], component.props.couchdbUrl).then( screenModules =>
+                          component.setState(
+                            { useridentifier: userIdentifier[0]
+                            , myroletypes: userRoles
+                            , rolinstance: externalRole
+                            , contextinstance: contextID[0]
+                            , contexttype: contextTypes[0]
+                            , modules: screenModules
+                            }));
+                      },
+                      true));
+                },
+                true);
+          });
+        }
+        pproxy.getUserIdentifier(
+          function(userIdentifier)
+          {
+            if ( isExternalRole ( component.props.rolinstance ))
+            {
+              completeState(component.props.rolinstance, userIdentifier);
+            }
+            else
+            {
+              component.addUnsubscriber(
+                pproxy.getBinding(
+                  component.props.rolinstance,
+                  function( binding )
+                  {
+                    // If no binding, Leave the state incomplete.
+                    if (binding[0])
+                    {
+                      completeState( binding[0], userIdentifier);
+                    }
+                  }));
+            }
+          },
+          true);
       });
+  }
+
+  componentDidMount ()
+  {
+    this.computeState();
+  }
+
+  componentDidUpdate (prevProps)
+  {
+    const component = this;
+    if ( component.props.rolinstance !== prevProps.rolinstance)
+    {
+      component.resetState();
+      component.computeState();
+    }
   }
 
   static getDerivedStateFromError(/*error*/) {
@@ -187,12 +212,11 @@ class Screen_ extends PerspectivesComponent
   render ()
   {
     const component = this;
-    let TheScreen, myroletype;
+    let TheScreen;
 
     if (component.state.hasError)
     {
-      return  <PerspectivesContainer>
-                <Row>
+      return    <Row>
                   <Col>
                   <Card>
                     <Card.Body>
@@ -204,16 +228,14 @@ class Screen_ extends PerspectivesComponent
                     </Card.Body>
                     </Card>
                   </Col>
-                </Row>
-              </PerspectivesContainer>;
+                </Row>;
     }
     else if (component.stateIsComplete())
     {
       if (component.state.modules.length == 1)
       {
         TheScreen = component.state.modules[0]["module"];
-        myroletype = component.state.modules[0]["roleName"];
-        return  <ContextOfRole rolinstance={component.state.rolinstance} myroletype={myroletype}>
+        return  <ContextOfRole rolinstance={component.state.rolinstance}>
                   <TheScreen/>
                 </ContextOfRole>;
       }
@@ -223,8 +245,7 @@ class Screen_ extends PerspectivesComponent
       }
     }
     else
-      return  <PerspectivesContainer>
-                <Row>
+      return    <Row>
                   <Col>
                   <Card>
                     <Card.Body>
@@ -236,8 +257,7 @@ class Screen_ extends PerspectivesComponent
                     </Card.Body>
                     </Card>
                   </Col>
-                </Row>
-              </PerspectivesContainer>;
+                </Row>;
   }
 }
 

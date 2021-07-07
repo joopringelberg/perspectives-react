@@ -20,8 +20,15 @@ export default class PerspectivesComponent extends Component
 
   componentWillUnmount ()
   {
+    this.unsubscribeAll();
+    this.__mounted__ = false;
+  }
+
+  // Returns a promise for when all subscribers have been unsubscribed.
+  unsubscribeAll()
+  {
     const component = this;
-    PDRproxy.then(
+    return PDRproxy.then(
       function(pproxy)
       {
         component.unsubscribers.forEach(
@@ -30,7 +37,7 @@ export default class PerspectivesComponent extends Component
             unsubscriber.request = "Unsubscribe";
             pproxy.send(unsubscriber, function(){});
           });
-        component.__mounted__ = false;
+        component.unsubscibers = [];
       });
   }
 

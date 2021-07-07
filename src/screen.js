@@ -3,9 +3,8 @@ import React from 'react';
 const PropTypes = require("prop-types");
 const PDRproxy = require("perspectives-proxy").PDRproxy;
 import PerspectivesComponent from "./perspectivescomponent.js";
-import ContextOfRole from "./contextofrole.js";
 import {PSContext, AppContext} from "./reactcontexts";
-import { deconstructModelName, deconstructSegments, isExternalRole, deconstructLocalName } from "./urifunctions.js";
+import { deconstructModelName, deconstructSegments, isExternalRole } from "./urifunctions.js";
 import {BackButton} from "./perspectivescontainer.js";
 import Pouchdb from "pouchdb-browser";
 
@@ -45,11 +44,12 @@ function fetchModuleFromPouchdb( modelName, systemUser, couchdbUrl )
 }
 
 // Returns a promise that resolves to an array, possibly empty, of objects of the form {roleName :: String, module :: <A React Component> }.
-function importScreens( contextType, roleNames, userIdentifier, couchdbUrl )
+function importScreens( roleNames, userIdentifier, couchdbUrl )
 {
+  // We map over roles the user plays. These can be context roles or aspect roles.
   const promises = roleNames.map( function(roleName)
     {
-      // modelName = model part of the roleName (or, arbitrarily, the contextType).
+      // modelName = model part of the roleName.
       const modelName = deconstructModelName( roleName );
 
       // importModule should be available on the global scope of the program that uses this library.
@@ -64,13 +64,13 @@ function importScreens( contextType, roleNames, userIdentifier, couchdbUrl )
   return Promise.allSettled(promises).then(
       function (outcomes)
       {
-        return outcomes.filter( ({status, value}) => status == "fulfilled" && value.module[computeScreenName( contextType, value.roleName )]);
+        return outcomes.filter( ({status, value}) => status == "fulfilled" && value.module[computeScreenName( value.roleName )]);
       }
     ).then(function (outcomesWithScreen)
     {
       return outcomesWithScreen.map( function({value})
       {
-        return {"roleName": value.roleName, "module": value.module[computeScreenName( contextType, value.roleName )]};
+        return {"roleName": value.roleName, "module": value.module[computeScreenName( value.roleName )]};
       });
     });
 }
@@ -78,7 +78,7 @@ function importScreens( contextType, roleNames, userIdentifier, couchdbUrl )
 // > Object { status: "fulfilled", value: 3 }
 // > Object { status: "rejected", reason: "foo" }
 
-function computeScreenName( contextType, roleName )
+function computeScreenName( roleName )
 {
   // Make the identifier start with lowercase and replace '$' with _ (underscore).
   function mapName (s)
@@ -88,8 +88,8 @@ function computeScreenName( contextType, roleName )
     return s.replace(regex1, '_').replace(regex2, s.charAt(0).toLowerCase());
   }
 
-  // screenName = local part of the contextType + last segment of roleName.
-  return mapName( deconstructSegments(contextType) ) + "_" + deconstructLocalName(roleName);
+  // screenName = local part of the roleName (all segments).
+  return mapName( deconstructSegments(roleName) );
 
 }
 
@@ -120,10 +120,10 @@ class Screen_ extends PerspectivesComponent
     this.state.useridentifier = undefined;
     // The role that 'me' plays in the current context. We pass it on to ContextOfRole
     // and that component includes it in the PSContext it provides to descendants.
-    this.state.myroletypes = undefined;
+    this.state.myroletype = undefined;
+    this.state.externalrole = undefined;
     this.state.contextinstance = undefined;
     this.state.contexttype = undefined;
-    this.state.rolinstance = undefined;
     this.state.modules = undefined;
     // Will become true if building the child component tree fails.
     this.state.hasError = false;
@@ -137,31 +137,33 @@ class Screen_ extends PerspectivesComponent
       {
         function completeState(externalRole, userIdentifier)
         {
-          pproxy.getRolContext (externalRole,
-            function(contextID)
+          pproxy.getRolContext(
+            externalRole,
+            function (contextIds)
             {
-              pproxy.getContextType (contextID[0],
-                function(contextTypes)
+              pproxy.getContextType(
+                contextIds[0],
+                function (contextTypes)
                 {
                   component.addUnsubscriber(
                     pproxy.getMeForContext(
                       externalRole,
+                      // userRoles includes roles from aspects.
                       function(userRoles)
                       {
-                        importScreens( contextTypes[0], userRoles, userIdentifier[0], component.props.couchdbUrl).then( screenModules =>
+                        importScreens( userRoles, userIdentifier[0], component.props.couchdbUrl).then( screenModules =>
                           component.setState(
                             { useridentifier: userIdentifier[0]
-                            , myroletypes: userRoles
-                            , rolinstance: externalRole
-                            , contextinstance: contextID[0]
+                            , myroletype: userRoles[0]
+                            , externalrole: externalRole
+                            , contextinstance: contextIds[0]
                             , contexttype: contextTypes[0]
                             , modules: screenModules
                             }));
-                      },
-                      true));
-                },
-                true);
-          });
+                      }));
+                }, true); // fireandforget: context type will never change.
+            }, true); // fireandforget: context will never change.
+
         }
         pproxy.getUserIdentifier(
           function(userIdentifier)
@@ -199,8 +201,13 @@ class Screen_ extends PerspectivesComponent
     const component = this;
     if ( component.props.rolinstance !== prevProps.rolinstance)
     {
-      component.resetState();
-      component.computeState();
+      component.unsubscribeAll().then(
+        function()
+        {
+          component.resetState();
+          component.computeState();
+        }
+      );
     }
   }
 
@@ -212,7 +219,7 @@ class Screen_ extends PerspectivesComponent
   render ()
   {
     const component = this;
-    let TheScreen;
+    let TheScreen, pscontext;
 
     if (component.state.hasError)
     {
@@ -234,14 +241,34 @@ class Screen_ extends PerspectivesComponent
     {
       if (component.state.modules.length == 1)
       {
+        pscontext =
+          { contextinstance: component.state.contextinstance
+          , contexttype: component.state.contexttype
+          , myroletype: component.state.myroletype};
         TheScreen = component.state.modules[0]["module"];
-        return  <ContextOfRole rolinstance={component.state.rolinstance}>
+        return  <PSContext.Provider value={pscontext}>
                   <TheScreen/>
-                </ContextOfRole>;
+                </PSContext.Provider>;
+      }
+      else if (component.state.modules.length > 0)
+      {
+        return <p>You must choose a role from {component.state.modules.map( ({roleName}) => roleName ).toString()}</p>;
       }
       else
       {
-        return <p>You must choose a role from {component.state.modules.map( ({roleName}) => roleName ).toString()}</p>;
+        return    <Row>
+                    <Col>
+                    <Card>
+                      <Card.Body>
+                        <Card.Title>No access</Card.Title>
+                        <Card.Text>
+                          You have no role here. Please move back!
+                        </Card.Text>
+                        <BackButton buttontext="Back"/>
+                      </Card.Body>
+                      </Card>
+                    </Col>
+                  </Row>;
       }
     }
     else

@@ -139,7 +139,7 @@ class View_ extends PerspectivesComponent
     {
       return (<PSView.Provider value={component.state}>
         {component.props.children}
-        </PSView.Provider>)
+        </PSView.Provider>);
     }
     else
     {

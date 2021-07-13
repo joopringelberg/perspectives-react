@@ -10,6 +10,10 @@ import RoleInstances from "./roleinstances.js";
 
 import RoleInstanceIterator from "./roleinstanceiterator.js";
 
+import RoleDropZone from "./roleDropzone.js";
+
+import NoInstancesSwitcher from "./noinstancesswitcher.js";
+
 import {deconstructLocalName, getQualifiedPropertyName} from "./urifunctions.js";
 
 import {addBehaviour} from "./behaviourcomponent.js";
@@ -29,6 +33,9 @@ const PropTypes = require("prop-types");
 ////////////////////////////////////////////////////////////////////////////////
 // CARD
 ////////////////////////////////////////////////////////////////////////////////
+// The default component to display in the card column. Shows a plain text control.
+// The behaviours granted to the table will be established on this Card component.
+// Displays the value of prop cardcolumn of RoleTable (a property of the role).
 class Card extends React.Component
 {
   componentDidMount()
@@ -76,23 +83,51 @@ export default class RoleTable extends PerspectivesComponent
       roleRepresentation = addBehaviour( Card, component.props.behaviours || []);
     }
     return (<RoleInstances rol={component.props.roletype} contexttocreate={component.props.contexttocreate}>
-        <RoleTable_
-          viewname={component.props.viewname}
-          cardcolumn={component.props.cardcolumn}
-          roleRepresentation={roleRepresentation}
-          />
-        <TableControls createButton={ component.props.createButton }/>
+        <NoInstancesSwitcher>
+          <p>{component.props.noinstancesmessage}</p>
+          <PSRol.Consumer>{ psrol =>
+            <RoleDropZone
+              ariaLabel=""
+              bind={psrol.bind /* As we have a role, just bind the role we drop.*/}
+              checkbinding={psrol.checkbinding}
+            >
+              <RoleTable_
+                viewname={component.props.viewname}
+                cardcolumn={component.props.cardcolumn}
+                roleRepresentation={roleRepresentation}
+                />
+              <TableControls createButton={ component.props.createButton }/>
+            </RoleDropZone>
+          }</PSRol.Consumer>
+        </NoInstancesSwitcher>
       </RoleInstances>);
   }
 }
 
 RoleTable.propTypes =
+  // The columns in the table are the properties in the view.
   { "viewname": PropTypes.string.isRequired
+  // must be the local name of one of the properties in the view.
+  // This column is displayed as a mini card showing this property's value
+  // and can be clicked to open the role or the context behind it.
   , "cardcolumn": PropTypes.string.isRequired
+  // The qualified or local name of the role that the table displays.
+  // May use default prefixes.
   , "roletype": PropTypes.string.isRequired
+  // The type of the context to create, if the table displays a context role.
+  // Must be a qualified context type, possibly constructed with a default
+  // namespace (such as sys:).
+  // Is passed on to RoleInstances
   , "contexttocreate": PropTypes.string
+  // If true, a button will be displayed to create a new role (and possibly a context)
+  , "createButton": PropTypes.bool
+  // A React component that is displayed in the card column.
+  // Is by the default the Card class given above.
   , "roleRepresentation": PropTypes.object
+  // Behaviours added to the roleRepresentation component.
   , "behaviours": PropTypes.arrayOf(PropTypes.func)
+  // The message to display if no instances can be found.
+  , "noinstancesmessage": PropTypes.string.isRequired
   };
 
 RoleTable.contextType = PSContext;

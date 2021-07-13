@@ -278,7 +278,7 @@ class Screen_ extends PerspectivesComponent
                     <Card.Body>
                       <Card.Title>No access</Card.Title>
                       <Card.Text>
-                        Either there is no context, or you have no role in it. Please move back!
+                        You seem to have no role in this context. Please move back!
                       </Card.Text>
                       <BackButton buttontext="Back"/>
                     </Card.Body>

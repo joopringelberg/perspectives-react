@@ -15,8 +15,9 @@ import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
 The user can add an instance to a role with this component by dropping a binding
 on it. The new instance will be created and the dropped role fills it.
 It can be used both inside a Functional Role and inside an MultiRole: as a descendant
-of either a RoleInstance or a RolInstances component.
-We require two functions on the props:
+of either a RoleInstance or a RolInstances component, but does not require them
+as ReactContext.
+Instead, we require two functions on the props:
   * bind: either use PSRol.bind, PSRol.bind_ or PSRoleInstances.bind
   * checkBinding
 

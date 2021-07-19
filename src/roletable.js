@@ -83,8 +83,6 @@ export default class RoleTable extends PerspectivesComponent
       roleRepresentation = addBehaviour( Card, component.props.behaviours || []);
     }
     return (<RoleInstances rol={component.props.roletype} contexttocreate={component.props.contexttocreate}>
-        <NoInstancesSwitcher>
-          <p>{component.props.noinstancesmessage}</p>
           <PSRol.Consumer>{ psrol =>
             <RoleDropZone
               ariaLabel=""
@@ -99,7 +97,6 @@ export default class RoleTable extends PerspectivesComponent
               <TableControls createButton={ component.props.createButton }/>
             </RoleDropZone>
           }</PSRol.Consumer>
-        </NoInstancesSwitcher>
       </RoleInstances>);
   }
 }

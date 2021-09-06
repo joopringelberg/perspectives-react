@@ -64,7 +64,7 @@ function importScreens( roleNames, userIdentifier, couchdbUrl )
   return Promise.allSettled(promises).then(
       function (outcomes)
       {
-        return outcomes.filter( ({status, value}) => status == "fulfilled" && value.module[computeScreenName( value.roleName )]);
+        return outcomes.filter( ({status, value}) => status == "fulfilled" && value.module && value.module[computeScreenName( value.roleName )]);
       }
     ).then(function (outcomesWithScreen)
     {

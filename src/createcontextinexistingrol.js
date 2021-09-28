@@ -79,7 +79,9 @@ class CreateContextInExistingRol_ extends PerspectivesComponent
 CreateContextInExistingRol_.contextType = PSRol;
 
 CreateContextInExistingRol_.propTypes = {
-  contextname: PropTypes.string.isRequired, // fully qualified name
+  // fully qualified name: the type of Context to create.
+  // The core loads the model that defines this type, if it is not locally available.
+  contextname: PropTypes.string.isRequired,
   myroletype: PropTypes.string.isRequired
 };
 

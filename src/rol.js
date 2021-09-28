@@ -42,6 +42,10 @@ export default function Rol(props)
 }
 
 Rol.propTypes =
-  { "rol": PropTypes.string.isRequired
+  {
+    // May be a local name that will be resolved to the embedding context given by
+    // PSContext.
+    // Can also be a qualified name.
+    rol: PropTypes.string.isRequired
   , ariaLabel: PropTypes.string
   };

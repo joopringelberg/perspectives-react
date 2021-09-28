@@ -21,7 +21,7 @@ export default class CreateContext_ extends PerspectivesComponent
     };
     var resolver;
     var p = new Promise(
-      function (resolve, reject)
+      function (resolve/*, reject*/)
       {
         resolver = resolve;
       });
@@ -81,7 +81,9 @@ export default class CreateContext_ extends PerspectivesComponent
 CreateContext_.contextType = PSRol;
 
 CreateContext_.propTypes = {
-  contextname: PropTypes.string.isRequired, // fully qualified name: the type of Context to create.
+  // fully qualified name: the type of Context to create.
+  // The core loads the model that defines this type, if it is not locally available.
+  contextname: PropTypes.string.isRequired
 };
 
 // CreateContext passes on:

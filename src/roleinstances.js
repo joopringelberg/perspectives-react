@@ -249,10 +249,11 @@ export default class RoleInstances extends PerspectivesComponent
 RoleInstances.contextType = PSContext;
 
 RoleInstances.propTypes =
-  // May be a local name that will be resolved to the embedding context given by
-  // PSContext.
-  // Can also be a qualified name.
-  { rol: PropTypes.string.isRequired
-  // Must be a qualified context type, possibly constructed with a default
-  // namespace (such as sys:).
+  {
+    // May be a local name that will be resolved to the embedding context given by
+    // PSContext.
+    // Can also be a qualified name.
+    rol: PropTypes.string.isRequired
+    // fully qualified name: the type of Context to create.
+    // The core loads the model that defines this type, if it is not locally available.
   , contexttocreate: PropTypes.string };

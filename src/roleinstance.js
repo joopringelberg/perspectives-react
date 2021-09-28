@@ -25,6 +25,7 @@ It supports two props:
     "p"   : "model:Parsing"
 If the Role identified by the `role` prop is a ContextRole, `contexttocreate` identifies the type of context
 that will be created if an instance of the Role is created.
+The core loads the model that defines this type, if it is not locally available.
 If given a single child, and if there is an instance of the Role, this will be rendered in a PSRol context.
 If given more children, and if there is NO instance of the Role, the first child will be rendered.
 If given more children and if there is an instance of the Role, all but the first child will be rendered.
@@ -296,4 +297,6 @@ RoleInstance.contextType = PSContext;
 RoleInstance.propTypes =
   { role: PropTypes.string
   , roleinstance: PropTypes.string
+  // fully qualified name: the type of Context to create.
+  // The core loads the model that defines this type, if it is not locally available.
   , contexttocreate: PropTypes.string };

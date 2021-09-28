@@ -12,8 +12,6 @@ import RoleInstanceIterator from "./roleinstanceiterator.js";
 
 import RoleDropZone from "./roleDropzone.js";
 
-import NoInstancesSwitcher from "./noinstancesswitcher.js";
-
 import {deconstructLocalName, getQualifiedPropertyName} from "./urifunctions.js";
 
 import {addBehaviour} from "./behaviourcomponent.js";
@@ -123,8 +121,6 @@ RoleTable.propTypes =
   , "roleRepresentation": PropTypes.object
   // Behaviours added to the roleRepresentation component.
   , "behaviours": PropTypes.arrayOf(PropTypes.func)
-  // The message to display if no instances can be found.
-  , "noinstancesmessage": PropTypes.string.isRequired
   };
 
 RoleTable.contextType = PSContext;

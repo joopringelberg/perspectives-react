@@ -82,8 +82,11 @@ export default class CreateContext extends PerspectivesComponent
 CreateContext.contextType = PSContext;
 
 CreateContext.propTypes = {
-  contextname: PropTypes.string.isRequired, // fully qualified name: the type of Context to create.
-  rolname: PropTypes.string.isRequired // (local) name of the role type the context should be bound in.
+  // fully qualified name: the type of Context to create.
+  // The core loads the model that defines this type, if it is not locally available.
+  contextname: PropTypes.string.isRequired,
+  // (local) name of the role type the context should be bound in.
+  rolname: PropTypes.string.isRequired
 };
 
 // CreateContext passes on:

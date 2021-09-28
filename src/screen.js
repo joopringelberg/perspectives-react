@@ -6,6 +6,8 @@ import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext, AppContext} from "./reactcontexts";
 import { deconstructModelName, deconstructSegments, isExternalRole } from "./urifunctions.js";
 import {BackButton} from "./perspectivescontainer.js";
+import RoleTable from "./roletable.js";
+import {addRemoveRoleFromContext} from "./cardbehaviour.js";
 import Pouchdb from "pouchdb-browser";
 
 import
@@ -248,6 +250,14 @@ class Screen_ extends PerspectivesComponent
         TheScreen = component.state.modules[0]["module"];
         return  <PSContext.Provider value={pscontext}>
                   <TheScreen/>
+                  <RoleTable
+                    viewname="allProperties"
+                    cardcolumn="Message"
+                    roletype="model:System$ContextWithNotification$Notifications"
+                    //contexttocreate
+                    // createButton
+                    // roleRepresentation
+                    behaviours={[addRemoveRoleFromContext]}/>
                 </PSContext.Provider>;
       }
       else if (component.state.modules.length > 0)

@@ -658,7 +658,7 @@ class TableControls extends PerspectivesComponent
   render ()
   {
     const component = this;
-    if ( component.props.createButton == undefined || component.props.createButton )
+    if ( component.props.createButton )
     {
       return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for table" className="mb-5">
                 <div

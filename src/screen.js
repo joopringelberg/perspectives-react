@@ -14,6 +14,7 @@ import
   { Col
   , Row
   , Card
+  , Collapse
   } from "react-bootstrap";
 
 // TODO. Even though PerspectivesGlobals has been declared external, we cannot import it here.
@@ -99,13 +100,14 @@ export default function Screen(props)
 {
   return  <AppContext.Consumer>
           {
-            ({couchdbUrl, systemUser}) => <Screen_ couchdbUrl={couchdbUrl} systemUser={systemUser} {...props}/>
+            ({couchdbUrl, systemUser}) => <Screen_ couchdbUrl={couchdbUrl} systemUser={systemUser} {...props} shownotifications={props.shownotifications}/>
           }
           </AppContext.Consumer>;
 }
 
 Screen.propTypes =
-  { rolinstance: PropTypes.string.isRequired };
+  { rolinstance: PropTypes.string.isRequired
+  , shownotifications: PropTypes.bool.isRequired };
 
 // Screen_ loads the component in the context of the role `rolinstance` that it receives on its props.
 class Screen_ extends PerspectivesComponent
@@ -250,14 +252,18 @@ class Screen_ extends PerspectivesComponent
         TheScreen = component.state.modules[0]["module"];
         return  <PSContext.Provider value={pscontext}>
                   <TheScreen/>
-                  <RoleTable
-                    viewname="allProperties"
-                    cardcolumn="Message"
-                    roletype="model:System$ContextWithNotification$Notifications"
-                    //contexttocreate
-                    // createButton
-                    // roleRepresentation
-                    behaviours={[addRemoveRoleFromContext]}/>
+                  <Collapse in={component.props.shownotifications}>
+                    <div>
+                    <RoleTable
+                      viewname="allProperties"
+                      cardcolumn="Message"
+                      roletype="model:System$ContextWithNotification$Notifications"
+                      //contexttocreate
+                      // createButton
+                      // roleRepresentation
+                      behaviours={[addRemoveRoleFromContext]}/>
+                    </div>
+                  </Collapse>
                 </PSContext.Provider>;
       }
       else if (component.state.modules.length > 0)
@@ -304,4 +310,5 @@ Screen_.propTypes =
   { rolinstance: PropTypes.string.isRequired
   , couchdbUrl: PropTypes.string
   , systemUser: PropTypes.string.isRequired
+  , shownotifications: PropTypes.bool.isRequired
   };

@@ -1,12 +1,14 @@
 const React = require("react");
 const PropTypes = require("prop-types");
-const PDRproxy = require("perspectives-proxy").PDRproxy;
+import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRoleInstances, PSContext} from "./reactcontexts";
 import {isQualifiedName} from "./urifunctions.js";
 
-// This component retrieves the instances of the Role type it finds on its props.
+// This component retrieves the instances of the Role type it finds on its props,
+// from the context instance it finds in its React context (a PSContext type).
+// If either changes, the instances are recomputed.
 // It provides those instances (as PSRoleInstances.Provider) on its state and the functions:
 //  - bind (create a role instance and fill it),
 //  - createRole and
@@ -28,6 +30,22 @@ export default class RoleInstances extends PerspectivesComponent
   }
 
   componentDidMount ()
+  {
+    const component = this;
+    component.getRoleInstances();
+    if (component.stateIsComplete())
+    {
+      component.eventDiv.current.addEventListener('SetCursor',
+        function (e)
+        {
+          component.setcursor( e.detail );
+          e.stopPropagation();
+        },
+        false);
+    }
+  }
+
+  getRoleInstances()
   {
     const component = this;
     PDRproxy.then(
@@ -140,37 +158,32 @@ export default class RoleInstances extends PerspectivesComponent
                     );
                   }
               ));
-            });
+            },
+            FIREANDFORGET
+          );
         }
+
         if (isQualifiedName( component.props.rol ))
         {
           getRol( [component.props.rol] );
         }
         else
         {
-          component.addUnsubscriber(
-            pproxy.getUnqualifiedRolType(
-              component.context.contexttype,
-              component.props.rol,
-              getRol
-          ));
+          pproxy.getUnqualifiedRolType(
+            component.context.contexttype,
+            component.props.rol,
+            getRol,
+            FIREANDFORGET
+          );
         }
       });
-      if (component.stateIsComplete())
-      {
-        component.eventDiv.current.addEventListener('SetCursor',
-          function (e)
-          {
-            component.setcursor( e.detail );
-            e.stopPropagation();
-          },
-          false);
-      }
   }
 
-  // We need this function because on re-rendering, the eventDiv will have been deleted
+  // This function takes care of re-rendering, when the eventDiv will have been deleted
   // and the listener has vanished with it. We re-establish the listener on the newly
   // created eventDiv instance.
+  // When the contextinstance on the components context changes, we need to recompute the role instances.
+  // The same holds for when the `rol` prop changes.
   componentDidUpdate (prevProps, prevState)
   {
     const component = this;
@@ -183,6 +196,12 @@ export default class RoleInstances extends PerspectivesComponent
           e.stopPropagation();
         },
         false);
+    }
+    if  ( component.context.contextinstance !== component.state.contextinstance ||
+          (prevProps.rol == component.props.rol)
+        )
+    {
+      component.getRoleInstances();
     }
   }
 

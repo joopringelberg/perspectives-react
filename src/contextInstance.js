@@ -36,6 +36,11 @@ export default class ContextInstance extends PerspectivesComponent
     );
   }
 
+  componentDidUpdate()
+  {
+    this.componentDidMount();
+  }
+
   render ()
   {
     const component = this;

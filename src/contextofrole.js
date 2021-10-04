@@ -12,7 +12,6 @@ export default class ContextOfRole extends PerspectivesComponent
     this.state.contextinstance = undefined;
     this.state.contexttype = undefined;
     this.state.myroletype = undefined;
-    this.state.children = undefined;
   }
 
   componentDidMount ()

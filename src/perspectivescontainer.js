@@ -1,8 +1,6 @@
 const React = require("react");
 const Component = React.PureComponent;
 
-import { PDRproxy, FIREANDFORGET } from 'perspectives-proxy';
-
 import PropTypes from "prop-types";
 
 import Screen from "./screen.js";
@@ -34,12 +32,13 @@ export class PerspectivesContainer extends Component
   constructor(props)
   {
     super(props);
-    this.showNotifications = Notification.permission === "granted";
     this.notifications = [];
     // State holds either selectedContext or selectedRoleInstance, not both.
+    // When App first creates PerspectivesContainer, it passes a value for either.
+    // New values flow down from App through the props.
     this.state =
-      { selectedContext: undefined
-      , selectedRoleInstance: undefined
+      { selectedContext: props.selectedcontext
+      , selectedRoleInstance: props.selectedroleinstance
       , viewname: undefined
       , cardprop: undefined
       , backwardsNavigation: undefined
@@ -93,64 +92,7 @@ export class PerspectivesContainer extends Component
             , backwardsNavigation: false });
         e.stopPropagation();
       });
-      PDRproxy.then( pproxy =>
-        pproxy.getRol (component.props.systemcontextinstance,
-          "model:System$PerspectivesSystem$AllNotifications",
-          function(notifications)
-          {
-            const oldNotifications = component.notifications;
-            let newNotifications;
-            if ( oldNotifications.length === 0 && notifications.length > 1 )
-            {
-              newNotifications = [];
-            }
-            else
-            {
-              newNotifications = notifications.filter(x => !oldNotifications.includes(x));
-            }
-            component.notifications = notifications;
-            if (component.showNotifications)
-            {
-              newNotifications.forEach( function(notification)
-                {
-                  pproxy.getProperty(
-                    notification,
-                    "model:System$ContextWithNotification$Notifications$Message",
-                    "model:System$ContextWithNotification$Notifications",
-                    function( messages )
-                    {
-                      // A minimal message.
-                      const n = new Notification(
-                        messages[0],
-                        { data: {roleId: notification}
-                        });
-                      n.onclick = function(e)
-                          {
-                            pproxy.getRolContext(
-                              notification,
-                              function (contextIdArray)
-                              {
-                                if (history.state && history.state.selectedContext != contextIdArray[0])
-                                {
-                                  history.pushState({ selectedContext: contextIdArray[0] }, "");
-                                  // console.log("Pushing context state " + e.detail);
-                                  component.setState(
-                                    { selectedContext: contextIdArray[0]
-                                    , selectedRoleInstance: undefined
-                                    , viewname: undefined
-                                    , cardprop: undefined
-                                    , backwardsNavigation: false });
-                                }
-                                e.stopPropagation();
-                              },
-                              FIREANDFORGET);
-                          };
 
-                    }
-                  );
-                });
-              }
-          }) );
   }
 
   render ()
@@ -165,7 +107,7 @@ export class PerspectivesContainer extends Component
             {
               component.state.selectedContext
               ?
-              <Screen rolinstance={component.state.selectedContext} shownotifications={component.props.shownotifications}/>
+              <Screen rolinstance={component.state.selectedContext}/>
               :
               (component.state.selectedRoleInstance
                 ?
@@ -182,8 +124,8 @@ export class PerspectivesContainer extends Component
 }
 
 PerspectivesContainer.propTypes =
-  { systemcontextinstance: PropTypes.string.isRequired
-  , shownotifications: PropTypes.bool.isRequired
+  { selectedcontext: PropTypes.string
+  , selectedroleinstance: PropTypes.string
   };
 
 // Use like this:

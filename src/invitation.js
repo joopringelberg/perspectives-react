@@ -17,7 +17,7 @@ import {makeRoleInListPresentation} from "./cards.js";
 import ExternalRole from "./externalrole.js";
 import View from "./view.js";
 import RoleInstance from "./roleinstance.js";
-import RoleDropZone from "./roledropzone.js";
+import RoleDropZone from "./roleDropzone.js";
 import { BackButton } from "./perspectivescontainer.js";
 import { addFillARole } from "./cardbehaviour.js";
 import {addBehaviour} from "./behaviourcomponent.js";

@@ -3,7 +3,7 @@ const PropTypes = require("prop-types");
 
 import RoleInstanceIterator from "./roleinstanceiterator.js";
 import RoleInstances from "./roleinstances.js";
-import RoleDropZone from "./roledropzone.js";
+import RoleDropZone from "./roleDropzone.js";
 import NoInstancesSwitcher from "./noinstancesswitcher";
 import {PSRoleInstances} from "./reactcontexts.js";
 

@@ -22,7 +22,7 @@ export {default as RoleInstanceIterator} from "./roleinstanceiterator.js";
 export {default as PerspectivesComponent} from "./perspectivescomponent.js";
 export * from "./cards.js";
 export {default as SetBoolAsCheckbox} from "./setboolascheckbox.js";
-export {default as RoleDropZone} from "./roledropzone.js";
+export {default as RoleDropZone} from "./roleDropzone.js";
 export {default as RoleTable} from "./roletable.js";
 export {default as FileDropZone} from "./filedropzone.js";
 export {PerspectivesContainer, BackButton} from "./perspectivescontainer.js";

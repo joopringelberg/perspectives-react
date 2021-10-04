@@ -169,24 +169,26 @@ class Screen_ extends PerspectivesComponent
         pproxy.getUserIdentifier(
           function(userIdentifier)
           {
-            if ( isExternalRole ( component.props.rolinstance ))
-            {
-              completeState(component.props.rolinstance, userIdentifier);
-            }
-            else
-            {
-              component.addUnsubscriber(
-                pproxy.getBinding(
-                  component.props.rolinstance,
-                  function( binding )
-                  {
-                    // If no binding, Leave the state incomplete.
-                    if (binding[0])
-                    {
-                      completeState( binding[0], userIdentifier);
-                    }
-                  }));
-            }
+            completeState(component.props.rolinstance, userIdentifier);
+            // TODO. De code hieronder zou niet meer nodig zijn.
+            // if ( isExternalRole ( component.props.rolinstance ))
+            // {
+            //   completeState(component.props.rolinstance, userIdentifier);
+            // }
+            // else
+            // {
+            //   component.addUnsubscriber(
+            //     pproxy.getBinding(
+            //       component.props.rolinstance,
+            //       function( binding )
+            //       {
+            //         // If no binding, Leave the state incomplete.
+            //         if (binding[0])
+            //         {
+            //           completeState( binding[0], userIdentifier);
+            //         }
+            //       }));
+            // }
           },
           true);
       });

@@ -11,7 +11,7 @@ export {default as importTransaction} from "./importTransaction.js";
 export * from "./reactcontexts";
 export {default as ExternalRole} from "./externalrole.js";
 export {default as CreateContextInExistingRol} from "./createcontextinexistingrol.js";
-export {deconstructModelName, deconstructSegments, isExternalRole, deconstructContext, isQualifiedName, externalRole} from "./urifunctions.js";
+export {deconstructModelName, deconstructSegments, isExternalRole, deconstructContext, isQualifiedName, externalRole, deconstructLocalName} from "./urifunctions.js";
 export {default as Screen} from "./screen.js";
 export {default as RemoveBinding} from "./removeBinding.js";
 export {default as RemoveRol} from  "./removeRol.js";

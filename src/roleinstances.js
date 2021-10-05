@@ -198,7 +198,7 @@ export default class RoleInstances extends PerspectivesComponent
         false);
     }
     if  ( component.context.contextinstance !== component.state.contextinstance ||
-          (prevProps.rol == component.props.rol)
+          (prevProps.rol !== component.props.rol)
         )
     {
       component.getRoleInstances();

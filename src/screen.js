@@ -21,6 +21,7 @@ import
 // It expects that model file to be in the models database. This might be a local db (IndexedDB) or a remote Couchdb.
 // Pouchdb will handle both.
 // Returns a promise for a module.
+// WHEN the explicitly stored value for 'me' in the context instance changes, the screen is recomputed.
 function fetchModuleFromPouchdb( modelName, systemUser, couchdbUrl )
 {
   // The IndexedDB database "localUsers"

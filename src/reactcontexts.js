@@ -52,6 +52,7 @@ export const PSProperty = React.createContext(
 
 export const AppContext = React.createContext(
   { systemExternalRole: undefined
+  , externalRoleId: undefined
   , systemUser: undefined
   , setEventDispatcher: function(){}
   , couchdbUrl: undefined

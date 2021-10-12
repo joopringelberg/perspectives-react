@@ -4,8 +4,9 @@ const PropTypes = require("prop-types");
 const PDRproxy = require("perspectives-proxy").PDRproxy;
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext, AppContext} from "./reactcontexts";
-import { deconstructModelName, deconstructSegments, isExternalRole } from "./urifunctions.js";
+import { deconstructModelName, deconstructSegments/*, isExternalRole*/ } from "./urifunctions.js";
 import {BackButton} from "./perspectivescontainer.js";
+import StandardScreen from "./standardscreen.js";
 import Pouchdb from "pouchdb-browser";
 
 import
@@ -154,14 +155,17 @@ class Screen_ extends PerspectivesComponent
                       function(userRoles)
                       {
                         importScreens( userRoles, userIdentifier[0], component.props.couchdbUrl).then( screenModules =>
-                          component.setState(
-                            { useridentifier: userIdentifier[0]
-                            , myroletype: userRoles[0]
-                            , externalrole: externalRole
-                            , contextinstance: contextIds[0]
-                            , contexttype: contextTypes[0]
-                            , modules: screenModules
-                            }));
+                          {
+                            component.setState(
+                              { useridentifier: userIdentifier[0]
+                              , myroletype: userRoles[0]
+                              , externalrole: externalRole
+                              , contextinstance: contextIds[0]
+                              , contexttype: contextTypes[0]
+                              , modules: screenModules
+                              });
+                            component.props.setMyRoleType( userRoles[0]);
+                          });
                       }));
                 }, true); // fireandforget: context type will never change.
             }, true); // fireandforget: context will never change.
@@ -260,19 +264,10 @@ class Screen_ extends PerspectivesComponent
       }
       else
       {
-        return    <Row>
-                    <Col>
-                    <Card>
-                      <Card.Body>
-                        <Card.Title>No access</Card.Title>
-                        <Card.Text>
-                          There is no screen for the role {component.state.myroletype}. Please move back!
-                        </Card.Text>
-                        <BackButton buttontext="Back"/>
-                      </Card.Body>
-                      </Card>
-                    </Col>
-                  </Row>;
+        return  <StandardScreen
+                  contextinstance={component.state.contextinstance}
+                  contexttype={component.state.contexttype}
+                  myroletype={component.state.myroletype}/>;
       }
     }
     else
@@ -298,4 +293,5 @@ Screen_.propTypes =
   { rolinstance: PropTypes.string.isRequired
   , couchdbUrl: PropTypes.string
   , systemUser: PropTypes.string.isRequired
+  , setMyRoleType: PropTypes.func.isRequired
   };

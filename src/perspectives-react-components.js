@@ -33,3 +33,6 @@ export {default as LocalRoleSpecialisation} from "./localrolespecialisation.js";
 export {default as ContextInstance} from "./contextInstance.js";
 export * from "./cardbehaviour.js";
 export * from "./behaviourcomponent.js";
+export {default as StandardScreen} from "./standardscreen.js";
+export {default as PerspectiveForm} from "./perspectiveform.js";
+export {default as PerspectiveTable} from "./perspectivetable.js";

@@ -1,13 +1,12 @@
 import React from 'react';
 
-const PropTypes = require("prop-types");
 import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext} from "./reactcontexts";
 import PerspectiveForm from "./perspectiveform.js";
 import PerspectiveTable from "./perspectivetable.js";
 
-import {Row, Col, Tabs, Tab, Container} from "react-bootstrap";
+import {Tabs, Tab, Container} from "react-bootstrap";
 
 export default class StandardScreen extends PerspectivesComponent
 {
@@ -24,8 +23,8 @@ export default class StandardScreen extends PerspectivesComponent
       {
         // (contextInstance, userRoleInstance, userRoleType, receiveValues, fireAndForget)
         pproxy.getPerspectives(
-          component.props.contextinstance,
-          component.props.myroletype,
+          component.context.contextinstance,
+          component.context.myroletype,
           function( perspectives )
           {
             console.log(perspectives);
@@ -59,10 +58,19 @@ export default class StandardScreen extends PerspectivesComponent
                   { perspective.isFunctional ?
                     <PerspectiveForm
                       perspective={perspective}
-                      myroletype={component.props.myroletype}
-                      contextinstance={component.props.contextinstance}
-                      contexttype={component.props.contexttype}/>
-                    : <PerspectiveTable perspective={perspective}/>}
+                      myroletype={component.context.myroletype}
+                      contextinstance={component.context.contextinstance}
+                      contexttype={component.context.contexttype}/>
+                    : <PerspectiveTable
+                        viewname=""
+                        cardcolumn={Object.keys(perspective.properties)[0]}
+                        roletype={perspective.roleType || ""}
+                        //contexttocreate   // We must be able to derive this from the Perspective.
+                        createButton={true} // Make contingent on the RoleVerbs!
+                        //roleRepresentation
+                        //behaviours // Make contingent on the RoleVerbs!
+                        perspective={perspective}
+                        />}
                 </Container>
               </Tab>
             )
@@ -78,8 +86,3 @@ export default class StandardScreen extends PerspectivesComponent
 }
 
 StandardScreen.contextType = PSContext;
-StandardScreen.propTypes =
-  { contextinstance: PropTypes.string.isRequired
-  , contexttype: PropTypes.string.isRequired
-  , myroletype: PropTypes.string.isRequired
-  };

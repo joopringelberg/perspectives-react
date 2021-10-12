@@ -247,12 +247,12 @@ class Screen_ extends PerspectivesComponent
     }
     else if (component.stateIsComplete())
     {
+      pscontext =
+        { contextinstance: component.state.contextinstance
+        , contexttype: component.state.contexttype
+        , myroletype: component.state.myroletype};
       if (component.state.modules.length == 1)
       {
-        pscontext =
-          { contextinstance: component.state.contextinstance
-          , contexttype: component.state.contexttype
-          , myroletype: component.state.myroletype};
         TheScreen = component.state.modules[0]["module"];
         return  <PSContext.Provider value={pscontext}>
                   <TheScreen/>
@@ -264,10 +264,9 @@ class Screen_ extends PerspectivesComponent
       }
       else
       {
-        return  <StandardScreen
-                  contextinstance={component.state.contextinstance}
-                  contexttype={component.state.contexttype}
-                  myroletype={component.state.myroletype}/>;
+        return  <PSContext.Provider value={pscontext}>
+                  <StandardScreen/>
+                </PSContext.Provider>;
       }
     }
     else

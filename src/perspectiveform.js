@@ -149,7 +149,7 @@ export default class PerspectiveForm extends PerspectivesComponent
           ariaLabel="To fill the role whose properties are displayed here, drag another role onto it."
           >
           {
-            perspective.properties.map(serialisedProperty =>
+            Object.values(perspective.properties).map(serialisedProperty =>
               <Form.Group as={Row} key={serialisedProperty.id}>
                 <Form.Label column sm="3">{ serialisedProperty.displayName }</Form.Label>
                 <Col sm="9">
@@ -172,7 +172,7 @@ export default class PerspectiveForm extends PerspectivesComponent
       // If there is no role instance, it is not mandatory. We'll show all fields disabled and a create button.
       return <>
         {
-          perspective.properties.map(serialisedProperty =>
+          Object.values(perspective.properties).map(serialisedProperty =>
             <Form.Group as={Row} key={serialisedProperty.id}>
                       <Form.Label column sm="3">{ serialisedProperty.displayName }</Form.Label>
                       <Col sm="9">

@@ -44,6 +44,23 @@ export default class StandardScreen extends PerspectivesComponent
     }
   }
 
+  computeCardColumn( perspective )
+  {
+    const propMatchingName = Object.keys(perspective.properties).find( propName => propName.match(/Name/) );
+    if ( perspective.properties["model:System$RootContext$External$Name"])
+    {
+      return "model:System$RootContext$External$Name";
+    }
+    else if ( propMatchingName )
+    {
+      return propMatchingName;
+    }
+    else
+    {
+      return Object.keys(perspective.properties)[0];
+    }
+  }
+
   render()
   {
     const component = this;
@@ -65,7 +82,7 @@ export default class StandardScreen extends PerspectivesComponent
                       contexttype={component.context.contexttype}/>
                     : <PerspectiveTable
                         viewname=""
-                        cardcolumn={Object.keys(perspective.properties)[0]}
+                        cardcolumn={component.computeCardColumn( perspective )}
                         roletype={perspective.roleType || ""}
                         //contexttocreate   // We must be able to derive this from the Perspective.
                         createButton={true} // Make contingent on the RoleVerbs!

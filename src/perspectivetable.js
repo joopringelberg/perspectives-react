@@ -16,8 +16,6 @@ import {deconstructLocalName, getQualifiedPropertyName} from "./urifunctions.js"
 
 import {addBehaviour} from "./behaviourcomponent.js";
 
-import * as Behaviours from "./cardbehaviour.js";
-
 import {PlusIcon} from '@primer/octicons-react';
 
 import
@@ -70,42 +68,6 @@ Card.contextType = PSRol;
 // Context type of RoleTable is PSContext
 export default class PerspectiveTable extends PerspectivesComponent
 {
-  // Maps the role verbs in the perspective to an array of behaviours.
-  mapRoleVerbsToBehaviours()
-  {
-    const perspective = this.props.perspective;
-    function mapRoleVerb(verb)
-    {
-      switch (verb)
-      {
-        case "Remove":
-          return Behaviours.addRemoveRoleFromContext;
-        case "Delete":
-          return Behaviours.addRemoveRoleFromContext;
-        case "Fill":
-          return Behaviours.addFillWithRole;
-        case "Unbind":
-          return Behaviours.addRemoveFiller;
-        case "RemoveFiller":
-          return Behaviours.addRemoveFiller;
-        // There is no behaviour on the role that matches Create, CreateAndFill and Move.
-        // We return addFillARole as default because it must be added anyway and we have
-        // to return a value from this function.
-        default:
-          return Behaviours.addFillARole;
-      }
-    }
-    if (perspective)
-    {
-      return [...new Set( perspective.verbs.map( mapRoleVerb ) )].concat(
-        [Behaviours.addOpenContextOrRoleForm]);
-    }
-    else
-    {
-      return [];
-    }
-  }
-
   render ()
   {
     const
@@ -119,7 +81,7 @@ export default class PerspectiveTable extends PerspectivesComponent
     else
     {
       // Map role verbs to behaviour.
-      roleRepresentation = addBehaviour( Card, component.props.behaviours || component.mapRoleVerbsToBehaviours() );
+      roleRepresentation = addBehaviour( Card, component.props.behaviours || [] );
     }
     return (<RoleInstances
               rol={roleType}
@@ -462,6 +424,7 @@ class TableCell extends PerspectivesComponent
   {
     super(props);
     const component = this;
+    this.isCalculated = props.perspective.properties[component.props.propertyname].isCalculated;
     // value is an array of strings.
     this.state.value = undefined;
     this.state.editable = false;
@@ -573,7 +536,7 @@ class TableCell extends PerspectivesComponent
   handleKeyDown (event)
   {
     const component = this;
-    if (!component.state.editable && !event.shiftKey)
+    if (!component.state.editable && !event.shiftKey && !component.isCalculated)
     {
       switch(event.keyCode){
         case 32: // Space
@@ -601,6 +564,11 @@ class TableCell extends PerspectivesComponent
           event.preventDefault();
           event.stopPropagation();
           break;
+        case 37: // Left Arrow
+          event.stopPropagation();
+          break;
+        case 39: // Right Arrow
+          event.stopPropagation();
       }
     }
     // if (event.keyCode == 9 || event.keyCode == 11)

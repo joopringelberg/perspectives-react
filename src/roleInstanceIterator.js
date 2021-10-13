@@ -27,6 +27,8 @@ class RoleInstanceIterator_ extends PerspectivesComponent
   constructor (props)
   {
     super(props);
+    // We need to copy the instances to state in order to be able to compare them
+    // with new instances in the context on an update.
     this.state.instances = undefined;
     // We keep a copy of the cursor to provide an optimisation in componentDidUpdate.
     // It allows us to recompute only two instances instead of all of them.

@@ -25,7 +25,7 @@ export default class PerspectiveForm extends PerspectivesComponent
   constructor(props)
   {
     super(props);
-    this.state = {roleInstanceWithProps: this.props.perspective.roleInstances[0]};
+    this.state = {roleInstanceWithProps: Object.values( this.props.perspective.roleInstances )[0]};
     this.checkBinding = this.checkBinding.bind(this);
     this.bind_ = this.bind_.bind(this);
     this.createRoleInstance = this.createRoleInstance.bind(this);
@@ -185,11 +185,6 @@ export default class PerspectiveForm extends PerspectivesComponent
         )}
         <Row>
           <Button variant="secondary" onClick={component.createRoleInstance}/>
-        </Row>
-        <Row>
-          <RoleInstance roleinstance={component.state.roleInstanceWithProps.roleId}>
-            <DraggableCard/>
-          </RoleInstance>
         </Row>
         </>;
     }

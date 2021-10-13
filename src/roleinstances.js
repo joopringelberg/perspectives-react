@@ -189,7 +189,7 @@ export default class RoleInstances extends PerspectivesComponent
         if (component.props.perspective)
         {
           component.setTheState(
-            component.props.perspective.roleInstances.map( r => r.roleId ),
+            Object.keys( component.props.perspective.roleInstances ),
             component.props.perspective.roleKind,
             component.props.perspective.roleType
           );

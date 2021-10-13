@@ -265,7 +265,11 @@ class Screen_ extends PerspectivesComponent
       else
       {
         return  <PSContext.Provider value={pscontext}>
-                  <StandardScreen/>
+                  <StandardScreen
+                    contextinstance={component.state.contextinstance}
+                    contexttype={component.state.contexttype}
+                    myroletype={component.state.myroletype}
+                  />
                 </PSContext.Provider>;
       }
     }

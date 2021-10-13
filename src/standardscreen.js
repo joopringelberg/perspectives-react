@@ -1,4 +1,5 @@
 import React from 'react';
+const PropTypes = require("prop-types");
 
 import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
@@ -36,7 +37,8 @@ export default class StandardScreen extends PerspectivesComponent
 
   componentDidUpdate(prevProps)
   {
-    if (this.props != prevProps)
+    if (this.props.contextinstance != prevProps.contextinstance ||
+        this.props.myroletype != prevProps.myroletype )
     {
       this.componentDidMount();
     }
@@ -86,3 +88,8 @@ export default class StandardScreen extends PerspectivesComponent
 }
 
 StandardScreen.contextType = PSContext;
+StandardScreen.propTypes =
+  { contextinstance: PropTypes.string.isRequired
+  , contexttype: PropTypes.string.isRequired
+  , myroletype: PropTypes.string.isRequired
+  };

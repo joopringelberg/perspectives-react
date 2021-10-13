@@ -4,7 +4,6 @@ import {PSRol} from "./reactcontexts.js";
 const PDRproxy = require("perspectives-proxy").PDRproxy;
 import RoleDropZone from "./roleDropzone.js";
 import {addBehaviour} from "./behaviourcomponent.js";
-import {addFillARole, addOpenContextOrRoleForm} from "./cardbehaviour.js";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import RoleInstance from "./roleinstance.js";
 import
@@ -29,6 +28,7 @@ export default class PerspectiveForm extends PerspectivesComponent
     this.checkBinding = this.checkBinding.bind(this);
     this.bind_ = this.bind_.bind(this);
     this.createRoleInstance = this.createRoleInstance.bind(this);
+    this.DraggableCard = addBehaviour( RoleCard, this.props.behaviours );
   }
 
   changeValue (qualifiedPropertyName, val)
@@ -140,6 +140,7 @@ export default class PerspectiveForm extends PerspectivesComponent
     const component = this;
     // const component = this;
     const perspective = this.props.perspective;
+    const DraggableCard = this.DraggableCard;
 
     if (component.state.roleInstanceWithProps)
     {
@@ -196,6 +197,7 @@ PerspectiveForm.propTypes =
   , myroletype: PropTypes.string.isRequired
   , contextinstance: PropTypes.string.isRequired
   , contexttype: PropTypes.string.isRequired
+  , behaviours: PropTypes.arrayOf(PropTypes.func)
   };
 
 class RoleCard extends Component
@@ -216,10 +218,5 @@ class RoleCard extends Component
   }
 }
 RoleCard.contextType = PSRol;
-
-const DraggableCard = addBehaviour(
-  RoleCard,
-  [addFillARole, addOpenContextOrRoleForm]
-  );
 
 RoleCard.propTypes = { setSelf: PropTypes.func };

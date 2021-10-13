@@ -118,7 +118,9 @@ export default class StandardScreen extends PerspectivesComponent
                                 perspective={perspective}
                                 myroletype={component.context.myroletype}
                                 contextinstance={component.context.contextinstance}
-                                contexttype={component.context.contexttype}/>
+                                contexttype={component.context.contexttype}
+                                behaviours={component.mapRoleVerbsToBehaviours( perspective )}
+                                />
                               : <PerspectiveTable
                                   viewname=""
                                   cardcolumn={component.computeCardColumn( perspective )}

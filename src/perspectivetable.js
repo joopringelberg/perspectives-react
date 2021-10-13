@@ -303,6 +303,7 @@ class RoleTable_ extends PerspectivesComponent
                               return false;
                             }}
                           deregisterPreviousCell={component.deregisterPreviousCell}
+                          perspective={component.props.perspective}
                           />
                       </RoleInstanceIterator>
                     </tbody>
@@ -372,26 +373,25 @@ class TableRow extends PerspectivesComponent
   render()
   {
     const component = this;
-    return  <PSContext.Consumer>{
-              pscontext =>  <tr
-                              onClick={component.handleClick}
-                              onKeyDown={component.handleKeyDown}
-                              ref={component.ref}
-                            >{
-                              component.props.propertynames.map( pn =>
-                                <TableCell
-                                  key = {pn}
-                                  propertyname = {pn}
-                                  iscard = {pn == component.props.cardcolumn}
-                                  psrol= {component.context}
-                                  myroletype = {pscontext.myroletype}
-                                  isselected = { component.props.tableisactive && !!component.context.isselected && (component.props.column == pn) }
-                                  roleRepresentation={component.props.roleRepresentation}
-                                  isFirstCell={component.props.isFirstCell}
-                                  deregisterPreviousCell={component.props.deregisterPreviousCell}
-                                /> )
-                            }</tr>
-            }</PSContext.Consumer>;
+    return  <tr
+              onClick={component.handleClick}
+              onKeyDown={component.handleKeyDown}
+              ref={component.ref}
+            >{
+              component.props.propertynames.map( pn =>
+                <TableCell
+                  key = {pn}
+                  propertyname = {pn}
+                  iscard = {pn == component.props.cardcolumn}
+                  psrol= {component.context}
+                  myroletype = {component.props.myroletype}
+                  isselected = { component.props.tableisactive && !!component.context.isselected && (component.props.column == pn) }
+                  roleRepresentation={component.props.roleRepresentation}
+                  isFirstCell={component.props.isFirstCell}
+                  deregisterPreviousCell={component.props.deregisterPreviousCell}
+                  perspective={component.props.perspective}
+                /> )
+            }</tr>;
   }
 }
 
@@ -406,6 +406,7 @@ TableRow.propTypes =
   , roleRepresentation: PropTypes.func.isRequired
   , isFirstCell: PropTypes.func.isRequired
   , deregisterPreviousCell: PropTypes.object.isRequired
+  , perspective: PropTypes.object
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -446,21 +447,38 @@ class TableCell extends PerspectivesComponent
   componentDidMount ()
   {
     const component = this;
-    PDRproxy.then(
-      function( pproxy )
+    const perspective = component.props.perspective;
+    let roleInstanceWithProperties;
+    if (perspective)
+    {
+      roleInstanceWithProperties = perspective.roleInstances[component.props.psrol.rolinstance];
+      if (roleInstanceWithProperties)
       {
-        component.addUnsubscriber(
-          pproxy.getProperty(
-            component.props.psrol.rolinstance,
-            component.props.propertyname,
-            component.props.psrol.roltype,
-            function (propertyValues)
-            {
-              component.setState({value: propertyValues});
-            })
-        );
+        component.setState({value: roleInstanceWithProperties.propertyValues[component.props.propertyname].values});
       }
-    );
+      else
+      {
+        component.setState({value: []});
+      }
+    }
+    else
+    {
+      PDRproxy.then(
+        function( pproxy )
+        {
+          component.addUnsubscriber(
+            pproxy.getProperty(
+              component.props.psrol.rolinstance,
+              component.props.propertyname,
+              component.props.psrol.roltype,
+              function (propertyValues)
+              {
+                component.setState({value: propertyValues});
+              })
+          );
+        }
+      );
+    }
   }
 
   // val is a string.
@@ -672,6 +690,7 @@ TableCell.propTypes =
   ).isRequired
   , roleRepresentation: PropTypes.func.isRequired
   , deregisterPreviousCell: PropTypes.object.isRequired
+  , perspective: PropTypes.object
 };
 
 ////////////////////////////////////////////////////////////////////////////////

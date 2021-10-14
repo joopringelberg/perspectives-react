@@ -25,14 +25,15 @@ export default class StandardScreen extends PerspectivesComponent
       {
         // (contextInstance, userRoleInstance, userRoleType, receiveValues, fireAndForget)
         pproxy.getPerspectives(
-          component.context.contextinstance,
-          component.context.myroletype,
-          function( perspectives )
+          component.context.contextinstance
+          ,component.context.myroletype
+          ,function( perspectives )
           {
             console.log(perspectives);
             component.setState({perspectives: perspectives});
-          },
-          FIREANDFORGET );
+          }
+          // ,FIREANDFORGET 
+        );
       });
   }
 

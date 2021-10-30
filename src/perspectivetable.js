@@ -612,14 +612,13 @@ class TableCell extends PerspectivesComponent
         {
           // SELECTED, NOT EDITABLE, CARD
           return (
-            <td >
+            <td onKeyDown={component.handleKeyDown}>
                 <RoleRepresentation
                   inputRef={component.inputRef}
                   tabIndex={component.state.lastCellBeforeTableInactivated ? "0" : "-1"}
                   // if we set defaultValue, the value on screen does not update.
                   defaultValue={component.state.value}
                   className="shadow bg-info"
-                  onKeyDown={component.handleKeyDown}
                   onClick={component.handleClick}
                   labelProperty={deconstructLocalName ( component.props.propertyname )}
                 />

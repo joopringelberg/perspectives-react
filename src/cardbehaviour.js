@@ -182,17 +182,20 @@ export function addFillWithRole(domEl, component)
   function handleKeyDown ( event )
   {
     switch(event.keyCode){
-      case 13: // Enter
-      case 32: // space
-      readClipBoard( function( roleDataAndBehaviour )
-        {
-          if (roleDataAndBehaviour.roleData.rolinstance)
-          {
-            tryToBind( event, roleDataAndBehaviour );
-          }
-        });
+      case 86: // v
+      if (event.ctrlKey)
+      {
         event.preventDefault();
+        event.stopPropagation();
+        readClipBoard( function( roleDataAndBehaviour )
+          {
+            if (roleDataAndBehaviour.roleData.rolinstance)
+            {
+              tryToBind( event, roleDataAndBehaviour );
+            }
+          });
       }
+    }
   }
 
   function tryToBind (event, {roleData, addedBehaviour} )

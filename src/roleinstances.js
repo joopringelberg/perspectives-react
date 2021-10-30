@@ -46,6 +46,12 @@ export default class RoleInstances extends PerspectivesComponent
         },
         false);
     }
+    // Mark the perspective, so we can detect that the PDR has
+    // given us a new value.
+    if ( component.props.perspective )
+    {
+      component.props.perspective.seenBefore = true;
+    }
   }
 
   bind ({rolinstance})
@@ -216,8 +222,6 @@ export default class RoleInstances extends PerspectivesComponent
   // This function takes care of re-rendering, when the eventDiv will have been deleted
   // and the listener has vanished with it. We re-establish the listener on the newly
   // created eventDiv instance.
-  // When the contextinstance on the component's context changes, we need to recompute the role instances.
-  // The same holds for when the `rol` prop changes.
   componentDidUpdate (prevProps, prevState)
   {
     const component = this;
@@ -231,8 +235,15 @@ export default class RoleInstances extends PerspectivesComponent
         },
         false);
     }
+    // When the contextinstance on the component's context changes, we need to recompute the role instances.
+    // The same holds for when the `rol` prop changes.
+    if ( component.props.perspective && !component.props.perspective.seenBefore )
+    {
+      component.props.perspective.seenBefore = true;
+      component.getRoleInstances();
+    }
     if  ( component.context.contextinstance !== component.state.contextinstance ||
-          (prevProps.rol !== component.props.rol)
+          (prevProps.rol !== component.props.rol )
         )
     {
       component.getRoleInstances();

@@ -1,7 +1,7 @@
 import React from 'react';
 const PropTypes = require("prop-types");
 
-import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
+import {PDRproxy} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext} from "./reactcontexts";
 import PerspectiveForm from "./perspectiveform.js";
@@ -32,7 +32,7 @@ export default class StandardScreen extends PerspectivesComponent
             console.log(perspectives);
             component.setState({perspectives: perspectives});
           }
-          // ,FIREANDFORGET 
+          // ,FIREANDFORGET
         );
       });
   }

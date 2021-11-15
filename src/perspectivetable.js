@@ -12,6 +12,8 @@ import RoleInstanceIterator from "./roleinstanceiterator.js";
 
 import RoleDropZone from "./roleDropzone.js";
 
+import ActionDropDown from "./actiondropdown.js";
+
 import {deconstructLocalName, getQualifiedPropertyName} from "./urifunctions.js";
 
 import {addBehaviour} from "./behaviourcomponent.js";
@@ -63,9 +65,9 @@ class Card extends React.Component
 Card.contextType = PSRol;
 
 ////////////////////////////////////////////////////////////////////////////////
-// ROLETABLE
+// PERSPECTIVESTABLE
 ////////////////////////////////////////////////////////////////////////////////
-// Context type of RoleTable is PSContext
+// Context type of PerspectiveTable is PSContext
 export default class PerspectiveTable extends PerspectivesComponent
 {
   render ()
@@ -99,7 +101,13 @@ export default class PerspectiveTable extends PerspectivesComponent
                 roleRepresentation={roleRepresentation}
                 perspective={component.props.perspective}
                 />
-              <TableControls createButton={ component.props.createButton }/>
+              <TableControls
+                createButton={ component.props.createButton }
+                perspective={ component.props.perspective}
+                selectedroleinstance={psrol.cursor}
+                contextinstance={psrol.contextinstance}
+                myroletype={component.context.myroletype}
+                />
             </RoleDropZone>
           }</PSRoleInstances.Consumer>
       </RoleInstances>);
@@ -704,6 +712,15 @@ TableCell.propTypes =
 ////////////////////////////////////////////////////////////////////////////////
 class TableControls extends PerspectivesComponent
 {
+  constructor()
+  {
+    super();
+    this.runAction = this.runAction.bind(this);
+    this.state =
+      { currentRoleInstance: undefined
+      , actions: undefined };
+  }
+
   handleKeyDown (event)
     {
       const component = this;
@@ -716,20 +733,86 @@ class TableControls extends PerspectivesComponent
             break;
         }
   }
+
+  componentDidMount()
+  {
+    const component = this;
+    component.setState(
+      { currentRoleInstance: component.props.selectedroleinstance
+      , actions: component.computeActions()
+      });
+  }
+
+  componentDidUpdate()
+  {
+    const component = this;
+    // Set state if the current role instance has changed, or if the perspective has changed.
+    if (component.props.selectedroleinstance != component.state.currentRoleInstance || !component.props.perspective.seenBefore)
+    {
+      component.setState(
+        { currentRoleInstance: component.props.selectedroleinstance
+        , actions: component.computeActions()
+        });
+    }
+  }
+
+  runAction( actionName )
+  {
+    const component = this;
+    PDRproxy.then(
+      function (pproxy)
+      {
+          pproxy.action(
+            component.state.currentRoleInstance
+            , component.props.contextinstance
+            , component.props.perspective.id
+            , actionName
+            , component.props.myroletype); // authoringRole
+      });
+  }
+
+  computeActions()
+  {
+    const component = this;
+    let objectStateActions = [];
+    if (component.props.perspective)
+    {
+      if (component.state.selectedRoleInstance)
+      {
+        objectStateActions = component.props.perspective.roleInstances[ component.state.selectedRoleInstance].actions;
+      }
+      return component.props.perspective.actions.concat( objectStateActions );
+    }
+    else
+    {
+      return [];
+    }
+  }
+
   render ()
   {
     const component = this;
-    if ( component.props.createButton )
+    if ( component.stateIsComplete() )
     {
       return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for table" className="mb-5">
-                <div
-                  className="ml-3 mr-3"
-                  tabIndex="0"
-                  onClick={ () => component.context.createRole( function() {}) }
-                  onKeyDown={ ev => component.handleKeyDown(ev)}
-                >
-                  <PlusIcon alt="Add row" aria-label="Click to add a row" size='medium'/>
-                </div>
+                {
+                  component.props.createButton ?
+                  <div
+                    className="ml-3 mr-3"
+                    tabIndex="0"
+                    onClick={ () => component.context.createRole( function() {}) }
+                    onKeyDown={ ev => component.handleKeyDown(ev)}
+                  >
+                    <PlusIcon alt="Add row" aria-label="Click to add a row" size='medium'/>
+                  </div>
+                  : null
+                }
+                { component.state.actions.length > 0 ?
+                  <ActionDropDown
+                    actions={ component.state.actions }
+                    runaction={component.runAction}
+                  />
+                  : null }
               </Navbar>;
     }
     else
@@ -741,4 +824,9 @@ class TableControls extends PerspectivesComponent
 
 TableControls.contextType = PSRoleInstances;
 TableControls.propTypes =
-  { createButton: PropTypes.bool };
+  { createButton: PropTypes.bool
+  , perspective: PropTypes.object
+  , selectedroleinstance: PropTypes.string
+  , contextinstance: PropTypes.string
+  , myroletype: PropTypes.string
+  };

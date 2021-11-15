@@ -119,7 +119,7 @@ class Screen_ extends PerspectivesComponent
 
   resetState()
   {
-    // This represents 'me': the 'own' user.
+    // This represents 'me': the 'own' user, i.e. an instance of model:System$PerspectivesSystem$User.
     this.state.useridentifier = undefined;
     // The role that 'me' plays in the current context. We pass it on to ContextOfRole
     // and that component includes it in the PSContext it provides to descendants.

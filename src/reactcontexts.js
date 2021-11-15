@@ -3,6 +3,7 @@ const React = require("react");
 export const PSContext = React.createContext(
   { contextinstance: ""
   , contexttype: ""
+  // use this as value for authoringRole in calls to the PDR.
   , myroletype: ""
   });
 

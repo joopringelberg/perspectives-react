@@ -435,6 +435,7 @@ class TableCell extends PerspectivesComponent
     const component = this;
     if (component.state.value.length != 1 || component.state.value[0] != val)
     {
+      component.setState({value: [val]});
       PDRproxy.then(
         function(pproxy)
         {
@@ -495,6 +496,14 @@ class TableCell extends PerspectivesComponent
     {
       switch( event.keyCode )
       {
+        // Safe on leaving the cell, allow event to bubble.
+        case 37: // left arrow
+        case 39: // right arrow
+        case 38: // Up arrow
+        case 40: // Down arrow
+          component.changeValue(event.target.value);
+          component.setState({editable: false});
+          break;
         case 13: // Return
           component.changeValue(event.target.value);
           component.setState({editable: false});
@@ -503,8 +512,6 @@ class TableCell extends PerspectivesComponent
           break;
         case 27: // Escape
           component.setState({editable: false});
-          // Make the Form.Control display the original value. DO WE STILL NEED THIS?
-          component.inputRef.current.value = component.state.value;
           event.preventDefault();
           event.stopPropagation();
           break;

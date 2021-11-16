@@ -559,6 +559,12 @@ class TableCell extends PerspectivesComponent
     {
       switch( event.keyCode )
       {
+        // Safe on leaving the cell, allow event to bubble.
+        case 38: // Up arrow
+        case 40: // Down arrow
+          component.changeValue(event.target.value);
+          component.setState({editable: false});
+          break;
         case 13: // Return
           component.changeValue(event.target.value);
           component.setState({editable: false});
@@ -792,7 +798,7 @@ class TableControls extends PerspectivesComponent
   render ()
   {
     const component = this;
-    if ( component.stateIsComplete() )
+    if ( component.stateIsComplete(["currentRoleInstance"]) )
     {
       return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for table" className="mb-5">
                 {

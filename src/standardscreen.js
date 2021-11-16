@@ -126,7 +126,7 @@ export default class StandardScreen extends PerspectivesComponent
                                   viewname=""
                                   cardcolumn={component.computeCardColumn( perspective )}
                                   roletype={perspective.roleType || ""}
-                                  //contexttocreate   // We must be able to derive this from the Perspective.
+                                  contexttocreate={perspective.contextTypesToCreate[0]}
                                   createButton={createButton}
                                   //roleRepresentation
                                   behaviours={component.mapRoleVerbsToBehaviours( perspective )}

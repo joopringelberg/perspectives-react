@@ -499,8 +499,11 @@ class TableCell extends PerspectivesComponent
         // Safe on leaving the cell, allow event to bubble.
         case 37: // left arrow
         case 39: // right arrow
+          event.stopPropagation();
+          break;
         case 38: // Up arrow
         case 40: // Down arrow
+        case 9:  // Tab key
           component.changeValue(event.target.value);
           component.setState({editable: false});
           break;

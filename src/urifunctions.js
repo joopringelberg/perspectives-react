@@ -35,7 +35,7 @@ export function externalRole( s )
   }
   else
   {
-    return s + "_External";
+    return s + "$External";
   }
 }
 
@@ -47,7 +47,7 @@ export function isExternalRole( s )
 
 export function deconstructContext( s )
 {
-  const matches = s.match(/(.*)_External/);
+  const matches = s.match(/(.*?)(?:\$_External|\$External)/);
   if ( matches )
   {
     return matches[1];

@@ -267,7 +267,7 @@ export function addFillARole(domEl, component)
                   JSON.stringify(
                     { roleData:
                       { rolinstance: component.context.rolinstance
-                      , cardTitle: valArr[0]
+                      , cardTitle: (valArr[0] || "No title")
                       , roleType: component.context.roltype
                       , contextType: component.context.contexttype
                       }

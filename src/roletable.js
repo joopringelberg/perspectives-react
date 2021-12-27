@@ -16,6 +16,8 @@ import {deconstructLocalName, getQualifiedPropertyName} from "./urifunctions.js"
 
 import {addBehaviour} from "./behaviourcomponent.js";
 
+import * as Behaviours from "./cardbehaviour.js";
+
 import {PlusIcon} from '@primer/octicons-react';
 
 import
@@ -78,7 +80,7 @@ export default class RoleTable extends PerspectivesComponent
     }
     else
     {
-      roleRepresentation = addBehaviour( Card, component.props.behaviours || []);
+      roleRepresentation = addBehaviour( Card, (component.props.behaviours || []).concat([Behaviours.addFillARole]));
     }
     return (<RoleInstances rol={component.props.roletype} contexttocreate={component.props.contexttocreate}>
           <PSRoleInstances.Consumer>{ psrol =>

@@ -90,7 +90,7 @@ export default class StandardScreen extends PerspectivesComponent
     if (perspective)
     {
       return [...new Set( perspective.verbs.map( mapRoleVerb ) )].concat(
-        [Behaviours.addOpenContextOrRoleForm]);
+        [Behaviours.addOpenContextOrRoleForm, Behaviours.addFillARole]);
     }
     else
     {
@@ -112,7 +112,9 @@ export default class StandardScreen extends PerspectivesComponent
               {
                 const createButton = !perspective.isCalculated &&
                   (perspective.verbs.includes("Create") || perspective.verbs.includes("CreateAndFill"));
-                return  <Tab key={perspective.id} eventKey={perspective.id} title={perspective.displayName}>
+                if (Object.keys(perspective.properties).length > 0)
+                {
+                  return  <Tab key={perspective.id} eventKey={perspective.id} title={perspective.displayName}>
                           <Container>
                             { perspective.isFunctional ?
                               <PerspectiveForm
@@ -134,6 +136,11 @@ export default class StandardScreen extends PerspectivesComponent
                                   />}
                           </Container>
                         </Tab>;
+                }
+                else
+                {
+                  return null;
+                }
             }
             )
           }

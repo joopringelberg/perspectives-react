@@ -8,7 +8,7 @@ import PerspectiveForm from "./perspectiveform.js";
 import PerspectiveTable from "./perspectivetable.js";
 import * as Behaviours from "./cardbehaviour.js";
 
-import {Tabs, Tab, Container} from "react-bootstrap";
+import {Tabs, Tab, Container, Card} from "react-bootstrap";
 
 export default class StandardScreen extends PerspectivesComponent
 {
@@ -103,49 +103,63 @@ export default class StandardScreen extends PerspectivesComponent
     const component = this;
     if (component.stateIsComplete())
     {
-      // return <div>{this.props.contextinstance}</div>;
-      return (
-        <Container role="application">
-          <Tabs defaultActiveKey={component.state.perspectives[0].id} id="perspective-tabs">
-          {
-            component.state.perspectives.map( perspective =>
-              {
-                const createButton = !perspective.isCalculated &&
-                  (perspective.verbs.includes("Create") || perspective.verbs.includes("CreateAndFill"));
-                if (Object.keys(perspective.properties).length > 0)
+      if (component.state.perspectives[0])
+      {
+        return (
+          <Container role="application">
+            <Tabs defaultActiveKey={component.state.perspectives[0].id} id="perspective-tabs">
+            {
+              component.state.perspectives.map( perspective =>
                 {
-                  return  <Tab key={perspective.id} eventKey={perspective.id} title={perspective.displayName}>
-                          <Container>
-                            { perspective.isFunctional ?
-                              <PerspectiveForm
-                                perspective={perspective}
-                                myroletype={component.context.myroletype}
-                                contextinstance={component.context.contextinstance}
-                                contexttype={component.context.contexttype}
-                                behaviours={component.mapRoleVerbsToBehaviours( perspective )}
-                                />
-                              : <PerspectiveTable
-                                  viewname=""
-                                  cardcolumn={component.computeCardColumn( perspective )}
-                                  roletype={perspective.roleType || ""}
-                                  contexttocreate={perspective.contextTypesToCreate[0]}
-                                  createButton={createButton}
-                                  //roleRepresentation
-                                  behaviours={component.mapRoleVerbsToBehaviours( perspective )}
+                  const createButton = !perspective.isCalculated &&
+                    (perspective.verbs.includes("Create") || perspective.verbs.includes("CreateAndFill"));
+                  if (Object.keys(perspective.properties).length > 0)
+                  {
+                    return  <Tab key={perspective.id} eventKey={perspective.id} title={perspective.displayName}>
+                            <Container>
+                              { perspective.isFunctional ?
+                                <PerspectiveForm
                                   perspective={perspective}
-                                  />}
-                          </Container>
-                        </Tab>;
-                }
-                else
-                {
-                  return null;
-                }
+                                  myroletype={component.context.myroletype}
+                                  contextinstance={component.context.contextinstance}
+                                  contexttype={component.context.contexttype}
+                                  behaviours={component.mapRoleVerbsToBehaviours( perspective )}
+                                  />
+                                : <PerspectiveTable
+                                    viewname=""
+                                    cardcolumn={component.computeCardColumn( perspective )}
+                                    roletype={perspective.roleType || ""}
+                                    contexttocreate={perspective.contextTypesToCreate[0]}
+                                    createButton={createButton}
+                                    //roleRepresentation
+                                    behaviours={component.mapRoleVerbsToBehaviours( perspective )}
+                                    perspective={perspective}
+                                    />}
+                            </Container>
+                          </Tab>;
+                  }
+                  else
+                  {
+                    return null;
+                  }
+              }
+              )
             }
-            )
-          }
-          </Tabs>
-        </Container>);
+            </Tabs>
+          </Container>);
+      }
+      else {
+        return    <Container>
+                    <Card>
+                      <Card.Body>
+                        <Card.Title>An error condition occurred</Card.Title>
+                        <Card.Text>
+                          The role you currently have in this context has no perspectives. Try another role.
+                        </Card.Text>
+                      </Card.Body>
+                      </Card>
+                  </Container>;
+      }
     }
     else
     {

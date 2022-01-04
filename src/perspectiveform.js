@@ -103,36 +103,19 @@ export default class PerspectiveForm extends PerspectivesComponent
   bind_(rolInstance)
   {
     const component = this;
-    return function({rolinstance})
-      {
-        if (rolinstance)
+    const rolinstance = rolInstance.rolinstance;
+    if (rolinstance)
+    {
+      PDRproxy.then(
+        function (pproxy)
         {
-          // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
-          PDRproxy.then(
-            function (pproxy)
-            {
-              pproxy.checkBinding(
-                component.props.perspective.contexttype,
-                component.props.perspective.roleType,
-                rolinstance,
-                function(psbool)
-                {
-                  if ( psbool[0] === "true" )
-                  {
-                    pproxy.bind_(
-                      rolInstance, // binder: component.state.rolinstance?
-                      rolinstance, // binding
-                      component.props.myroletype,
-                      function( /*rolId*/ ){});
-                  }
-                  else
-                  {
-                    alert("Cannot bind_!");
-                  }
-                });
-          });
-        }
-      };
+          pproxy.bind_(
+            component.state.roleInstanceWithProps.roleId,
+            rolinstance, // binding
+            component.props.myroletype,
+            function( /*rolId*/ ){});
+        });
+    }
   }
 
   render ()
@@ -185,7 +168,7 @@ export default class PerspectiveForm extends PerspectivesComponent
                     </Form.Group>
         )}
         <Row>
-          <Button variant="secondary" onClick={component.createRoleInstance}/>
+          <Button variant="secondary" onClick={component.createRoleInstance}>Create</Button>
         </Row>
         </>;
     }

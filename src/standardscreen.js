@@ -63,6 +63,20 @@ export default class StandardScreen extends PerspectivesComponent
     }
   }
 
+  // Returns a property to display on the draggable card of a perspectiveform.
+  computeCardTitle( perspective )
+  {
+    const propMatchingName = Object.keys(perspective.properties).find( propName => propName.match(/Name/) );
+    if ( propMatchingName )
+    {
+      return propMatchingName;
+    }
+    else
+    {
+      return Object.keys(perspective.properties)[0];
+    }
+  }
+
   // Maps the role verbs in the perspective to an array of behaviours.
   mapRoleVerbsToBehaviours(perspective)
   {
@@ -124,6 +138,7 @@ export default class StandardScreen extends PerspectivesComponent
                                   contextinstance={component.context.contextinstance}
                                   contexttype={component.context.contexttype}
                                   behaviours={component.mapRoleVerbsToBehaviours( perspective )}
+                                  cardtitle={ component.computeCardTitle( perspective )}
                                   />
                                 : <PerspectiveTable
                                     viewname=""

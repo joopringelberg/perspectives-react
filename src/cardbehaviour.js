@@ -1,6 +1,7 @@
 // const PDRproxy = require("perspectives-proxy").PDRproxy;
 
 import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
+import {isQualifiedName} from "./urifunctions.js";
 
 /*
 This module gives functions that add behaviour to a component that represents a role.
@@ -181,10 +182,10 @@ export function addFillWithRole(domEl, component)
 
   function handleKeyDown ( event )
   {
-    switch(event.keyCode){
-      case 86: // v
-      if (event.ctrlKey)
-      {
+    if (event.ctrlKey)
+    {
+      switch(event.keyCode){
+        case 86: // v
         event.preventDefault();
         event.stopPropagation();
         readClipBoard( function( roleDataAndBehaviour )
@@ -254,30 +255,60 @@ export function addFillARole(domEl, component)
         if (event.ctrlKey)
         {
           // Set information in the CardClipboard external property of model:System$PerspectivesSystem.
-          PDRproxy.then( pproxy =>
-            pproxy.getPropertyFromLocalName(
-              component.context.rolinstance,
-              component.props.labelProperty,
-              component.context.roltype,
-              function(valArr)
-              {
-                pproxy.setProperty(
-                  component.props.systemExternalRole,
-                  "model:System$PerspectivesSystem$External$CardClipBoard",
-                  JSON.stringify(
-                    { roleData:
-                      { rolinstance: component.context.rolinstance
-                      , cardTitle: (valArr[0] || "No title")
-                      , roleType: component.context.roltype
-                      , contextType: component.context.contexttype
-                      }
-                    , addedBehaviour: component.addedBehaviour
-                    , myroletype: component.props.myroletype
-                    }),
-                  component.props.myroletype );
-              }
-            )
-          );
+          if (isQualifiedName (component.props.labelProperty))
+          {
+            PDRproxy.then( pproxy =>
+              pproxy.getProperty(
+                component.context.rolinstance,
+                component.props.labelProperty,
+                component.context.roltype,
+                function(valArr)
+                {
+                  pproxy.setProperty(
+                    component.props.systemExternalRole,
+                    "model:System$PerspectivesSystem$External$CardClipBoard",
+                    JSON.stringify(
+                      { roleData:
+                        { rolinstance: component.context.rolinstance
+                        , cardTitle: (valArr[0] || "No title")
+                        , roleType: component.context.roltype
+                        , contextType: component.context.contexttype
+                        }
+                      , addedBehaviour: component.addedBehaviour
+                      , myroletype: component.props.myroletype
+                      }),
+                    component.props.myroletype );
+                }
+              )
+            );
+          }
+          else
+          {
+            PDRproxy.then( pproxy =>
+              pproxy.getPropertyFromLocalName(
+                component.context.rolinstance,
+                component.props.labelProperty,
+                component.context.roltype,
+                function(valArr)
+                {
+                  pproxy.setProperty(
+                    component.props.systemExternalRole,
+                    "model:System$PerspectivesSystem$External$CardClipBoard",
+                    JSON.stringify(
+                      { roleData:
+                        { rolinstance: component.context.rolinstance
+                        , cardTitle: (valArr[0] || "No title")
+                        , roleType: component.context.roltype
+                        , contextType: component.context.contexttype
+                        }
+                      , addedBehaviour: component.addedBehaviour
+                      , myroletype: component.props.myroletype
+                      }),
+                    component.props.myroletype );
+                }
+              )
+            );
+          }
           event.preventDefault();
           event.stopPropagation();
         }

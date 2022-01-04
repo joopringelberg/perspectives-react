@@ -146,7 +146,7 @@ export default class PerspectiveForm extends PerspectivesComponent
           }
           <Row>
             <RoleInstance roleinstance={component.state.roleInstanceWithProps.roleId}>
-              <DraggableCard/>
+              <DraggableCard labelProperty={component.props.cardtitle} title={component.findValue(component.props.cardtitle)[0] || "No title"}/>
             </RoleInstance>
           </Row>
         </RoleDropZone>;
@@ -181,6 +181,7 @@ PerspectiveForm.propTypes =
   , contextinstance: PropTypes.string.isRequired
   , contexttype: PropTypes.string.isRequired
   , behaviours: PropTypes.arrayOf(PropTypes.func)
+  , cardtitle: PropTypes.string.isRequired
   };
 
 class RoleCard extends Component
@@ -191,10 +192,11 @@ class RoleCard extends Component
   }
   render()
   {
+    const component = this;
       return  <Card tabIndex="0" aria-label="Drag this card to manipulate this role.">
                 <Card.Body>
                   <Card.Text>
-                    Drag this role
+                    {component.props.title}
                   </Card.Text>
                 </Card.Body>
               </Card>;
@@ -202,4 +204,9 @@ class RoleCard extends Component
 }
 RoleCard.contextType = PSRol;
 
-RoleCard.propTypes = { setSelf: PropTypes.func };
+RoleCard.propTypes =
+  { setSelf: PropTypes.func
+  , title: PropTypes.string.isRequired
+  , labelProperty: PropTypes.string.isRequired
+
+  };

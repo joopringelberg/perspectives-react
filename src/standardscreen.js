@@ -8,7 +8,7 @@ import PerspectiveForm from "./perspectiveform.js";
 import PerspectiveTable from "./perspectivetable.js";
 import * as Behaviours from "./cardbehaviour.js";
 
-import {Tabs, Tab, Container, Card} from "react-bootstrap";
+import {Tabs, Tab, Container, Card, Button} from "react-bootstrap";
 
 export default class StandardScreen extends PerspectivesComponent
 {
@@ -43,37 +43,6 @@ export default class StandardScreen extends PerspectivesComponent
         this.props.myroletype != prevProps.myroletype )
     {
       this.componentDidMount();
-    }
-  }
-
-  computeCardColumn( perspective )
-  {
-    const propMatchingName = Object.keys(perspective.properties).find( propName => propName.match(/Name/) );
-    if ( perspective.properties["model:System$RootContext$External$Name"])
-    {
-      return "model:System$RootContext$External$Name";
-    }
-    else if ( propMatchingName )
-    {
-      return propMatchingName;
-    }
-    else
-    {
-      return Object.keys(perspective.properties)[0];
-    }
-  }
-
-  // Returns a property to display on the draggable card of a perspectiveform.
-  computeCardTitle( perspective )
-  {
-    const propMatchingName = Object.keys(perspective.properties).find( propName => propName.match(/Name/) );
-    if ( propMatchingName )
-    {
-      return propMatchingName;
-    }
-    else
-    {
-      return Object.keys(perspective.properties)[0];
     }
   }
 
@@ -112,6 +81,85 @@ export default class StandardScreen extends PerspectivesComponent
     }
   }
 
+  mayCreateInstance( perspective )
+  {
+    return !perspective.isCalculated &&
+      (perspective.verbs.includes("Create") || perspective.verbs.includes("CreateAndFill"));
+  }
+
+  showFormOrTable (perspective)
+  {
+    const component = this;
+    return  <Tab key={perspective.id} eventKey={perspective.id} title={perspective.displayName}>
+            <Container>
+              { perspective.isFunctional ?
+                <PerspectiveForm
+                  perspective={perspective}
+                  myroletype={component.context.myroletype}
+                  contextinstance={component.context.contextinstance}
+                  contexttype={component.context.contexttype}
+                  behaviours={component.mapRoleVerbsToBehaviours( perspective )}
+                  cardtitle={ perspective.identifyingProperty }
+                  />
+                : <PerspectiveTable
+                    viewname=""
+                    cardcolumn={ perspective.identifyingProperty }
+                    roletype={perspective.roleType || ""}
+                    contexttocreate={perspective.contextTypesToCreate[0]}
+                    createButton={component.mayCreateInstance( perspective )}
+                    //roleRepresentation
+                    behaviours={component.mapRoleVerbsToBehaviours( perspective )}
+                    perspective={perspective}
+                    />}
+            </Container>
+          </Tab>;
+  }
+
+  createRoleInstance( perspective )
+  {
+    const component = this;
+    PDRproxy.then( function (pproxy)
+      {
+        // If a ContextRole Kind, create a new context, too.
+        if (perspective.roleKind == "ContextRole" && perspective.contextTypesToCreate.length > 0)
+        {
+          pproxy.createContext (
+            {
+              id: "", // will be set in the core.
+              prototype : undefined,
+              ctype: perspective.contextTypesToCreate[0], // Arbitrary choice, for now.
+              rollen: {},
+              externeProperties: {}
+            },
+            perspective.roleType,
+            component.context.contextinstance,
+            component.context.contexttype,
+            component.context.myroletype,
+            function(){});
+        }
+        else
+        {
+          pproxy.createRole(
+                component.context.contextinstance,
+                perspective.roleType,
+                component.context.myroletype);
+        }
+      });
+  }
+
+  handleKeyDown (event, perspective)
+    {
+      const component = this;
+        switch(event.keyCode){
+          case 13: // Return
+          case 32: // Space
+            component.createRoleInstance( perspective );
+            event.preventDefault();
+            event.stopPropagation();
+            break;
+        }
+  }
+
   render()
   {
     const component = this;
@@ -125,33 +173,33 @@ export default class StandardScreen extends PerspectivesComponent
             {
               component.state.perspectives.map( perspective =>
                 {
-                  const createButton = !perspective.isCalculated &&
-                    (perspective.verbs.includes("Create") || perspective.verbs.includes("CreateAndFill"));
-                  if (Object.keys(perspective.properties).length > 0)
+                  if (Object.keys( perspective.roleInstances ).length > 0 )
                   {
-                    return  <Tab key={perspective.id} eventKey={perspective.id} title={perspective.displayName}>
-                            <Container>
-                              { perspective.isFunctional ?
-                                <PerspectiveForm
-                                  perspective={perspective}
-                                  myroletype={component.context.myroletype}
-                                  contextinstance={component.context.contextinstance}
-                                  contexttype={component.context.contexttype}
-                                  behaviours={component.mapRoleVerbsToBehaviours( perspective )}
-                                  cardtitle={ component.computeCardTitle( perspective )}
-                                  />
-                                : <PerspectiveTable
-                                    viewname=""
-                                    cardcolumn={component.computeCardColumn( perspective )}
-                                    roletype={perspective.roleType || ""}
-                                    contexttocreate={perspective.contextTypesToCreate[0]}
-                                    createButton={createButton}
-                                    //roleRepresentation
-                                    behaviours={component.mapRoleVerbsToBehaviours( perspective )}
-                                    perspective={perspective}
-                                    />}
-                            </Container>
-                          </Tab>;
+                    // We have instances
+                    return component.showFormOrTable(perspective);
+                  }
+                  else if (component.mayCreateInstance(perspective))
+                  {
+                    if (Object.keys( perspective.properties ).length > 0 )
+                    {
+                      // No instances, but properties anyway:
+                      return component.showFormOrTable(perspective);
+                    }
+                    else
+                    {
+                      // There may be properties for instances when they are made. Just show a create button.
+                      return  <Tab key={perspective.id} eventKey={perspective.id} title={perspective.displayName}>
+                                <Button
+                                  tabIndex="0"
+                                  variant="secondary"
+                                  onClick={component.createRoleInstance}
+                                  onKeyDown={ ev => component.handleKeyDown(ev, perspective)}
+                                  alt="Add an instance"
+                                  aria-label="Click or press space or return to add a row"
+                                  >Create
+                                </Button>
+                              </Tab>;
+                    }
                   }
                   else
                   {

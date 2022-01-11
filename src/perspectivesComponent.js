@@ -1,5 +1,5 @@
-const React = require("react"); //3
-const PDRproxy = require("perspectives-proxy").PDRproxy;
+import React from "react";
+import {PDRproxy} from "perspectives-proxy";
 const Component = React.PureComponent;
 
 export default class PerspectivesComponent extends Component

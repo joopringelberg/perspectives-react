@@ -22,3 +22,8 @@ for a discussion about variables and sass. */
 	outline-style: auto;
 	outline-width: 1px;
 }
+
+.navbarCard {
+  padding-top: 4px!important;
+  padding-bottom: 4px!important;
+}

@@ -147,7 +147,8 @@ export default class RoleInstance extends PerspectivesComponent
 
         function checkbinding({rolinstance}, callback)
         {
-          // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
+          // checkBinding( <contexttype>, <(local)RolName>, <binding>, [() -> undefined] )
+          // Where (local)RolName identifies the role in <contexttype> whose binding specification we want to compare with <binding>.
           pproxy.checkBinding(
             component.context.contexttype,
             component.state.roltype,

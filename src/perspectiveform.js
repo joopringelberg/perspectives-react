@@ -187,7 +187,8 @@ export default class PerspectiveForm extends PerspectivesComponent
     }
     else
     {
-      // If there is no role instance, it is not mandatory. We'll show all fields disabled and a create button.
+      // If there is no role instance, it apparantly has not been defined as mandatory.
+      // We'll show all fields disabled and a create button.
       return <>
         {
           Object.values(perspective.properties).map(serialisedProperty =>
@@ -212,6 +213,7 @@ export default class PerspectiveForm extends PerspectivesComponent
             myroletype={component.props.myroletype}
             create={ component.createRoleInstance }
             />
+          <div>This will make RoleInstance display the FormControls</div>
         </RoleInstance>
         </>;
     }

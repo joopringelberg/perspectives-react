@@ -56,7 +56,8 @@ export default class FormPasteRole extends PerspectivesComponent
               clipboardContent = JSON.parse( valArr[0]);
               if ( clipboardContent.roleData && clipboardContent.roleData.rolinstance )
               {
-                component.context.checkbinding({rolinstance: clipboardContent.roleData.rolinstance},
+                component.context.checkbinding(
+                  {rolinstance: clipboardContent.roleData.rolinstance},
                   function(compatibleRole)
                   {
                     component.setState({compatibleRole, roleOnClipboard: clipboardContent.roleData.rolinstance});
@@ -87,11 +88,11 @@ export default class FormPasteRole extends PerspectivesComponent
     {
       if (compatibleRole && component.context.rolinstance )
       {
-        component.context.bind_( roleOnClipboard );
+        component.context.bind_( {rolinstance: roleOnClipboard} );
       }
       else if ( compatibleRole )
       {
-        component.context.bind( roleOnClipboard );
+        component.context.bind( {rolinstance: roleOnClipboard} );
       }
     }
   }
@@ -104,8 +105,14 @@ export default class FormPasteRole extends PerspectivesComponent
        // eslint-disable-next-line react/prop-types
       props.show.toString()}>
       { component.context.rolinstance
-        ? "Bind the role on the clipboard to the role in this form."
-        : "Create a new role for this form and fill it with the role on the clipboard."
+        ? ( component.state.compatibleRole
+            ? "Fill the role in this form with the role on the clipboard."
+            : "The role on the clipboard cannot fill the role in this form."
+          )
+        : ( component.state.compatibleRole
+            ? "Create a new role for this form and then fill it with the role on the clipboard."
+            : "The role on the clipboard cannot fill the role in this form."
+          )
       }
     </Tooltip> );
 
@@ -130,6 +137,7 @@ export default class FormPasteRole extends PerspectivesComponent
                       alt="Paste the role on the clipboard"
                       aria-label="Paste the role on the clipboard"
                       disabled={component.state.compatibleRole}
+                      className={component.state.compatibleRole ? "iconStyle" : "disabledIconStyle"}
                       size="medium"
                     />
                     </div>

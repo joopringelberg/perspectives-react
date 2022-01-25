@@ -457,19 +457,9 @@ class TableCell extends PerspectivesComponent
   componentDidMount ()
   {
     const component = this;
-    const perspective = component.props.perspective;
-    let roleInstanceWithProperties;
-    if (perspective)
+    if ( component.props.perspective )
     {
-      roleInstanceWithProperties = perspective.roleInstances[component.props.psrol.rolinstance];
-      if (roleInstanceWithProperties)
-      {
-        component.setState({value: roleInstanceWithProperties.propertyValues[component.props.propertyname].values});
-      }
-      else
-      {
-        component.setState({value: []});
-      }
+      component.setValueFromPerspective();
     }
     else
     {
@@ -488,6 +478,25 @@ class TableCell extends PerspectivesComponent
           );
         }
       );
+    }
+  }
+
+  setValueFromPerspective ()
+  {
+    const component = this;
+    const perspective = component.props.perspective;
+    let roleInstanceWithProperties;
+    if (perspective)
+    {
+      roleInstanceWithProperties = perspective.roleInstances[component.props.psrol.rolinstance];
+      if (roleInstanceWithProperties)
+      {
+        component.setState({value: roleInstanceWithProperties.propertyValues[component.props.propertyname].values});
+      }
+      else
+      {
+        component.setState({value: []});
+      }
     }
   }
 
@@ -538,6 +547,10 @@ class TableCell extends PerspectivesComponent
         {
           component.setState({lastCellBeforeTableInactivated: false});
         };
+    }
+    if ( component.props.perspective && !component.props.perspective.seenBefore )
+    {
+      component.setValueFromPerspective();
     }
   }
 

@@ -25,7 +25,6 @@ export default class RoleInstances extends PerspectivesComponent
     super(props);
     const component = this;
     component.state.instances = undefined;
-    // roltype
     this.eventDiv = React.createRef();
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.bind = this.bind.bind(this);
@@ -107,7 +106,7 @@ export default class RoleInstances extends PerspectivesComponent
         return  { contextinstance: component.context.contextinstance
                 , contexttype: component.context.contexttype
                 , rol: component.props.rol
-                , roltype: rolType
+                , roltype: rolType // always qualified.
                 , roleKind
                 , instances: rolIdArr.sort()
                 , cursor: nextCursor

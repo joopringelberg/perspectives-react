@@ -3,6 +3,7 @@ const PDRproxy = require("perspectives-proxy").PDRproxy;//3
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRol, PSRoleInstances, PSContext} from "./reactcontexts";
+import BinaryModal from "./binarymodal.js";
 
 // This component requires a PSRoleInstances context and iterates over its instances.
 // It provides the PSRol context to each role instance. PSRol contains the functions:
@@ -34,6 +35,9 @@ class RoleInstanceIterator_ extends PerspectivesComponent
     // It allows us to recompute only two instances instead of all of them.
     // This copy has no role in instance selection and moving.
     this.state.cursor = undefined;
+    this.state.showRemoveContextModal = false;
+    this.removeWithContext = this.removeWithContext.bind(this);
+    this.removeWithoutContext = this.removeWithoutContext.bind(this);
   }
 
   // Compute a PSRol instance for the rolInstance.
@@ -83,14 +87,44 @@ class RoleInstanceIterator_ extends PerspectivesComponent
       , checkbinding: rolBindingContext.checkbinding
       , removerol: function()
         {
-          PDRproxy.then(
-            function (pproxy)
-            {
-              pproxy.removeRol( component.context.contexttype, component.context.roltype, rolInstance, component.props.myroletype );
-            });
+          if (component.context.roleKind == "ContextRole")
+          {
+            // Ask the user whether she wants to remove the context as well.
+            component.setState({showRemoveContextModal: true});
+          }
+          else
+          {
+            component.removeWithoutContext();
+          }
         }
       , rolinstance: rolInstance
       , isselected: component.context.cursor === rolInstance
+      });
+  }
+
+  removeWithContext()
+  {
+    const component = this;
+    PDRproxy.then(
+      function (pproxy)
+      {
+        pproxy.removeContext(
+          component.context.cursor,
+          component.context.roltype,
+          component.props.myroletype );
+      });
+  }
+
+  removeWithoutContext()
+  {
+    const component = this;
+    PDRproxy.then(
+      function (pproxy)
+      {
+        pproxy.removeRol(
+          component.context.roltype,
+          component.context.cursor,
+          component.props.myroletype );
       });
   }
 
@@ -180,15 +214,23 @@ class RoleInstanceIterator_ extends PerspectivesComponent
     const component = this;
     if (component.stateIsComplete())
     {
-      return component.state.instances.map(
-        function( rolInstance )
-        {
-          return (<PSRol.Provider key={rolInstance} value={component.state[rolInstance]}>
-            {component.props.children}
-            </PSRol.Provider>);
-        }
-      );
-        }
+      return  <>
+                {component.state.instances.map(
+                  function( rolInstance )
+                  {
+                    return  <PSRol.Provider key={rolInstance} value={component.state[rolInstance]}>
+                              {component.props.children}
+                              </PSRol.Provider>;
+                  })}
+                <BinaryModal
+                  title="Remove context?"
+                  message="Do you want to remove the context that fills the role as well?"
+                  show={component.state.showRemoveContextModal}
+                  yes={component.removeWithContext}
+                  no={component.removeWithoutContext}
+                  />
+              </>;
+    }
     else
     {
       return null;

@@ -9,13 +9,16 @@ import {PSRol, PSContext} from "./reactcontexts";
 const PDRproxy = require("perspectives-proxy").PDRproxy;
 
 import {isQualifiedName} from "./urifunctions.js";
+import BinaryModal from "./binarymodal.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 // ROLEINSTANCE
 ////////////////////////////////////////////////////////////////////////////////
 /*
 This component provides a PSRol context.
-It supports two props:
+It supports four props, none of which are required:
+  - roleinstance: the identifier of a role instance;
+  - contextinstance: the identifier of a context instance;
   - role: the name of the Role, possibly unqualified;
   - contexttocreate: either a fully qualified context type name, or a local name with a default namespace prefix:
     "cdb" : "model:Couchdb"
@@ -23,6 +26,9 @@ It supports two props:
     "usr" : "model:User"
     "ser" : "model:Serialise
     "p"   : "model:Parsing"
+If `roleinstance` is given, it is used to create the PSRol instance.
+Otherwise, role must be given and then it is used to create the PSRol instance.
+If contextinstance is given, it overrides the contextinstance of the PSContext react context of RoleInstance.
 If the Role identified by the `role` prop is a ContextRole, `contexttocreate` identifies the type of context
 that will be created if an instance of the Role is created.
 The core loads the model that defines this type, if it is not locally available.
@@ -44,7 +50,22 @@ export default class RoleInstance extends PerspectivesComponent
       , roltype: undefined
       , roleKind: undefined
       , isselected: true
+      , showRemoveContextModal: false
       };
+    this.removeWithContext = this.removeWithContext.bind(this);
+    this.removeWithoutContext = this.removeWithoutContext.bind(this);
+  }
+
+  contextInstance()
+  {
+    if (this.props.contextinstance)
+    {
+      return this.props.contextinstance;
+    }
+    else
+    {
+      return this.context.contextinstance;
+    }
   }
 
   createRole (receiveResponse)
@@ -66,7 +87,7 @@ export default class RoleInstance extends PerspectivesComponent
                 externeProperties: {}
               },
               component.state.roltype,
-              component.context.contextinstance,
+              component.contextInstance(),
               component.context.contexttype,
               component.context.myroletype,
               function(contextAndExternalRole)
@@ -79,7 +100,7 @@ export default class RoleInstance extends PerspectivesComponent
           else
           {
             pproxy.createRole (
-              component.context.contextinstance,
+              component.contextInstance(),
               component.state.roltype,
               component.context.myroletype,
               function(newRoleId_)
@@ -136,7 +157,7 @@ export default class RoleInstance extends PerspectivesComponent
           if (rolinstance)
           {
             pproxy.bind(
-              component.context.contextinstance,
+              component.contextInstance(),
               component.props.role, // may be a local name.
               component.context.contexttype,
               {properties: {}, binding: rolinstance},
@@ -161,15 +182,15 @@ export default class RoleInstance extends PerspectivesComponent
 
         function removerol()
         {
-          PDRproxy.then(
-            function (pproxy)
-            {
-              pproxy.removeRol(
-                component.context.contexttype,
-                component.state.roltype,
-                component.state.rolinstance,
-                component.context.myroletype );
-            });
+          if (component.state.roleKind == "ContextRole")
+          {
+            // Ask the user whether she wants to remove the context as well.
+            component.setState({showRemoveContextModal: true});
+          }
+          else
+          {
+            component.removeWithoutContext();
+          }
         }
 
         // Will be called exactly once, with the qualified name of the role.
@@ -183,7 +204,7 @@ export default class RoleInstance extends PerspectivesComponent
           // Get role instance.
           component.addUnsubscriber(
             pproxy.getRol(
-              component.context.contextinstance,
+              component.contextInstance(),
               rolType,
               function(rolIdArr)
               {
@@ -207,7 +228,7 @@ export default class RoleInstance extends PerspectivesComponent
             function(roleKindArr)
             {
               const roleKind = roleKindArr[0];
-              component.setState( { contextinstance: component.context.contextinstance
+              component.setState( { contextinstance: component.contextInstance()
                           , contexttype: component.context.contexttype
                           , roltype
                           , roleKind
@@ -221,7 +242,11 @@ export default class RoleInstance extends PerspectivesComponent
             });
         }
 
-        if (component.props.role)
+        if (component.props.roleinstance)
+        {
+          getPSRolFromInstance( component.props.roleinstance );
+        }
+        else if (component.props.role)
         {
           if (isQualifiedName( component.props.role ))
           {
@@ -237,15 +262,38 @@ export default class RoleInstance extends PerspectivesComponent
             ));
           }
         }
-        else if (component.props.roleinstance)
-        {
-          getPSRolFromInstance( component.props.roleinstance );
-        }
         else
         {
           console.warn("RoleInstance needs a value for either the `role` or the `roleinstance` prop!");
         }
       });
+  }
+
+  removeWithContext()
+  {
+    const component = this;
+    PDRproxy.then(
+      function (pproxy)
+      {
+        pproxy.removeContext(
+          component.state.rolinstance,
+          component.state.roltype, // is always qualified.
+          component.context.myroletype );
+      });
+  }
+
+  removeWithoutContext()
+  {
+    const component = this;
+      PDRproxy.then(
+        function (pproxy)
+        {
+          pproxy.removeRol(
+            component.state.roltype,
+            component.state.rolinstance,
+            component.context.myroletype );
+        });
+
   }
 
   render ()
@@ -266,9 +314,18 @@ export default class RoleInstance extends PerspectivesComponent
     {
       if (component.state.rolinstance)
       {
-        return  <PSRol.Provider value={component.state}>
-                  {children}
-                </PSRol.Provider>;
+        return  <>
+                  <PSRol.Provider value={component.state}>
+                    {children}
+                  </PSRol.Provider>
+                  <BinaryModal
+                    title="Remove context?"
+                    message="Do you want to remove the context that fills the role as well?"
+                    show={component.state.showRemoveContextModal}
+                    yes={component.removeWithContext}
+                    no={component.removeWithoutContext}
+                    />
+                </>;
       }
       else if ( defaultElement )
       {
@@ -294,10 +351,10 @@ export default class RoleInstance extends PerspectivesComponent
 
 RoleInstance.contextType = PSContext;
 
-// Either role or roleinstance is required!
 RoleInstance.propTypes =
   { role: PropTypes.string
   , roleinstance: PropTypes.string
+  , contextinstance: PropTypes.string
   // fully qualified name: the type of Context to create.
   // The core loads the model that defines this type, if it is not locally available.
   , contexttocreate: PropTypes.string };

@@ -24,9 +24,10 @@ const PropTypes = require("prop-types");
 import {PDRproxy} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext} from "./reactcontexts";
-import PerspectiveForm from "./perspectiveform.js";
+import PerspectiveBasedForm from "./perspectivebasedform.js";
 import PerspectiveTable from "./perspectivetable.js";
-import * as Behaviours from "./cardbehaviour.js";
+import mapRoleVerbsToBehaviours from "./maproleverbstobehaviours.js";
+
 
 import {Tabs, Tab, Container, Card, Button} from "react-bootstrap";
 
@@ -66,40 +67,6 @@ export default class StandardScreen extends PerspectivesComponent
     }
   }
 
-  // Maps the role verbs in the perspective to an array of behaviours.
-  mapRoleVerbsToBehaviours(perspective)
-  {
-    function mapRoleVerb(verb)
-    {
-      switch (verb)
-      {
-        case "Remove":
-          return Behaviours.addRemoveRoleFromContext;
-        case "Delete":
-          return Behaviours.addRemoveRoleFromContext;
-        case "Fill":
-          return Behaviours.addFillWithRole;
-        case "Unbind":
-          return Behaviours.addRemoveFiller;
-        case "RemoveFiller":
-          return Behaviours.addRemoveFiller;
-        // There is no behaviour on the role that matches Create, CreateAndFill and Move.
-        // We return addFillARole as default because it must be added anyway and we have
-        // to return a value from this function.
-        default:
-          return Behaviours.addFillARole;
-      }
-    }
-    if (perspective)
-    {
-      return [...new Set( perspective.verbs.map( mapRoleVerb ) )].concat(
-        [Behaviours.addOpenContextOrRoleForm, Behaviours.addFillARole]);
-    }
-    else
-    {
-      return [];
-    }
-  }
 
   mayCreateInstance( perspective )
   {
@@ -113,12 +80,12 @@ export default class StandardScreen extends PerspectivesComponent
     return  <Tab key={perspective.id} eventKey={perspective.id} title={perspective.displayName}>
             <Container>
               { perspective.isFunctional ?
-                <PerspectiveForm
+                <PerspectiveBasedForm
                   perspective={perspective}
                   myroletype={component.context.myroletype}
                   contextinstance={component.context.contextinstance}
                   contexttype={component.context.contexttype}
-                  behaviours={component.mapRoleVerbsToBehaviours( perspective )}
+                  behaviours={mapRoleVerbsToBehaviours( perspective )}
                   cardtitle={ perspective.identifyingProperty }
                   />
                 : <PerspectiveTable
@@ -128,7 +95,7 @@ export default class StandardScreen extends PerspectivesComponent
                     contexttocreate={perspective.contextTypesToCreate[0]}
                     createButton={component.mayCreateInstance( perspective )}
                     //roleRepresentation
-                    behaviours={component.mapRoleVerbsToBehaviours( perspective )}
+                    behaviours={mapRoleVerbsToBehaviours( perspective )}
                     perspective={perspective}
                     />}
             </Container>

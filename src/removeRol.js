@@ -24,12 +24,12 @@ class RemoveRol_ extends PerspectivesComponent
           child,
           {
             // Should be applied to a PSRol object.
-            removerol: function({contexttype, roltype, rolinstance})
+            removerol: function({roltype, rolinstance})
             {
               PDRproxy.then(
                 function (pproxy)
                 {
-                  pproxy.removeRol( contexttype, roltype, rolinstance, component.props.myroletype );
+                  pproxy.removeRol( roltype, rolinstance, component.props.myroletype );
                 }
               );
             }

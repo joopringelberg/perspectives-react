@@ -1,33 +1,21 @@
 const React = require("react"); // 2
-
 import PerspectivesComponent from "./perspectivescomponent.js";
-
 const PDRproxy = require("perspectives-proxy").PDRproxy;
-
-import {PSRoleInstances, PSRol, PSContext} from "./reactcontexts";
-
+import {PSRoleInstances, PSRol, PSContext, AppContext} from "./reactcontexts";
 import RoleInstances from "./roleinstances.js";
-
 import RoleInstanceIterator from "./roleinstanceiterator.js";
-
 import RoleDropZone from "./roleDropzone.js";
-
 import ActionDropDown from "./actiondropdown.js";
-
 import {deconstructLocalName, getQualifiedPropertyName} from "./urifunctions.js";
-
 import {addBehaviour} from "./behaviourcomponent.js";
-
+import TablePasteRole from "./tablepasterole.js";
 import {PlusIcon} from '@primer/octicons-react';
-
 import
   { Navbar
   , Table
   , Form
   } from "react-bootstrap";
-
 import "./components.css";
-
 const PropTypes = require("prop-types");
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -826,6 +814,9 @@ class TableControls extends PerspectivesComponent
                   </div>
                   : null
                 }
+                <AppContext.Consumer>
+                  { appcontext => <TablePasteRole systemexternalrole={appcontext.systemExternalRole}/> }
+                </AppContext.Consumer>
                 { component.state.actions.length > 0 ?
                   <ActionDropDown
                     actions={ component.state.actions }

@@ -278,7 +278,8 @@ export default class RoleInstance extends PerspectivesComponent
         pproxy.removeContext(
           component.state.rolinstance,
           component.state.roltype, // is always qualified.
-          component.context.myroletype );
+          component.context.myroletype,
+          () => component.setState({showRemoveContextModal: false}));
       });
   }
 
@@ -291,7 +292,8 @@ export default class RoleInstance extends PerspectivesComponent
           pproxy.removeRol(
             component.state.roltype,
             component.state.rolinstance,
-            component.context.myroletype );
+            component.context.myroletype,
+            () => component.setState({showRemoveContextModal: false}));
         });
 
   }
@@ -324,6 +326,7 @@ export default class RoleInstance extends PerspectivesComponent
                     show={component.state.showRemoveContextModal}
                     yes={component.removeWithContext}
                     no={component.removeWithoutContext}
+                    close={() => component.setState({showRemoveContextModal: false})}
                     />
                 </>;
       }

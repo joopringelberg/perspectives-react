@@ -111,7 +111,8 @@ class RoleInstanceIterator_ extends PerspectivesComponent
         pproxy.removeContext(
           component.context.cursor,
           component.context.roltype,
-          component.props.myroletype );
+          component.props.myroletype,
+          () => component.setState({showRemoveContextModal: false}));
       });
   }
 
@@ -124,7 +125,8 @@ class RoleInstanceIterator_ extends PerspectivesComponent
         pproxy.removeRol(
           component.context.roltype,
           component.context.cursor,
-          component.props.myroletype );
+          component.props.myroletype,
+          () => component.setState({showRemoveContextModal: false}));
       });
   }
 
@@ -228,6 +230,7 @@ class RoleInstanceIterator_ extends PerspectivesComponent
                   show={component.state.showRemoveContextModal}
                   yes={component.removeWithContext}
                   no={component.removeWithoutContext}
+                  close={() => component.setState({showRemoveContextModal: false})}
                   />
               </>;
     }

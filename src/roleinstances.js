@@ -15,8 +15,10 @@ import {isQualifiedName} from "./urifunctions.js";
 //  - checkbinding.
 // It has a cursor position that can be set by the user pressing up and down arrow keys
 // in the subtree of components (it sets a handler that listens for keypresses
-// bubbling up from that tree).
+// bubbling up from that tree). By default the cursor is the first of the instances.
 // It also has an interesting property, roleKind.
+
+// As an alternative, it takes a perspective and sets its internal state from that.
 
 export default class RoleInstances extends PerspectivesComponent
 {

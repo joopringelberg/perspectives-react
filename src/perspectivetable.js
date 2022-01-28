@@ -754,7 +754,7 @@ class TableControls extends PerspectivesComponent
   {
     const component = this;
     // Set state if the current role instance has changed, or if the perspective has changed.
-    if (component.props.selectedroleinstance != component.state.currentRoleInstance || !component.props.perspective.seenBefore)
+    if ((component.props.selectedroleinstance && component.props.selectedroleinstance != component.state.currentRoleInstance) || !component.props.perspective.seenBefore)
     {
       component.setState(
         { currentRoleInstance: component.props.selectedroleinstance
@@ -778,15 +778,18 @@ class TableControls extends PerspectivesComponent
       });
   }
 
+  // Computes the actions available based on context- and subject state, combined with those
+  // available based on object state.
   computeActions()
   {
     const component = this;
     let objectStateActions = [];
     if (component.props.perspective)
     {
-      if (component.state.selectedRoleInstance)
+      // It happens that the perspective is not always yet updated when we compute actions.
+      if (component.props.selectedroleinstance && component.props.perspective.roleInstances[ component.props.selectedroleinstance])
       {
-        objectStateActions = component.props.perspective.roleInstances[ component.state.selectedRoleInstance].actions;
+        objectStateActions = component.props.perspective.roleInstances[ component.props.selectedroleinstance].actions;
       }
       return component.props.perspective.actions.concat( objectStateActions );
     }
@@ -836,6 +839,7 @@ TableControls.contextType = PSRoleInstances;
 TableControls.propTypes =
   { createButton: PropTypes.bool
   , perspective: PropTypes.object
+  // This is the cursor of the PSRoleInstances, by default the first instance.
   , selectedroleinstance: PropTypes.string
   , contextinstance: PropTypes.string
   , myroletype: PropTypes.string

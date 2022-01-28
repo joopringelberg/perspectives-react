@@ -183,7 +183,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
           }
           </RoleDropZone>
           <RoleInstance
-            roleinstance={component.props.roleinstance}
+            roleinstance={component.state.roleInstanceWithProps.roleId}
             contextinstance={component.props.contextinstance}
           >
             <FormControls

@@ -138,7 +138,7 @@ class RoleTable_ extends PerspectivesComponent
     super(props);
     this.state.propertyNames = undefined;
     this.state.column = undefined;
-    this.state.active = false;
+    this.state.active = true;
     this.eventDiv = React.createRef();
     this.handleKeyDown = this.handleKeyDown.bind( this );
     // The first rendered cell sets this to false.

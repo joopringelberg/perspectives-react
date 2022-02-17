@@ -50,16 +50,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
   constructor(props)
   {
     super(props);
-    let roleInstanceWithProps;
-    if (props.roleinstance)
-    {
-      roleInstanceWithProps = Object.values( this.props.perspective.roleInstances )
-        .filter( inst => inst.roleId == props.roleinstance)[0];
-    }
-    else
-    {
-      roleInstanceWithProps = Object.values( this.props.perspective.roleInstances )[0];
-    }
+    const roleInstanceWithProps = this.computeRoleInstanceWithProps();
     this.state = {roleInstanceWithProps};
     this.checkBinding = this.checkBinding.bind(this);
     this.bind_ = this.bind_.bind(this);
@@ -67,6 +58,20 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
     this.DraggableCard = addBehaviour( RoleCard, this.props.behaviours );
   }
 
+  computeRoleInstanceWithProps()
+  {
+    const component = this;
+    if (component.props.roleinstance)
+    {
+      return Object.values( this.props.perspective.roleInstances )
+        .filter( inst => inst.roleId == component.props.roleinstance)[0];
+    }
+    else
+    {
+      return Object.values( this.props.perspective.roleInstances )[0];
+    }
+
+  }
   changeValue (qualifiedPropertyName, val)
   {
     const component = this;
@@ -104,6 +109,19 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
     if (!component.state.roleInstanceWithProps && !component.props.perspective.isCalculated && component.props.perspective.isMandatory)
     {
       component.createRoleInstance();
+    }
+  }
+
+  componentDidUpdate()
+  {
+    const component = this;
+    // Set state if the current role instance has changed, or if the perspective has changed.
+    if (!component.props.perspective.seenInForm)
+    {
+      component.props.perspective.seenInForm = true;
+      component.setState(
+        { roleInstanceWithProps: component.computeRoleInstanceWithProps()
+        });
     }
   }
 
@@ -304,9 +322,9 @@ class FormControls extends PerspectivesComponent
   {
     const component = this;
     // Set state if the current role instance has changed, or if the perspective has changed.
-    if (!component.props.perspective.seenBefore)
+    if (!component.props.perspective.seenInControls)
     {
-      component.props.perspective.seenBefore = true;
+      component.props.perspective.seenInControls = true;
       component.setState(
         { actions: component.computeActions()
         });
@@ -387,4 +405,5 @@ FormControls.propTypes =
   , rolinstance: PropTypes.string
   , myroletype: PropTypes.string.isRequired
   , create: PropTypes.func
+  , card: PropTypes.element.isRequired
   };

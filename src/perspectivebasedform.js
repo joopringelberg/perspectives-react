@@ -28,12 +28,10 @@ import PerspectivesComponent from "./perspectivescomponent.js";
 import RoleInstance from "./roleinstance.js";
 import ActionDropDown from "./actiondropdown.js";
 import FormPasteRole from "./formpasterole.js";
+import SmartFieldControl from "./smartfieldcontrol.js";
 import {PlusIcon} from '@primer/octicons-react';
 import
-  { Row
-  , Col
-  , Form
-  , Card
+  { Card
   , Navbar
   } from "react-bootstrap";
 const PropTypes = require("prop-types");
@@ -55,6 +53,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
     this.checkBinding = this.checkBinding.bind(this);
     this.bind_ = this.bind_.bind(this);
     this.createRoleInstance = this.createRoleInstance.bind(this);
+    this.changeValue = this.changeValue.bind(this);
     this.DraggableCard = addBehaviour( RoleCard, this.props.behaviours );
   }
 
@@ -80,7 +79,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
     {
       throw "Perspectives-react, View: supply a single string value to the function 'setvalue'.";
     }
-    if (oldValue.length != 1 || oldValue[0] != val)
+    if (oldValue && (oldValue.length > 0 || oldValue[0] != val) || !oldValue )
     {
       PDRproxy.then(
         function(pproxy)
@@ -100,6 +99,15 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
     if (component.state.roleInstanceWithProps)
     {
       return component.state.roleInstanceWithProps.propertyValues[propId].values;
+    }
+  }
+
+  findValues( propId )
+  {
+    const component = this;
+    if (component.state.roleInstanceWithProps)
+    {
+      return component.state.roleInstanceWithProps.propertyValues[propId];
     }
   }
 
@@ -175,13 +183,11 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
   render ()
   {
     const component = this;
-    // const component = this;
     const perspective = this.props.perspective;
     const DraggableCard = this.DraggableCard;
 
-    if (component.state.roleInstanceWithProps)
-    {
-      return <>
+    return (
+        <>
           <RoleDropZone
             bind={component.bind_}
             checkbinding={component.checkBinding}
@@ -189,66 +195,48 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
           >
           {
             Object.values(perspective.properties).map(serialisedProperty =>
-              <Form.Group as={Row} key={serialisedProperty.id}>
-                <Form.Label column sm="3">{ serialisedProperty.displayName }</Form.Label>
-                <Col sm="9">
-                  <Form.Control
-                    aria-label={ serialisedProperty.displayName }
-                    defaultValue={component.findValue( serialisedProperty.id )} onBlur={e => component.changeValue(serialisedProperty.id, e.target.value)}/>
-                </Col>
-              </Form.Group>
+              <SmartFieldControl
+                key={serialisedProperty.id}
+                serialisedProperty={serialisedProperty}
+                propertyValues ={component.findValues( serialisedProperty.id )}
+                changeValue = {component.changeValue}
+              />
             )
           }
           </RoleDropZone>
-          <RoleInstance
-            roleinstance={component.state.roleInstanceWithProps.roleId}
-            contextinstance={component.props.contextinstance}
-          >
-            <FormControls
-              createButton={ false }
-              perspective={ component.props.perspective}
-              contextinstance={ component.props.contextinstance }
-              rolinstance={component.state.roleInstanceWithProps.roleId}
-              myroletype={component.props.myroletype}
-              create={ component.createRoleInstance }
-              card={ <DraggableCard labelProperty={component.props.cardtitle} title={component.findValue(component.props.cardtitle)[0] || "No title"}/> }
-              />
-            </RoleInstance>
-        </>;
-    }
-    else
-    {
-      // If there is no role instance, it apparantly has not been defined as mandatory.
-      // We'll show all fields disabled and a create button.
-      return <>
-        {
-          Object.values(perspective.properties).map(serialisedProperty =>
-            <Form.Group as={Row} key={serialisedProperty.id}>
-                      <Form.Label column sm="3">{ serialisedProperty.displayName }</Form.Label>
-                      <Col sm="9">
-                        <Form.Control
-                          disabled={true}
-                          aria-label={ serialisedProperty.displayName }
-                          onBlur={e => component.changeValue(serialisedProperty.id, e.target.value)}/>
-                      </Col>
-                    </Form.Group>
-        )}
-        <RoleInstance
-          role={component.props.perspective.roleType}
-          contextinstance={component.props.contextinstance}
-        >
-          <FormControls
-            createButton={ true }
-            perspective={ component.props.perspective}
-            contextinstance={ component.props.contextinstance }
-            // No rolinstance.
-            myroletype={component.props.myroletype}
-            create={ component.createRoleInstance }
-            />
-          <div>This will make RoleInstance display the FormControls</div>
-        </RoleInstance>
-        </>;
-    }
+          {
+            component.state.roleInstanceWithProps ?
+              <RoleInstance
+                roleinstance={component.state.roleInstanceWithProps.roleId}
+                contextinstance={component.props.contextinstance}
+              >
+                <FormControls
+                  createButton={ false }
+                  perspective={ component.props.perspective}
+                  contextinstance={ component.props.contextinstance }
+                  rolinstance={component.state.roleInstanceWithProps.roleId}
+                  myroletype={component.props.myroletype}
+                  create={ component.createRoleInstance }
+                  card={ <DraggableCard labelProperty={component.props.cardtitle} title={component.findValue(component.props.cardtitle)[0] || "No title"}/> }
+                  />
+              </RoleInstance>
+              :
+              <RoleInstance
+                role={component.props.perspective.roleType}
+                contextinstance={component.props.contextinstance}
+              >
+                <FormControls
+                  createButton={ true }
+                  perspective={ component.props.perspective}
+                  contextinstance={ component.props.contextinstance }
+                  // No rolinstance.
+                  myroletype={component.props.myroletype}
+                  create={ component.createRoleInstance }
+                  />
+                <div>This will make RoleInstance display the FormControls</div>
+              </RoleInstance>
+            }
+          </>);
   }
 }
 
@@ -349,11 +337,18 @@ class FormControls extends PerspectivesComponent
   computeActions()
   {
     const component = this;
-    let objectStateActions = [];
+    let roleInstance;
     if (component.props.rolinstance)
     {
-      objectStateActions = component.props.perspective.roleInstances[ component.props.rolinstance ].actions;
-      return component.props.perspective.actions.concat( objectStateActions );
+      roleInstance = component.props.perspective.roleInstances[ component.props.rolinstance ];
+      if (roleInstance)
+      {
+        return component.props.perspective.actions.concat( roleInstance.actions );
+      }
+      else
+      {
+        return [];
+      }
     }
     else
     {
@@ -405,5 +400,5 @@ FormControls.propTypes =
   , rolinstance: PropTypes.string
   , myroletype: PropTypes.string.isRequired
   , create: PropTypes.func
-  , card: PropTypes.element.isRequired
+  , card: PropTypes.element
   };

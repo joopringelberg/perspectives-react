@@ -48,12 +48,10 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
   constructor(props)
   {
     super(props);
-    const roleInstanceWithProps = this.computeRoleInstanceWithProps();
-    this.state = {roleInstanceWithProps};
+    this.state = {roleInstanceWithProps: this.computeRoleInstanceWithProps()};
     this.checkBinding = this.checkBinding.bind(this);
     this.bind_ = this.bind_.bind(this);
     this.createRoleInstance = this.createRoleInstance.bind(this);
-    this.changeValue = this.changeValue.bind(this);
     this.DraggableCard = addBehaviour( RoleCard, this.props.behaviours );
   }
 
@@ -67,30 +65,9 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
     }
     else
     {
-      return Object.values( this.props.perspective.roleInstances )[0];
+      return Object.values( component.props.perspective.roleInstances )[0];
     }
 
-  }
-  changeValue (qualifiedPropertyName, val)
-  {
-    const component = this;
-    const oldValue = component.findValue( qualifiedPropertyName );
-    if ( Array.isArray( val ) )
-    {
-      throw "Perspectives-react, View: supply a single string value to the function 'setvalue'.";
-    }
-    if (oldValue && (oldValue.length > 0 || oldValue[0] != val) || !oldValue )
-    {
-      PDRproxy.then(
-        function(pproxy)
-        {
-          pproxy.setProperty(
-            component.state.roleInstanceWithProps.roleId,
-            qualifiedPropertyName,
-            val,
-            component.props.myroletype );
-        });
-    }
   }
 
   findValue( propId )
@@ -185,6 +162,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
     const component = this;
     const perspective = this.props.perspective;
     const DraggableCard = this.DraggableCard;
+    const title = component.findValue(component.props.cardtitle);
 
     return (
         <>
@@ -198,45 +176,37 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
               <SmartFieldControl
                 key={serialisedProperty.id}
                 serialisedProperty={serialisedProperty}
-                propertyValues ={component.findValues( serialisedProperty.id )}
-                changeValue = {component.changeValue}
+                propertyValues={component.findValues( serialisedProperty.id )}
+                roleId={component.state.roleInstanceWithProps ? component.state.roleInstanceWithProps.roleId : null}
+                myroletype={component.props.myroletype}
               />
             )
           }
           </RoleDropZone>
-          {
-            component.state.roleInstanceWithProps ?
-              <RoleInstance
-                roleinstance={component.state.roleInstanceWithProps.roleId}
-                contextinstance={component.props.contextinstance}
-              >
-                <FormControls
-                  createButton={ false }
-                  perspective={ component.props.perspective}
-                  contextinstance={ component.props.contextinstance }
-                  rolinstance={component.state.roleInstanceWithProps.roleId}
-                  myroletype={component.props.myroletype}
-                  create={ component.createRoleInstance }
-                  card={ <DraggableCard labelProperty={component.props.cardtitle} title={component.findValue(component.props.cardtitle)[0] || "No title"}/> }
-                  />
-              </RoleInstance>
-              :
-              <RoleInstance
-                role={component.props.perspective.roleType}
-                contextinstance={component.props.contextinstance}
-              >
-                <FormControls
-                  createButton={ true }
-                  perspective={ component.props.perspective}
-                  contextinstance={ component.props.contextinstance }
-                  // No rolinstance.
-                  myroletype={component.props.myroletype}
-                  create={ component.createRoleInstance }
-                  />
-                <div>This will make RoleInstance display the FormControls</div>
-              </RoleInstance>
-            }
-          </>);
+          <RoleInstance
+            roleinstance={component.state.roleInstanceWithProps ? component.state.roleInstanceWithProps.roleId : null}
+            role={component.props.perspective.roleType}
+            contextinstance={component.props.contextinstance}
+          >
+            <FormControls
+              createButton={ true }
+              perspective={ component.props.perspective}
+              contextinstance={ component.props.contextinstance }
+              // No rolinstance.
+              myroletype={component.props.myroletype}
+              create={ component.createRoleInstance }
+              />
+            <FormControls
+              createButton={ false }
+              perspective={ component.props.perspective}
+              contextinstance={ component.props.contextinstance }
+              roleinstance={component.state.roleInstanceWithProps ? component.state.roleInstanceWithProps.roleId : null}
+              myroletype={component.props.myroletype}
+              create={ component.createRoleInstance }
+              card={ <DraggableCard labelProperty={component.props.cardtitle} title={title && title[0] ? title[0] : "No title"}/> }
+            />
+          </RoleInstance>
+        </>);
   }
 }
 

@@ -26,7 +26,7 @@
   "homepage": "https://github.com/joopringelberg/perspectives-react#readme",
   "peerDependencies": {
     "react": "^17.0.1",
-    "react-bootstrap": "^1.4.0",
+    "react-bootstrap": "^1.6.4",
     "react-dom": "^17.0.1",
     "@primer/octicons-react": "^11.0.0",
     "@babel/polyfill": "^7.12.1",

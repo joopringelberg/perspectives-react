@@ -98,7 +98,11 @@ export default class SmartFieldControl extends Component
     {
       throw "Perspectives-react, View: supply a single string value to the function 'setvalue'.";
     }
-    if (oldValue && (oldValue.length != 0 || oldValue[0] != val) || !oldValue )
+    if (
+        !oldValue ||
+        oldValue.length == 0 ||
+        oldValue[0] != val
+    )
     {
       PDRproxy.then(
         function(pproxy)
@@ -115,14 +119,35 @@ export default class SmartFieldControl extends Component
   handleKeyDown (event, newvalue)
   {
     const component = this;
+    if (!component.isDisabled())
+    {
       switch( event.keyCode )
       {
         // Safe on leaving the cell, allow event to bubble.
-        case 37: // left arrow
-        case 39: // right arrow
+        case 37: // left arrow. Allow to bubble when at position 0.
+          if (event.target.selectionStart != 0)
+          {
+            event.stopPropagation();
+          }
+          else
+          {
+            component.changeValue(newvalue);
+          }
+          break;
+        case 39: // right arrow. Allow to bubble when at the end.
+          if (event.target.selectionStart < event.target.value.length)
+          {
+            event.stopPropagation();
+          }
+          else
+          {
+            component.changeValue(newvalue);
+          }
+          break;
         case 38: // Up arrow
         case 40: // Down arrow
-        case 9:  // Tab key
+        case 9:  // Horizontal Tab.
+        case 11: // Vertical Tab.
         case 13: // Return
           component.changeValue(newvalue);
           break;
@@ -131,8 +156,13 @@ export default class SmartFieldControl extends Component
           event.preventDefault();
           break;
       }
+    }
   }
 
+  isDisabled()
+  {
+    return !this.props.propertyValues || this.props.disabled;
+  }
 
   render()
   {
@@ -141,28 +171,30 @@ export default class SmartFieldControl extends Component
     switch ( controlType ){
       case "checkbox":
         return (
-          <Form.Check
-            ref= { component.props.inputRef}
-            aria-label={ component.props.serialisedProperty.displayName }
-            disabled={ component.props.propertyValues ? false : true }
-            value={ component.state.value }
-            onChange={e => component.setState({value: e.target.value}) }
-            onBlur={e => component.changeValue(e.target.checked.toString())}
-            onKeyDown={e => component.handleKeyDown(e, e.target.checked.toString())}
+          <div onKeyDown={e => component.handleKeyDown(e, e.target.checked.toString())}>
+            <Form.Check
+              ref= { component.props.inputRef}
+              aria-label={ component.props.serialisedProperty.displayName }
+              readOnly={ component.isDisabled() }
+              value={ component.state.value }
+              onChange={e => component.setState({value: e.target.value}) }
+              onBlur={e => component.changeValue(e.target.checked.toString())}
             />
+          </div>
 );
       default:
         return (
-          <Form.Control
-            ref= { component.props.inputRef}
-            aria-label={ component.props.serialisedProperty.displayName }
-            disabled={ component.props.propertyValues ? false : true }
-            value={ component.state.value }
-            onChange={e => component.setState({value: e.target.value}) }
-            onBlur={e => component.changeValue(e.target.value)}
-            onKeyDown={e => component.handleKeyDown(e, e.target.value)}
-            type={controlType}
-          />);
+          <div onKeyDown={e => component.handleKeyDown(e, e.target.value)}>
+            <Form.Control
+              ref= { component.props.inputRef}
+              aria-label={ component.props.serialisedProperty.displayName }
+              readOnly={ component.isDisabled() }
+              value={ component.state.value }
+              onChange={e => component.setState({value: e.target.value}) }
+              onBlur={e => component.changeValue(e.target.value)}
+              type={controlType}
+            />
+          </div>);
     }
   }
 }
@@ -190,4 +222,6 @@ SmartFieldControl.propTypes =
   , myroletype: PropTypes.string.isRequired
 
   , inputRef: PropTypes.any
+
+  , disabled: PropTypes.bool.isRequired
   };

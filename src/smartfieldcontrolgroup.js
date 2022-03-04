@@ -127,6 +127,7 @@ export default class SmartFieldControlGroup extends Component
             propertyValues = { component.props.propertyValues }
             roleId = { component.props.roleId }
             myroletype = { component.props.myroletype }
+            disabled={false}
           />
         </Col>
       </Form.Group>);

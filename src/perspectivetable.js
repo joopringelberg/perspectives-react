@@ -9,6 +9,9 @@ import ActionDropDown from "./actiondropdown.js";
 import {deconstructLocalName, getQualifiedPropertyName} from "./urifunctions.js";
 import {addBehaviour} from "./behaviourcomponent.js";
 import TablePasteRole from "./tablepasterole.js";
+import SmartFieldControl from "./smartfieldcontrol.js";
+import mapRoleVerbsToBehaviours from "./maproleverbstobehaviours.js";
+
 import {PlusIcon} from '@primer/octicons-react';
 import
   { Navbar
@@ -58,11 +61,17 @@ Card.contextType = PSRol;
 // Context type of PerspectiveTable is PSContext
 export default class PerspectiveTable extends PerspectivesComponent
 {
+  mayCreateInstance()
+  {
+    const perspective = this.props.perspective;
+    return !perspective.isCalculated &&
+      (perspective.verbs.includes("Create") || perspective.verbs.includes("CreateAndFill"));
+  }
+
   render ()
   {
-    const
-      component = this,
-      roleType = component.props.perspective.roleType || component.props.roletype;
+    const component = this;
+    const perspective = this.props.perspective;
     let roleRepresentation;
     if (component.props.roleRepresentation)
     {
@@ -71,61 +80,49 @@ export default class PerspectiveTable extends PerspectivesComponent
     else
     {
       // Map role verbs to behaviour.
-      roleRepresentation = addBehaviour( Card, component.props.behaviours || [] );
+      roleRepresentation = addBehaviour( Card, mapRoleVerbsToBehaviours( perspective ) );
     }
+    // NOTE that we currently arbitrarily select the first type of context to create.
     return (<RoleInstances
-              rol={roleType}
-              contexttocreate={component.props.contexttocreate}
-              perspective={component.props.perspective}>
-          <PSRoleInstances.Consumer>{ psrol =>
-            <RoleDropZone
-              ariaLabel=""
-              bind={psrol.bind /* As we have a role, just bind the role we drop.*/}
-              checkbinding={psrol.checkbinding}
+              rol={perspective.roleType}
+              contexttocreate={perspective.contextTypesToCreate[0]}
+              perspective={perspective}
             >
-              <RoleTable_
-                viewname={component.props.viewname}
-                cardcolumn={component.props.cardcolumn}
-                roleRepresentation={roleRepresentation}
-                perspective={component.props.perspective}
-                />
-              <TableControls
-                createButton={ component.props.createButton }
-                perspective={ component.props.perspective}
-                selectedroleinstance={psrol.cursor}
-                contextinstance={psrol.contextinstance}
-                myroletype={component.context.myroletype}
-                />
-            </RoleDropZone>
-          }</PSRoleInstances.Consumer>
-      </RoleInstances>);
+              <PSRoleInstances.Consumer>{ psrol =>
+                <RoleDropZone
+                  ariaLabel=""
+                  bind={psrol.bind /* As we have a role, just bind the role we drop.*/}
+                  checkbinding={psrol.checkbinding}
+                >
+                  <RoleTable_
+                    cardcolumn={component.props.cardcolumn}
+                    roleRepresentation={roleRepresentation}
+                    perspective={perspective}
+                    />
+                  <TableControls
+                    createButton={ component.mayCreateInstance() }
+                    perspective={ perspective}
+                    selectedroleinstance={psrol.cursor}
+                    contextinstance={psrol.contextinstance}
+                    myroletype={component.context.myroletype}
+                    />
+                </RoleDropZone>
+              }</PSRoleInstances.Consumer>
+            </RoleInstances>);
   }
 }
 
 PerspectiveTable.propTypes =
-  // The columns in the table are the properties in the view.
-  { "viewname": PropTypes.string.isRequired
+  {
   // must be the local name of one of the properties in the view.
   // This column is displayed as a mini card showing this property's value
   // and can be clicked to open the role or the context behind it.
-  , "cardcolumn": PropTypes.string.isRequired
-  // The qualified or local name of the role that the table displays.
-  // May use default prefixes.
-  , "roletype": PropTypes.string.isRequired
-  // The type of the context to create, if the table displays a context role.
-  // Must be a qualified context type, possibly constructed with a default
-  // namespace (such as sys:).
-  // Is passed on to RoleInstances
-  , "contexttocreate": PropTypes.string
-  // If true, a button will be displayed to create a new role (and possibly a context)
-  , "createButton": PropTypes.bool
+  "cardcolumn": PropTypes.string.isRequired
   // A React component that is displayed in the card column.
   // Is by the default the Card class given above.
   , "roleRepresentation": PropTypes.object
-  // Behaviours added to the roleRepresentation component.
-  , "behaviours": PropTypes.arrayOf(PropTypes.func)
   // When given a perspective, the table will not retrieve roleinstances itself.
-  , "perspective": PropTypes.object
+  , "perspective": PropTypes.object.isRequired
   };
 
 PerspectiveTable.contextType = PSContext;
@@ -136,48 +133,19 @@ class RoleTable_ extends PerspectivesComponent
   constructor (props)
   {
     super(props);
-    this.state.propertyNames = undefined;
-    this.state.column = undefined;
-    this.state.active = true;
+    const component = this;
+    const propertyNames = Object.keys( component.props.perspective.properties );
+    component.state =
+      { propertyNames
+      , column: propertyNames[0]
+      , active: true
+      };
     this.eventDiv = React.createRef();
     this.handleKeyDown = this.handleKeyDown.bind( this );
     // The first rendered cell sets this to false.
     // Each subsequent cell can than see it is not first.
     this.firstCellSet = false;
     this.deregisterPreviousCell = {f: () => {}};
-  }
-
-  componentDidMount ()
-  {
-    // TODO. Find out whether the roletype is a context role type.
-    const component = this;
-    let propertyNames;
-    if (component.props.perspective)
-    {
-      propertyNames = Object.keys( component.props.perspective.properties );
-      component.setState(
-        { propertyNames: propertyNames
-        , column: propertyNames[0]
-      });
-    }
-    else
-    {
-      PDRproxy.then(
-        function (pproxy)
-        {
-          component.addUnsubscriber(
-            pproxy.getViewProperties(
-              component.context.roltype,
-              component.props.viewname,
-              function(propertyNames)
-              {
-                component.setState(
-                  { propertyNames: propertyNames
-                  , column: propertyNames[0]
-                });
-              }));
-        });
-    }
   }
 
   componentDidUpdate(prevProps, prevState)
@@ -200,7 +168,7 @@ class RoleTable_ extends PerspectivesComponent
       component.eventDiv.current.addEventListener('SetSelectRow',
         function (e)
         {
-          // By definition of row selection, the current column now becomes the card column.
+          // By definition of row selection, the card column now becomes the current column.
           component.setState( { column: getQualifiedPropertyName( component.props.cardcolumn, component.state.propertyNames)});
           e.stopPropagation();
         },
@@ -252,18 +220,6 @@ class RoleTable_ extends PerspectivesComponent
       tableName = perspective ? perspective.displayName : deconstructLocalName( component.context.roltype );
     var qualifiedColumnName;
 
-    function propertyDisplayName( qualifiedName )
-    {
-      if (perspective)
-      {
-        return perspective.properties[qualifiedName].displayName;
-      }
-      else
-      {
-        deconstructLocalName( qualifiedName );
-      }
-    }
-
     if (component.stateIsComplete())
     {
       qualifiedColumnName = getQualifiedPropertyName( component.props.cardcolumn, component.state.propertyNames);
@@ -273,7 +229,10 @@ class RoleTable_ extends PerspectivesComponent
                     <caption>Table for the role { tableName }</caption>
                     <thead>
                       <tr>
-                      { component.state.propertyNames.map( pn => <th key={pn}>{ propertyDisplayName( pn ) }</th>) }
+                      { component.state.propertyNames.map( pn =>
+                        <th key={pn}>
+                          { perspective.properties[pn].displayName }
+                        </th>) }
                       </tr>
                     </thead>
                     <tbody
@@ -284,7 +243,6 @@ class RoleTable_ extends PerspectivesComponent
                     >
                       <RoleInstanceIterator>
                         <TableRow
-                          propertynames={ component.state.propertyNames }
                           myroletype={pscontext.myroletype}
                           column={component.state.column}
                           tableisactive = {component.state.active}
@@ -314,10 +272,9 @@ class RoleTable_ extends PerspectivesComponent
 }
 
 RoleTable_.propTypes =
-  { viewname: PropTypes.string.isRequired
-  , cardcolumn: PropTypes.string.isRequired
+  { cardcolumn: PropTypes.string.isRequired
   , roleRepresentation: PropTypes.func.isRequired
-  , perspective: PropTypes.object
+  , perspective: PropTypes.object.isRequired
 };
 
 RoleTable_.contextType = PSRoleInstances;
@@ -333,6 +290,40 @@ class TableRow extends PerspectivesComponent
     this.handleClick = this.handleClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.ref = React.createRef();
+  }
+
+  componentDidMount()
+  {
+    this.setState( {roleInstanceWithProps: this.computeRoleInstanceWithProps()} );
+  }
+
+  componentDidUpdate()
+  {
+    const component = this;
+    // Set state if the current role instance has changed, or if the perspective has changed.
+    if (!component.props.perspective.seenInTable)
+    {
+      component.props.perspective.seenInTable = true;
+      component.setState(
+        { roleInstanceWithProps: component.computeRoleInstanceWithProps()
+        });
+    }
+  }
+
+  computeRoleInstanceWithProps()
+  {
+    const component = this;
+    return Object.values( this.props.perspective.roleInstances )
+      .filter( inst => inst.roleId == component.context.rolinstance)[0];
+  }
+
+  findValues( propId )
+  {
+    const component = this;
+    if (component.state.roleInstanceWithProps)
+    {
+      return component.state.roleInstanceWithProps.propertyValues[propId];
+    }
   }
 
   handleClick (event)
@@ -370,23 +361,25 @@ class TableRow extends PerspectivesComponent
   render()
   {
     const component = this;
+    const perspective = component.props.perspective;
     return  <tr
               onClick={component.handleClick}
               onKeyDown={component.handleKeyDown}
               ref={component.ref}
             >{
-              component.props.propertynames.map( pn =>
+              Object.values(perspective.properties).map( serialisedProperty =>
                 <TableCell
-                  key = {pn}
-                  propertyname = {pn}
-                  iscard = {pn == component.props.cardcolumn}
+                  key = {serialisedProperty.id}
+                  propertyname = {serialisedProperty.id}
+                  serialisedProperty={serialisedProperty}
+                  propertyValues={component.findValues( serialisedProperty.id )}
+                  iscard = {serialisedProperty.id == component.props.cardcolumn}
                   psrol= {component.context}
                   myroletype = {component.props.myroletype}
-                  isselected = { component.props.tableisactive && !!component.context.isselected && (component.props.column == pn) }
+                  isselected = { component.props.tableisactive && !!component.context.isselected && (component.props.column == serialisedProperty.id) }
                   roleRepresentation={component.props.roleRepresentation}
                   isFirstCell={component.props.isFirstCell}
                   deregisterPreviousCell={component.props.deregisterPreviousCell}
-                  perspective={component.props.perspective}
                 /> )
             }</tr>;
   }
@@ -395,15 +388,14 @@ class TableRow extends PerspectivesComponent
 TableRow.contextType = PSRol;
 
 TableRow.propTypes =
-  { propertynames: PropTypes.arrayOf(PropTypes.string)
-  , myroletype: PropTypes.string.isRequired
+  { myroletype: PropTypes.string.isRequired
   , column: PropTypes.string.isRequired
   , tableisactive: PropTypes.bool.isRequired
   , cardcolumn: PropTypes.string.isRequired
   , roleRepresentation: PropTypes.func.isRequired
   , isFirstCell: PropTypes.func.isRequired
   , deregisterPreviousCell: PropTypes.object.isRequired
-  , perspective: PropTypes.object
+  , perspective: PropTypes.object.isRequired
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -420,9 +412,10 @@ class TableCell extends PerspectivesComponent
   {
     super(props);
     const component = this;
-    this.isCalculated = props.perspective.properties[component.props.propertyname].isCalculated;
+    this.state = {};
     // value is an array of strings.
-    this.state.value = undefined;
+    this.state.value = props.propertyValues ? props.propertyValues.values : [];
+
     this.state.editable = false;
     this.state.lastCellBeforeTableInactivated = this.props.isFirstCell();
     if (this.state.lastCellBeforeTableInactivated)
@@ -436,56 +429,47 @@ class TableCell extends PerspectivesComponent
     }
     this.handleClick = this.handleClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleKeyDownOnCard = this.handleKeyDownOnCard.bind(this);
     // A reference to the Form.Control that handles input.
     // It is used to dispatch the custom SetCursor and SetColumn events.
     // It also receives focus.
     this.inputRef = React.createRef();
   }
 
-  componentDidMount ()
+  componentDidUpdate(prevProps/*, prevState*/)
   {
     const component = this;
-    if ( component.props.perspective )
+    // The card component loses focus for an unknown reason as soon as we start editing it.
+    // This prevents that.
+    if ( component.props.isselected && (!prevProps.isselected || component.props.iscard))
     {
-      component.setValueFromPerspective();
-    }
-    else
-    {
-      PDRproxy.then(
-        function( pproxy )
+      // Gives the Form.Control the focus, activating it.
+      component.inputRef.current.focus();
+      // Deregister the previous selected cell:
+      this.props.deregisterPreviousCell.f();
+      // In case we jump back later into the table, make the current cell think
+      // it was the last selected cell before the table inactivated.
+      this.setState({lastCellBeforeTableInactivated: true});
+      // Set a new deregister function that will make the current cell forget it
+      // was the last selected cell before the table inactivated.
+      this.props.deregisterPreviousCell.f = function()
         {
-          component.addUnsubscriber(
-            pproxy.getProperty(
-              component.props.psrol.rolinstance,
-              component.props.propertyname,
-              component.props.psrol.roltype,
-              function (propertyValues)
-              {
-                component.setState({value: propertyValues});
-              })
-          );
-        }
-      );
+          component.setState({lastCellBeforeTableInactivated: false});
+        };
+    }
+    // NOTE: we just compare the first value.
+    if (!prevProps.propertyValues || (prevProps.propertyValues && prevProps.propertyValues.values[0] != component.props.propertyValues.values[0]))
+    {
+      this.setState(
+        { value: this.props.propertyValues.values
+        , editable: false
+        });
     }
   }
 
-  setValueFromPerspective ()
+  findValue()
   {
-    const component = this;
-    const perspective = component.props.perspective;
-    let roleInstanceWithProperties;
-    if (perspective)
-    {
-      roleInstanceWithProperties = perspective.roleInstances[component.props.psrol.rolinstance];
-      if (roleInstanceWithProperties)
-      {
-        component.setState({value: roleInstanceWithProperties.propertyValues[component.props.propertyname].values});
-      }
-      else
-      {
-        component.setState({value: []});
-      }
-    }
+    return this.state.roleInstanceWithProps.propertyValues[this.props.propertyname].values;
   }
 
   // val is a string.
@@ -515,37 +499,41 @@ class TableCell extends PerspectivesComponent
     this.inputRef.current.dispatchEvent( new CustomEvent('SetColumn', { detail: this.props.propertyname, bubbles: true }) );
   }
 
-  componentDidUpdate(prevProps/*, prevState*/)
+  handleKeyDownOnCard(event)
   {
     const component = this;
-    // The card component loses focus for an unknown reason as soon as we start editing it.
-    // This prevents that.
-    if ( component.props.isselected && (!prevProps.isselected || component.props.iscard))
+    if (component.props.isselected)
     {
-      // Gives the Form.Control the focus, activating it.
-      component.inputRef.current.focus();
-      // Deregister the previous selected cell:
-      this.props.deregisterPreviousCell.f();
-      // In case we jump back later into the table, make the current cell think
-      // it was the last selected cell before the table inactivated.
-      this.setState({lastCellBeforeTableInactivated: true});
-      // Set a new deregister function that will make the current cell forget it
-      // was the last selected cell before the table inactivated.
-      this.props.deregisterPreviousCell.f = function()
+      if (component.state.editable)
+      {
+        switch( event.keyCode )
         {
-          component.setState({lastCellBeforeTableInactivated: false});
-        };
-    }
-    if ( component.props.perspective && !component.props.perspective.seenBefore )
-    {
-      component.setValueFromPerspective();
+          // Stop editing, allow event to bubble.
+          // Content has been restored in the SmartFieldControl.
+          // We stop editing with value change from the PDR!
+          case 27: // Escape
+            component.setState({editable: false});
+            break;
+        }
+      }
+      else if (!event.shiftKey && !component.props.serialisedProperty.isCalculated)
+      {
+        switch(event.keyCode){
+          case 32: // Space
+          case 13: // Return
+            component.setState({editable:true});
+            event.preventDefault();
+            event.stopPropagation();
+            break;
+          }
+      }
     }
   }
 
   handleKeyDown (event)
   {
     const component = this;
-    if (!component.state.editable && !event.shiftKey && !component.isCalculated)
+    if (!component.state.editable && !event.shiftKey && !component.props.serialisedProperty.isCalculated)
     {
       switch(event.keyCode){
         case 32: // Space
@@ -586,109 +574,77 @@ class TableCell extends PerspectivesComponent
           break;
       }
     }
-    // if (event.keyCode == 9 || event.keyCode == 11)
-    // {
-    //   // Make sure tabIndex = 0;
-    //   this.setState({lastCellBeforeTableInactivated: true});
-    // }
   }
 
   render ()
   {
     const component = this;
     const RoleRepresentation = component.props.roleRepresentation;
-    if (component.props.isselected)
+    if (component.props.iscard)
     {
-      // SELECTED
-      if (component.state.editable)
+      if (component.props.isselected)
       {
-        // SELECTED, EDITABLE
-        return (
-          <td >
-            <Form.Control
-              ref={ component.inputRef }
-              tabIndex="-1"
-              aria-label={deconstructLocalName(component.props.propertyname)}
-              defaultValue={component.state.value}
-              onKeyDown={ component.handleKeyDown }
-              onBlur={function(e)
-                {
-                  component.changeValue(e.target.value);
-                  component.setState({editable: false});
-                }}
-              onClick={ component.handleClick }
-            />
-          </td>);
-      }
-      else
-      {
-        // SELECTED, NOT EDITABLE
-        if (component.props.iscard)
+        if (component.state.editable)
         {
-          // SELECTED, NOT EDITABLE, CARD
           return (
-            <td onKeyDown={component.handleKeyDown}>
+            <td onKeyDown={component.handleKeyDownOnCard}>
+              <SmartFieldControl
+                inputRef={component.inputRef}
+                aria-label={deconstructLocalName(component.props.propertyname)}
+                onClick={ component.handleClick }
+                serialisedProperty={component.props.serialisedProperty}
+                propertyValues={component.props.propertyValues}
+                roleId={component.props.psrol.rolinstance}
+                myroletype={component.props.myroletype}
+              />
+            </td>);
+        }
+        else
+        {
+          // Zoals het was
+          return (
+            <td onKeyDown={component.handleKeyDownOnCard}>
                 <RoleRepresentation
                   inputRef={component.inputRef}
                   tabIndex={component.state.lastCellBeforeTableInactivated ? "0" : "-1"}
                   // if we set defaultValue, the value on screen does not update.
-                  defaultValue={component.state.value}
+                  value={component.state.value}
                   className="shadow bg-info"
                   onClick={component.handleClick}
                   labelProperty={deconstructLocalName ( component.props.propertyname )}
                 />
             </td>);
         }
-        else
-        {
-          // SELECTED, NOT EDITABLE, OTHERWISE
-          return (
-            <td>
-              <Form.Control readOnly plaintext
-                ref={ component.inputRef }
+      }
+      else
+      {
+        return (
+          <td>
+              <RoleRepresentation
+                inputRef={component.inputRef}
                 tabIndex={component.state.lastCellBeforeTableInactivated ? "0" : "-1"}
-                aria-label={deconstructLocalName(component.props.propertyname)}
-                onKeyDown={ component.handleKeyDown }
-                onClick={ component.handleClick }
-                defaultValue={component.state.value}
+                // if we set defaultValue, the value on screen does not update.
+                value={component.state.value}
+                className="shadow"
+                onClick={component.handleClick}
+                labelProperty={deconstructLocalName ( component.props.propertyname )}
               />
-            </td>);
-        }
+          </td>);
       }
     }
     else
     {
-      // NOT SELECTED
-      if (component.props.iscard)
-      {
-        // NOT SELECTED, CARD
-        return <td>
-          <RoleRepresentation
+      return (
+        <td onClick={component.handleClick}>
+          <SmartFieldControl
             inputRef={component.inputRef}
-            tabIndex={component.state.lastCellBeforeTableInactivated ? "0" : "-1"}
-            defaultValue={component.state.value}
-            className="shadow"
-            onClick={component.handleClick}
+            aria-label={deconstructLocalName(component.props.propertyname)}
+            serialisedProperty={component.props.serialisedProperty}
+            propertyValues={component.props.propertyValues}
+            roleId={component.props.psrol.rolinstance}
+            myroletype={component.props.myroletype}
           />
-        </td>;
-      }
-      else
-      {
-        // NOT SELECTED, OTHERWISE
-        return (
-          <td>
-            <Form.Control
-              readOnly
-              plaintext
-              className={component.props.iscard ? "shadow" : null}
-              ref={component.inputRef}
-              tabIndex={component.state.lastCellBeforeTableInactivated ? "0" : "-1"}
-              aria-label={component.state.value}
-              onClick={component.handleClick}
-              defaultValue={component.state.value}
-            />
-          </td>);
-        }
+        </td>);
     }
   }
 }
@@ -698,20 +654,29 @@ TableCell.propTypes =
   , myroletype: PropTypes.string.isRequired
   , isselected: PropTypes.bool.isRequired
   , iscard: PropTypes.bool.isRequired
-  , psrol: PropTypes.shape(
-    { contextinstance: PropTypes.string.isRequired
-    , contexttype: PropTypes.string.isRequired
-    , roltype: PropTypes.string.isRequired
-    , bind_: PropTypes.func
-    , checkbinding: PropTypes.func
-    , removerol: PropTypes.func
-    , rolinstance: PropTypes.string.isRequired
-    , isselected: PropTypes.bool.isRequired
-    }
-  ).isRequired
+  , psrol:
+    PropTypes.shape(
+      { contextinstance: PropTypes.string.isRequired
+      , contexttype: PropTypes.string.isRequired
+      , roltype: PropTypes.string.isRequired
+      , bind_: PropTypes.func
+      , checkbinding: PropTypes.func
+      , removerol: PropTypes.func
+      , rolinstance: PropTypes.string.isRequired
+      , isselected: PropTypes.bool.isRequired
+      }).isRequired
   , roleRepresentation: PropTypes.func.isRequired
   , deregisterPreviousCell: PropTypes.object.isRequired
-  , perspective: PropTypes.object
+  , serialisedProperty:
+      PropTypes.shape(
+        { id: PropTypes.string.isRequired
+        , displayName: PropTypes.string.isRequired
+        , isFunctional: PropTypes.bool.isRequired
+        , isMandatory: PropTypes.bool.isRequired
+        , isCalculated: PropTypes.bool.isRequired
+        , range: PropTypes.string.isRequired
+        , verbs: PropTypes.arrayOf( PropTypes.string ).isRequired
+        }).isRequired
 };
 
 ////////////////////////////////////////////////////////////////////////////////

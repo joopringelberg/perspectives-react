@@ -89,13 +89,8 @@ export default class StandardScreen extends PerspectivesComponent
                   cardtitle={ perspective.identifyingProperty }
                   />
                 : <PerspectiveTable
-                    viewname=""
                     cardcolumn={ perspective.identifyingProperty }
-                    roletype={perspective.roleType || ""}
-                    contexttocreate={perspective.contextTypesToCreate[0]}
-                    createButton={component.mayCreateInstance( perspective )}
                     //roleRepresentation
-                    behaviours={mapRoleVerbsToBehaviours( perspective )}
                     perspective={perspective}
                     />}
             </Container>

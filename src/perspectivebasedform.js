@@ -28,7 +28,7 @@ import PerspectivesComponent from "./perspectivescomponent.js";
 import RoleInstance from "./roleinstance.js";
 import ActionDropDown from "./actiondropdown.js";
 import FormPasteRole from "./formpasterole.js";
-import SmartFieldControl from "./smartfieldcontrol.js";
+import SmartFieldControlGroup from "./smartfieldcontrolgroup.js";
 import {PlusIcon} from '@primer/octicons-react';
 import
   { Card
@@ -173,7 +173,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
           >
           {
             Object.values(perspective.properties).map(serialisedProperty =>
-              <SmartFieldControl
+              <SmartFieldControlGroup
                 key={serialisedProperty.id}
                 serialisedProperty={serialisedProperty}
                 propertyValues={component.findValues( serialisedProperty.id )}

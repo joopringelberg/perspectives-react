@@ -51,21 +51,19 @@ const React = require("react");
 const Component = React.PureComponent;
 const PDRproxy = require("perspectives-proxy").PDRproxy;
 import
-  { Form
+  { Row
+  , Col
+  , Form
   } from "react-bootstrap";
 const PropTypes = require("prop-types");
+import SmartFieldControl from "./smartfieldcontrol.js";
 
-export default class SmartFieldControl extends Component
+export default class SmartFieldControlGroup extends Component
 {
   constructor(props)
   {
     super(props);
-    this.state = {value: this.originalValue()};
-  }
-
-  originalValue()
-  {
-    return this.props.propertyValues ? this.props.propertyValues.values : "";
+    this.state = {value: props.propertyValues ? props.propertyValues.values : ""};
   }
 
   componentDidUpdate(prevProps)
@@ -112,62 +110,30 @@ export default class SmartFieldControl extends Component
     }
   }
 
-  handleKeyDown (event, newvalue)
-  {
-    const component = this;
-      switch( event.keyCode )
-      {
-        // Safe on leaving the cell, allow event to bubble.
-        case 37: // left arrow
-        case 39: // right arrow
-        case 38: // Up arrow
-        case 40: // Down arrow
-        case 9:  // Tab key
-        case 13: // Return
-          component.changeValue(newvalue);
-          break;
-        case 27: // Escape
-          component.setState( {value: component.originalValue()});
-          event.preventDefault();
-          break;
-      }
-  }
-
 
   render()
   {
     const component = this;
-    const controlType = component.mapRange( component.props.serialisedProperty.range );
-    switch ( controlType ){
-      case "checkbox":
-        return (
-          <Form.Check
-            ref= { component.props.inputRef}
-            aria-label={ component.props.serialisedProperty.displayName }
-            disabled={ component.props.propertyValues ? false : true }
-            value={ component.state.value }
-            onChange={e => component.setState({value: e.target.value}) }
-            onBlur={e => component.changeValue(e.target.checked.toString())}
-            onKeyDown={e => component.handleKeyDown(e, e.target.checked.toString())}
-            />
-);
-      default:
-        return (
-          <Form.Control
-            ref= { component.props.inputRef}
-            aria-label={ component.props.serialisedProperty.displayName }
-            disabled={ component.props.propertyValues ? false : true }
-            value={ component.state.value }
-            onChange={e => component.setState({value: e.target.value}) }
-            onBlur={e => component.changeValue(e.target.value)}
-            onKeyDown={e => component.handleKeyDown(e, e.target.value)}
-            type={controlType}
-          />);
+    return (
+      <Form.Group as={Row}>
+        <Form.Label
+          column
+          sm="3">
+          { component.props.serialisedProperty.displayName }
+        </Form.Label>
+        <Col sm="9">
+          <SmartFieldControl
+            serialisedProperty = { component.props.serialisedProperty }
+            propertyValues = { component.props.propertyValues }
+            roleId = { component.props.roleId }
+            myroletype = { component.props.myroletype }
+          />
+        </Col>
+      </Form.Group>);
     }
-  }
 }
 
-SmartFieldControl.propTypes =
+SmartFieldControlGroup.propTypes =
   { serialisedProperty:
       PropTypes.shape(
         { id: PropTypes.string.isRequired
@@ -188,6 +154,4 @@ SmartFieldControl.propTypes =
   , roleId: PropTypes.string
 
   , myroletype: PropTypes.string.isRequired
-
-  , inputRef: PropTypes.any
   };

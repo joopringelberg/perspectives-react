@@ -70,7 +70,6 @@ export default class PerspectiveTable extends PerspectivesComponent
     component.state =
       { column: this.propertyNames[0]
       , row: Object.keys( component.props.perspective.roleInstances )[0]
-      , active: true
       };
   }
 
@@ -120,20 +119,6 @@ export default class PerspectiveTable extends PerspectivesComponent
     const rowIndex = roleIds.indexOf( component.state.row );
 
     switch(event.keyCode){
-      case 9: // Horizontal Tab
-      case 11: // Vertical Tab
-        if (event.shiftKey)
-        {
-          // TODO. DIT WERKT NIET.
-          // If shift-tab, stop the event and throw another shift-tab.
-          // event.stopPropagation();
-          // event.preventDefault();
-          // See: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/KeyboardEvent
-          // component.eventDiv.current.dispatchEvent( new KeyboardEvent("keypress", {key: "\t", shiftKey: true}) );
-        }
-        // Leaving the table.
-        component.setState({active: false});
-        break;
       case 40: // Down arrow
         if ( rowIndex < roleIds.length - 1 )
         {
@@ -204,7 +189,6 @@ export default class PerspectiveTable extends PerspectivesComponent
                 </thead>
                 <tbody
                   ref={component.eventDiv}
-                  onFocus={ () => component.setState( { active: true}) }
                   onKeyDown={ component.handleKeyDown }
                 >
                   {
@@ -215,7 +199,6 @@ export default class PerspectiveTable extends PerspectivesComponent
                         isselected={ roleId == component.state.row }
                         myroletype={pscontext.myroletype}
                         column={component.state.column}
-                        tableisactive = {component.state.active}
                         cardcolumn = {perspective.identifyingProperty}
                         roleRepresentation={component.roleRepresentation}
                         isFirstCell={function()

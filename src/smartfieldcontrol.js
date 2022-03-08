@@ -28,6 +28,18 @@ import
   } from "react-bootstrap";
 const PropTypes = require("prop-types");
 
+////////////////////////////////////////////////////////////////////////////////
+// TABINDEX VALUES
+////////////////////////////////////////////////////////////////////////////////
+// A negative value means that the element should be focusable,
+// but should not be reachable via sequential keyboard navigation;
+// Presumably this means clicking on it or setting it from Javascript.
+const focusable = -1;
+
+// 0 means that the element should be focusable and reachable via sequential keyboard navigation,
+// but its relative order is defined by the platform convention;
+const receiveFocusByKeyboard = 0;
+
 export default class SmartFieldControl extends Component
 {
   constructor(props)
@@ -134,6 +146,7 @@ export default class SmartFieldControl extends Component
           <div onKeyDown={e => component.handleKeyDown(e, component.state.value)}>
             <Form.Check
               ref= { component.props.inputRef}
+              tabIndex={component.props.isselected ? receiveFocusByKeyboard : focusable}
               aria-label={ component.props.serialisedProperty.displayName }
               readOnly={ component.props.disabled }
               checked={ component.state.value == "true" }
@@ -146,6 +159,7 @@ export default class SmartFieldControl extends Component
           <div onKeyDown={e => component.handleKeyDown(e, e.target.value)}>
             <Form.Control
               ref= { component.props.inputRef}
+              tabIndex={component.props.isselected ? receiveFocusByKeyboard : focusable}
               aria-label={ component.props.serialisedProperty.displayName }
               readOnly={ component.props.disabled }
               value={ component.state.value }
@@ -183,4 +197,6 @@ SmartFieldControl.propTypes =
   , inputRef: PropTypes.any
 
   , disabled: PropTypes.bool.isRequired
+
+  , isselected: PropTypes.bool.isRequired
   };

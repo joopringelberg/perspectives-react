@@ -68,7 +68,6 @@ export default class TableControls extends PerspectivesComponent
           // NOTE we just take the first context type here, for now!
           contextToCreate,
           component.props.perspective.userRoleType,
-          // [<externalRoleId>(, <contextRoleId>)?]
           function(contextAndExternalRole)
           {
             // Return the new context role identifier!

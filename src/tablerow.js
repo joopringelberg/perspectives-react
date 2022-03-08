@@ -89,7 +89,7 @@ export default class TableRow extends PerspectivesComponent
                   propertyValues={ roleInstanceWithProps.propertyValues[serialisedProperty.id] }
                   iscard = {serialisedProperty.id == component.props.cardcolumn}
                   myroletype = {component.props.myroletype}
-                  isselected = { component.props.tableisactive && component.props.isselected && (component.props.column == serialisedProperty.id) }
+                  isselected = { component.props.isselected && (component.props.column == serialisedProperty.id) }
                   roleRepresentation={component.props.roleRepresentation}
                   isFirstCell={component.props.isFirstCell}
                   deregisterPreviousCell={component.props.deregisterPreviousCell}
@@ -103,7 +103,6 @@ TableRow.propTypes =
   { myroletype: PropTypes.string.isRequired
   , roleinstance: PropTypes.string.isRequired
   , column: PropTypes.string.isRequired
-  , tableisactive: PropTypes.bool.isRequired
   , isselected: PropTypes.bool.isRequired
   , cardcolumn: PropTypes.string.isRequired
   , roleRepresentation: PropTypes.func.isRequired

@@ -203,6 +203,7 @@ export default class TableCell extends PerspectivesComponent
                 roleId={component.props.roleinstance}
                 myroletype={component.props.myroletype}
                 disabled={false}
+                isselected={component.props.isselected}
               />
             </td>);
         }
@@ -217,7 +218,7 @@ export default class TableCell extends PerspectivesComponent
               >
                 <RoleRepresentation
                   inputRef={component.inputRef}
-                  tabIndex={component.props.isselected ? receiveFocusByKeyboard : focusable}
+                  tabIndex={receiveFocusByKeyboard}
                   value={component.props.propertyValues.values}
                   className="shadow bg-info"
                   onClick={component.handleClick}
@@ -233,7 +234,7 @@ export default class TableCell extends PerspectivesComponent
           <td>
               <RoleRepresentation
                 inputRef={component.inputRef}
-                tabIndex={component.props.isselected ? receiveFocusByKeyboard : focusable}
+                tabIndex={focusable}
                 value={component.props.propertyValues.values}
                 className="shadow"
                 onClick={component.handleClick}
@@ -251,14 +252,13 @@ export default class TableCell extends PerspectivesComponent
         >
           <SmartFieldControl
             inputRef={component.inputRef}
-            tabIndex={component.props.isselected ? receiveFocusByKeyboard : focusable}
             aria-label={deconstructLocalName(component.props.propertyname)}
             serialisedProperty={component.props.serialisedProperty}
             propertyValues={component.props.propertyValues}
             roleId={component.props.roleinstance}
             myroletype={component.props.myroletype}
             disabled={!component.state.editable}
-            focus={component.isselected}
+            isselected={component.props.isselected}
           />
         </td>);
     }

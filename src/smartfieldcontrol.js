@@ -37,18 +37,18 @@ export default class SmartFieldControl extends Component
     this.state = { value: this.valueOnProps() };
   }
 
-  // Returns the first value in the `propertyValues` prop, or the empty string.
-  valueOnProps()
-  {
-    return this.props.propertyValues.values[0] || "";
-  }
-
   componentDidUpdate(prevProps)
   {
     if (prevProps.propertyValues.values[0] != this.props.propertyValues.values[0])
     {
       this.setState({ value: this.valueOnProps()});
     }
+  }
+
+  // Returns the first value in the `propertyValues` prop, or the empty string.
+  valueOnProps()
+  {
+    return this.props.propertyValues.values[0] || "";
   }
 
   mapRange( range )
@@ -72,7 +72,6 @@ export default class SmartFieldControl extends Component
     const oldValue = component.valueOnProps();
     if ( oldValue != val )
     {
-      console.log("Value is now: " + val);
       PDRproxy.then(
         function(pproxy)
         {
@@ -82,10 +81,6 @@ export default class SmartFieldControl extends Component
             val,
             component.props.myroletype );
         });
-    }
-    else
-    {
-      console.log("No value change. Oldvalue is '" + oldValue + "', new value is '" + val + "'.");
     }
   }
 
@@ -106,7 +101,6 @@ export default class SmartFieldControl extends Component
         case 9:  // Horizontal Tab.
         case 11: // Vertical Tab.
         case 32: // Space
-          console.log("space in SmartFieldControl");
           event.stopPropagation();
           break;
         case 13: // Return
@@ -127,8 +121,10 @@ export default class SmartFieldControl extends Component
     function toggleValue()
     {
       const newvalue = (component.state.value != "true").toString();
-      console.log("Toggling value from: " + component.state.value + " to " + newvalue );
-      component.setState({value: (component.state.value != "true").toString()});
+      if ( !component.props.disabled )
+      {
+        component.changeValue(newvalue);
+      }
     }
     const component = this;
     const controlType = component.mapRange( component.props.serialisedProperty.range );
@@ -140,10 +136,8 @@ export default class SmartFieldControl extends Component
               ref= { component.props.inputRef}
               aria-label={ component.props.serialisedProperty.displayName }
               readOnly={ component.props.disabled }
-              isValid={ component.state.value == "true" }
-              isInvalid={ component.state.value == "false" }
-              onChange={toggleValue }
-              onBlur={() => component.changeValue(component.state.value)}
+              checked={ component.state.value == "true" }
+              onChange={ toggleValue }
             />
           </div>
 );

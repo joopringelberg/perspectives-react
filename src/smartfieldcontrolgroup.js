@@ -49,7 +49,6 @@
 
 const React = require("react");
 const Component = React.PureComponent;
-const PDRproxy = require("perspectives-proxy").PDRproxy;
 import
   { Row
   , Col
@@ -63,15 +62,6 @@ export default class SmartFieldControlGroup extends Component
   constructor(props)
   {
     super(props);
-    this.state = {value: props.propertyValues ? props.propertyValues.values : ""};
-  }
-
-  componentDidUpdate(prevProps)
-  {
-    if (prevProps.propertyValues != this.props.propertyValues)
-    {
-      this.setState({value: this.props.propertyValues ? this.props.propertyValues.values : ""});
-    }
   }
 
   mapRange( range )
@@ -87,29 +77,6 @@ export default class SmartFieldControlGroup extends Component
         return "number";
     }
   }
-
-  changeValue (val)
-  {
-    const component = this;
-    const oldValue = component.state.value;
-    if ( Array.isArray( val ) )
-    {
-      throw "Perspectives-react, View: supply a single string value to the function 'setvalue'.";
-    }
-    if (oldValue && (oldValue.length != 0 || oldValue[0] != val) || !oldValue )
-    {
-      PDRproxy.then(
-        function(pproxy)
-        {
-          pproxy.setProperty(
-            component.props.roleId,
-            component.props.serialisedProperty.id,
-            val,
-            component.props.myroletype );
-        });
-    }
-  }
-
 
   render()
   {
@@ -127,7 +94,7 @@ export default class SmartFieldControlGroup extends Component
             propertyValues = { component.props.propertyValues }
             roleId = { component.props.roleId }
             myroletype = { component.props.myroletype }
-            disabled={false}
+            disabled={ component.props.roleId ? false : true }
           />
         </Col>
       </Form.Group>);
@@ -150,7 +117,7 @@ SmartFieldControlGroup.propTypes =
       PropTypes.shape(
         { values: PropTypes.arrayOf( PropTypes.string ).isRequired
         , propertyVerbs: PropTypes.arrayOf( PropTypes.string).isRequired
-        })
+      }).isRequired
 
   , roleId: PropTypes.string
 

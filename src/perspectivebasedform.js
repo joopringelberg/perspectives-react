@@ -70,6 +70,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
 
   }
 
+  // Always returns an array of strings (possibly empty).
   findValue( propId )
   {
     const component = this;
@@ -77,14 +78,27 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
     {
       return component.state.roleInstanceWithProps.propertyValues[propId].values;
     }
+    else
+    {
+      return [];
+    }
   }
 
+  // Always returns an object with this shape:
+  // PropTypes.shape(
+  //   { values: PropTypes.arrayOf( PropTypes.string ).isRequired
+  //   , propertyVerbs: PropTypes.arrayOf( PropTypes.string).isRequired
+  //   })
   findValues( propId )
   {
     const component = this;
     if (component.state.roleInstanceWithProps)
     {
       return component.state.roleInstanceWithProps.propertyValues[propId];
+    }
+    else
+    {
+      return {values:[], propertyVerbs:[]};
     }
   }
 

@@ -19,33 +19,6 @@
 // END LICENSE
 
 // This Component is built upon the data sent from the PDR for a single property.
-//
-// type RoleInstanceWithProperties =
-// { roleId :: String
-// , objectStateBasedRoleVerbs :: Array String
-// , objectStateBasedSerialisedProperties :: Object SerialisedProperty
-//      Notice that the keys of this object are property types!
-// , propertyValues :: Object ValuesWithVerbs
-// , actions :: Array String
-// }
-//
-// The verbs in this type contain both those based on context- and subject state,
-// and those based on object state.
-//
-// type ValuesWithVerbs =
-//   { values :: Array String
-//   , propertyVerbs :: Array String
-//   }
-//
-// type SerialisedProperty =
-//   { id :: String
-//   , displayName :: String
-//   , isFunctional :: Boolean
-//   , isMandatory :: Boolean
-//   , isCalculated :: Boolean
-//   , range :: String
-//   , verbs :: Array String
-//   }
 
 const React = require("react");
 const Component = React.PureComponent;
@@ -60,19 +33,21 @@ export default class SmartFieldControl extends Component
   constructor(props)
   {
     super(props);
-    this.state = {value: this.originalValue()};
+    // `value` is a string.
+    this.state = { value: this.valueOnProps() };
   }
 
-  originalValue()
+  // Returns the first value in the `propertyValues` prop, or the empty string.
+  valueOnProps()
   {
-    return this.props.propertyValues ? this.props.propertyValues.values : "";
+    return this.props.propertyValues.values[0] || "";
   }
 
   componentDidUpdate(prevProps)
   {
-    if (prevProps.propertyValues != this.props.propertyValues)
+    if (prevProps.propertyValues.values[0] != this.props.propertyValues.values[0])
     {
-      this.setState({value: this.props.propertyValues ? this.props.propertyValues.values : ""});
+      this.setState({ value: this.valueOnProps()});
     }
   }
 
@@ -90,20 +65,14 @@ export default class SmartFieldControl extends Component
     }
   }
 
+  // `val` is a string.
   changeValue (val)
   {
     const component = this;
-    const oldValue = component.state.value;
-    if ( Array.isArray( val ) )
+    const oldValue = component.valueOnProps();
+    if ( oldValue != val )
     {
-      throw "Perspectives-react, View: supply a single string value to the function 'setvalue'.";
-    }
-    if (
-        !oldValue ||
-        oldValue.length == 0 ||
-        oldValue[0] != val
-    )
-    {
+      console.log("Value is now: " + val);
       PDRproxy.then(
         function(pproxy)
         {
@@ -114,71 +83,67 @@ export default class SmartFieldControl extends Component
             component.props.myroletype );
         });
     }
+    else
+    {
+      console.log("No value change. Oldvalue is '" + oldValue + "', new value is '" + val + "'.");
+    }
   }
 
+  // newvalue should be a string.
   handleKeyDown (event, newvalue)
   {
     const component = this;
-    if (!component.isDisabled())
+    if (!component.props.disabled)
     {
       switch( event.keyCode )
       {
-        // Safe on leaving the cell, allow event to bubble.
-        case 37: // left arrow. Allow to bubble when at position 0.
-          if (event.target.selectionStart != 0)
-          {
-            event.stopPropagation();
-          }
-          else
-          {
-            component.changeValue(newvalue);
-          }
-          break;
-        case 39: // right arrow. Allow to bubble when at the end.
-          if (event.target.selectionStart < event.target.value.length)
-          {
-            event.stopPropagation();
-          }
-          else
-          {
-            component.changeValue(newvalue);
-          }
-          break;
+        // Assuming this code only runs when the field control is active,
+        // let it handle the navigation keys locally but do not bubble.
+        case 37: // left arrow.
+        case 39: // right arrow.
         case 38: // Up arrow
         case 40: // Down arrow
         case 9:  // Horizontal Tab.
         case 11: // Vertical Tab.
+        case 32: // Space
+          console.log("space in SmartFieldControl");
+          event.stopPropagation();
+          break;
         case 13: // Return
+          // Safe changes, allow event to bubble.
           component.changeValue(newvalue);
           break;
         case 27: // Escape
-          component.setState( {value: component.originalValue()});
+          // Discard changes, allow event to bubble.
+          component.setState( {value: component.valueOnProps()});
           event.preventDefault();
           break;
       }
     }
   }
 
-  isDisabled()
-  {
-    return !this.props.propertyValues || this.props.disabled;
-  }
-
   render()
   {
+    function toggleValue()
+    {
+      const newvalue = (component.state.value != "true").toString();
+      console.log("Toggling value from: " + component.state.value + " to " + newvalue );
+      component.setState({value: (component.state.value != "true").toString()});
+    }
     const component = this;
     const controlType = component.mapRange( component.props.serialisedProperty.range );
     switch ( controlType ){
       case "checkbox":
         return (
-          <div onKeyDown={e => component.handleKeyDown(e, e.target.checked.toString())}>
+          <div onKeyDown={e => component.handleKeyDown(e, component.state.value)}>
             <Form.Check
               ref= { component.props.inputRef}
               aria-label={ component.props.serialisedProperty.displayName }
-              readOnly={ component.isDisabled() }
-              value={ component.state.value }
-              onChange={e => component.setState({value: e.target.value}) }
-              onBlur={e => component.changeValue(e.target.checked.toString())}
+              readOnly={ component.props.disabled }
+              isValid={ component.state.value == "true" }
+              isInvalid={ component.state.value == "false" }
+              onChange={toggleValue }
+              onBlur={() => component.changeValue(component.state.value)}
             />
           </div>
 );
@@ -188,7 +153,7 @@ export default class SmartFieldControl extends Component
             <Form.Control
               ref= { component.props.inputRef}
               aria-label={ component.props.serialisedProperty.displayName }
-              readOnly={ component.isDisabled() }
+              readOnly={ component.props.disabled }
               value={ component.state.value }
               onChange={e => component.setState({value: e.target.value}) }
               onBlur={e => component.changeValue(e.target.value)}
@@ -215,7 +180,7 @@ SmartFieldControl.propTypes =
       PropTypes.shape(
         { values: PropTypes.arrayOf( PropTypes.string ).isRequired
         , propertyVerbs: PropTypes.arrayOf( PropTypes.string).isRequired
-        })
+      }).isRequired
 
   , roleId: PropTypes.string
 

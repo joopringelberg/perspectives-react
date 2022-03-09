@@ -47,6 +47,7 @@ export default class SmartFieldControl extends Component
     super(props);
     // `value` is a string.
     this.state = { value: this.valueOnProps() };
+    this.leaveControl = this.leaveControl.bind(this);
   }
 
   componentDidUpdate(prevProps)
@@ -128,6 +129,14 @@ export default class SmartFieldControl extends Component
     }
   }
 
+  // This method is called onBlur, i.e. when the user navigates away
+  // from the SmartFieldControl.
+  leaveControl(e)
+  {
+    this.changeValue(e.target.value);
+    e.currentTarget.reportValidity();
+  }
+
   render()
   {
     function toggleValue()
@@ -140,6 +149,7 @@ export default class SmartFieldControl extends Component
     }
     const component = this;
     const controlType = component.mapRange( component.props.serialisedProperty.range );
+    const mandatory = component.props.serialisedProperty.isMandatory;
     switch ( controlType ){
       case "checkbox":
         return (
@@ -151,6 +161,7 @@ export default class SmartFieldControl extends Component
               readOnly={ component.props.disabled }
               checked={ component.state.value == "true" }
               onChange={ toggleValue }
+              required={mandatory}
             />
           </div>
 );
@@ -164,8 +175,9 @@ export default class SmartFieldControl extends Component
               readOnly={ component.props.disabled }
               value={ component.state.value }
               onChange={e => component.setState({value: e.target.value}) }
-              onBlur={e => component.changeValue(e.target.value)}
+              onBlur={component.leaveControl}
               type={controlType}
+              required={mandatory}
             />
           </div>);
     }

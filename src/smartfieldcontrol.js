@@ -64,6 +64,7 @@ export default class SmartFieldControl extends Component
     return this.props.propertyValues.values[0] || "";
   }
 
+  // Zie: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
   mapRange( range )
   {
     switch (range) {
@@ -75,6 +76,8 @@ export default class SmartFieldControl extends Component
         return "date";
       case "PNumber":
         return "number";
+      case "PEmail":
+        return "email";
     }
   }
 

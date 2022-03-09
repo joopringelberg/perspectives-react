@@ -118,7 +118,14 @@ export default class SmartFieldControl extends Component
           break;
         case 13: // Return
           // Safe changes, allow event to bubble.
-          component.changeValue(newvalue);
+          if (event.target.reportValidity())
+          {
+            component.changeValue(newvalue);
+          }
+          else
+          {
+            event.stopPropagation();
+          }
           break;
         case 27: // Escape
           // Discard changes, allow event to bubble.
@@ -134,7 +141,7 @@ export default class SmartFieldControl extends Component
   leaveControl(e)
   {
     this.changeValue(e.target.value);
-    e.currentTarget.reportValidity();
+    return e.target.reportValidity();
   }
 
   render()

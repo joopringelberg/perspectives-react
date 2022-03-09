@@ -40,7 +40,7 @@ export default class TableRow extends PerspectivesComponent
 
   handleClick (event)
   {
-    event.preventDefault();
+    // event.preventDefault();
     event.stopPropagation();
     // Signal to Table that this row is selected.
     this.ref.current.dispatchEvent( new CustomEvent('SetRow', { detail: this.props.roleinstance, bubbles: true }) );
@@ -91,8 +91,6 @@ export default class TableRow extends PerspectivesComponent
                   myroletype = {component.props.myroletype}
                   isselected = { component.props.isselected && (component.props.column == serialisedProperty.id) }
                   roleRepresentation={component.props.roleRepresentation}
-                  isFirstCell={component.props.isFirstCell}
-                  deregisterPreviousCell={component.props.deregisterPreviousCell}
                   perspective={component.props.perspective}
                 /> )
             }</tr>;
@@ -106,9 +104,5 @@ TableRow.propTypes =
   , isselected: PropTypes.bool.isRequired
   , cardcolumn: PropTypes.string.isRequired
   , roleRepresentation: PropTypes.func.isRequired
-  // This is a function provided by the table itself. Only the topmost and left-most cell
-  // is the first cell.
-  , isFirstCell: PropTypes.func.isRequired
-  , deregisterPreviousCell: PropTypes.object.isRequired
   , perspective: PropTypes.object.isRequired
 };

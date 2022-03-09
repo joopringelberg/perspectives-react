@@ -62,10 +62,6 @@ export default class PerspectiveTable extends PerspectivesComponent
     this.roleRepresentation = addBehaviour( Card, mapRoleVerbsToBehaviours( component.props.perspective ) );
     this.eventDiv = React.createRef();
     this.handleKeyDown = this.handleKeyDown.bind( this );
-    // The first rendered cell (the left- and topmost cell) sets this to false.
-    // Each subsequent cell can then see it is not first.
-    this.firstCellSet = false;
-    this.deregisterPreviousCell = {f: () => {}};
 
     component.state =
       { column: this.propertyNames[0]
@@ -201,16 +197,6 @@ export default class PerspectiveTable extends PerspectivesComponent
                         column={component.state.column}
                         cardcolumn = {perspective.identifyingProperty}
                         roleRepresentation={component.roleRepresentation}
-                        isFirstCell={function()
-                          {
-                            if (!component.firstCellSet)
-                            {
-                              component.firstCellSet = true;
-                              return true;
-                            }
-                            return false;
-                          }}
-                        deregisterPreviousCell={component.deregisterPreviousCell}
                         perspective={component.props.perspective}
                         />)
                   }

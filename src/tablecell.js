@@ -55,25 +55,9 @@ export default class TableCell extends PerspectivesComponent
   constructor (props)
   {
     super(props);
-    const component = this;
     // Being editable is not determined by props, but entirely by interaction with the cell
     // through the keyboard.
     this.state = { editable: false };
-    // By default, the left- and topmost cell must be the one that gets focus when we tab into the table.
-    // Then, when the user activates other cells (using arrow keys or tab), this one must lose focus.
-    // But when the user clicks outside of the table (or tabs out of it), this cell must remember
-    // it was the last one before that happend. When the user tabs into the table, this cell will then
-    // get the focus.
-    this.state.lastCellBeforeTableInactivated = this.props.isFirstCell();
-    if (this.state.lastCellBeforeTableInactivated)
-    {
-      // Set a new deregister function that will make the current cell forget it
-      // was the last selected cell before the table inactivated.
-      this.props.deregisterPreviousCell.f = function()
-        {
-          component.setState({lastCellBeforeTableInactivated: false});
-        };
-    }
     this.handleClick = this.handleClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     // A reference to the Form.Control that handles input.
@@ -101,7 +85,7 @@ export default class TableCell extends PerspectivesComponent
   // When selected, the cell should have focus.
   // When the value changes, we stop editing.
   // When we start editing, we should re-establish the focus.
-  componentDidUpdate(/*prevProps, prevState*/)
+  componentDidUpdate(prevProps/*, prevState*/)
   {
     const component = this;
 
@@ -129,17 +113,10 @@ export default class TableCell extends PerspectivesComponent
       setFocus();
     }
 
-      // // Deregister the previous selected cell:
-      // this.props.deregisterPreviousCell.f();
-      // // In case we jump back later into the table, make the current cell think
-      // // it was the last selected cell before the table inactivated.
-      // this.setState({lastCellBeforeTableInactivated: true, editable});
-      // // Set a new deregister function that will make the current cell forget it
-      // // was the last selected cell before the table inactivated.
-      // this.props.deregisterPreviousCell.f = function()
-      //   {
-      //     component.setState({lastCellBeforeTableInactivated: false});
-      //   };
+    if (prevProps.isselected && !component.props.isselected && component.state.editable)
+    {
+      component.setState({editable: false});
+    }
   }
 
   // Set the column in the RoleTable_.
@@ -272,7 +249,6 @@ TableCell.propTypes =
   , iscard: PropTypes.bool.isRequired
   , roleinstance: PropTypes.string.isRequired
   , roleRepresentation: PropTypes.func.isRequired
-  , deregisterPreviousCell: PropTypes.object.isRequired
   , serialisedProperty:
       PropTypes.shape(
         { id: PropTypes.string.isRequired

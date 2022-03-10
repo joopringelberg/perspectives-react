@@ -122,14 +122,16 @@ export default class TableControls extends PerspectivesComponent
   // available based on object state.
   computeActions()
   {
-    const component = this;
+    const props = this.props;
+    const perspective = this.props.perspective;
     let objectStateActions = [];
     // It happens that the perspective is not always yet updated when we compute actions.
-    if (component.props.selectedroleinstance)
+    // It also happens that the selectedroleinstance is not updated while the perspectives are?
+    if (props.selectedroleinstance && perspective.roleInstances[ props.selectedroleinstance])
     {
-      objectStateActions = component.props.perspective.roleInstances[ component.props.selectedroleinstance].actions;
+      objectStateActions = perspective.roleInstances[ props.selectedroleinstance ].actions;
     }
-    return component.props.perspective.actions.concat( objectStateActions );
+    return perspective.actions.concat( objectStateActions );
   }
 
   render ()

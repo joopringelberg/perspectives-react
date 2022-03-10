@@ -163,7 +163,7 @@ export default class PerspectiveTable extends PerspectivesComponent
     return (
       <div>
       {
-        component.stateIsComplete() ?
+        component.stateIsComplete(["row"]) ?
         <PSContext.Consumer>{
           pscontext =>
             <>

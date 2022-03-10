@@ -147,6 +147,26 @@ export default class SmartFieldControl extends Component
     return e.target.reportValidity();
   }
 
+  // Returns an integer or undefined.
+  minLength(controlType)
+  {
+    const component = this;
+    if (["text", "search", "url", "tel", "email", "password"].indexOf(controlType) >= 0)
+    {
+      return component.props.serialisedProperty.constrainingFacets.minLength;
+    }
+  }
+
+  // Returns an integer or undefined.
+  maxLength(controlType)
+  {
+    const component = this;
+    if (["text", "search", "url", "tel", "email", "password"].indexOf(controlType) >= 0)
+    {
+      return component.props.serialisedProperty.constrainingFacets.maxLength;
+    }
+  }
+
   render()
   {
     function toggleValue()
@@ -179,6 +199,7 @@ export default class SmartFieldControl extends Component
         return (
           <div onKeyDown={e => component.handleKeyDown(e, e.target.value)}>
             <Form.Control
+              as={ controlType == "text" && component.minLength(controlType) > 80 ? "textarea" : "input" }
               ref= { component.props.inputRef}
               tabIndex={component.props.isselected ? receiveFocusByKeyboard : focusable}
               aria-label={ component.props.serialisedProperty.displayName }
@@ -188,6 +209,8 @@ export default class SmartFieldControl extends Component
               onBlur={component.leaveControl}
               type={controlType}
               required={mandatory}
+              minLength={component.minLength(controlType)}
+              maxLength={component.maxLength(controlType)}
             />
           </div>);
     }
@@ -204,6 +227,19 @@ SmartFieldControl.propTypes =
         , isCalculated: PropTypes.bool.isRequired
         , range: PropTypes.string.isRequired
         , verbs: PropTypes.arrayOf( PropTypes.string ).isRequired
+        , constrainingFacets: PropTypes.shape(
+          { minLength: PropTypes.number
+          , maxLength: PropTypes.number
+          , pattern: PropTypes.string
+          , whiteSpace: PropTypes.string
+          , enumeration: PropTypes.arrayOf(PropTypes.String)
+          , maxInclusive: PropTypes.string
+          , maxExclusive: PropTypes.string
+          , minInclusive: PropTypes.string
+          , minExclusive: PropTypes.string
+          , totalDigits: PropTypes.number
+          , fractionDigits: PropTypes.number
+          }).isRequired
         }).isRequired
 
   , propertyValues:

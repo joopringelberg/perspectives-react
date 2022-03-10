@@ -99,6 +99,15 @@ export default class PerspectiveTable extends PerspectivesComponent
       false);
   }
 
+  componentDidUpdate()
+  {
+    // If the selected row has been deleted, set `row` to the first row.
+    if (!this.props.perspective.roleInstances[this.state.row])
+    {
+      this.setState({row: Object.keys( this.props.perspective.roleInstances )[0]});
+    }
+  }
+
   setrow (cr)
   {
     if (cr !== this.state.row && cr)

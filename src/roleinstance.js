@@ -16,8 +16,10 @@ import BinaryModal from "./binarymodal.js";
 ////////////////////////////////////////////////////////////////////////////////
 /*
 This component provides a PSRol context.
-It supports four props, none of which are required:
+It supports six props, none of which are required:
   - roleinstance: the identifier of a role instance;
+  - roletype, its type
+  - rolekind, its kind
   - contextinstance: the identifier of a context instance;
   - role: the name of the Role, possibly unqualified;
   - contexttocreate: either a fully qualified context type name, or a local name with a default namespace prefix:
@@ -26,7 +28,8 @@ It supports four props, none of which are required:
     "usr" : "model:User"
     "ser" : "model:Serialise
     "p"   : "model:Parsing"
-If `roleinstance` is given, it is used to create the PSRol instance.
+If `roleinstance` is given, it is used to create the PSRol instance. If roletype or rolekind
+are missing, they are fetched from the core.
 Otherwise, role must be given and then it is used to create the PSRol instance.
 If contextinstance is given, it overrides the contextinstance of the PSContext react context of RoleInstance.
 If the Role identified by the `role` prop is a ContextRole, `contexttocreate` identifies the type of context
@@ -215,31 +218,55 @@ export default class RoleInstance extends PerspectivesComponent
 
         function getPSRolFromInstance(rolinstance)
         {
-          pproxy.getRolType(rolinstance, function( rolTypeArr )
+          if (component.props.roletype)
+          {
+            buildPSRol(rolinstance, component.props.roletype);
+          }
+          else
+          {
+            pproxy.getRolType(rolinstance, function( rolTypeArr )
             {
               buildPSRol(rolinstance, rolTypeArr[0]);
-            });
+            }
+          );}
         }
 
         function buildPSRol(rolinstance, roltype)
         {
-          // Get the role kind. No need to unsubscribe: the result won't change.
-          pproxy.getRoleKind( roltype,
-            function(roleKindArr)
-            {
-              const roleKind = roleKindArr[0];
-              component.setState( { contextinstance: component.contextInstance()
-                          , contexttype: component.context.contexttype
-                          , roltype
-                          , roleKind
-                          , bind_: bind_( rolinstance )
-                          , bind
-                          , checkbinding
-                          , removerol
-                          , rolinstance
-                          , isselected: true // To accommodate the PSRol definition.
-                        });
-            });
+          if (component.props.rolekind)
+          {
+            component.setState( { contextinstance: component.contextInstance()
+                        , contexttype: component.context.contexttype
+                        , roltype
+                        , roleKind: component.props.rolekind
+                        , bind_: bind_( rolinstance )
+                        , bind
+                        , checkbinding
+                        , removerol
+                        , rolinstance
+                        , isselected: true // To accommodate the PSRol definition.
+                      });
+          }
+          else
+          {
+            // Get the role kind. No need to unsubscribe: the result won't change.
+            pproxy.getRoleKind( roltype,
+              function(roleKindArr)
+              {
+                const roleKind = roleKindArr[0];
+                component.setState( { contextinstance: component.contextInstance()
+                            , contexttype: component.context.contexttype
+                            , roltype
+                            , roleKind
+                            , bind_: bind_( rolinstance )
+                            , bind
+                            , checkbinding
+                            , removerol
+                            , rolinstance
+                            , isselected: true // To accommodate the PSRol definition.
+                          });
+              });
+          }
         }
 
         if (component.props.roleinstance)
@@ -357,6 +384,8 @@ RoleInstance.contextType = PSContext;
 RoleInstance.propTypes =
   { role: PropTypes.string
   , roleinstance: PropTypes.string
+  , roletype: PropTypes.string
+  , rolekind: PropTypes.string
   , contextinstance: PropTypes.string
   // fully qualified name: the type of Context to create.
   // The core loads the model that defines this type, if it is not locally available.

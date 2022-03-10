@@ -192,6 +192,8 @@ export default class TableCell extends PerspectivesComponent
                 roleinstance={component.props.roleinstance}
                 contextinstance={component.props.perspective.contextInstance}
                 contexttocreate={component.props.perspective.contextTypesToCreate[0]}
+                roletype={component.props.perspective.roleType}
+                rolekind={component.props.perspective.roleKind}
               >
                 <RoleRepresentation
                   inputRef={component.inputRef}

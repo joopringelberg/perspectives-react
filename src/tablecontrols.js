@@ -23,6 +23,7 @@ import PerspectivesComponent from "./perspectivescomponent.js";
 const PDRproxy = require("perspectives-proxy").PDRproxy;
 import {AppContext} from "./reactcontexts";
 import ActionDropDown from "./actiondropdown.js";
+import {PSContext} from "./reactcontexts";
 import TablePasteRole from "./tablepasterole.js";
 
 import {PlusIcon} from '@primer/octicons-react';
@@ -46,6 +47,7 @@ export default class TableControls extends PerspectivesComponent
   createRole (receiveResponse)
   {
     const component = this;
+    // NOTE we just take the first context type here, for now!
     const contextToCreate = component.props.perspective.contextTypesToCreate[0];
     const roleType = component.props.perspective.roleType;
     PDRproxy.then( function (pproxy)
@@ -65,8 +67,8 @@ export default class TableControls extends PerspectivesComponent
           },
           roleType,
           component.props.perspective.contextInstance,
-          // NOTE we just take the first context type here, for now!
-          contextToCreate,
+          // The type of the embedding context.
+          component.context.contexttype,
           component.props.perspective.userRoleType,
           function(contextAndExternalRole)
           {
@@ -166,6 +168,8 @@ export default class TableControls extends PerspectivesComponent
     }
   }
 }
+
+TableControls.contextType = PSContext;
 
 TableControls.propTypes =
   { createButton: PropTypes.bool.isRequired

@@ -167,6 +167,12 @@ export default class SmartFieldControl extends Component
     }
   }
 
+  // Returns an array of strings.
+  enumeration()
+  {
+    return this.props.serialisedProperty.constrainingFacets.enumeration || [];
+  }
+
   render()
   {
     function toggleValue()
@@ -177,8 +183,32 @@ export default class SmartFieldControl extends Component
         component.changeValue(newvalue);
       }
     }
+    function htmlControlType ()
+    {
+      const controlType = component.mapRange( component.props.serialisedProperty.range );
+      if (controlType == "checkbox")
+      {
+        return "checkbox";
+      }
+      if (controlType == "text")
+      {
+        if (component.minLength(controlType) > 80)
+        {
+          return "textarea";
+        }
+        else if (component.enumeration())
+        {
+          return "select";
+        }
+        else
+        {
+          return "input";
+        }
+      }
+    }
+
     const component = this;
-    const controlType = component.mapRange( component.props.serialisedProperty.range );
+    const controlType = htmlControlType();
     const mandatory = component.props.serialisedProperty.isMandatory;
     switch ( controlType ){
       case "checkbox":
@@ -193,13 +223,33 @@ export default class SmartFieldControl extends Component
               onChange={ toggleValue }
               required={mandatory}
             />
-          </div>
-);
+          </div>);
+      case "select":
+        return (
+          <div onKeyDown={e => component.handleKeyDown(e, e.target.value)}>
+            <Form.Control
+              as="select"
+              ref= { component.props.inputRef}
+              tabIndex={component.props.isselected ? receiveFocusByKeyboard : focusable}
+              aria-label={ component.props.serialisedProperty.displayName }
+              readOnly={ component.props.disabled }
+              value={ component.state.value }
+              onChange={e => component.setState({value: e.target.value}) }
+              onBlur={component.leaveControl}
+              required={mandatory}
+              minLength={component.minLength(controlType)}
+              maxLength={component.maxLength(controlType)}
+            >
+            {
+              component.enumeration().map( value => <option key={value}>{value}</option>)
+            }
+            </Form.Control>
+          </div>);
       default:
         return (
           <div onKeyDown={e => component.handleKeyDown(e, e.target.value)}>
             <Form.Control
-              as={ controlType == "text" && component.minLength(controlType) > 80 ? "textarea" : "input" }
+              as={ controlType }
               ref= { component.props.inputRef}
               tabIndex={component.props.isselected ? receiveFocusByKeyboard : focusable}
               aria-label={ component.props.serialisedProperty.displayName }
@@ -232,7 +282,7 @@ SmartFieldControl.propTypes =
           , maxLength: PropTypes.number
           , pattern: PropTypes.string
           , whiteSpace: PropTypes.string
-          , enumeration: PropTypes.arrayOf(PropTypes.String)
+          , enumeration: PropTypes.arrayOf(PropTypes.string)
           , maxInclusive: PropTypes.string
           , maxExclusive: PropTypes.string
           , minInclusive: PropTypes.string

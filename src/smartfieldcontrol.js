@@ -48,6 +48,8 @@ export default class SmartFieldControl extends Component
     // `value` is a string.
     this.state = { value: this.valueOnProps() };
     this.leaveControl = this.leaveControl.bind(this);
+    this.inputType = this.mapRange( this.props.serialisedProperty.range );
+    this.controlType = this.htmlControlType();
   }
 
   componentDidUpdate(prevProps)
@@ -55,6 +57,30 @@ export default class SmartFieldControl extends Component
     if (prevProps.propertyValues.values[0] != this.props.propertyValues.values[0])
     {
       this.setState({ value: this.valueOnProps()});
+    }
+  }
+
+  htmlControlType ()
+  {
+    const controlType = this.mapRange(this.props.serialisedProperty.range );
+    if (controlType == "checkbox")
+    {
+      return "checkbox";
+    }
+    if (controlType == "text")
+    {
+      if (this.minLength(controlType) > 80)
+      {
+        return "textarea";
+      }
+      else if (this.enumeration().length > 0)
+      {
+        return "select";
+      }
+      else
+      {
+        return "input";
+      }
     }
   }
 
@@ -121,7 +147,7 @@ export default class SmartFieldControl extends Component
           break;
         case 13: // Return
           // Safe changes, allow event to bubble.
-          if (event.target.reportValidity())
+          if (component.reportValidity(event))
           {
             component.changeValue(newvalue);
           }
@@ -141,29 +167,68 @@ export default class SmartFieldControl extends Component
 
   // This method is called onBlur, i.e. when the user navigates away
   // from the SmartFieldControl.
+  // Event target is the input control.
   leaveControl(e)
   {
     this.changeValue(e.target.value);
-    return e.target.reportValidity();
+    return this.reportValidity(e);
+  }
+
+  // The event should have the input element as target. Returns true iff no constraints are violated.
+  reportValidity(event)
+  {
+    // A ValidityState object. See: https://developer.mozilla.org/en-US/docs/Web/API/ValidityState
+    const validity = event.target.validity;
+    if (validity.patternMismatch)
+    {
+      // We now expect a pattern in the perspective.
+      const label = this.pattern(this.inputType).label;
+      event.target.setCustomValidity( label );
+    }
+    else
+    {
+      event.target.setCustomValidity( "" );
+    }
+    return event.target.reportValidity();
   }
 
   // Returns an integer or undefined.
-  minLength(controlType)
+  minLength()
   {
     const component = this;
-    if (["text", "search", "url", "tel", "email", "password"].indexOf(controlType) >= 0)
+    if (["text", "search", "url", "tel", "email", "password"].indexOf(this.inputType) >= 0)
     {
       return component.props.serialisedProperty.constrainingFacets.minLength;
     }
   }
 
   // Returns an integer or undefined.
-  maxLength(controlType)
+  maxLength()
   {
     const component = this;
-    if (["text", "search", "url", "tel", "email", "password"].indexOf(controlType) >= 0)
+    if (["text", "search", "url", "tel", "email", "password"].indexOf(this.inputType) >= 0)
     {
       return component.props.serialisedProperty.constrainingFacets.maxLength;
+    }
+  }
+
+  // Returns an integer or undefined.
+  minInclusive()
+  {
+    const component = this;
+    if (["range", "number", "date", "month", "week", "datetime", "datetime-local", "time"].indexOf(this.inputType) >= 0)
+    {
+      return component.props.serialisedProperty.constrainingFacets.minInclusive;
+    }
+  }
+
+  // Returns an integer or undefined.
+  maxInclusive()
+  {
+    const component = this;
+    if (["range", "number", "date", "month", "week", "datetime", "datetime-local", "time"].indexOf(this.inputType) >= 0)
+    {
+      return component.props.serialisedProperty.constrainingFacets.maxInclusive;
     }
   }
 
@@ -171,6 +236,18 @@ export default class SmartFieldControl extends Component
   enumeration()
   {
     return this.props.serialisedProperty.constrainingFacets.enumeration || [];
+  }
+
+  // Returns object of this shape:
+  // { regex: PropTypes.string.isRequired
+  // , label: PropTypes.string.isRequired}
+  pattern()
+  {
+    const component = this;
+    if (["text", "search", "url", "tel", "email", "password"].indexOf(this.inputType) >= 0)
+    {
+      return component.props.serialisedProperty.constrainingFacets.pattern;
+    }
   }
 
   render()
@@ -183,34 +260,22 @@ export default class SmartFieldControl extends Component
         component.changeValue(newvalue);
       }
     }
-    function htmlControlType ()
+    // Expects object of this shape:
+    // { regex: PropTypes.string.isRequired
+    // , label: PropTypes.string.isRequired}
+    // Returns the string that represents just the regex, no flags.
+    // label has the shape /regex/flags.
+    // flags will be ignored.
+    function patternToSource(p)
     {
-      const controlType = component.mapRange( component.props.serialisedProperty.range );
-      if (controlType == "checkbox")
-      {
-        return "checkbox";
-      }
-      if (controlType == "text")
-      {
-        if (component.minLength(controlType) > 80)
-        {
-          return "textarea";
-        }
-        else if (component.enumeration())
-        {
-          return "select";
-        }
-        else
-        {
-          return "input";
-        }
-      }
+      const r = /\/(.*)\//;
+      return p.regex.match(r)[1];
     }
 
     const component = this;
-    const controlType = htmlControlType();
     const mandatory = component.props.serialisedProperty.isMandatory;
-    switch ( controlType ){
+    const pattern = component.pattern(this.inputType);
+    switch ( this.controlType ){
       case "checkbox":
         return (
           <div onKeyDown={e => component.handleKeyDown(e, component.state.value)}>
@@ -237,8 +302,6 @@ export default class SmartFieldControl extends Component
               onChange={e => component.setState({value: e.target.value}) }
               onBlur={component.leaveControl}
               required={mandatory}
-              minLength={component.minLength(controlType)}
-              maxLength={component.maxLength(controlType)}
             >
             {
               component.enumeration().map( value => <option key={value}>{value}</option>)
@@ -249,18 +312,21 @@ export default class SmartFieldControl extends Component
         return (
           <div onKeyDown={e => component.handleKeyDown(e, e.target.value)}>
             <Form.Control
-              as={ controlType }
+              as={ component.controlType }
               ref= { component.props.inputRef}
               tabIndex={component.props.isselected ? receiveFocusByKeyboard : focusable}
-              aria-label={ component.props.serialisedProperty.displayName }
+              aria-label={ pattern? pattern.label : component.props.serialisedProperty.displayName }
               readOnly={ component.props.disabled }
               value={ component.state.value }
               onChange={e => component.setState({value: e.target.value}) }
               onBlur={component.leaveControl}
-              type={controlType}
+              type={component.inputType}
               required={mandatory}
-              minLength={component.minLength(controlType)}
-              maxLength={component.maxLength(controlType)}
+              minLength={component.minLength()}
+              maxLength={component.maxLength()}
+              min={component.minInclusive()}
+              max={component.maxInclusive()}
+              pattern={ pattern ? patternToSource(pattern) : null }
             />
           </div>);
     }
@@ -280,7 +346,10 @@ SmartFieldControl.propTypes =
         , constrainingFacets: PropTypes.shape(
           { minLength: PropTypes.number
           , maxLength: PropTypes.number
-          , pattern: PropTypes.string
+          , pattern: PropTypes.shape(
+            { regex: PropTypes.string.isRequired
+            , label: PropTypes.string.isRequired}
+          )
           , whiteSpace: PropTypes.string
           , enumeration: PropTypes.arrayOf(PropTypes.string)
           , maxInclusive: PropTypes.string

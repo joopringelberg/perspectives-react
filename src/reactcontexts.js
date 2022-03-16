@@ -7,6 +7,16 @@ export const PSContext = React.createContext(
   , myroletype: ""
   });
 
+  export const AppContext = React.createContext(
+    { systemExternalRole: undefined
+    , externalRoleId: undefined
+    , myRoleType: undefined
+    // The user identifier (his GUID).
+    , systemUser: undefined
+    , setEventDispatcher: function(){}
+    , couchdbUrl: undefined
+    });
+
 export const PSRoleInstances = React.createContext(
   { contextinstance: ""
   , contexttype: ""
@@ -50,12 +60,3 @@ export const PSProperty = React.createContext(
   , setvalue: function(){}
   }
 );
-
-export const AppContext = React.createContext(
-  { systemExternalRole: undefined
-  , externalRoleId: undefined
-  , myRoleType: undefined
-  , systemUser: undefined
-  , setEventDispatcher: function(){}
-  , couchdbUrl: undefined
-  });

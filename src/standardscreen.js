@@ -39,15 +39,30 @@ export default class StandardScreen extends PerspectivesComponent
     this.state =
       { perspectives: undefined };
   }
-  componentDidMount ()
+
+  componentDidMount()
+  {
+    this.getPerspectives();
+  }
+
+  componentDidUpdate(prevProps)
+  {
+    if (this.props.contextinstance != prevProps.contextinstance ||
+        this.props.myroletype != prevProps.myroletype )
+    {
+      this.getPerspectives();
+    }
+  }
+
+  getPerspectives ()
   {
     const component = this;
     PDRproxy.then(function(pproxy)
       {
         // (contextInstance, userRoleInstance, userRoleType, receiveValues, fireAndForget)
         pproxy.getPerspectives(
-          component.context.contextinstance
-          ,component.context.myroletype
+          component.props.contextinstance
+          ,component.props.myroletype
           ,function( perspectives )
           {
             console.log(perspectives);
@@ -57,16 +72,6 @@ export default class StandardScreen extends PerspectivesComponent
         );
       });
   }
-
-  componentDidUpdate(prevProps)
-  {
-    if (this.props.contextinstance != prevProps.contextinstance ||
-        this.props.myroletype != prevProps.myroletype )
-    {
-      this.componentDidMount();
-    }
-  }
-
 
   mayCreateInstance( perspective )
   {
@@ -82,9 +87,9 @@ export default class StandardScreen extends PerspectivesComponent
               { perspective.isFunctional ?
                 <PerspectiveBasedForm
                   perspective={perspective}
-                  myroletype={component.context.myroletype}
-                  contextinstance={component.context.contextinstance}
-                  contexttype={component.context.contexttype}
+                  myroletype={component.props.myroletype}
+                  contextinstance={component.props.contextinstance}
+                  contexttype={component.props.contexttype}
                   behaviours={mapRoleVerbsToBehaviours( perspective )}
                   cardtitle={ perspective.identifyingProperty }
                   />
@@ -114,32 +119,32 @@ export default class StandardScreen extends PerspectivesComponent
               externeProperties: {}
             },
             perspective.roleType,
-            component.context.contextinstance,
-            component.context.contexttype,
-            component.context.myroletype,
+            component.props.contextinstance,
+            component.props.contexttype,
+            component.props.myroletype,
             function(){});
         }
         else
         {
           pproxy.createRole(
-                component.context.contextinstance,
+                component.props.contextinstance,
                 perspective.roleType,
-                component.context.myroletype);
+                component.props.myroletype);
         }
       });
   }
 
   handleKeyDown (event, perspective)
-    {
-      const component = this;
-        switch(event.keyCode){
-          case 13: // Return
-          case 32: // Space
-            component.createRoleInstance( perspective );
-            event.preventDefault();
-            event.stopPropagation();
-            break;
-        }
+  {
+    const component = this;
+      switch(event.keyCode){
+        case 13: // Return
+        case 32: // Space
+          component.createRoleInstance( perspective );
+          event.preventDefault();
+          event.stopPropagation();
+          break;
+      }
   }
 
   render()
@@ -147,6 +152,7 @@ export default class StandardScreen extends PerspectivesComponent
     const component = this;
     if (component.stateIsComplete())
     {
+      // Fetched perspectives from the server, but do we have one?
       if (component.state.perspectives[0])
       {
         return (
@@ -214,6 +220,9 @@ export default class StandardScreen extends PerspectivesComponent
 }
 
 StandardScreen.contextType = PSContext;
+
+// These are exactly the props in PSContext.
+// However, we need them as props to compare them with previous props in componentDidUpdate.
 StandardScreen.propTypes =
   { contextinstance: PropTypes.string.isRequired
   , contexttype: PropTypes.string.isRequired

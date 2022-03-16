@@ -105,10 +105,11 @@ export default function Screen(props)
 }
 
 Screen.propTypes =
-  { rolinstance: PropTypes.string.isRequired
+  { externalroleinstance: PropTypes.string.isRequired
+  , setMyRoleType: PropTypes.func.isRequired
   };
 
-// Screen_ loads the component in the context of the role `rolinstance` that it receives on its props.
+// Screen_ loads the component in the context of the role `externalroleinstance` that it receives on its props.
 class Screen_ extends PerspectivesComponent
 {
   constructor (props)
@@ -119,8 +120,6 @@ class Screen_ extends PerspectivesComponent
 
   resetState()
   {
-    // This represents 'me': the 'own' user, i.e. an instance of model:System$PerspectivesSystem$User.
-    this.state.useridentifier = undefined;
     // The role that 'me' plays in the current context. We pass it on to ContextOfRole
     // and that component includes it in the PSContext it provides to descendants.
     this.state.myroletype = undefined;
@@ -135,67 +134,39 @@ class Screen_ extends PerspectivesComponent
   computeState ()
   {
     const component = this;
+    const externalRole = component.props.externalroleinstance;
+    const userIdentifier = component.props.systemUser;
     PDRproxy.then(
       function(pproxy)
       {
-        function completeState(externalRole, userIdentifier)
-        {
-          pproxy.getRolContext(
-            externalRole,
-            function (contextIds)
-            {
-              pproxy.getContextType(
-                contextIds[0],
-                function (contextTypes)
-                {
-                  component.addUnsubscriber(
-                    pproxy.getMeForContext(
-                      externalRole,
-                      // userRoles includes roles from aspects.
-                      function(userRoles)
-                      {
-                        importScreens( userRoles, userIdentifier[0], component.props.couchdbUrl).then( screenModules =>
-                          {
-                            component.setState(
-                              { useridentifier: userIdentifier[0]
-                              , myroletype: userRoles[0]
-                              , externalrole: externalRole
-                              , contextinstance: contextIds[0]
-                              , contexttype: contextTypes[0]
-                              , modules: screenModules
-                              });
-                            component.props.setMyRoleType( userRoles[0]);
-                          });
-                      }));
-                }, true); // fireandforget: context type will never change.
-            }, true); // fireandforget: context will never change.
-
-        }
-        pproxy.getUserIdentifier(
-          function(userIdentifier)
+        pproxy.getRolContext(
+          externalRole,
+          function (contextIds)
           {
-            completeState(component.props.rolinstance, userIdentifier);
-            // TODO. De code hieronder zou niet meer nodig zijn.
-            // if ( isExternalRole ( component.props.rolinstance ))
-            // {
-            //   completeState(component.props.rolinstance, userIdentifier);
-            // }
-            // else
-            // {
-            //   component.addUnsubscriber(
-            //     pproxy.getBinding(
-            //       component.props.rolinstance,
-            //       function( binding )
-            //       {
-            //         // If no binding, Leave the state incomplete.
-            //         if (binding[0])
-            //         {
-            //           completeState( binding[0], userIdentifier);
-            //         }
-            //       }));
-            // }
-          },
-          true);
+            pproxy.getContextType(
+              contextIds[0],
+              function (contextTypes)
+              {
+                component.addUnsubscriber(
+                  pproxy.getMeForContext(
+                    externalRole,
+                    // userRoles includes roles from aspects.
+                    function(userRoles)
+                    {
+                      importScreens( userRoles, userIdentifier, component.props.couchdbUrl).then( screenModules =>
+                        {
+                          component.setState(
+                            { myroletype: userRoles[0]
+                            , externalrole: externalRole
+                            , contextinstance: contextIds[0]
+                            , contexttype: contextTypes[0]
+                            , modules: screenModules
+                            });
+                          component.props.setMyRoleType( userRoles[0]);
+                        });
+                    }));
+              }, true); // fireandforget: context type will never change.
+          }, true); // fireandforget: context will never change.
       });
   }
 
@@ -207,7 +178,7 @@ class Screen_ extends PerspectivesComponent
   componentDidUpdate (prevProps)
   {
     const component = this;
-    if ( component.props.rolinstance !== prevProps.rolinstance)
+    if ( component.props.externalroleinstance !== prevProps.externalroleinstance)
     {
       component.unsubscribeAll().then(
         function()
@@ -293,8 +264,11 @@ class Screen_ extends PerspectivesComponent
 Screen_.contextType = PSContext;
 
 Screen_.propTypes =
-  { rolinstance: PropTypes.string.isRequired
-  , couchdbUrl: PropTypes.string
-  , systemUser: PropTypes.string.isRequired
+  {
+  // Inherited from Screen:
+    externalroleinstance: PropTypes.string.isRequired
   , setMyRoleType: PropTypes.func.isRequired
+  // Own props (values come from AppContext).
+  , couchdbUrl: PropTypes.string.isRequired
+  , systemUser: PropTypes.string.isRequired
   };

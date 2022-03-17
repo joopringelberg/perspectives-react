@@ -24,6 +24,7 @@ import PerspectivesComponent from "./perspectivescomponent.js";
 import {deconstructLocalName} from "./urifunctions.js";
 import SmartFieldControl from "./smartfieldcontrol.js";
 import RoleInstance from "./roleinstance.js";
+import {serialisedProperty, propertyValues} from "./perspectiveshape.js";
 
 import "./components.css";
 const PropTypes = require("prop-types");
@@ -163,8 +164,27 @@ export default class TableCell extends PerspectivesComponent
 
   propertyOnlyConsultable()
   {
-    const propertyVerbs = this.props.propertyValues.propertyVerbs;
-    return propertyVerbs.indexOf("Consult") > -1 && propertyVerbs.length == 1;
+    if (this.props.propertyValues)
+    {
+      const propertyVerbs = this.props.propertyValues.propertyVerbs;
+      return propertyVerbs.indexOf("Consult") > -1 && propertyVerbs.length == 1;
+    }
+    else
+    {
+      return false;
+    }
+  }
+
+  values()
+  {
+    if (this.props.propertyValues)
+    {
+      return this.props.propertyValues.values;
+    }
+    else
+    {
+      return [];
+    }
   }
 
   render ()
@@ -207,7 +227,7 @@ export default class TableCell extends PerspectivesComponent
                 <RoleRepresentation
                   inputRef={component.inputRef}
                   tabIndex={receiveFocusByKeyboard}
-                  value={component.props.propertyValues.values}
+                  value={component.values()}
                   className="shadow bg-info"
                   onClick={component.handleClick}
                   labelProperty={deconstructLocalName ( component.props.propertyname )}
@@ -223,7 +243,7 @@ export default class TableCell extends PerspectivesComponent
               <RoleRepresentation
                 inputRef={component.inputRef}
                 tabIndex={focusable}
-                value={component.props.propertyValues.values}
+                value={component.values()}
                 className="shadow"
                 onClick={component.handleClick}
                 labelProperty={deconstructLocalName ( component.props.propertyname )}
@@ -260,35 +280,9 @@ TableCell.propTypes =
   , iscard: PropTypes.bool.isRequired
   , roleinstance: PropTypes.string.isRequired
   , roleRepresentation: PropTypes.func.isRequired
-  , serialisedProperty:
-      PropTypes.shape(
-        { id: PropTypes.string.isRequired
-        , displayName: PropTypes.string.isRequired
-        , isFunctional: PropTypes.bool.isRequired
-        , isMandatory: PropTypes.bool.isRequired
-        , isCalculated: PropTypes.bool.isRequired
-        , range: PropTypes.string.isRequired
-        , constrainingFacets: PropTypes.shape(
-          { minLength: PropTypes.number
-          , maxLength: PropTypes.number
-          , pattern: PropTypes.shape(
-            { regex: PropTypes.string.isRequired
-            , label: PropTypes.string.isRequired}
-          )
-          , whiteSpace: PropTypes.string
-          , enumeration: PropTypes.arrayOf(PropTypes.string)
-          , maxInclusive: PropTypes.string
-          , maxExclusive: PropTypes.string
-          , minInclusive: PropTypes.string
-          , minExclusive: PropTypes.string
-          , totalDigits: PropTypes.number
-          , fractionDigits: PropTypes.number
-          }).isRequired
-        }).isRequired
-  , propertyValues:
-      PropTypes.shape(
-        { values: PropTypes.arrayOf( PropTypes.string ).isRequired
-        , propertyVerbs: PropTypes.arrayOf( PropTypes.string).isRequired
-      }).isRequired
+  , serialisedProperty: serialisedProperty.isRequired
+  // This member is not required, because the state of the role instance
+  // may not allow this property.
+  , propertyValues: propertyValues
   , perspective: PropTypes.object.isRequired
 };

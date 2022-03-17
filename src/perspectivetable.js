@@ -57,7 +57,15 @@ export default class PerspectiveTable extends PerspectivesComponent
   {
     super(props);
     const component = this;
-    this.propertyNames = Object.keys( component.props.perspective.properties );
+
+    const perspective = this.props.perspective;
+    const identifyingProperty = perspective.properties[perspective.identifyingProperty];
+    this.orderedProperties = Object.values(perspective.properties);
+    this.orderedProperties.splice( this.orderedProperties.indexOf( identifyingProperty), 1);
+    this.orderedProperties.unshift(identifyingProperty);
+    this.propertyNames = this.orderedProperties.map( p => p.id);
+
+    // this.propertyNames = Object.keys( component.props.perspective.properties );
     // Map role verbs to behaviour.
     this.roleRepresentation = addBehaviour( Card, mapRoleVerbsToBehaviours( component.props.perspective ) );
     this.eventDiv = React.createRef();
@@ -208,6 +216,7 @@ export default class PerspectiveTable extends PerspectivesComponent
                         roleRepresentation={component.roleRepresentation}
                         roleinstancewithprops={perspective.roleInstances[roleId]}
                         perspective={component.props.perspective}
+                        orderedProperties={component.orderedProperties}
                         />)
                   }
                 </tbody>

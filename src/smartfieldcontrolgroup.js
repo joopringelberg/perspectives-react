@@ -112,12 +112,13 @@ SmartFieldControlGroup.propTypes =
         , isCalculated: PropTypes.bool.isRequired
         , range: PropTypes.string.isRequired
         }).isRequired
-
+  // This member is not required, because the state of the role instance
+  // may not allow this property.
   , propertyValues:
       PropTypes.shape(
         { values: PropTypes.arrayOf( PropTypes.string ).isRequired
         , propertyVerbs: PropTypes.arrayOf( PropTypes.string).isRequired
-      }).isRequired
+      })
 
   , roleId: PropTypes.string
 

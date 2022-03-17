@@ -28,6 +28,8 @@ import
   } from "react-bootstrap";
 const PropTypes = require("prop-types");
 
+import {serialisedProperty, propertyValues} from "./perspectiveshape.js";
+
 ////////////////////////////////////////////////////////////////////////////////
 // TABINDEX VALUES
 ////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +56,9 @@ export default class SmartFieldControl extends Component
 
   componentDidUpdate(prevProps)
   {
-    if (prevProps.propertyValues.values[0] != this.props.propertyValues.values[0])
+    if (prevProps.propertyValues
+        && this.props.propertyValues
+        && prevProps.propertyValues.values[0] != this.props.propertyValues.values[0])
     {
       this.setState({ value: this.valueOnProps()});
     }
@@ -87,7 +91,14 @@ export default class SmartFieldControl extends Component
   // Returns the first value in the `propertyValues` prop, or the empty string.
   valueOnProps()
   {
-    return this.props.propertyValues.values[0] || "";
+    if (this.props.propertyValues)
+    {
+      return this.props.propertyValues.values[0] || "";
+    }
+    else
+    {
+      return "";
+    }
   }
 
   // Zie: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
@@ -334,37 +345,11 @@ export default class SmartFieldControl extends Component
 }
 
 SmartFieldControl.propTypes =
-  { serialisedProperty:
-      PropTypes.shape(
-        { id: PropTypes.string.isRequired
-        , displayName: PropTypes.string.isRequired
-        , isFunctional: PropTypes.bool.isRequired
-        , isMandatory: PropTypes.bool.isRequired
-        , isCalculated: PropTypes.bool.isRequired
-        , range: PropTypes.string.isRequired
-        , constrainingFacets: PropTypes.shape(
-          { minLength: PropTypes.number
-          , maxLength: PropTypes.number
-          , pattern: PropTypes.shape(
-            { regex: PropTypes.string.isRequired
-            , label: PropTypes.string.isRequired}
-          )
-          , whiteSpace: PropTypes.string
-          , enumeration: PropTypes.arrayOf(PropTypes.string)
-          , maxInclusive: PropTypes.string
-          , maxExclusive: PropTypes.string
-          , minInclusive: PropTypes.string
-          , minExclusive: PropTypes.string
-          , totalDigits: PropTypes.number
-          , fractionDigits: PropTypes.number
-          }).isRequired
-        }).isRequired
+  { serialisedProperty: serialisedProperty.isRequired
 
-  , propertyValues:
-      PropTypes.shape(
-        { values: PropTypes.arrayOf( PropTypes.string ).isRequired
-        , propertyVerbs: PropTypes.arrayOf( PropTypes.string).isRequired
-      }).isRequired
+  // This member is not required, because the state of the role instance
+  // may not allow this property.
+  , propertyValues: propertyValues
 
   , roleId: PropTypes.string
 

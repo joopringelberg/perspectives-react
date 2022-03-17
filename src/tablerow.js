@@ -23,7 +23,7 @@ import PerspectivesComponent from "./perspectivescomponent.js";
 import TableCell from "./tablecell.js";
 import "./components.css";
 const PropTypes = require("prop-types");
-
+import {roleinstancewithprops, serialisedProperty} from "./perspectiveshape.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 // TABLEROW
@@ -73,14 +73,13 @@ export default class TableRow extends PerspectivesComponent
   render()
   {
     const component = this;
-    const perspective = component.props.perspective;
     const roleInstanceWithProps = component.props.roleinstancewithprops;
     return  <tr
               onClick={component.handleClick}
               onKeyDown={component.handleKeyDown}
               ref={component.ref}
             >{
-              Object.values(perspective.properties).map( serialisedProperty =>
+              component.props.orderedProperties.map( serialisedProperty =>
                 <TableCell
                   key = {serialisedProperty.id}
                   propertyname = {serialisedProperty.id}
@@ -92,6 +91,7 @@ export default class TableRow extends PerspectivesComponent
                   isselected = { component.props.isselected && (component.props.column == serialisedProperty.id) }
                   roleRepresentation={component.props.roleRepresentation}
                   perspective={component.props.perspective}
+                  orderedProperties={component.props.orderedProperties}
                 /> )
             }</tr>;
   }
@@ -104,22 +104,7 @@ TableRow.propTypes =
   , isselected: PropTypes.bool.isRequired
   , cardcolumn: PropTypes.string.isRequired
   , roleRepresentation: PropTypes.func.isRequired
-  , roleinstancewithprops: PropTypes.shape(
-    { roleId: PropTypes.string
-    , objectStateBasedRoleVerbs: PropTypes.arrayOf(PropTypes.string)
-    // -- keys are the string representation of PropertyType,
-    // -- so this map can be read as one from PropertyType to PropertyVerbs, too.
-    , propertyValues: PropTypes.objectOf(
-      // ValuesWithVerbs
-      PropTypes.shape(
-        { values: PropTypes.arrayOf (PropTypes.string)
-        , propertyVerbs: PropTypes.arrayOf (PropTypes.string)
-        }))
-    , actions: PropTypes.arrayOf(PropTypes.string)
-    // This member is not needed on the client side, but we need it to
-    // compile a complete list of SerialisedProperties.
-    , objectStateBasedProperties: PropTypes.arrayOf(PropTypes.string)
-    }
-  )
+  , roleinstancewithprops: roleinstancewithprops
   , perspective: PropTypes.object.isRequired
+  , orderedProperties: PropTypes.arrayOf(serialisedProperty)
 };

@@ -145,7 +145,10 @@ export default class TableCell extends PerspectivesComponent
             break;
         }
       }
-      else if (!event.shiftKey && !component.props.serialisedProperty.isCalculated)
+      else if (!event.shiftKey
+                && !component.props.serialisedProperty.isCalculated
+                && !component.propertyOnlyConsultable()
+              )
       {
         switch(event.keyCode){
           case 13: // Return
@@ -156,6 +159,12 @@ export default class TableCell extends PerspectivesComponent
           }
       }
     }
+  }
+
+  propertyOnlyConsultable()
+  {
+    const propertyVerbs = this.props.propertyValues.propertyVerbs;
+    return propertyVerbs.indexOf("Consult") > -1 && propertyVerbs.length == 1;
   }
 
   render ()
@@ -259,7 +268,22 @@ TableCell.propTypes =
         , isMandatory: PropTypes.bool.isRequired
         , isCalculated: PropTypes.bool.isRequired
         , range: PropTypes.string.isRequired
-        , verbs: PropTypes.arrayOf( PropTypes.string ).isRequired
+        , constrainingFacets: PropTypes.shape(
+          { minLength: PropTypes.number
+          , maxLength: PropTypes.number
+          , pattern: PropTypes.shape(
+            { regex: PropTypes.string.isRequired
+            , label: PropTypes.string.isRequired}
+          )
+          , whiteSpace: PropTypes.string
+          , enumeration: PropTypes.arrayOf(PropTypes.string)
+          , maxInclusive: PropTypes.string
+          , maxExclusive: PropTypes.string
+          , minInclusive: PropTypes.string
+          , minExclusive: PropTypes.string
+          , totalDigits: PropTypes.number
+          , fractionDigits: PropTypes.number
+          }).isRequired
         }).isRequired
   , propertyValues:
       PropTypes.shape(

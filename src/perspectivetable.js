@@ -206,6 +206,7 @@ export default class PerspectiveTable extends PerspectivesComponent
                         column={component.state.column}
                         cardcolumn = {perspective.identifyingProperty}
                         roleRepresentation={component.roleRepresentation}
+                        roleinstancewithprops={perspective.roleInstances[roleId]}
                         perspective={component.props.perspective}
                         />)
                   }

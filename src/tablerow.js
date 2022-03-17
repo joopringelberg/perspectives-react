@@ -74,7 +74,7 @@ export default class TableRow extends PerspectivesComponent
   {
     const component = this;
     const perspective = component.props.perspective;
-    const roleInstanceWithProps = component.props.perspective.roleInstances[component.props.roleinstance];
+    const roleInstanceWithProps = component.props.roleinstancewithprops;
     return  <tr
               onClick={component.handleClick}
               onKeyDown={component.handleKeyDown}
@@ -104,5 +104,22 @@ TableRow.propTypes =
   , isselected: PropTypes.bool.isRequired
   , cardcolumn: PropTypes.string.isRequired
   , roleRepresentation: PropTypes.func.isRequired
+  , roleinstancewithprops: PropTypes.shape(
+    { roleId: PropTypes.string
+    , objectStateBasedRoleVerbs: PropTypes.arrayOf(PropTypes.string)
+    // -- keys are the string representation of PropertyType,
+    // -- so this map can be read as one from PropertyType to PropertyVerbs, too.
+    , propertyValues: PropTypes.objectOf(
+      // ValuesWithVerbs
+      PropTypes.shape(
+        { values: PropTypes.arrayOf (PropTypes.string)
+        , propertyVerbs: PropTypes.arrayOf (PropTypes.string)
+        }))
+    , actions: PropTypes.arrayOf(PropTypes.string)
+    // This member is not needed on the client side, but we need it to
+    // compile a complete list of SerialisedProperties.
+    , objectStateBasedProperties: PropTypes.arrayOf(PropTypes.string)
+    }
+  )
   , perspective: PropTypes.object.isRequired
 };

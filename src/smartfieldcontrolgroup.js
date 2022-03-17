@@ -111,7 +111,6 @@ SmartFieldControlGroup.propTypes =
         , isMandatory: PropTypes.bool.isRequired
         , isCalculated: PropTypes.bool.isRequired
         , range: PropTypes.string.isRequired
-        , verbs: PropTypes.arrayOf( PropTypes.string ).isRequired
         }).isRequired
 
   , propertyValues:

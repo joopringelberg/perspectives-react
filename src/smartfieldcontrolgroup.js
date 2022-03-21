@@ -78,6 +78,19 @@ export default class SmartFieldControlGroup extends Component
     }
   }
 
+  propertyOnlyConsultable()
+  {
+    if (this.props.propertyValues)
+    {
+      const propertyVerbs = this.props.propertyValues.propertyVerbs;
+      return propertyVerbs.indexOf("Consult") > -1 && propertyVerbs.length == 1;
+    }
+    else
+    {
+      return false;
+    }
+  }
+
   render()
   {
     const component = this;
@@ -94,7 +107,7 @@ export default class SmartFieldControlGroup extends Component
             propertyValues = { component.props.propertyValues }
             roleId = { component.props.roleId }
             myroletype = { component.props.myroletype }
-            disabled={ component.props.roleId ? false : true }
+            disabled={ component.propertyOnlyConsultable() }
             isselected={true}
           />
         </Col>

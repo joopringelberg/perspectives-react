@@ -246,17 +246,20 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
     else
     {
       // There may be properties for instances when they are made. Just show a create button.
-      return  <Tab key={perspective.id} eventKey={perspective.id} title={perspective.displayName}>
+      return  <div
+                className="border-bottom pb-4 pt-4 widget"
+                key={index}
+              >
                 <Button
                   tabIndex="0"
                   variant="secondary"
-                  onClick={component.createRoleInstance}
+                  onClick={component.createRoleInstance(perspective)}
                   onKeyDown={ ev => component.handleKeyDown(ev, perspective)}
                   alt="Add an instance"
                   aria-label="Click or press space or return to add a row"
                   >Create
                 </Button>
-              </Tab>;
+              </div>;
     }
   }
   render()

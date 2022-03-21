@@ -140,7 +140,7 @@ export default class TableControls extends PerspectivesComponent
     const actions = component.computeActions();
     if ( component.stateIsComplete(["currentRoleInstance"]) )
     {
-      return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for table" className="mb-5">
+      return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for table">
                 {
                   component.props.createButton ?
                   <div

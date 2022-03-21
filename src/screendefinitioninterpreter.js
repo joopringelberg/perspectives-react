@@ -148,7 +148,7 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
   {
     const component = this;
     return (
-      <Tabs defaultActiveKey={1} id="perspective-tabs">
+      <Tabs defaultActiveKey={0} id="perspective-tabs">
       {
         tabs.map((tab, index) =>
           <Tab key={index} eventKey={index} title={tab.title}>
@@ -203,26 +203,24 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
       </Col>
     );
   }
-  buildTable(widgetCommonFields, index)
+  buildTable(widgetCommonFields)
   {
     const perspective = widgetCommonFields.perspective;
     // const title = widgetCommonFields.title;
     return (
       <PerspectiveTable
-        key={index}
         cardcolumn={ perspective.identifyingProperty }
         //roleRepresentation
         perspective={perspective}
         />);
   }
-  buildForm(widgetCommonFields, index)
+  buildForm(widgetCommonFields)
   {
     const component = this;
     const perspective = widgetCommonFields.perspective;
     // const title = widgetCommonFields.title;
     return (
       <PerspectiveBasedForm
-        key={index}
         perspective={perspective}
         myroletype={component.props.myroletype}
         contextinstance={component.props.contextinstance}
@@ -238,7 +236,10 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
     if (Object.keys( perspective.roleInstances ).length > 0 )
     {
       return (
-        <div className="border-bottom pb-2">
+        <div
+          className="border-bottom pb-4 pt-4 widget"
+          key={index}
+          >
         {widgetFunction( widgetCommonFields, index )}
         </div>);
     }

@@ -345,7 +345,7 @@ class FormControls extends PerspectivesComponent
     const component = this;
     if ( component.stateIsComplete() )
     {
-      return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for table" className="mb-5">
+      return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for table">
                 {
                   component.props.createButton ?
                   <div

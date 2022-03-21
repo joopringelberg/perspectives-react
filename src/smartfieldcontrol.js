@@ -309,6 +309,7 @@ export default class SmartFieldControl extends Component
               tabIndex={component.props.isselected ? receiveFocusByKeyboard : focusable}
               aria-label={ component.props.serialisedProperty.displayName }
               readOnly={ component.props.disabled }
+              disabled={ component.props.disabled }
               value={ component.state.value }
               onChange={e => component.setState({value: e.target.value}) }
               onBlur={component.leaveControl}

@@ -178,8 +178,6 @@ export default class PerspectiveTable extends PerspectivesComponent
       perspective = component.props.perspective;
 
     return (
-      <div>
-      {
         component.stateIsComplete(["row"]) ?
         <PSContext.Consumer>{
           pscontext =>
@@ -230,8 +228,7 @@ export default class PerspectiveTable extends PerspectivesComponent
         }</PSContext.Consumer>
         :
         null
-      }
-      </div>);
+      );
   }
 }
 

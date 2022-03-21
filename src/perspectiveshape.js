@@ -18,7 +18,7 @@
 // Full text of this license can be found in the LICENSE file in the projects root.
 // END LICENSE
 
-// This Component is built upon the data sent from the PDR for a single property.
+// The shape of structures sent from the PDR, describing screens and perspectives.
 
 const PropTypes = require("prop-types");
 
@@ -57,8 +57,8 @@ export const propertyValues =
 export const roleinstancewithprops = PropTypes.shape(
   { roleId: PropTypes.string
   , objectStateBasedRoleVerbs: PropTypes.arrayOf(PropTypes.string)
-  // -- keys are the string representation of PropertyType,
-  // -- so this map can be read as one from PropertyType to PropertyVerbs, too.
+  // // keys are the string representation of PropertyType,
+  // // so this map can be read as one from PropertyType to PropertyVerbs, too.
   , propertyValues: PropTypes.objectOf(
     // ValuesWithVerbs
     PropTypes.shape(
@@ -70,3 +70,60 @@ export const roleinstancewithprops = PropTypes.shape(
   // compile a complete list of SerialisedProperties.
   , objectStateBasedProperties: PropTypes.arrayOf(PropTypes.string)
   });
+
+export const SerialisedPerspective =
+  {
+  ////
+  //// Type level properties
+  ////
+  id: PropTypes.string.isRequired
+  , displayName: PropTypes.string.isRequired
+  , isFunctional: PropTypes.bool.isRequired
+  , isMandatory: PropTypes.bool.isRequired
+  , isCalculated: PropTypes.bool.isRequired
+  // The RoleType having the Perspective.
+  , userRoleType: PropTypes.string.isRequired
+  // The RoleType of the object of the Perspective.
+  , roleType: /*OPTIONAL*/ PropTypes.string
+  , roleKind: /*OPTIONAL*/ PropTypes.string
+  , contextTypesToCreate: PropTypes.arrayOf(PropTypes.string)
+  , identifyingProperty: PropTypes.string.isRequired
+  ////
+  //// Instance properties
+  ////
+  , contextInstance: PropTypes.string.isRequired
+  , roleInstances: PropTypes.objectOf(roleinstancewithprops)
+  ////
+  //// State dependent properties
+  ////
+  , verbs: PropTypes.arrayOf(PropTypes.string)
+  // All properties that are available given Context and Subject state,
+  // unified with all properties that are available given the Object states of
+  // instances. In a table, we should create a column for each.
+  , properties: PropTypes.objectOf(serialisedProperty)
+  , actions: PropTypes.arrayOf(PropTypes.string)
+};
+
+export const ScreenDefinition =
+  { title: PropTypes.string.isRequired
+  , tabs: /*OPTIONAL*/    PropTypes.arrayOf(TabDef)
+  , rows: /*OPTIONAL*/    PropTypes.arrayOf(ScreenElementDef)
+  , columns: /*OPTIONAL*/ PropTypes.arrayOf(ScreenElementDef)
+};
+
+export const TabDef =
+  { title: PropTypes.string.isRequired
+  , elements: PropTypes.arrayOf(ScreenElementDef).isRequired
+};
+
+export const ScreenElementDef =
+  { row: /*OPTIONAL*/     PropTypes.arrayOf(ScreenElementDef)
+  , column: /*OPTIONAL*/  PropTypes.arrayOf(ScreenElementDef)
+  , table: /*OPTIONAL*/   PropTypes.shape(WidgetCommonFields)
+  , form: /*OPTIONAL*/    PropTypes.shape(WidgetCommonFields)
+};
+
+export const WidgetCommonFields =
+  { title: PropTypes.string.isRequired
+  , perspective: PropTypes.shape( SerialisedPerspective ).isRequired
+};

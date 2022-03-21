@@ -6,7 +6,8 @@ import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext, AppContext} from "./reactcontexts";
 import { deconstructModelName, deconstructSegments/*, isExternalRole*/ } from "./urifunctions.js";
 import {BackButton} from "./perspectivescontainer.js";
-import StandardScreen from "./standardscreen.js";
+// import StandardScreen from "./standardscreen.js";
+import ScreenDefinitionInterpreter from "./screendefinitioninterpreter.js";
 import Pouchdb from "pouchdb-browser";
 
 import
@@ -236,7 +237,7 @@ class Screen_ extends PerspectivesComponent
       else
       {
         return  <PSContext.Provider value={pscontext}>
-                  <StandardScreen
+                  <ScreenDefinitionInterpreter
                     contextinstance={component.state.contextinstance}
                     contexttype={component.state.contexttype}
                     myroletype={component.state.myroletype}

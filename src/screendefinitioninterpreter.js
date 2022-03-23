@@ -249,7 +249,8 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
           className="border-bottom pb-4 pt-4 widget"
           key={index}
           >
-        {widgetFunction( widgetCommonFields, index )}
+        { widgetCommonFields.title ? <h4>{widgetCommonFields.title}</h4> : null }
+        { widgetFunction( widgetCommonFields, index ) }
         </div>);
     }
     else
@@ -259,6 +260,7 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
                 className="border-bottom pb-4 pt-4 widget"
                 key={index}
               >
+                { widgetCommonFields.title ? <h5>{widgetCommonFields.title}</h5> : null }
                 <Button
                   tabIndex="0"
                   variant="secondary"

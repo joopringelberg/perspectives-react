@@ -41,6 +41,8 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
     this.screenElement = this.screenElement.bind(this);
     this.buildForm = this.buildForm.bind(this);
     this.buildTable = this.buildTable.bind(this);
+    this.buildRow = this.buildRow.bind(this);
+    this.buildColumn = this.buildColumn.bind(this);
   }
   componentDidMount()
   {
@@ -131,18 +133,25 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
   buildScreen(screen)
   {
     const component = this;
+    let contents;
     if (screen.tabs)
     {
-      return component.buildTabs(screen.tabs);
+      contents = component.buildTabs(screen.tabs);
     }
     else if (screen.rows)
       {
-        return component.buildRow(screen.rows);
+        contents = screen.rows.map( component.screenElement );
       }
     else if (screen.columns)
       {
-        return component.buildColum(screen.columns);
+        contents = screen.columns.map( component.screenElement );
       }
+    return  (<Container role="application">
+            { screen.title != "" ? <h3>{screen.title}</h3> : null }
+            {
+              contents
+            }
+            </Container>);
   }
   buildTabs(tabs)
   {
@@ -272,12 +281,7 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
       // Fetched perspectives from the server, but do we have one?
       if (screen)
       {
-        return (
-          <Container role="application">
-          {
-            component.buildScreen(screen)
-          }
-          </Container>);
+        return component.buildScreen(screen);
       }
       else
       {

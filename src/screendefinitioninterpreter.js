@@ -156,11 +156,12 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
   buildTabs(tabs)
   {
     const component = this;
+    const defaultKey = tabs[0] ? tabs[0].title : "";
     return (
-      <Tabs defaultActiveKey={0} id="perspective-tabs">
+      <Tabs defaultActiveKey={defaultKey} id="perspective-tabs">
       {
         tabs.map((tab, index) =>
-          <Tab key={index} eventKey={index} title={tab.title}>
+          <Tab key={tab.title} eventKey={index} title={tab.title}>
             <Container>
             { tab.elements.map( component.screenElement) }
             </Container>
@@ -264,7 +265,7 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
                 <Button
                   tabIndex="0"
                   variant="secondary"
-                  onClick={component.createRoleInstance(perspective)}
+                  onClick={ () => component.createRoleInstance(perspective)}
                   onKeyDown={ ev => component.handleKeyDown(ev, perspective)}
                   alt="Add an instance"
                   aria-label="Click or press space or return to add a row"

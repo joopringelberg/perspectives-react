@@ -58,13 +58,7 @@ export default class PerspectiveTable extends PerspectivesComponent
     super(props);
     const component = this;
 
-    const perspective = this.props.perspective;
-    const identifyingProperty = perspective.properties[perspective.identifyingProperty];
-    this.orderedProperties = Object.values(perspective.properties);
-    this.orderedProperties.splice( this.orderedProperties.indexOf( identifyingProperty), 1);
-    this.orderedProperties.unshift(identifyingProperty);
-    this.propertyNames = this.orderedProperties.map( p => p.id);
-
+    component.orderProperties();
     // this.propertyNames = Object.keys( component.props.perspective.properties );
     // Map role verbs to behaviour.
     this.roleRepresentation = addBehaviour( Card, mapRoleVerbsToBehaviours( component.props.perspective ) );
@@ -75,6 +69,16 @@ export default class PerspectiveTable extends PerspectivesComponent
       { column: this.propertyNames[0]
       , row: Object.keys( component.props.perspective.roleInstances )[0]
       };
+  }
+
+  orderProperties()
+  {
+    const perspective = this.props.perspective;
+    const identifyingProperty = perspective.properties[perspective.identifyingProperty];
+    this.orderedProperties = Object.values(perspective.properties);
+    this.orderedProperties.splice( this.orderedProperties.indexOf( identifyingProperty), 1);
+    this.orderedProperties.unshift(identifyingProperty);
+    this.propertyNames = this.orderedProperties.map( p => p.id);
   }
 
   componentDidMount ()
@@ -107,12 +111,39 @@ export default class PerspectiveTable extends PerspectivesComponent
       false);
   }
 
-  componentDidUpdate()
+  componentDidUpdate(prevProps)
   {
+    // True iff the arrays are not equal.
+    function unequalArrays (arr1, arr2)
+    {
+      let found = false;
+      let i = -1;
+      let j;
+      // Is there an element in arr2 that is not in arr1?
+      while (!found && i < arr2.length - 1)
+      {
+        i++;
+        j = arr1.findIndex( n => n == arr2[i] );
+        if ( j > -1 )
+        {
+          arr1.splice(j, 1);
+        }
+        else
+        {
+          found = true;
+        }
+      }
+      return found || arr1.length > 0;
+    }
     // If the selected row has been deleted, set `row` to the first row.
     if (!this.props.perspective.roleInstances[this.state.row])
     {
       this.setState({row: Object.keys( this.props.perspective.roleInstances )[0]});
+    }
+    // If we have a different set of properties, recompute the ordered properties.
+    if ( unequalArrays( Object.keys( prevProps.perspective.properties ), Object.keys( this.props.perspective.properties ) ) )
+    {
+      this.orderProperties();
     }
   }
 

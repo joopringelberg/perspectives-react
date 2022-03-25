@@ -206,7 +206,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
               createButton={ true }
               perspective={ component.props.perspective}
               contextinstance={ component.props.contextinstance }
-              // No rolinstance.
+              // No roleinstance.
               myroletype={component.props.myroletype}
               create={ component.createRoleInstance }
               />
@@ -310,7 +310,7 @@ class FormControls extends PerspectivesComponent
       function (pproxy)
       {
           pproxy.action(
-            component.props.rolinstance
+            component.props.roleinstance
             , component.props.contextinstance
             , component.props.perspective.id
             , actionName
@@ -322,9 +322,9 @@ class FormControls extends PerspectivesComponent
   {
     const component = this;
     let roleInstance;
-    if (component.props.rolinstance)
+    if (component.props.roleinstance)
     {
-      roleInstance = component.props.perspective.roleInstances[ component.props.rolinstance ];
+      roleInstance = component.props.perspective.roleInstances[ component.props.roleinstance ];
       if (roleInstance)
       {
         return component.props.perspective.actions.concat( roleInstance.actions );
@@ -381,7 +381,7 @@ FormControls.propTypes =
   { createButton: PropTypes.bool
   , perspective: PropTypes.object.isRequired
   , contextinstance: PropTypes.string.isRequired
-  , rolinstance: PropTypes.string
+  , roleinstance: PropTypes.string
   , myroletype: PropTypes.string.isRequired
   , create: PropTypes.func
   , card: PropTypes.element

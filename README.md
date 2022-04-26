@@ -17,6 +17,10 @@ This package depends on:
   * perspectivesGlobals
   * importModule
 
+
+## Dependency management
+See [Publishing a new version](https://github.com/joopringelberg/perspectives-core/blob/master/technical%20readme.md#publishing-a-new-version) in the Perspectives Core (PDR) project.
+
 ## Bundled Dependencies
 `prop-types` and `react-loadable` are bundled with the distribution.
 
@@ -51,6 +55,8 @@ $ npx webpack --watch
 ```
 
 ## Components
+**NOTICE** THIS SECTION IS OUT OF DATE.
+
 We use the name **prop** to indicate React properties (keys on the props object) and **Property** to indicate Perspectives Properties. Components require some props to be provided as attributes on the Component. Such mandatory attributes are listed below in the tables of Attributes.
 
 ### How to build a GUI

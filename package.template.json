@@ -1,0 +1,53 @@
+{
+  "name": "perspectives-react",
+  "version": "0.17.0",
+  "description": "React components to build a GUI based on the perspectives-protocol (hides connection to perspectives-core).",
+  "main": "dist/perspectives-react.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --watch",
+    "build": "webpack",
+    "symlinks": "./createPerspectivesLinks.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joopringelberg/perspectives-react.git"
+  },
+  "keywords": [
+    "perspectives",
+    "react"
+  ],
+  "author": "Joop Ringelberg <joop.ringelberg@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/joopringelberg/perspectives-react/issues"
+  },
+  "homepage": "https://github.com/joopringelberg/perspectives-react#readme",
+  "peerDependencies": {
+    "react": "^17.0.1",
+    "react-bootstrap": "^1.6.4",
+    "react-dom": "^17.0.1",
+    "@primer/octicons-react": "^11.0.0",
+    "@babel/polyfill": "^7.12.1",
+    "perspectives-proxy": "https://github.com/joopringelberg/perspectives-proxy.git#v1.13.0",
+    "prop-types": "^15.7.2",
+    "pouchdb-browser": "^7.2.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-react": "^7.12.5",
+    "babel-loader": "^8.2.1",
+    "css-loader": "^5.0.1",
+    "eslint": "^7.13.0",
+    "eslint-plugin-react": "^7.21.5",
+    "ignore-loader": "^0.1.2",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.4.0",
+    "webpack-cli": "^4.2.0"
+  },
+  "dependencies": {}
+}

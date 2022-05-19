@@ -176,9 +176,46 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
     const component = this;
     const perspective = this.props.perspective;
     const DraggableCard = this.DraggableCard;
-    const title = component.findValue(component.props.cardtitle);
+    let title;
 
-    return (
+    function Controls()
+    {
+      return  <RoleInstance
+                roleinstance={component.state.roleInstanceWithProps ? component.state.roleInstanceWithProps.roleId : null}
+                role={component.props.perspective.roleType}
+                contextinstance={component.props.contextinstance}
+              >
+                <FormControls
+                  createButton={ true }
+                  perspective={ component.props.perspective}
+                  contextinstance={ component.props.contextinstance }
+                  // No roleinstance.
+                  myroletype={component.props.myroletype}
+                  create={ component.createRoleInstance }
+                  />
+                <FormControls
+                  createButton={ false }
+                  perspective={ component.props.perspective}
+                  contextinstance={ component.props.contextinstance }
+                  roleinstance={component.state.roleInstanceWithProps ? component.state.roleInstanceWithProps.roleId : null}
+                  myroletype={component.props.myroletype}
+                  create={ component.createRoleInstance }
+                  card={ <DraggableCard labelProperty={component.props.cardtitle} title={title && title[0] ? title[0] : component.props.perspective.displayName}/> }
+                />
+              </RoleInstance>;
+    }
+
+    // If there are no properties defined on this role type,
+    // Just show the form controls.
+
+    if (Object.keys( component.props.perspective.properties).length === 0 )
+    {
+      return <Controls/>;
+    }
+    else
+    {
+      title = component.findValue(component.props.cardtitle);
+      return (
         <>
           <RoleDropZone
             bind={component.bind_}
@@ -197,30 +234,9 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
             )
           }
           </RoleDropZone>
-          <RoleInstance
-            roleinstance={component.state.roleInstanceWithProps ? component.state.roleInstanceWithProps.roleId : null}
-            role={component.props.perspective.roleType}
-            contextinstance={component.props.contextinstance}
-          >
-            <FormControls
-              createButton={ true }
-              perspective={ component.props.perspective}
-              contextinstance={ component.props.contextinstance }
-              // No roleinstance.
-              myroletype={component.props.myroletype}
-              create={ component.createRoleInstance }
-              />
-            <FormControls
-              createButton={ false }
-              perspective={ component.props.perspective}
-              contextinstance={ component.props.contextinstance }
-              roleinstance={component.state.roleInstanceWithProps ? component.state.roleInstanceWithProps.roleId : null}
-              myroletype={component.props.myroletype}
-              create={ component.createRoleInstance }
-              card={ <DraggableCard labelProperty={component.props.cardtitle} title={title && title[0] ? title[0] : "No title"}/> }
-            />
-          </RoleInstance>
+          <Controls/>
         </>);
+    }      
   }
 }
 

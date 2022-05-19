@@ -104,11 +104,16 @@ export const SerialisedPerspective =
   , actions: PropTypes.arrayOf(PropTypes.string)
 };
 
-export const ScreenDefinition =
+export const WidgetCommonFields =
   { title: PropTypes.string.isRequired
-  , tabs: /*OPTIONAL*/    PropTypes.arrayOf(TabDef)
-  , rows: /*OPTIONAL*/    PropTypes.arrayOf(ScreenElementDef)
-  , columns: /*OPTIONAL*/ PropTypes.arrayOf(ScreenElementDef)
+  , perspective: PropTypes.shape( SerialisedPerspective ).isRequired
+};
+
+export const ScreenElementDef =
+  { row: /*OPTIONAL*/     PropTypes.arrayOf( PropTypes.object ) // ScreenElementDef
+  , column: /*OPTIONAL*/  PropTypes.arrayOf( PropTypes.object )
+  , table: /*OPTIONAL*/   PropTypes.shape(WidgetCommonFields)
+  , form: /*OPTIONAL*/    PropTypes.shape(WidgetCommonFields)
 };
 
 export const TabDef =
@@ -116,14 +121,10 @@ export const TabDef =
   , elements: PropTypes.arrayOf(ScreenElementDef).isRequired
 };
 
-export const ScreenElementDef =
-  { row: /*OPTIONAL*/     PropTypes.arrayOf(ScreenElementDef)
-  , column: /*OPTIONAL*/  PropTypes.arrayOf(ScreenElementDef)
-  , table: /*OPTIONAL*/   PropTypes.shape(WidgetCommonFields)
-  , form: /*OPTIONAL*/    PropTypes.shape(WidgetCommonFields)
+export const ScreenDefinition =
+  { title: PropTypes.string.isRequired
+  , tabs: /*OPTIONAL*/    PropTypes.arrayOf(TabDef)
+  , rows: /*OPTIONAL*/    PropTypes.arrayOf(ScreenElementDef)
+  , columns: /*OPTIONAL*/ PropTypes.arrayOf(ScreenElementDef)
 };
 
-export const WidgetCommonFields =
-  { title: PropTypes.string.isRequired
-  , perspective: PropTypes.shape( SerialisedPerspective ).isRequired
-};

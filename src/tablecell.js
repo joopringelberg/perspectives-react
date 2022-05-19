@@ -19,7 +19,8 @@
 // END LICENSE
 
 const React = require("react"); // 2
-import ReactDOM from 'react-dom';
+// const ReactDOM = require("react-dom");
+import ReactDOM from "react-dom";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {deconstructLocalName} from "./urifunctions.js";
 import SmartFieldControl from "./smartfieldcontrol.js";

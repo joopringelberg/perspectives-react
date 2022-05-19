@@ -1,3 +1,5 @@
+import "regenerator-runtime/runtime";
+
 import React from 'react';
 
 const PropTypes = require("prop-types");
@@ -15,6 +17,8 @@ import
   , Row
   , Card
   } from "react-bootstrap";
+
+  import lifecycle from '../node_modules/page-lifecycle/dist/lifecycle.es5.js';
 
 // TODO. Even though PerspectivesGlobals has been declared external, we cannot import it here.
 // Doing so will cause a runtime error if the calling program has not put it on the global scope in time.
@@ -116,8 +120,41 @@ class Screen_ extends PerspectivesComponent
   constructor (props)
   {
     super(props);
-    this.resetState();
-  }
+    const component = this;
+    component.resetState();
+    // component.beforeUnloadListener = function(event)
+    //   {
+    //     event.preventDefault();
+    //     return event.returnValue = "Are you sure you want to exit?";
+    //   };
+    // window.addEventListener( "beforeUnload", component.beforeUnloadListener, {capture: true} );
+    lifecycle.addEventListener('statechange', function(event) {
+      console.log(event.oldState, event.newState);
+    });
+    lifecycle.addUnsavedChanges("Context");
+    window.addEventListener( "visibilitychange", 
+      function()
+      {
+        console.log(document.visibilityState);
+        // See: https://blog.bitsrc.io/page-lifecycle-api-a-browser-api-every-frontend-developer-should-know-b1c74948bd74
+        // See: https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilitychange_event
+        if (document.visibilityState == "hidden" || document.visibilityState == "visible")
+        {
+          PDRproxy.then(
+          function(pproxy)
+          {
+            console.log("PDRproxy.then is available");
+            pproxy.setProperty(
+              component.props.externalroleinstance
+              , "model:System$ContextWithScreenState$External$IsOnScreen"
+              // Set to true if page is visible, false when hidden.
+              , (document.visibilityState == "visible").toString()
+              , component.state.myroletype);
+          });
+        }
+      });
+      history.pushState({title: "InPlace home screen"}, "");
+    }
 
   resetState()
   {
@@ -154,17 +191,27 @@ class Screen_ extends PerspectivesComponent
                     // userRoles includes roles from aspects.
                     function(userRoles)
                     {
-                      importScreens( userRoles, userIdentifier, component.props.couchdbUrl).then( screenModules =>
+                      pproxy.setProperty(
+                        externalRole
+                        , "model:System$ContextWithScreenState$External$IsOnScreen"
+                        , "true"
+                        , userRoles[0]
+                        , function()
                         {
-                          component.setState(
-                            { myroletype: userRoles[0]
-                            , externalrole: externalRole
-                            , contextinstance: contextIds[0]
-                            , contexttype: contextTypes[0]
-                            , modules: screenModules
+                          importScreens( userRoles, userIdentifier, component.props.couchdbUrl)
+                          .then( screenModules =>
+                            {
+                              component.setState(
+                                { myroletype: userRoles[0]
+                                , externalrole: externalRole
+                                , contextinstance: contextIds[0]
+                                , contexttype: contextTypes[0]
+                                , modules: screenModules
+                                });
+                              component.props.setMyRoleType( userRoles[0]);
                             });
-                          component.props.setMyRoleType( userRoles[0]);
-                        });
+                          }
+                      );
                     }));
               }, true); // fireandforget: context type will never change.
           }, true); // fireandforget: context will never change.
@@ -173,8 +220,28 @@ class Screen_ extends PerspectivesComponent
 
   componentDidMount ()
   {
-    this.computeState();
+    const component = this;
+    component.computeState();
   }
+
+  // We ensure this method is called when the user navigates away from the InPlace page. Otherwise, 
+  // screen state will persist in Perspectives. 
+  componentWillUnmount ()
+  {
+    // Modify the external role so we know the screen will close.
+    const component = this;
+    // window.removeEventListener( "beforeUnload", component.beforeUnloadListener, {capture: true} );
+    lifecycle.removeUnsavedChanges("Context");
+    PDRproxy.then(
+      function(pproxy)
+      {
+        pproxy.setProperty(
+          component.props.externalroleinstance
+          , "model:System$ContextWithScreenState$External$IsOnScreen"
+          , "false"
+          , component.state.myroletype);
+      });
+}
 
   componentDidUpdate (prevProps)
   {
@@ -185,7 +252,20 @@ class Screen_ extends PerspectivesComponent
         function()
         {
           component.resetState();
-          component.computeState();
+          // Set IsOnScreen to false
+          PDRproxy.then(
+            function(pproxy)
+            {
+              pproxy.setProperty(
+                prevProps.externalroleinstance
+                , "model:System$ContextWithScreenState$External$IsOnScreen"
+                , "false"
+                , component.state.myroletype
+                , function()
+                  {
+                    component.computeState();
+                  });
+            })
         }
       );
     }

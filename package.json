@@ -25,13 +25,14 @@
   },
   "homepage": "https://github.com/joopringelberg/perspectives-react#readme",
   "peerDependencies": {
-    "@primer/octicons-react": "^11.0.0",
-    "perspectives-proxy": "https://github.com/joopringelberg/perspectives-proxy.git#v1.13.0",
-    "pouchdb-browser": "^7.2.2",
-    "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-bootstrap": "^1.6.4",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "@primer/octicons-react": "^11.0.0",
+    "@babel/polyfill": "^7.12.1",
+    "perspectives-proxy": "https://github.com/joopringelberg/perspectives-proxy.git#v1.13.0",
+    "prop-types": "^15.7.2",
+    "pouchdb-browser": "^7.2.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.1",
@@ -44,9 +45,9 @@
     "eslint": "^7.13.0",
     "eslint-plugin-react": "^7.21.5",
     "ignore-loader": "^0.1.2",
-    "page-lifecycle": "^0.1.2",
     "style-loader": "^2.0.0",
     "webpack": "^5.4.0",
     "webpack-cli": "^4.2.0"
-  }
+  },
+  "dependencies": {}
 }

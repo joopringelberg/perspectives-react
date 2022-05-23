@@ -5,6 +5,6 @@
 # * createPerspectivesLinks.sh
 # * package.json
 
-PERSPECTIVESPROXY=v1.13.0
+PERSPECTIVESPROXY=v1.14.0
 
 sed "s/PERSPECTIVESPROXY/${PERSPECTIVESPROXY}/g;" package.template.json > package.json

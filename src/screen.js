@@ -128,40 +128,42 @@ class Screen_ extends PerspectivesComponent
     //     return event.returnValue = "Are you sure you want to exit?";
     //   };
     // window.addEventListener( "beforeUnload", component.beforeUnloadListener, {capture: true} );
-    lifecycle.addEventListener('statechange', function(event) {
-      console.log(event.oldState, event.newState);
-    });
     lifecycle.addUnsavedChanges("Context");
     window.addEventListener( "visibilitychange", 
       function()
       {
-        console.log(document.visibilityState);
         // See: https://blog.bitsrc.io/page-lifecycle-api-a-browser-api-every-frontend-developer-should-know-b1c74948bd74
         // See: https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilitychange_event
         if (document.visibilityState == "hidden" || document.visibilityState == "visible")
         {
-          PDRproxy.then(
-          function(pproxy)
-          {
-            console.log("PDRproxy.then is available");
-            pproxy.setProperty(
-              component.props.externalroleinstance
-              , "model:System$ContextWithScreenState$External$IsOnScreen"
-              // Set to true if page is visible, false when hidden.
-              , (document.visibilityState == "visible").toString()
-              , component.state.myroletype);
-          });
+          // Set to true if page is visible, false when hidden.
+          component.setIsOnScreen( component.props.externalroleinstance, (document.visibilityState == "visible").toString() );
         }
       });
       history.pushState({title: "InPlace home screen"}, "");
     }
+
+  setIsOnScreen (roleInstance, value, callback)
+  {
+    const component = this;
+    PDRproxy.then(
+      function(pproxy)
+      {
+        console.log("Setting IsOnScreen of " + roleInstance + " to `" + value +"`.")
+        pproxy.setProperty(
+          roleInstance
+          , "model:System$ContextWithScreenState$External$IsOnScreen"
+          , value
+          , component.state.myroletype
+          , callback);
+      });
+  }
 
   resetState()
   {
     // The role that 'me' plays in the current context. We pass it on to ContextOfRole
     // and that component includes it in the PSContext it provides to descendants.
     this.state.myroletype = undefined;
-    this.state.externalrole = undefined;
     this.state.contextinstance = undefined;
     this.state.contexttype = undefined;
     this.state.modules = undefined;
@@ -191,27 +193,23 @@ class Screen_ extends PerspectivesComponent
                     // userRoles includes roles from aspects.
                     function(userRoles)
                     {
-                      pproxy.setProperty(
-                        externalRole
-                        , "model:System$ContextWithScreenState$External$IsOnScreen"
-                        , "true"
-                        , userRoles[0]
-                        , function()
+                      component.setIsOnScreen( 
+                        component.props.externalroleinstance,
+                        "true", 
+                        function()
                         {
                           importScreens( userRoles, userIdentifier, component.props.couchdbUrl)
                           .then( screenModules =>
                             {
                               component.setState(
                                 { myroletype: userRoles[0]
-                                , externalrole: externalRole
                                 , contextinstance: contextIds[0]
                                 , contexttype: contextTypes[0]
                                 , modules: screenModules
                                 });
                               component.props.setMyRoleType( userRoles[0]);
                             });
-                          }
-                      );
+                          });
                     }));
               }, true); // fireandforget: context type will never change.
           }, true); // fireandforget: context will never change.
@@ -232,15 +230,7 @@ class Screen_ extends PerspectivesComponent
     const component = this;
     // window.removeEventListener( "beforeUnload", component.beforeUnloadListener, {capture: true} );
     lifecycle.removeUnsavedChanges("Context");
-    PDRproxy.then(
-      function(pproxy)
-      {
-        pproxy.setProperty(
-          component.props.externalroleinstance
-          , "model:System$ContextWithScreenState$External$IsOnScreen"
-          , "false"
-          , component.state.myroletype);
-      });
+    component.setIsOnScreen( component.props.externalroleinstance, "false")
 }
 
   componentDidUpdate (prevProps)
@@ -256,15 +246,13 @@ class Screen_ extends PerspectivesComponent
           PDRproxy.then(
             function(pproxy)
             {
-              pproxy.setProperty(
-                prevProps.externalroleinstance
-                , "model:System$ContextWithScreenState$External$IsOnScreen"
-                , "false"
-                , component.state.myroletype
-                , function()
-                  {
-                    component.computeState();
-                  });
+              component.setIsOnScreen( 
+                prevProps.externalroleinstance, 
+                "false", 
+                function()
+                {
+                  component.computeState();
+                });
             })
         }
       );

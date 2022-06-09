@@ -77,7 +77,10 @@ export default class PerspectiveTable extends PerspectivesComponent
     const identifyingProperty = perspective.properties[perspective.identifyingProperty];
     this.orderedProperties = Object.values(perspective.properties);
     this.orderedProperties.splice( this.orderedProperties.indexOf( identifyingProperty), 1);
-    this.orderedProperties.unshift(identifyingProperty);
+    if (identifyingProperty)
+    {
+      this.orderedProperties.unshift(identifyingProperty);
+    }
     this.propertyNames = this.orderedProperties.map( p => p.id);
   }
 

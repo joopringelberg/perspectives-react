@@ -23,6 +23,7 @@ import PerspectivesComponent from "./perspectivescomponent.js";
 const PDRproxy = require("perspectives-proxy").PDRproxy;
 import {AppContext} from "./reactcontexts";
 import ActionDropDown from "./actiondropdown.js";
+import CreateContextDropDown from "./createContextDropdown.js";
 import {PSContext} from "./reactcontexts";
 import TablePasteRole from "./tablepasterole.js";
 
@@ -44,11 +45,11 @@ export default class TableControls extends PerspectivesComponent
     this.runAction = this.runAction.bind(this);
   }
 
-  createRole (receiveResponse)
+  createRole (receiveResponse, contextToCreate)
   {
     const component = this;
     // NOTE we just take the first context type here, for now!
-    const contextToCreate = component.props.perspective.contextTypesToCreate[0];
+    // const contextToCreate = component.props.perspective.contextTypesToCreate[0];
     const roleType = component.props.perspective.roleType;
     PDRproxy.then( function (pproxy)
     {
@@ -143,14 +144,10 @@ export default class TableControls extends PerspectivesComponent
       return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for table">
                 {
                   component.props.createButton ?
-                  <div
-                    className="ml-3 mr-3"
-                    tabIndex="0"
-                    onClick={ () => component.createRole( function() {}) }
-                    onKeyDown={ ev => component.handleKeyDown(ev)}
-                  >
-                    <PlusIcon alt="Add row" aria-label="Click to add a row" size='medium'/>
-                  </div>
+                  <CreateContextDropDown 
+                    contexts={component.props.perspective.contextTypesToCreate}
+                    createcontext={ contextToCreate => component.createRole( function() {}, contextToCreate)}
+                  />
                   : null
                 }
                 <AppContext.Consumer>

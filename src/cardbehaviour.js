@@ -94,7 +94,7 @@ export function addOpenContextOrRoleForm(domEl, component)
       case 32: // Space
         if (component.context.isselected)
         {
-          if (event.shiftKey)
+          if (e.shiftKey)
           {
             handle( e.altKey );
             component.props.setEventDispatcher(eventDispatcher);

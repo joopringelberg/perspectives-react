@@ -47,6 +47,7 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
   componentDidMount()
   {
     this.getScreen();
+    this.unsubscriber = undefined;
   }
   componentDidUpdate(prevProps)
   {
@@ -65,6 +66,10 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
     const component = this;
     PDRproxy.then(function(pproxy)
       {
+        if (component.unsubscriber)
+        {
+          pproxy.send(component.unsubscriber, function(){});
+        }
         // { request: "GetScreen", subject: UserRoleType, object: ContextInstance }
         pproxy.getScreen(
           component.props.myroletype
@@ -79,7 +84,11 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
             }
           }
           // ,FIREANDFORGET
-        );
+        ).then( function(unsubscriber)
+          {
+            unsubscriber.request = "Unsubscribe";
+            component.unsubscriber = unsubscriber;
+          });
       });
   }
   mayCreateInstance( perspective )

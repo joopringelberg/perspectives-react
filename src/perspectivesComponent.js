@@ -34,6 +34,7 @@ export default class PerspectivesComponent extends Component
         component.unsubscribers.forEach(
           function(unsubscriber)
           {
+            // unsubscriber = {subject: req.subject, corrId: req.corrId}
             unsubscriber.request = "Unsubscribe";
             pproxy.send(unsubscriber, function(){});
           });
@@ -56,6 +57,7 @@ export default class PerspectivesComponent extends Component
   {
     if (unsubscriberPromise)
     {
+      // unsubscriber = {subject: req.subject, corrId: req.corrId}
       unsubscriberPromise.then(unsubscriber => this.unsubscribers.push(unsubscriber));
     }
   }

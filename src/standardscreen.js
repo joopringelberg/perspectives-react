@@ -59,17 +59,18 @@ export default class StandardScreen extends PerspectivesComponent
     const component = this;
     PDRproxy.then(function(pproxy)
       {
-        // (contextInstance, userRoleInstance, userRoleType, receiveValues, fireAndForget)
-        pproxy.getPerspectives(
-          component.props.contextinstance
-          ,component.props.myroletype
-          ,function( perspectives )
-          {
-            console.log(perspectives);
-            component.setState({perspectives: perspectives});
-          }
-          // ,FIREANDFORGET
-        );
+        component.addUnsubscriber(
+          // (contextInstance, userRoleInstance, userRoleType, receiveValues, fireAndForget)
+          pproxy.getPerspectives(
+            component.props.contextinstance
+            ,component.props.myroletype
+            ,function( perspectives )
+            {
+              console.log(perspectives);
+              component.setState({perspectives: perspectives});
+            }
+            // ,FIREANDFORGET
+          ));
       });
   }
 

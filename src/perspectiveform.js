@@ -49,28 +49,29 @@ export default class PerspectiveForm extends PerspectivesComponent
     const component = this;
     PDRproxy.then(function(pproxy)
       {
-        // (contextInstance, userRoleType, roleInstance, receiveValues, fireAndForget)
-        pproxy.getPerspective(
-          component.props.contextinstance || "",
-          component.props.userRoleType || "",
-          component.props.roleinstance
-          ,function( perspective )
-          {
-            console.log(perspective);
-            if (perspective[0])
+        component.addUnsubscriber(
+          // (contextInstance, userRoleType, roleInstance, receiveValues, fireAndForget)
+          pproxy.getPerspective(
+            component.props.contextinstance || "",
+            component.props.userRoleType || "",
+            component.props.roleinstance
+            ,function( perspective )
             {
-              if ( Object.keys(perspective[0].roleInstances).length == 0 )
+              console.log(perspective);
+              if (perspective[0])
               {
-                history.back();
-              }
-              else
-              {
-                component.setState({perspective: perspective[0]});
+                if ( Object.keys(perspective[0].roleInstances).length == 0 )
+                {
+                  history.back();
+                }
+                else
+                {
+                  component.setState({perspective: perspective[0]});
+                }
               }
             }
-          }
-          // ,FIREANDFORGET
-        );
+            // ,FIREANDFORGET
+          ));
       });
   }
 

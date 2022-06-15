@@ -9,7 +9,10 @@ export const PSContext = React.createContext(
 
   export const AppContext = React.createContext(
     { systemExternalRole: undefined
+    // for contexts that are opened
     , externalRoleId: undefined
+    // for roles that are opened
+    , roleId: undefined
     , myRoleType: undefined
     // The user identifier (his GUID).
     , systemUser: undefined

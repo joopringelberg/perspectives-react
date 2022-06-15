@@ -34,37 +34,51 @@ export default class CreateContextDropDown extends Component
   render()
   {
     const component = this;
-    return  <Dropdown
-              id="dropdown-createContext"
-              title="Contexts to create"
-              focusFirstItemOnShow={false}
-              variant="secondary"
-              size="sm"
-              onSelect={ component.props.createcontext }>
-              <Dropdown.Toggle as={CustomToggle} id="CreateContext_Toggle" disabled={component.props.contexts.length == 0}>
-                <PlusIcon alt="Contexts to create" aria-label="Contexts to create" size="medium"/>
-              </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  {
-                    component.props.contexts.map(
-                      function(contextName)
-                      {
-                        return    <Dropdown.Item
-                                    key={contextName}
-                                    eventKey={contextName}
-                                  >{
-                                    contextName // TODO This must be a displayname.
-                                  }</Dropdown.Item>;
-                      }
-                    )
-                  }
-                </Dropdown.Menu>
-            </Dropdown>;
+    if (component.props.contexts.length == 0)
+    {
+      return  <div
+                className="ml-3 mr-3"
+                tabIndex="0"
+                onClick={ () => component.props.create() }
+                onKeyDown={ ev => component.handleKeyDown(ev)}
+              >
+                <PlusIcon alt="Add a row" aria-label="Click to add a row" size='medium'/>
+              </div>
+    }
+    else
+    {
+      return  <Dropdown
+                id="dropdown-createContext"
+                title="Contexts to create"
+                focusFirstItemOnShow={false}
+                variant="secondary"
+                size="sm"
+                onSelect={ component.props.create }>
+                <Dropdown.Toggle as={CustomToggle} id="CreateContext_Toggle" disabled={component.props.contexts.length == 0}>
+                  <PlusIcon alt="Contexts to create" aria-label="Contexts to create" size="medium"/>
+                </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {
+                      component.props.contexts.map(
+                        function(contextName)
+                        {
+                          return    <Dropdown.Item
+                                      key={contextName}
+                                      eventKey={contextName}
+                                    >{
+                                      contextName // TODO This must be a displayname.
+                                    }</Dropdown.Item>;
+                        }
+                      )
+                    }
+                  </Dropdown.Menu>
+              </Dropdown>;
+    }
   }
 }
 
 CreateContextDropDown.propTypes =
-  { createcontext: PropTypes.func
+  { create: PropTypes.func
   , contexts: PropTypes.arrayOf(PropTypes.string)
   };
 

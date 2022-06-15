@@ -48,8 +48,6 @@ export default class TableControls extends PerspectivesComponent
   createRole (receiveResponse, contextToCreate)
   {
     const component = this;
-    // NOTE we just take the first context type here, for now!
-    // const contextToCreate = component.props.perspective.contextTypesToCreate[0];
     const roleType = component.props.perspective.roleType;
     PDRproxy.then( function (pproxy)
     {
@@ -146,7 +144,7 @@ export default class TableControls extends PerspectivesComponent
                   component.props.createButton ?
                   <CreateContextDropDown 
                     contexts={component.props.perspective.contextTypesToCreate}
-                    createcontext={ contextToCreate => component.createRole( function() {}, contextToCreate)}
+                    create={ contextToCreate => component.createRole( function() {}, contextToCreate)}
                   />
                   : null
                 }

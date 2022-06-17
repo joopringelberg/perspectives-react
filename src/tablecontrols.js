@@ -26,6 +26,7 @@ import ActionDropDown from "./actiondropdown.js";
 import CreateContextDropDown from "./createContextDropdown.js";
 import {PSContext} from "./reactcontexts";
 import TablePasteRole from "./tablepasterole.js";
+import { SerialisedPerspective } from "./perspectiveshape.js";
 
 import {PlusIcon} from '@primer/octicons-react';
 import
@@ -137,6 +138,7 @@ export default class TableControls extends PerspectivesComponent
   {
     const component = this;
     const actions = component.computeActions();
+    const instances = component.props.perspective.roleInstances;
     if ( component.stateIsComplete(["currentRoleInstance"]) )
     {
       return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for table">
@@ -151,7 +153,7 @@ export default class TableControls extends PerspectivesComponent
                 <AppContext.Consumer>
                   { appcontext => <TablePasteRole systemexternalrole={appcontext.systemExternalRole}/> }
                 </AppContext.Consumer>
-                { actions.length > 0 ?
+                { actions.length > 0 && instances.length > 0?
                   <ActionDropDown
                     actions={ actions }
                     runaction={component.runAction}
@@ -170,7 +172,7 @@ TableControls.contextType = PSContext;
 
 TableControls.propTypes =
   { createButton: PropTypes.bool.isRequired
-  , perspective: PropTypes.object.isRequired
+  , perspective: PropTypes.shape( SerialisedPerspective ).isRequired
   // This is the row that is selected in the table, possibly none.
   , selectedroleinstance: PropTypes.string
   };

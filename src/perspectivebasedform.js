@@ -30,6 +30,7 @@ import ActionDropDown from "./actiondropdown.js";
 import FormPasteRole from "./formpasterole.js";
 import SmartFieldControlGroup from "./smartfieldcontrolgroup.js";
 import {PlusIcon} from '@primer/octicons-react';
+import { SerialisedPerspective } from "./perspectiveshape.js";
 import
   { Card
   , Navbar
@@ -241,7 +242,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
 }
 
 PerspectiveBasedForm.propTypes =
-  { perspective: PropTypes.object.isRequired
+  { perspective: PropTypes.shape( SerialisedPerspective ).isRequired
   , roleinstance: PropTypes.string
   , myroletype: PropTypes.string.isRequired
   , contextinstance: PropTypes.string.isRequired
@@ -377,7 +378,7 @@ class FormControls extends PerspectivesComponent
                 <AppContext.Consumer>
                   { appcontext => <FormPasteRole systemexternalrole={appcontext.systemExternalRole}/> }
                 </AppContext.Consumer>
-                { component.state.actions.length > 0 ?
+                { component.state.actions.length > 0 && component.props.roleinstance ?
                   <ActionDropDown
                     actions={ component.state.actions }
                     runaction={component.runAction}
@@ -395,7 +396,7 @@ class FormControls extends PerspectivesComponent
 
 FormControls.propTypes =
   { createButton: PropTypes.bool
-  , perspective: PropTypes.object.isRequired
+  , perspective: PropTypes.shape( SerialisedPerspective ).isRequired
   , contextinstance: PropTypes.string.isRequired
   , roleinstance: PropTypes.string
   , myroletype: PropTypes.string.isRequired

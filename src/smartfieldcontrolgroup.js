@@ -78,12 +78,17 @@ export default class SmartFieldControlGroup extends Component
     }
   }
 
+  // The property is only consultable when it just has the verb Consult,
+  // or when it is calculated. It will be shown disabled as a consequence.
   propertyOnlyConsultable()
   {
     if (this.props.propertyValues)
     {
       const propertyVerbs = this.props.propertyValues.propertyVerbs;
-      return propertyVerbs.indexOf("Consult") > -1 && propertyVerbs.length == 1;
+      const property = this.props.serialisedProperty;
+      return (propertyVerbs.indexOf("Consult") > -1 
+        && propertyVerbs.length == 1)
+        || property.isCalculated;
     }
     else
     {
@@ -107,7 +112,7 @@ export default class SmartFieldControlGroup extends Component
             propertyValues = { component.props.propertyValues }
             roleId = { component.props.roleId }
             myroletype = { component.props.myroletype }
-            disabled={ component.propertyOnlyConsultable() }
+            disabled={ component.propertyOnlyConsultable() || !component.props.roleId }
             isselected={true}
           />
         </Col>

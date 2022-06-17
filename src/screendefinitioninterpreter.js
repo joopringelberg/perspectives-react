@@ -193,11 +193,25 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
     }
     else if (element.table)
     {
-      return component.widgetOrButton(element.table, component.buildTable, index);
+      return (
+        <div
+          className="border-bottom pb-4 pt-4 widget"
+          key={index}
+          >
+        { element.table.title ? <h4>{element.table.title}</h4> : null }
+        { component.buildTable( element.table, index ) }
+        </div>);
     }
     else if (element.form)
     {
-      return component.widgetOrButton(element.form, component.buildForm, index);
+      return (
+        <div
+          className="border-bottom pb-4 pt-4 widget"
+          key={index}
+          >
+        { element.form.title ? <h4>{element.form.title}</h4> : null }
+        { component.buildForm( element.form, index ) }
+        </div>);
     }
   }
   buildRow(screenElements, index)

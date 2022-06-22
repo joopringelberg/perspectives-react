@@ -116,7 +116,7 @@ export function ViewIncomingInvitation(props)
       return  <Card ref={ref} tabIndex={props.tabIndex} aria-label={props["aria-label"]}>
                 <Card.Text>Contact card of {
                   // eslint-disable-next-line react/prop-types
-                  props.propval("Voornaam")}.</Card.Text>
+                  props.propval("FirstName")}.</Card.Text>
               </Card>;
     }))
     , [addFillARole]);
@@ -127,7 +127,7 @@ export function ViewIncomingInvitation(props)
       <Form.Group as={Row} controlId="initiator" className="align-items-center">
         <Col sm="4">
           <RolInstance role="Guest">
-            <ContactCard labelProperty="Voornaam"/>
+            <ContactCard labelProperty="FirstName"/>
           </RolInstance>
         </Col>
         <Col sm="4 text-center">

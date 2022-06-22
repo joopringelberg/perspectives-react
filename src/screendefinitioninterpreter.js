@@ -165,12 +165,12 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
   buildTabs(tabs)
   {
     const component = this;
-    const defaultKey = tabs[0] ? tabs[0].title : "";
+    const defaultKey = tabs[0] ? 0 : "";
     return (
       <Tabs defaultActiveKey={defaultKey} id="perspective-tabs">
       {
         tabs.map((tab, index) =>
-          <Tab key={tab.title} eventKey={index} title={tab.title}>
+          <Tab key={index} eventKey={index} title={tab.title}>
             <Container>
             { tab.elements.map( component.screenElement) }
             </Container>

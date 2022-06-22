@@ -121,7 +121,6 @@ export function ViewIncomingInvitation(props)
     }))
     , [addFillARole]);
   return (<>
-    <Row><Col className="pb-3" ><BackButton buttontext="Back to all chats"/></Col></Row>
     <Message/>
     <section aria-label="Received invitation">
       <Form.Group as={Row} controlId="initiator" className="align-items-center">

@@ -79,6 +79,7 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
           {
             if (screens[0])
             {
+              console.log( screens[0] );
               component.setState({screen: screens[0]});
             }
           }

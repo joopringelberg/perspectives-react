@@ -213,54 +213,51 @@ export default class PerspectiveTable extends PerspectivesComponent
 
     return (
         component.stateIsComplete(["row"]) ?
-        <PSContext.Consumer>{
-          pscontext =>
-            <>
-              <Table
-                responsive
-                striped
-                bordered
-                hover
-                size="sm"
-                className="mb-0">
-                <caption>Table for the role { perspective.displayName }</caption>
-                <thead>
-                  <tr>
-                  { component.propertyNames.map( pn =>
-                    <th key={pn}>
-                      { perspective.properties[pn].displayName }
-                    </th>) }
-                  </tr>
-                </thead>
-                <tbody
-                  ref={component.eventDiv}
-                  onKeyDown={ component.handleKeyDown }
-                >
-                  {
-                    Object.keys(perspective.roleInstances).map( roleId =>
-                      <TableRow
-                        key={roleId}
-                        roleinstance={roleId}
-                        isselected={ roleId == component.state.row }
-                        myroletype={pscontext.myroletype}
-                        column={component.state.column}
-                        cardcolumn = {perspective.identifyingProperty}
-                        roleRepresentation={component.roleRepresentation}
-                        roleinstancewithprops={perspective.roleInstances[roleId]}
-                        perspective={component.props.perspective}
-                        orderedProperties={component.orderedProperties}
-                        />)
-                  }
-                </tbody>
-              </Table>
-              <TableControls
-                createButton={ component.mayCreateInstance() }
-                perspective={ perspective}
-                selectedroleinstance={component.state.row}
-              />
-            </>
-        }</PSContext.Consumer>
-        :
+        <>
+        <Table
+          responsive
+          striped
+          bordered
+          hover
+          size="sm"
+          className="mb-0">
+          <caption>Table for the role { perspective.displayName }</caption>
+          <thead>
+            <tr>
+            { component.propertyNames.map( pn =>
+              <th key={pn}>
+                { perspective.properties[pn].displayName }
+              </th>) }
+            </tr>
+          </thead>
+          <tbody
+            ref={component.eventDiv}
+            onKeyDown={ component.handleKeyDown }
+          >
+            {
+              Object.keys(perspective.roleInstances).map( roleId =>
+                <TableRow
+                  key={roleId}
+                  roleinstance={roleId}
+                  isselected={ roleId == component.state.row }
+                  myroletype={component.props.perspective.userRoleType}
+                  column={component.state.column}
+                  cardcolumn = {perspective.identifyingProperty}
+                  roleRepresentation={component.roleRepresentation}
+                  roleinstancewithprops={perspective.roleInstances[roleId]}
+                  perspective={component.props.perspective}
+                  orderedProperties={component.orderedProperties}
+                  />)
+            }
+          </tbody>
+        </Table>
+        <TableControls
+          createButton={ component.mayCreateInstance() }
+          perspective={ perspective}
+          selectedroleinstance={component.state.row}
+        />
+      </>
+      :
         null
       );
   }

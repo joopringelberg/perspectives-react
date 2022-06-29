@@ -151,7 +151,15 @@ export default class TableControls extends PerspectivesComponent
                   : null
                 }
                 <AppContext.Consumer>
-                  { appcontext => <TablePasteRole systemexternalrole={appcontext.systemExternalRole}/> }
+                  { appcontext => <TablePasteRole 
+                    systemexternalrole={appcontext.systemExternalRole}
+                    contextinstance={component.props.perspective.contextInstance}
+                    contexttype={component.props.perspective.contextType}
+                    roletype={component.props.perspective.roleType}
+                    selectedroleinstance={component.props.selectedroleinstance}
+                    myroletype={component.props.perspective.userRoleType}
+                    /> 
+                  }
                 </AppContext.Consumer>
                 { actions.length > 0 && Object.keys(instances).length > 0?
                   <ActionDropDown

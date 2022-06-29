@@ -21,7 +21,7 @@
 import React from 'react';
 const PropTypes = require("prop-types");
 
-import {PDRproxy} from "perspectives-proxy";
+import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRoleInstances} from "./reactcontexts";
 import {ClippyIcon} from '@primer/octicons-react';
@@ -56,12 +56,26 @@ export default class TablePasteRole extends PerspectivesComponent
               clipboardContent = JSON.parse( valArr[0]);
               if ( clipboardContent.roleData && clipboardContent.roleData.rolinstance )
               {
-                component.context.checkbinding(
-                  {rolinstance: clipboardContent.roleData.rolinstance},
-                  function(compatibleRole)
+                // component.context.checkbinding(
+                //   {rolinstance: clipboardContent.roleData.rolinstance},
+                  // function(compatibleRole)
+                  // {
+                  //   component.setState({compatibleRole, roleOnClipboard: clipboardContent.roleData.rolinstance});
+                  // });
+                // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
+                PDRproxy.then(
+                  function (pproxy)
                   {
-                    component.setState({compatibleRole, roleOnClipboard: clipboardContent.roleData.rolinstance});
-                  });
+                    pproxy.checkBinding(
+                      component.props.contexttype,
+                      component.props.roletype,
+                      clipboardContent.roleData.rolinstance,
+                      function(compatibleRole)
+                      {
+                        component.setState({compatibleRole, roleOnClipboard: clipboardContent.roleData.rolinstance});
+                      },
+                      FIREANDFORGET);
+                  });                
               }
             }
           });
@@ -86,7 +100,34 @@ export default class TablePasteRole extends PerspectivesComponent
     const {roleOnClipboard, compatibleRole} = component.state;
     if ( roleOnClipboard && compatibleRole)
     {
-      component.context.bind( {rolinstance: roleOnClipboard} );
+      if (component.props.selectedroleinstance)
+      {
+        PDRproxy.then(
+          function (pproxy)
+          {
+            // (binder, binding, myroletype)
+            pproxy.bind_(
+              component.props.selectedroleinstance,
+              roleOnClipboard,
+              component.props.myroletype,
+              function( /*rolId*/ ){});
+          });
+        }
+      else
+      {
+        // component.context.bind( {rolinstance: roleOnClipboard} );
+        PDRproxy.then(
+          function (pproxy)
+          {
+            pproxy.bind(
+              component.props.contextinstance,
+              component.props.roletype, // may be a local name.
+              component.props.contexttype,
+              {properties: {}, binding: roleOnClipboard},
+              component.props.myroletype,
+              function( /*rolId*/ ){});
+          });
+      }
     }
   }
 
@@ -139,4 +180,11 @@ export default class TablePasteRole extends PerspectivesComponent
 
 TablePasteRole.contextType = PSRoleInstances;
 
-TablePasteRole.propTypes = {systemexternalrole: PropTypes.string.isRequired };
+TablePasteRole.propTypes = 
+  { systemexternalrole: PropTypes.string.isRequired 
+  , contextinstance: PropTypes.string.isRequired
+  , contexttype: PropTypes.string.isRequired
+  , roletype: PropTypes.string.isRequired
+  , selectedroleinstance: PropTypes.string
+  , myroletype: PropTypes.string.isRequired
+  };

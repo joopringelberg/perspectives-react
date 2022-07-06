@@ -68,7 +68,10 @@ export const roleinstancewithprops = PropTypes.shape(
   , actions: PropTypes.arrayOf(PropTypes.string)
   // This member is not needed on the client side, but we need it to
   // compile a complete list of SerialisedProperties.
-  , objectStateBasedProperties: PropTypes.arrayOf(PropTypes.string)
+  , objectStateBasedProperties: PropTypes.arrayOf(PropTypes.shape(
+      { type: PropTypes.string.isRequired
+      , value: PropTypes.string.isRequired
+      }))
   });
 
 export const SerialisedPerspective =

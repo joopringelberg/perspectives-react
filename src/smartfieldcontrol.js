@@ -285,7 +285,7 @@ export default class SmartFieldControl extends Component
 
     const component = this;
     const mandatory = component.props.serialisedProperty.isMandatory;
-    const pattern = component.pattern(this.inputType);
+    const pattern = component.pattern();
     switch ( this.controlType ){
       case "checkbox":
         return (

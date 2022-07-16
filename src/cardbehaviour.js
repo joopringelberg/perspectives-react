@@ -278,7 +278,8 @@ export function addFillARole(domEl, component)
                       , myroletype: component.props.myroletype
                       }),
                     component.props.myroletype );
-                }
+                },
+                FIREANDFORGET
               )
             );
           }

@@ -140,7 +140,6 @@ class Screen_ extends PerspectivesComponent
           component.setIsOnScreen( component.props.externalroleinstance, (document.visibilityState == "visible").toString() );
         }
       });
-      history.pushState({title: "InPlace home screen"}, "");
     }
 
   setIsOnScreen (roleInstance, value, callback)

@@ -226,7 +226,7 @@ export default class PerspectiveTable extends PerspectivesComponent
             <tr>
             { component.propertyNames.map( pn =>
               <th key={pn}>
-                { perspective.properties[pn].displayName }
+                { (perspective.properties[pn]) ? perspective.properties[pn].displayName : null }
               </th>) }
             </tr>
           </thead>

@@ -27,9 +27,9 @@ import {PSContext} from "./reactcontexts";
 import PerspectiveBasedForm from "./perspectivebasedform.js";
 import PerspectiveTable from "./perspectivetable.js";
 import mapRoleVerbsToBehaviours from "./maproleverbstobehaviours.js";
+import PerspectivesTabs from "./perspectivestabs.js";
 
-
-import {Tabs, Tab, Container, Card, Button, Row, Col} from "react-bootstrap";
+import {Tabs, Tab, Container, Card, Button, Row, Col, Nav, Navbar} from "react-bootstrap";
 
 export default class ScreenDefinitionInterpreter extends PerspectivesComponent
 {
@@ -43,6 +43,7 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
     this.buildTable = this.buildTable.bind(this);
     this.buildRow = this.buildRow.bind(this);
     this.buildColumn = this.buildColumn.bind(this);
+    this.activeTabKey = 0;
   }
   componentDidMount()
   {
@@ -165,20 +166,16 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
   buildTabs(tabs)
   {
     const component = this;
-    const defaultKey = tabs[0] ? 0 : "";
-    return (
-      <Tabs defaultActiveKey={defaultKey} id="perspective-tabs">
-      {
-        tabs.map((tab, index) =>
-          <Tab key={index} eventKey={index} title={tab.title}>
-            <Container>
-            { tab.elements.map( component.screenElement) }
-            </Container>
-          </Tab>
-        )
-      }
-      </Tabs>
-    );
+    return  <PerspectivesTabs tabs={tabs}>
+            {
+              tabs.map((tab, index) =>
+                <Tab.Pane key={index} eventKey={index} title={tab.title}>
+                  <Container>
+                  { tab.elements.map( component.screenElement) }
+                  </Container>
+                </Tab.Pane>)
+            }
+            </PerspectivesTabs>;
   }
   screenElement(element, index)
   {

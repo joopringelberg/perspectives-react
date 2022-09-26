@@ -108,27 +108,28 @@ export const SerialisedPerspective =
   , actions: PropTypes.arrayOf(PropTypes.string)
 };
 
-export const WidgetCommonFields =
+// Note we have a forward reference problem here if we try to define and use RowDef and ColumnDef.
+
+export const WidgetCommonFields = PropTypes.shape(
   { title: PropTypes.string.isRequired
   , perspective: PropTypes.shape( SerialisedPerspective ).isRequired
-};
+});
 
-export const ScreenElementDef =
+export const ScreenElementDef = PropTypes.shape(
   { row: /*OPTIONAL*/     PropTypes.arrayOf( PropTypes.object ) // ScreenElementDef
   , column: /*OPTIONAL*/  PropTypes.arrayOf( PropTypes.object )
   , table: /*OPTIONAL*/   PropTypes.shape(WidgetCommonFields)
   , form: /*OPTIONAL*/    PropTypes.shape(WidgetCommonFields)
-};
+});
 
-export const TabDef =
+export const TabDef = PropTypes.shape(
   { title: PropTypes.string.isRequired
   , elements: PropTypes.arrayOf(ScreenElementDef).isRequired
-};
+});
 
-export const ScreenDefinition =
+export const ScreenDefinition = PropTypes.shape(
   { title: PropTypes.string.isRequired
   , tabs: /*OPTIONAL*/    PropTypes.arrayOf(TabDef)
   , rows: /*OPTIONAL*/    PropTypes.arrayOf(ScreenElementDef)
   , columns: /*OPTIONAL*/ PropTypes.arrayOf(ScreenElementDef)
-};
-
+});

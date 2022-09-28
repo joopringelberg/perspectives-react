@@ -43,6 +43,11 @@ export default function FileDropZone(props)
     {
       props.handlefile(theFile);
     }
+    // HACK. For reasons I do not understand, it happens that FileDropZone is rendered without property collapsenavbar.
+    if (props.collapsenavbar)
+    {
+      props.collapsenavbar();
+    }
   }
 
   if (props.tooltiptext)
@@ -99,4 +104,5 @@ FileDropZone.propTypes =
   { tooltiptext: PropTypes.string
   , handlefile: PropTypes.func.isRequired
   , extension: PropTypes.string
+  , collapsenavbar: PropTypes.func.isRequired
 };

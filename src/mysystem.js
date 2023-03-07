@@ -3,6 +3,7 @@ const PDRproxy = require("perspectives-proxy").PDRproxy;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext} from "./reactcontexts.js";
+import { default as ModelDependencies } from "./modelDependencies.js";
 
 export default class MySystem extends PerspectivesComponent
 {
@@ -11,8 +12,8 @@ export default class MySystem extends PerspectivesComponent
     super(props);
     this.state = {
       contextinstance: undefined,
-      contexttype: "model:System$PerspectivesSystem",
-      myroletype:  "model:System$PerspectivesSystem$User"
+      contexttype: ModelDependencies.system,
+      myroletype:  ModelDependencies.sysUser
     };
   }
 
@@ -25,7 +26,7 @@ export default class MySystem extends PerspectivesComponent
         pproxy.getUserIdentifier(
           function(sysId)
           {
-            component.setState({contextinstance: "model:User$" + sysId[0]});
+            component.setState({contextinstance: "def:#" + sysId[0]});
           }
         );
       });

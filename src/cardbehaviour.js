@@ -2,6 +2,7 @@
 
 import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
 import {isQualifiedName} from "./urifunctions.js";
+import { default as ModelDependencies } from "./modelDependencies.js";
 
 /*
 This module gives functions that add behaviour to a component that represents a role.
@@ -163,8 +164,8 @@ export function addFillWithRole(domEl, component)
       {
         pproxy.getProperty(
           component.props.systemExternalRole,
-          "model:System$PerspectivesSystem$External$CardClipBoard",
-          "model:System$PerspectivesSystem$External",
+          ModelDependencies.cardClipBoard,
+          ModelDependencies.systemExternal,
           function (valArr)
           {
             if (valArr[0])
@@ -212,8 +213,8 @@ export function addFillWithRole(domEl, component)
             // Empty clipboard.
             PDRproxy.then( pproxy => pproxy.deleteProperty(
               component.props.systemExternalRole,
-              "model:System$PerspectivesSystem$External$CardClipBoard",
-              "model:System$PerspectivesSystem$User") );
+              ModelDependencies.cardClipBoard,
+              modelDependencies.sysUser) );
           }
           else {
             component.eventDiv.current.classList.add("border-danger", "border");
@@ -254,7 +255,7 @@ export function addFillARole(domEl, component)
       case 67: // 'c'
         if (event.ctrlKey)
         {
-          // Set information in the CardClipboard external property of model:System$PerspectivesSystem.
+          // Set information in the CardClipboard external property of "model://perspectives.domains#System$PerspectivesSystem".
           if (isQualifiedName (component.props.labelProperty))
           {
             PDRproxy.then( pproxy =>
@@ -266,7 +267,7 @@ export function addFillARole(domEl, component)
                 {
                   pproxy.setProperty(
                     component.props.systemExternalRole,
-                    "model:System$PerspectivesSystem$External$CardClipBoard",
+                    ModelDependencies.cardClipBoard,
                     JSON.stringify(
                       { roleData:
                         { rolinstance: component.context.rolinstance
@@ -294,7 +295,7 @@ export function addFillARole(domEl, component)
                 {
                   pproxy.setProperty(
                     component.props.systemExternalRole,
-                    "model:System$PerspectivesSystem$External$CardClipBoard",
+                    ModelDependencies.cardClipBoard,
                     JSON.stringify(
                       { roleData:
                         { rolinstance: component.context.rolinstance

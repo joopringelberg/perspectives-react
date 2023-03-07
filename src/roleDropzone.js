@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import {AppContext} from "./reactcontexts.js";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
+import { default as ModelDependencies } from "./modelDependencies.js";
 
 // const PDRproxy = require("perspectives-proxy").PDRproxy;
 import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
@@ -62,8 +63,8 @@ class RoleDropZone_ extends PerspectivesComponent
       {
         pproxy.getProperty(
           component.props.systemExternalRole,
-          "model:System$PerspectivesSystem$External$CardClipBoard",
-          "model:System$PerspectivesSystem$External",
+          ModelDependencies.cardClipBoard,
+          ModelDependencies.systemExternal,
           function (valArr)
           {
             if (valArr[0])
@@ -94,8 +95,8 @@ class RoleDropZone_ extends PerspectivesComponent
             // {request: "DeleteProperty", subject: rolID, predicate: propertyName, authoringRole: myroletype}
             PDRproxy.then( pproxy => pproxy.deleteProperty(
               component.props.systemExternalRole,
-              "model:System$PerspectivesSystem$External$CardClipBoard",
-              "model:System$PerspectivesSystem$User") );
+              ModelDependencies.cardClipBoard,
+              ModelDependencies.sysUser) );
           }
           else {
             component.eventDiv.current.classList.add("failure");

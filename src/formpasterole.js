@@ -24,6 +24,7 @@ const PropTypes = require("prop-types");
 import {PDRproxy} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRol} from "./reactcontexts";
+import { default as ModelDependencies } from "./modelDependencies.js";
 import {ClippyIcon} from '@primer/octicons-react';
 
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
@@ -47,8 +48,8 @@ export default class FormPasteRole extends PerspectivesComponent
       {
         pproxy.getProperty(
           component.props.systemexternalrole,
-          "model:System$PerspectivesSystem$External$CardClipBoard",
-          "model:System$PerspectivesSystem$External",
+          ModelDependencies.cardClipBoard,
+          ModelDependencies.systemExternal,
           function (valArr)
           {
             if (valArr[0])

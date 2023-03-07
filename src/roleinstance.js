@@ -23,11 +23,11 @@ It supports six props, none of which are required:
   - contextinstance: the identifier of a context instance;
   - role: the name of the Role, possibly unqualified;
   - contexttocreate: either a fully qualified context type name, or a local name with a default namespace prefix:
-    "cdb" : "model:Couchdb"
-    "sys" : "model:System"
-    "usr" : "model:User"
-    "ser" : "model:Serialise
-    "p"   : "model:Parsing"
+    "cdb" : "model://perspectives.system#Couchdb"
+    "sys" : "model:://perspectives.system#System"
+    "usr" : "model:://perspectives.system#User"
+    "ser" : "model:://perspectives.system#Serialise
+    "p"   : "model:://perspectives.system#Parsing"
 If `roleinstance` is given, it is used to create the PSRol instance. If roletype or rolekind
 are missing, they are fetched from the core.
 Otherwise, role must be given and then it is used to create the PSRol instance.

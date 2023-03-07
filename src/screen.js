@@ -10,6 +10,7 @@ import { deconstructModelName, deconstructSegments/*, isExternalRole*/ } from ".
 import {BackButton} from "./perspectivescontainer.js";
 // import StandardScreen from "./standardscreen.js";
 import ScreenDefinitionInterpreter from "./screendefinitioninterpreter.js";
+import { default as ModelDependencies } from "./modelDependencies.js";
 import Pouchdb from "pouchdb-browser";
 
 import
@@ -151,7 +152,7 @@ class Screen_ extends PerspectivesComponent
         console.log("Setting IsOnScreen of " + roleInstance + " to `" + value +"`.")
         pproxy.setProperty(
           roleInstance
-          , "model:System$ContextWithScreenState$External$IsOnScreen"
+          , ModelDependencies.isOnScreen
           , value
           , component.state.myroletype
           , callback);

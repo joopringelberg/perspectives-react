@@ -1,21 +1,21 @@
 // NOTE DEPENDENCIES. Code in this section is adapted from module Perspectives.Identifiers.
-// Returns "localName" from "model:ModelName$localName" or Nothing
 
 // deconstructSegments :: String -> String
-// NOTE DEPENDENCY. This code is adapted from module Perspectives.Identifiers.
+// For type identifiers: from model://some.domain#System$any$segment, take any$segment.
 export function deconstructSegments(s) {
-  const localPartsRegEx = new RegExp("^model:\\w*\\$(.*)$");
+  const typePattern = "^(model://[^/]+#[A-Z][^\\$]+)\\$?(.*)$";
   try
   {
-    return s.match(localPartsRegEx)[1];
+    return s.match(typePattern)[2];
   } catch (e)
   {
     throw "deconstructSegments: no local name in '" + s + "'.";
   }
 }
 
+// From "model://some.authority#Modelname$Sometype$Subtype" return "Subtype";
 export function deconstructLocalName(s){
-  const localNameRegEx = new RegExp(".*\\$(\\w+)");
+  const localNameRegEx = new RegExp("^model://[^/]+#[A-Z][^#/]+\\$([A-Z][^\\$/]+)$");
   try
   {
     return s.match(localNameRegEx)[1];
@@ -28,15 +28,7 @@ export function deconstructLocalName(s){
 // A Namespace has the form "model:Name"
 export function externalRole( s )
 {
-  const modelRegEx = new RegExp("^model:(\\w*)$");
-  if (s.match(modelRegEx))
-  {
-    return s + "$_External";
-  }
-  else
-  {
-    return s + "$External";
-  }
+  return s + "$External";
 }
 
 export function isExternalRole( s )
@@ -47,7 +39,7 @@ export function isExternalRole( s )
 
 export function deconstructContext( s )
 {
-  const matches = s.match(/(.*?)(?:\$_External|\$External)/);
+  const matches = s.match(/(.*?)(?:\$External)/);
   if ( matches )
   {
     return matches[1];
@@ -58,18 +50,18 @@ export function deconstructContext( s )
   }
 }
 
-// Construct a directoryname from a modelname.
-// Each modelname must be unique.
-// It is the composition of "model:" and the name proper.
-// So all we need do to create a directoryname is to get the first fragment, i.e.
-// the part after "model:" and before the first "$".
+// TODO!
+// From a type identifier, retrieve the name of the file of the local version of a model.
+// "model://some.authority#Modelname$Sometype" should result in some_authority-Modelname.json.
+// We achieve this by first capturing the part following "model://" and before the first "$",
+// then replacing "." by "_" and "#" by "-".
 export function deconstructModelName( s )
 {
-  const namespaceRegex = new RegExp("^(model:\\w*)");
-  const m = s.match(namespaceRegex);
+  const typeRegex = new RegExp( "^model://([^/]+#[A-Z][^\\$]+)\\$?.*$" );
+  const m = s.match(typeRegex);
   if ( m )
   {
-    return m[1];
+    return m[1].replace(".", "_").replace("#", "-");
   }
   else {
     throw "deconstructModelName: the string '" + s + "' is not a well-formed domeinURI";
@@ -96,9 +88,9 @@ export function getQualifiedPropertyName (localName, qualifiedNames)
     }
 }
 
-// Is the identifier of the form `model:Domain$atLeastOneSegment`?
+// Is this a type identifier?
 export function isQualifiedName(s)
 {
-  const qualifiedNameRegex = new RegExp( "^model:(\\w*)\\$(.*)$" );
-  return s.match(qualifiedNameRegex);
+  const typeRegEx = new RegExp( "^(model://[^/]+#[A-Z][^\\$]+)\\$?(.*)$" );
+  return s.match(typeRegEx);
 }

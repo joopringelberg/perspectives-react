@@ -10,7 +10,7 @@ export {default as importContexts} from "./importContexts.js";
 export {default as importTransaction} from "./importTransaction.js";
 export * from "./reactcontexts";
 export {default as ExternalRole} from "./externalrole.js";
-export {deconstructModelName, deconstructSegments, isExternalRole, deconstructContext, isQualifiedName, externalRole, deconstructLocalName} from "./urifunctions.js";
+export {deconstructModelName, deconstructSegments, isExternalRole, deconstructContext, isQualifiedName, externalRole, deconstructLocalName, isSchemedResourceIdentifier} from "./urifunctions.js";
 export {default as Screen} from "./screen.js";
 export {default as RemoveBinding} from "./removeBinding.js";
 export {default as RemoveRol} from  "./removeRol.js";
@@ -40,3 +40,4 @@ export {default as ActionDropDown} from "./actiondropdown.js";
 export {default as Alert} from "./alert.js";
 export {default as BinaryModal} from "./binarymodal.js";
 export {default as ModelDependencies} from "./modelDependencies.js"
+export * from "./userMessaging.js";

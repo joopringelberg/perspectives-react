@@ -94,3 +94,10 @@ export function isQualifiedName(s)
   const typeRegEx = new RegExp( "^(model://[^/]+#[A-Z][^\\$]+)\\$?(.*)$" );
   return s.match(typeRegEx);
 }
+
+// Is this a resource identifier?
+export function isSchemedResourceIdentifier(s)
+{
+  const schemedResourceRegEx = new RegExp( "^(def|loc|rem|pub|model|):(.*)$" );
+  return s.match(schemedResourceRegEx);
+}

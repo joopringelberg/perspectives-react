@@ -25,14 +25,14 @@
   },
   "homepage": "https://github.com/joopringelberg/perspectives-react#readme",
   "peerDependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "@primer/octicons-react": "^11.0.0",
+    "perspectives-proxy": "https://github.com/joopringelberg/perspectives-proxy.git#v1.16.0",
+    "pouchdb-browser": "^7.2.2",
+    "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-bootstrap": "^1.6.4",
-    "react-dom": "^17.0.1",
-    "@primer/octicons-react": "^11.0.0",
-    "@babel/polyfill": "^7.12.1",
-    "perspectives-proxy": "https://github.com/joopringelberg/perspectives-proxy.git#v1.16.0",
-    "prop-types": "^15.7.2",
-    "pouchdb-browser": "^7.2.2"
+    "react-dom": "^17.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.1",
@@ -40,14 +40,17 @@
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/preset-env": "^7.12.1",
     "@babel/preset-react": "^7.12.5",
-    "babel-loader": "^8.2.1",
-    "css-loader": "^5.0.1",
-    "eslint": "^7.13.0",
+    "babel-loader": "^9.1.2",
+    "css-loader": "^6.7.3",
+    "eslint": "^8.36.0",
     "eslint-plugin-react": "^7.21.5",
     "ignore-loader": "^0.1.2",
-    "style-loader": "^2.0.0",
+    "style-loader": "^3.3.2",
     "webpack": "^5.4.0",
-    "webpack-cli": "^4.2.0"
+    "webpack-cli": "^5.0.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "i18next": "^22.4.13",
+    "page-lifecycle": "^0.1.2"
+  }
 }

@@ -41,3 +41,8 @@ export {default as Alert} from "./alert.js";
 export {default as BinaryModal} from "./binarymodal.js";
 export {default as ModelDependencies} from "./modelDependencies.js"
 export * from "./userMessaging.js";
+
+export async function getPreact(LANG_KEY)
+{
+  return await import(`./lang/${LANG_KEY}/preact.json`);
+}

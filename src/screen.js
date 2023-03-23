@@ -3,15 +3,16 @@ import "regenerator-runtime/runtime";
 import React from 'react';
 
 const PropTypes = require("prop-types");
-const PDRproxy = require("perspectives-proxy").PDRproxy;
+import { PDRproxy, FIREANDFORGET } from 'perspectives-proxy';
 import PerspectivesComponent from "./perspectivescomponent.js";
-import {PSContext, AppContext} from "./reactcontexts";
+import {PSContext, AppContext} from "./reactcontexts.js";
 import { deconstructModelName, deconstructSegments/*, isExternalRole*/ } from "./urifunctions.js";
 import {BackButton} from "./perspectivescontainer.js";
-// import StandardScreen from "./standardscreen.js";
 import ScreenDefinitionInterpreter from "./screendefinitioninterpreter.js";
 import { default as ModelDependencies } from "./modelDependencies.js";
+import {UserMessagingPromise} from "./userMessaging.js";
 import Pouchdb from "pouchdb-browser";
+import i18next from "i18next";
 
 import
   { Col
@@ -19,7 +20,7 @@ import
   , Card
   } from "react-bootstrap";
 
-  import lifecycle from '../node_modules/page-lifecycle/dist/lifecycle.es5.js';
+import lifecycle from '../node_modules/page-lifecycle/dist/lifecycle.es5.js';
 
 // TODO. Even though PerspectivesGlobals has been declared external, we cannot import it here.
 // Doing so will cause a runtime error if the calling program has not put it on the global scope in time.
@@ -211,8 +212,16 @@ class Screen_ extends PerspectivesComponent
                             });
                           });
                     }));
-              }, true); // fireandforget: context type will never change.
-          }, true); // fireandforget: context will never change.
+              }, FIREANDFORGET);
+          }, 
+          FIREANDFORGET,
+          function(e)
+          {
+            UserMessagingPromise.then( um => um.addMessageForEndUser(
+              { title: i18next.t("screen_clipboard_title", { ns: 'preact' })
+              , message: i18next.t("screen_clipboard_message", {ns: 'preact', erole: externalRole})
+              , error: e.toString()}));
+          });
       });
   }
 

@@ -77,6 +77,12 @@ module.exports = {
       commonjs: "pouchdb-browser",
       commonjs2: "pouchdb-browser",
       root: "pouchdb-browser"
+    },
+     "i18next": {
+      amd: "i18next",
+      commonjs: "i18next",
+      commonjs2: "i18next",
+      root: "i18next"
     }
   }
 };

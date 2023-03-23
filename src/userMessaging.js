@@ -30,7 +30,7 @@
 //    <EndUserNotifier message={app.state.endUserMessage}/>
 
 
-import { Button, Modal } from "react-bootstrap";
+import { Button, Card, Modal } from "react-bootstrap";
 import PropTypes from "prop-types";
 import PerspectivesComponent from "./perspectivescomponent";
 
@@ -122,14 +122,24 @@ export class EndUserNotifier extends PerspectivesComponent
         <Modal.Title>{component.props.message.title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>{component.props.message.message}</p>
-        { component.state.showErrorMessage ? component.props.message.error : null}
+        <Card>
+          <Card.Body>
+            <Card.Text>
+              {component.props.message.message}
+            </Card.Text>
+          </Card.Body>
+        </Card>
+        { component.state.showErrorMessage ? <pre>{component.props.message.error}</pre> : null}
       </Modal.Body>
       <Modal.Footer>
         <Button variant="primary" onClick={ () => component.props.message.acknowledge(true)}>
           OK
         </Button>
-        <Button variant="secondary" onClick={ () => component.toggleShow()}>{component.state.showErrorMessage ? "Hide details" : "Show details"}</Button>
+        {
+          component.props.message.error ?
+          <Button variant="secondary" onClick={ () => component.toggleShow()}>{component.state.showErrorMessage ? "Hide details" : "Show details"}</Button>
+          : null
+        }
       </Modal.Footer>
     </Modal>
   }

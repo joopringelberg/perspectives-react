@@ -5,6 +5,8 @@ const PDRproxy = require("perspectives-proxy").PDRproxy;
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {getQualifiedPropertyName} from "./urifunctions.js";
 import {PSRol, PSView, PSContext} from "./reactcontexts.js";
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 export default function View (props)
 {
@@ -67,10 +69,10 @@ class View_ extends PerspectivesComponent
         {
           console.warn( "Warning: View receives prop viewname=`allproperties`. Do you mean 'allProperties'?");
         }
-        component.addUnsubscriber(
-          pproxy.getViewProperties(
+        pproxy.getViewProperties(
             component.context.roltype,
-            component.props.viewname,
+            component.props.viewname)
+          .then(
             function(propertyNames)
             {
               // TODO. Dit is inefficient.
@@ -126,8 +128,13 @@ class View_ extends PerspectivesComponent
                 }
               );
             })
-        );
-      }
+          .catch(e => UserMessagingPromise.then( um => 
+            um.addMessageForEndUser(
+              { title: i18next.t("view_viewproperties_title", { ns: 'preact' }) 
+              , message: i18next.t("view_viewproperties_message", {role: component.context.roltype, ns: 'preact'})
+              , error: e.toString()
+            })));
+        }
     );
   }
 

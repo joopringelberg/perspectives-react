@@ -1,3 +1,7 @@
 { "screen_clipboard_title": "Clipboard"
-, "screen_clipboard_message": "Cannot open this context on the Clipboard: {{erole}}."
+, "screen_clipboard_message": "Cannot open this context on the Clipboard: {{- erole}}."
+, "roletable_viewproperties_title": "No columns"
+, "roletable_viewproperties_message": "No columns found to display for {{- role}}."
+, "view_viewproperties_title": "No properties"
+, "view_viewproperties_message": "No properties found to display for {{- role}}."
 }

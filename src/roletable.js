@@ -18,6 +18,9 @@ import {addBehaviour} from "./behaviourcomponent.js";
 
 import * as Behaviours from "./cardbehaviour.js";
 
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
+
 import {PlusIcon} from '@primer/octicons-react';
 
 import
@@ -151,17 +154,19 @@ class RoleTable_ extends PerspectivesComponent
     PDRproxy.then(
       function (pproxy)
       {
-        component.addUnsubscriber(
-          pproxy.getViewProperties(
+        pproxy.getViewProperties(
             component.context.roltype,
-            component.props.viewname,
-            function(propertyNames)
-            {
-              component.setState(
-                { propertyNames: propertyNames
-                , column: propertyNames[0]
-              });
-            }));
+            component.props.viewname)
+          .then( propertyNames => component.setState(
+            { propertyNames: propertyNames
+            , column: propertyNames[0]
+          }))
+          .catch(e => UserMessagingPromise.then( um => 
+            um.addMessageForEndUser(
+              { title: i18next.t("roletable_viewproperties_title", { ns: 'preact' }) 
+              , message: i18next.t("roletable_viewproperties_message", {role: component.context.roltype, ns: 'preact'})
+              , error: e.toString()
+            })));
       });
   }
 

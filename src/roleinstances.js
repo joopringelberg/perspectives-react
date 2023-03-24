@@ -174,23 +174,27 @@ export default class RoleInstances extends PerspectivesComponent
             throw("Rol: could not establish qualified name of Rol '" + component.props.rol + "' for Context '" + component.context.contexttype + "'.");
           }
           // Get the role kind. No need to unsubscribe: the result won't change.
-          pproxy.getRoleKind( rolType,
-            function(roleKindArr)
-            {
-              const roleKind = roleKindArr[0];
-              // Get role instances.
-              component.addUnsubscriber(
-                pproxy.getRol(
-                  component.context.contextinstance,
-                  rolType,
-                  function(rolIdArr)
-                  {
-                    component.setTheState(rolIdArr, roleKind, rolType);
-                  }
-              ));
-            },
-            FIREANDFORGET
-          );
+          pproxy.getRoleKind( rolType )
+            .then( function(roleKindArr)
+              {
+                const roleKind = roleKindArr[0];
+                // Get role instances.
+                component.addUnsubscriber(
+                  pproxy.getRol(
+                    component.context.contextinstance,
+                    rolType,
+                    function(rolIdArr)
+                    {
+                      component.setTheState(rolIdArr, roleKind, rolType);
+                    }
+                ));
+              })
+            .catch(e => UserMessagingPromise.then( um => 
+              um.addMessageForEndUser(
+                { title: i18next.t("rolekind_title", { ns: 'preact' }) 
+                , message: i18next.t("rolekind_message", {ns: 'preact', role: rolType })
+                , error: e.toString()
+                })));
         }
 
         if (component.props.perspective)

@@ -12,4 +12,6 @@
 , "contextOfRole_message": "Kan de context van deze rol instantie niet vinden: {{- role}}."
 , "role_title": "Roltype"
 , "role_message": "Kan het type van deze rol niet bepalen: {{- role}}."
+, "rolekind_title": "Soort rol"
+, "rolekind_message": "Kan niet vaststellen wat voor soort rol dit is: een gebruikersrol, een dingrol, een contextrol of een publieke rol: {{- role}}."
 }

@@ -256,22 +256,28 @@ export default class RoleInstance extends PerspectivesComponent
           else
           {
             // Get the role kind. No need to unsubscribe: the result won't change.
-            pproxy.getRoleKind( roltype,
-              function(roleKindArr)
-              {
-                const roleKind = roleKindArr[0];
-                component.setState( { contextinstance: component.contextInstance()
-                            , contexttype: component.context.contexttype
-                            , roltype
-                            , roleKind
-                            , bind_: bind_( rolinstance )
-                            , bind
-                            , checkbinding
-                            , removerol
-                            , rolinstance
-                            , isselected: true // To accommodate the PSRol definition.
-                          });
-              });
+            pproxy.getRoleKind( roltype )
+              .then (function(roleKindArr)
+                {
+                  const roleKind = roleKindArr[0];
+                  component.setState( { contextinstance: component.contextInstance()
+                              , contexttype: component.context.contexttype
+                              , roltype
+                              , roleKind
+                              , bind_: bind_( rolinstance )
+                              , bind
+                              , checkbinding
+                              , removerol
+                              , rolinstance
+                              , isselected: true // To accommodate the PSRol definition.
+                            });
+                })
+              .catch(e => UserMessagingPromise.then( um => 
+                um.addMessageForEndUser(
+                  { title: i18next.t("rolekind_title", { ns: 'preact' }) 
+                  , message: i18next.t("rolekind_message", {ns: 'preact', role: roltype })
+                  , error: e.toString()
+                  })));
           }
         }
 

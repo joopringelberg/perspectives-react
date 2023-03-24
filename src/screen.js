@@ -3,7 +3,7 @@ import "regenerator-runtime/runtime";
 import React from 'react';
 
 const PropTypes = require("prop-types");
-import { PDRproxy, FIREANDFORGET } from 'perspectives-proxy';
+import { PDRproxy, CONTINUOUS } from 'perspectives-proxy';
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext, AppContext} from "./reactcontexts.js";
 import { deconstructModelName, deconstructSegments/*, isExternalRole*/ } from "./urifunctions.js";
@@ -177,58 +177,49 @@ class Screen_ extends PerspectivesComponent
     const component = this;
     const externalRole = component.props.externalroleinstance;
     const userIdentifier = component.props.systemUser;
-    PDRproxy.then(
-      function(pproxy)
-      {
-        pproxy.getRolContext(
-          externalRole,
-          function (contextIds)
-          {
-            pproxy.getContextType( contextIds[0] )
-              .then(
-                function (contextTypes)
-                {
-                  component.addUnsubscriber(
-                    pproxy.getMeForContext(
-                      externalRole,
-                      // userRoles includes roles from aspects.
-                      function(userRoles)
-                      {
-                        component.setIsOnScreen( 
-                          component.props.externalroleinstance,
-                          "true", 
-                          function()
-                          {
-                            importScreens( userRoles, userIdentifier, component.props.couchdbUrl)
-                            .then( screenModules =>
-                              {
-                                component.setState(
-                                  { myroletype: userRoles[0]
-                                  , contextinstance: contextIds[0]
-                                  , contexttype: contextTypes[0]
-                                  , modules: screenModules
-                                  });
-                                component.props.setMyRoleType( userRoles[0]);
-                              });
+    let pproxy, contextId, contextType;
+    PDRproxy
+      .then( p => pproxy = p)
+      .then( pproxy => pproxy.getRolContext( externalRole ) )
+      .then( contextIds => contextId = contextIds[0] )
+      .then( contextId => pproxy.getContextType( contextId ) )
+      .then( contextTypes => contextType = contextTypes[0] )
+      .then( () => new Promise( function(resolve, reject)
+        {
+          component.addUnsubscriber(
+            pproxy.getMeForContext(
+              externalRole,
+              // userRoles includes roles from aspects.
+              function(userRoles)
+              {
+                component.setIsOnScreen( 
+                  component.props.externalroleinstance,
+                  "true", 
+                  function()
+                  {
+                    importScreens( userRoles, userIdentifier, component.props.couchdbUrl)
+                      .then( screenModules =>
+                        {
+                          component.setState(
+                            { myroletype: userRoles[0]
+                            , contextinstance: contextId
+                            , contexttype: contextType
+                            , modules: screenModules
                             });
-                      }));
-                })
-              .catch(e => UserMessagingPromise.then( um => 
-                um.addMessageForEndUser(
-                  { title: i18next.t("screen_computestate_title", { ns: 'preact' }) 
-                  , message: i18next.t("screen_computestate_message", {ns: 'preact'})
-                  , error: e.toString()
-                  })));
-          }, 
-          FIREANDFORGET,
-          function(e)
-          {
-            UserMessagingPromise.then( um => um.addMessageForEndUser(
-              { title: i18next.t("screen_clipboard_title", { ns: 'preact' })
-              , message: i18next.t("screen_clipboard_message", {ns: 'preact', erole: externalRole})
-              , error: e.toString()}));
-          });
-      });
+                          component.props.setMyRoleType( userRoles[0]);
+                        })
+                      .then( resolve );
+                    });
+              },
+              CONTINUOUS,
+              reject))
+          }))
+      .catch(e => UserMessagingPromise.then( um => 
+        um.addMessageForEndUser(
+          { title: i18next.t("screen_computestate_title", { ns: 'preact' }) 
+          , message: i18next.t("screen_computestate_message", {ns: 'preact'})
+          , error: e.toString()
+          })));
   }
 
   componentDidMount ()
@@ -325,19 +316,7 @@ class Screen_ extends PerspectivesComponent
       }
     }
     else
-      return    <Row>
-                  <Col>
-                  <Card>
-                    <Card.Body>
-                      <Card.Title>No access</Card.Title>
-                      <Card.Text>
-                        You seem to have no role in this context. Please move back!
-                      </Card.Text>
-                      <BackButton buttontext="Back"/>
-                    </Card.Body>
-                    </Card>
-                  </Col>
-                </Row>;
+      return null;
   }
 }
 

@@ -10,8 +10,8 @@ import { deconstructModelName, deconstructSegments/*, isExternalRole*/ } from ".
 import {BackButton} from "./perspectivescontainer.js";
 import ScreenDefinitionInterpreter from "./screendefinitioninterpreter.js";
 import { default as ModelDependencies } from "./modelDependencies.js";
-import {UserMessagingPromise} from "./userMessaging.js";
 import Pouchdb from "pouchdb-browser";
+import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
 
 import

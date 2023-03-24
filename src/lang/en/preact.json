@@ -10,4 +10,6 @@
 , "screen_computestate_message": "Something went wrong on constructing the screen."
 , "contextOfRole_title": "Context of a role"
 , "contextOfRole_message": "Cannot get the context of this role: {{- role}}."
+, "role_title": "Type of the role"
+, "role_message": "Cannot get the type of this role: {{- role}}."
 }

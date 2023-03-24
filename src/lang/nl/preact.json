@@ -10,4 +10,6 @@
 , "screen_computestate_message": "Er ging iets fout met de schermopbouw."
 , "contextOfRole_title": "Context van een rol"
 , "contextOfRole_message": "Kan de context van deze rol instantie niet vinden: {{- role}}."
+, "role_title": "Roltype"
+, "role_message": "Kan het type van deze rol niet bepalen: {{- role}}."
 }

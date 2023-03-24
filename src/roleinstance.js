@@ -10,6 +10,8 @@ const PDRproxy = require("perspectives-proxy").PDRproxy;
 
 import {isQualifiedName} from "./urifunctions.js";
 import BinaryModal from "./binarymodal.js";
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 ////////////////////////////////////////////////////////////////////////////////
 // ROLEINSTANCE
@@ -224,11 +226,15 @@ export default class RoleInstance extends PerspectivesComponent
           }
           else
           {
-            pproxy.getRolType(rolinstance, function( rolTypeArr )
-            {
-              buildPSRol(rolinstance, rolTypeArr[0]);
-            }
-          );}
+            pproxy.getRolType(rolinstance)
+              .then( rolTypeArr => buildPSRol(rolinstance, rolTypeArr[0]) )
+              .catch(e => UserMessagingPromise.then( um => 
+                um.addMessageForEndUser(
+                  { title: i18next.t("role_title", { ns: 'preact' }) 
+                  , message: i18next.t("role_message", {ns: 'preact', role: rolinstance})
+                  , error: e.toString()
+                  })));
+          }
         }
 
         function buildPSRol(rolinstance, roltype)

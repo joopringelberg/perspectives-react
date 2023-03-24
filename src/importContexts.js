@@ -1,4 +1,6 @@
 const PDRproxy = require("perspectives-proxy").PDRproxy;
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 export default function importContexts(fileList)
 {
@@ -20,17 +22,15 @@ export default function importContexts(fileList)
         const json = JSON.parse(t);
         if (isContextSerialisation( json ))
         {
-          // debugger;
           // Now send to the PDR.
-          PDRproxy.then(
-            function(pproxy)
-            {
-              pproxy.importContexts( json,
-                  function( buitenRolId )
-                  {
-                   // nothing to do here.
-                 } );
-            });
+          PDRproxy
+            .then( pproxy => pproxy.importContexts( json ) )
+            .catch(e => UserMessagingPromise.then( um => 
+              um.addMessageForEndUser(
+                { title: i18next.t("importContexts_title", { ns: 'preact' }) 
+                , message: i18next.t("importContexts_message", {ns: 'preact'})
+                , error: e.toString()
+                })));
         }
         else
         {

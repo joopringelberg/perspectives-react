@@ -16,4 +16,6 @@
 , "rolekind_message": "Cannot determine whether this is a user role, a context role, a thing role or a public role: {{- role}}."
 , "createContext_title": "Create Context"
 , "createContext_message": "Could not create a context of this type: {{- type}}."
+, "importContexts_title": "Import Contexts"
+, "importContexts_message": "Could not import contexts."
 }

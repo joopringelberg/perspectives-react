@@ -1,3 +1,13 @@
 { "screen_clipboard_title": "Klembord"
 , "screen_clipboard_message": "Kan deze context op het klembord niet openen: {{erole}}."
+, "roletable_viewproperties_title": "Geen kolommen"
+, "roletable_viewproperties_message": "Geen kolommen gevonden om te tonen voor {{- role}}."
+, "view_viewproperties_title": "Geen gegevenstypes"
+, "view_viewproperties_message": "Geen gegevenstypes gevonden om te tonen voor {{- role}}."
+, "contextInstance_title": "Context type"
+, "contextInstance_message": "Kan het type niet vinden van een context instantie."
+, "screen_computestate_title": "Schermopbouw"
+, "screen_computestate_message": "Er ging iets fout met de schermopbouw."
+, "contextOfRole_title": "Context van een rol"
+, "contextOfRole_message": "Kan de context van deze rol instantie niet vinden: {{- role}}."
 }

@@ -4,4 +4,10 @@
 , "roletable_viewproperties_message": "No columns found to display for {{- role}}."
 , "view_viewproperties_title": "No properties"
 , "view_viewproperties_message": "No properties found to display for {{- role}}."
+, "contextInstance_title": "Context type"
+, "contextInstance_message": "Could not find the type of a context instance."
+, "screen_computestate_title": "Constructing the screen"
+, "screen_computestate_message": "Something went wrong on constructing the screen."
+, "contextOfRole_title": "Context of a role"
+, "contextOfRole_message": "Cannot get the context of this role: {{- role}}."
 }

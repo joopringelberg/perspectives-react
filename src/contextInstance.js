@@ -4,6 +4,8 @@ const PDRproxy = require("perspectives-proxy").PDRproxy;
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext} from "./reactcontexts";
 const PropTypes = require("prop-types");
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 export default class ContextInstance extends PerspectivesComponent
 {
@@ -21,17 +23,20 @@ export default class ContextInstance extends PerspectivesComponent
     PDRproxy.then(
       function (pproxy)
       {
-        component.addUnsubscriber(
-          pproxy.getContextType(
-            component.props.contextinstance,
+        pproxy.getContextType(component.props.contextinstance)
+          .then(
             function(contextTypeArr)
             {
               component.setState(
                 { contexttype: contextTypeArr[0]
                 , myroletype: component.context.myroletype } );
-            }
-          )
-        );
+            })
+          .catch(e => UserMessagingPromise.then( um => 
+            um.addMessageForEndUser(
+              { title: i18next.t("contextInstance_title", { ns: 'preact' }) 
+              , message: i18next.t("contextInstance_message", {ns: 'preact'})
+              , error: e.toString()
+              })));
       }
     );
   }

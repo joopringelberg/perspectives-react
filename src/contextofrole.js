@@ -3,6 +3,8 @@ const PropTypes = require("prop-types");
 const PDRproxy = require("perspectives-proxy").PDRproxy;
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext} from "./reactcontexts";
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 export default class ContextOfRole extends PerspectivesComponent
 {
@@ -25,34 +27,42 @@ export default class ContextOfRole extends PerspectivesComponent
           component.props.rolinstance,
           function (contextId)
           {
-            pproxy.getContextType(
-              contextId[0],
-              function (contextType)
-              {
-                if ( !component.props.myroletype )
+            pproxy.getContextType( contextId[0] )
+              .then(
+                function (contextType)
                 {
-                  // Get it from the core.
-                  // This we subscribe to: it may change.
-                  component.addUnsubscriber(
-                    pproxy.getMeForContext( component.props.rolinstance,
-                      function(myroletype)
-                      {
-                        component.setState(
-                          { contextinstance: contextId[0]
-                          , contexttype: contextType[0]
-                          , myroletype: myroletype[0]
-                          });
-                      }));
-                }
-                else {
-                  component.setState(
-                    { contextinstance: contextId[0]
-                    , contexttype: contextType[0]
-                    , myroletype: component.props.myroletype
-                    });
-                }
-              }
-            ), true; // fireandforget: the type of the context will never change.
+                  if ( !component.props.myroletype )
+                  {
+                    // Get it from the core.
+                    // This we subscribe to: it may change.
+                    component.addUnsubscriber(
+                      pproxy.getMeForContext( component.props.rolinstance,
+                        function(myroletype)
+                        {
+                          component.setState(
+                            { contextinstance: contextId[0]
+                            , contexttype: contextType[0]
+                            , myroletype: myroletype[0]
+                            });
+                        }
+                        // Add user message here or throw.
+                        ));
+                  }
+                  else {
+                    component.setState(
+                      { contextinstance: contextId[0]
+                      , contexttype: contextType[0]
+                      , myroletype: component.props.myroletype
+                      });
+                  }
+                })
+              .catch(e => UserMessagingPromise.then( um => 
+                um.addMessageForEndUser(
+                  { title: i18next.t("contextOfRole_title", { ns: 'preact' }) 
+                  , message: i18next.t("contextOfRole_message", {ns: 'preact', role: component.props.rolinstance})
+                  , error: e.toString()
+                  })));
+                ;
           }, true); // fireandforget: the context of a role will never change.
       }
     );

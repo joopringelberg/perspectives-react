@@ -184,35 +184,41 @@ class Screen_ extends PerspectivesComponent
           externalRole,
           function (contextIds)
           {
-            pproxy.getContextType(
-              contextIds[0],
-              function (contextTypes)
-              {
-                component.addUnsubscriber(
-                  pproxy.getMeForContext(
-                    externalRole,
-                    // userRoles includes roles from aspects.
-                    function(userRoles)
-                    {
-                      component.setIsOnScreen( 
-                        component.props.externalroleinstance,
-                        "true", 
-                        function()
-                        {
-                          importScreens( userRoles, userIdentifier, component.props.couchdbUrl)
-                          .then( screenModules =>
-                            {
-                              component.setState(
-                                { myroletype: userRoles[0]
-                                , contextinstance: contextIds[0]
-                                , contexttype: contextTypes[0]
-                                , modules: screenModules
-                                });
-                              component.props.setMyRoleType( userRoles[0]);
+            pproxy.getContextType( contextIds[0] )
+              .then(
+                function (contextTypes)
+                {
+                  component.addUnsubscriber(
+                    pproxy.getMeForContext(
+                      externalRole,
+                      // userRoles includes roles from aspects.
+                      function(userRoles)
+                      {
+                        component.setIsOnScreen( 
+                          component.props.externalroleinstance,
+                          "true", 
+                          function()
+                          {
+                            importScreens( userRoles, userIdentifier, component.props.couchdbUrl)
+                            .then( screenModules =>
+                              {
+                                component.setState(
+                                  { myroletype: userRoles[0]
+                                  , contextinstance: contextIds[0]
+                                  , contexttype: contextTypes[0]
+                                  , modules: screenModules
+                                  });
+                                component.props.setMyRoleType( userRoles[0]);
+                              });
                             });
-                          });
-                    }));
-              }, FIREANDFORGET);
+                      }));
+                })
+              .catch(e => UserMessagingPromise.then( um => 
+                um.addMessageForEndUser(
+                  { title: i18next.t("screen_computestate_title", { ns: 'preact' }) 
+                  , message: i18next.t("screen_computestate_message", {ns: 'preact'})
+                  , error: e.toString()
+                  })));
           }, 
           FIREANDFORGET,
           function(e)
@@ -252,17 +258,13 @@ class Screen_ extends PerspectivesComponent
         {
           component.resetState();
           // Set IsOnScreen to false
-          PDRproxy.then(
-            function(pproxy)
-            {
-              component.setIsOnScreen( 
+         component.setIsOnScreen( 
                 prevProps.externalroleinstance, 
                 "false", 
                 function()
                 {
                   component.computeState();
                 });
-            })
         }
       );
     }

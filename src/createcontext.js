@@ -4,6 +4,8 @@ const PDRproxy = require("perspectives-proxy").PDRproxy;
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext} from "./reactcontexts";
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 export default class CreateContext extends PerspectivesComponent
 {
@@ -19,32 +21,24 @@ export default class CreateContext extends PerspectivesComponent
       interneProperties: {},
       externeProperties: {}
     };
-    var resolver;
-    var p = new Promise(
-      function (resolve/*, reject*/)
-      {
-        resolver = resolve;
-      });
     // Move all properties to the default context description to ensure we send a complete description.
     Object.assign(defaultContextDescription, contextDescription);
 
-    PDRproxy.then(
-      function(pproxy)
-      {
-        pproxy.createContext(
-          defaultContextDescription,
-          component.props.rolname, // local role name
-          component.context.contextinstance,
-          component.context.contexttype,
-          component.context.myroletype,
-          // [<externalRoleId>(, <contextRoleId>)?]
-          function( contextAndExternalRole )
-          {
-            // Resolve the promise returned by calling create; return the new external role identifier.
-            resolver( contextAndExternalRole[0] );
-          });
-      });
-    return p;
+    return PDRproxy
+      .then( pproxy => pproxy.createContext(
+        defaultContextDescription,
+        component.props.rolname, // local role name
+        component.context.contextinstance,
+        component.context.contexttype,
+        component.context.myroletype ))
+      .then( contextIds => contextIds[0] )
+      .catch(e => UserMessagingPromise.then( um => 
+        um.addMessageForEndUser(
+          { title: i18next.t("createContext_title", { ns: 'preact' }) 
+          , message: i18next.t("createContext_message", {ns: 'preact', type: contexttype})
+          , error: e.toString()
+          })));
+;
   }
 
   // Render! props.children contains the nested elements that provide input controls.

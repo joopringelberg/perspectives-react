@@ -27,7 +27,8 @@ import {PSContext} from "./reactcontexts";
 import PerspectiveBasedForm from "./perspectivebasedform.js";
 import PerspectiveTable from "./perspectivetable.js";
 import mapRoleVerbsToBehaviours from "./maproleverbstobehaviours.js";
-
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 import {Tabs, Tab, Container, Card, Button} from "react-bootstrap";
 
@@ -112,19 +113,24 @@ export default class StandardScreen extends PerspectivesComponent
         if (perspective.roleKind == "ContextRole" && perspective.contextTypesToCreate.length > 0)
         {
           pproxy.createContext (
-            {
-              id: "", // will be set in the core.
-              prototype : undefined,
-              ctype: perspective.contextTypesToCreate[0], // Arbitrary choice, for now.
-              rollen: {},
-              externeProperties: {}
-            },
-            perspective.roleType,
-            component.props.contextinstance,
-            component.props.contexttype,
-            component.props.myroletype,
-            function(){});
-        }
+              {
+                id: "", // will be set in the core.
+                prototype : undefined,
+                ctype: perspective.contextTypesToCreate[0], // Arbitrary choice, for now.
+                rollen: {},
+                externeProperties: {}
+              },
+              perspective.roleType,
+              component.props.contextinstance,
+              component.props.contexttype,
+              component.props.myroletype)
+            .catch(e => UserMessagingPromise.then( um => 
+              um.addMessageForEndUser(
+                { title: i18next.t("createContext_title", { ns: 'preact' }) 
+                , message: i18next.t("createContext_message", {ns: 'preact', type: component.props.contexttype})
+                , error: e.toString()
+                })));
+          }
         else
         {
           pproxy.createRole(

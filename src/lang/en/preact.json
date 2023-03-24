@@ -14,4 +14,6 @@
 , "role_message": "Cannot get the type of this role: {{- role}}."
 , "rolekind_title": "Kind of the role"
 , "rolekind_message": "Cannot determine whether this is a user role, a context role, a thing role or a public role: {{- role}}."
+, "createContext_title": "Create Context"
+, "createContext_message": "Could not create a context of this type: {{- type}}."
 }

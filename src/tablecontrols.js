@@ -27,8 +27,9 @@ import CreateContextDropDown from "./createContextDropdown.js";
 import {PSContext} from "./reactcontexts";
 import TablePasteRole from "./tablepasterole.js";
 import { SerialisedPerspective } from "./perspectiveshape.js";
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
-import {PlusIcon} from '@primer/octicons-react';
 import
   { Navbar
   } from "react-bootstrap";
@@ -58,23 +59,26 @@ export default class TableControls extends PerspectivesComponent
             roleType)
       {
         pproxy.createContext (
-          {
-            id: "", // will be set in the core.
-            prototype : undefined,
-            ctype: contextToCreate,
-            rollen: {},
-            externeProperties: {}
-          },
-          roleType,
-          component.props.perspective.contextInstance,
-          // The type of the embedding context.
-          component.context.contexttype,
-          component.props.perspective.userRoleType,
-          function(contextAndExternalRole)
-          {
-            // Return the new context role identifier!
-            receiveResponse( contextAndExternalRole[1] );
-          });
+            {
+              id: "", // will be set in the core.
+              prototype : undefined,
+              ctype: contextToCreate,
+              rollen: {},
+              externeProperties: {}
+            },
+            roleType,
+            component.props.perspective.contextInstance,
+            // The type of the embedding context.
+            component.context.contexttype,
+            component.props.perspective.userRoleType)
+          .then(contextAndExternalRole => contextAndExternalRole[1])
+          .catch(e => UserMessagingPromise.then( um => 
+            um.addMessageForEndUser(
+              { title: i18next.t("createContext_title", { ns: 'preact' }) 
+              , message: i18next.t("createContext_message", {ns: 'preact', type: component.context.contexttype})
+              , error: e.toString()
+              })));
+        ;
       }
       else if (roleType)
       {

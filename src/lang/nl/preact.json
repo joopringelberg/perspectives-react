@@ -14,4 +14,6 @@
 , "role_message": "Kan het type van deze rol niet bepalen: {{- role}}."
 , "rolekind_title": "Soort rol"
 , "rolekind_message": "Kan niet vaststellen wat voor soort rol dit is: een gebruikersrol, een dingrol, een contextrol of een publieke rol: {{- role}}."
+, "createContext_title": "Context aanmaken"
+, "createContext_message": "Het is niet gelukt een context aan te maken van dit type: {{- type}}."
 }

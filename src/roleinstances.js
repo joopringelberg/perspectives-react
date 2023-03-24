@@ -5,6 +5,8 @@ import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRoleInstances, PSContext} from "./reactcontexts";
 import {isQualifiedName} from "./urifunctions.js";
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 // This component retrieves the instances of the Role type it finds on its props,
 // from the context instance it finds in its React context (a PSContext type).
@@ -120,23 +122,30 @@ export default class RoleInstances extends PerspectivesComponent
                       if (roleKind == "ContextRole" && component.props.contexttocreate)
                       {
                         pproxy.createContext (
-                          {
-                            id: "", // will be set in the core.
-                            prototype : undefined,
-                            ctype: component.props.contexttocreate,
-                            rollen: {},
-                            externeProperties: {}
-                          },
-                          component.props.rol, //May be a local name.
-                          component.context.contextinstance,
-                          component.context.contexttype,
-                          component.context.myroletype,
+                            {
+                              id: "", // will be set in the core.
+                              prototype : undefined,
+                              ctype: component.props.contexttocreate,
+                              rollen: {},
+                              externeProperties: {}
+                            },
+                            component.props.rol, //May be a local name.
+                            component.context.contextinstance,
+                            component.context.contexttype,
+                            component.context.myroletype)
+                          .then(
                           // [<externalRoleId>(, <contextRoleId>)?]
-                          function(contextAndExternalRole)
-                          {
-                            // Return the new context role identifier!
-                            receiveResponse( contextAndExternalRole[1] );
-                          });
+                            function(contextAndExternalRole)
+                            {
+                              // Return the new context role identifier!
+                              receiveResponse( contextAndExternalRole[1] );
+                            })
+                          .catch(e => UserMessagingPromise.then( um => 
+                            um.addMessageForEndUser(
+                              { title: i18next.t("createContext_title", { ns: 'preact' }) 
+                              , message: i18next.t("createContext_message", {ns: 'preact', type: component.context.contexttype})
+                              , error: e.toString()
+                              })));
                       }
                       else
                       {

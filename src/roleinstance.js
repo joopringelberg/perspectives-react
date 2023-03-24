@@ -84,23 +84,29 @@ export default class RoleInstance extends PerspectivesComponent
           if (component.state.roleKind == "ContextRole" && component.props.contexttocreate)
           {
             pproxy.createContext (
-              {
-                id: "", // will be set in the core.
-                prototype : undefined,
-                ctype: component.props.contexttocreate,
-                rollen: {},
-                externeProperties: {}
-              },
-              component.state.roltype,
-              component.contextInstance(),
-              component.context.contexttype,
-              component.context.myroletype,
-              function(contextAndExternalRole)
-              {
-                component.setState({roleinstance: contextAndExternalRole[0]});
-                // Return the new context role identifier!
-                receiveResponse( contextAndExternalRole[1] );
-              });
+                {
+                  id: "", // will be set in the core.
+                  prototype : undefined,
+                  ctype: component.props.contexttocreate,
+                  rollen: {},
+                  externeProperties: {}
+                },
+                component.state.roltype,
+                component.contextInstance(),
+                component.context.contexttype,
+                component.context.myroletype)
+              .then( function(contextAndExternalRole)
+                {
+                  component.setState({roleinstance: contextAndExternalRole[0]});
+                  // Return the new context role identifier!
+                  receiveResponse( contextAndExternalRole[1] );
+                })
+              .catch(e => UserMessagingPromise.then( um => 
+                um.addMessageForEndUser(
+                  { title: i18next.t("createContext_title", { ns: 'preact' }) 
+                  , message: i18next.t("createContext_message", {ns: 'preact', type: component.context.contexttype})
+                  , error: e.toString()
+                  })));
           }
           else
           {

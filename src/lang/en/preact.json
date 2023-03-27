@@ -18,4 +18,6 @@
 , "createContext_message": "Could not create a context of this type: {{- type}}."
 , "importContexts_title": "Import Contexts"
 , "importContexts_message": "Could not import contexts."
+, "importTransaction_title": "Import Transaction"
+, "importTransaction_message": "Could not import transaction."
 }

@@ -1,4 +1,6 @@
 const PDRproxy = require("perspectives-proxy").PDRproxy;
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 export default function importTransaction(theFile)
 {
@@ -21,16 +23,14 @@ export default function importTransaction(theFile)
         {
           // debugger;
           // Now send to the PDR.
-          PDRproxy.then(
-            function(pproxy)
-            {
-              pproxy.importTransaction( json,
-                  function( /*buitenRolId*/ )
-                  {
-                   // nothing to do here.
-                   // if an error arises in the PDR, the proxy for the Api will handle it.
-                 } );
-            });
+          PDRproxy
+            .then( pproxy => pproxy.importTransaction( json ) )
+            .catch(e => UserMessagingPromise.then( um => 
+              um.addMessageForEndUser(
+                { title: i18next.t("importTransaction_title", { ns: 'preact' }) 
+                , message: i18next.t("importTransaction_message", {ns: 'preact', type: component.props.contexttype})
+                , error: e.toString()
+                })));
         }
         else
         {

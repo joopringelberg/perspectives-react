@@ -18,4 +18,6 @@
 , "createContext_message": "Het is niet gelukt een context aan te maken van dit type: {{- type}}."
 , "importContexts_title": "Context(en importeren"
 , "importContexts_message": "Het is niet gelukt om contexten te importeren."
+, "importTransaction_title": "Import Transactie"
+, "importTransaction_message": "Kan transactie niet verwerken."
 }

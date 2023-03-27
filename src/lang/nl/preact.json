@@ -20,4 +20,10 @@
 , "importContexts_message": "Het is niet gelukt om contexten te importeren."
 , "importTransaction_title": "Import Transactie"
 , "importTransaction_message": "Kan transactie niet verwerken."
+, "clipboardSet_title": "Klembord"
+, "clipboardSet_message": "Kon deze rol niet op het klembord zetten."
+, "setProperty_title": "Eigenschap"
+, "setProperty_message": "Kon deze eigenschap niet veranderen: {{- property}}."
+, "screen_IsOnScreen_title": "De context sluiten"
+, "screen_IsOnScreen_message": "kon niet goed vastleggen dat deze context gesloten is. Andere betrokkenen kunnen daar niet van op de hoogte worden gebracht."
 }

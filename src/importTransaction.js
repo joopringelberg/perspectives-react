@@ -28,7 +28,7 @@ export default function importTransaction(theFile)
             .catch(e => UserMessagingPromise.then( um => 
               um.addMessageForEndUser(
                 { title: i18next.t("importTransaction_title", { ns: 'preact' }) 
-                , message: i18next.t("importTransaction_message", {ns: 'preact', type: component.props.contexttype})
+                , message: i18next.t("importTransaction_message", {ns: 'preact'})
                 , error: e.toString()
                 })));
         }

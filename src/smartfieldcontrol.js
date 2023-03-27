@@ -29,6 +29,8 @@ import
 const PropTypes = require("prop-types");
 
 import {serialisedProperty, propertyValues} from "./perspectiveshape.js";
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 ////////////////////////////////////////////////////////////////////////////////
 // TABINDEX VALUES
@@ -132,8 +134,14 @@ export default class SmartFieldControl extends Component
             component.props.roleId,
             component.props.serialisedProperty.id,
             val,
-            component.props.myroletype );
-        });
+            component.props.myroletype )
+            .catch(e => UserMessagingPromise.then( um => 
+              um.addMessageForEndUser(
+                { title: i18next.t("setProperty_title", { ns: 'preact' }) 
+                , message: i18next.t("setProperty_message", {ns: 'preact', property: component.props.serialisedProperty.id})
+                , error: e.toString()
+                })));
+          });
     }
   }
 

@@ -39,7 +39,13 @@ class View_ extends PerspectivesComponent
             component.state.rolinstance,
             qualifiedPropertyName,
             val,
-            component.props.myroletype );
+            component.props.myroletype )
+          .catch(e => UserMessagingPromise.then( um => 
+            um.addMessageForEndUser(
+              { title: i18next.t("setProperty_title", { ns: 'preact' }) 
+              , message: i18next.t("setProperty_message", {ns: 'preact', property: qualifiedPropertyName})
+              , error: e.toString()
+              })));
         });
     }
   }

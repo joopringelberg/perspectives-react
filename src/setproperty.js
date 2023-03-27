@@ -6,6 +6,8 @@ const PDRproxy = require("perspectives-proxy").PDRproxy;
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {getQualifiedPropertyName} from "./urifunctions.js";
 import {PSView, PSProperty, PSContext} from "./reactcontexts.js";
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 /////// THIS COMPONENT IS NEVER USED.
 
@@ -37,7 +39,8 @@ class SetProperty_ extends PerspectivesComponent
   changeValue (val)
   {
     const component = this;
-    const oldValue = component.context[getQualifiedPropertyName(component.props.propertyname, component.context.viewproperties)];
+    const property = getQualifiedPropertyName(component.props.propertyname, component.context.viewproperties);
+    const oldValue = component.context[property];
     if (oldValue.length != 1 || oldValue[0] != val)
     {
       PDRproxy.then(
@@ -45,9 +48,15 @@ class SetProperty_ extends PerspectivesComponent
         {
           pproxy.setProperty(
             component.context.rolinstance,
-            getQualifiedPropertyName(component.props.propertyname, component.context.viewproperties),
+            property,
             val,
-            component.props.myroletype );
+            component.props.myroletype )
+          .catch(e => UserMessagingPromise.then( um => 
+            um.addMessageForEndUser(
+              { title: i18next.t("setProperty_title", { ns: 'preact' }) 
+              , message: i18next.t("setProperty_message", {ns: 'preact', property})
+              , error: e.toString()
+              })));
         });
     }
   }

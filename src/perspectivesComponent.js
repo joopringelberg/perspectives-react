@@ -58,7 +58,7 @@ export default class PerspectivesComponent extends Component
     if (unsubscriberPromise)
     {
       // unsubscriber = {subject: req.subject, corrId: req.corrId}
-      unsubscriberPromise.then(unsubscriber => this.unsubscribers.push(unsubscriber));
+      return unsubscriberPromise.then(unsubscriber => this.unsubscribers.push(unsubscriber));
     }
   }
 

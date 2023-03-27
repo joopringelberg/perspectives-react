@@ -446,11 +446,18 @@ class TableCell extends PerspectivesComponent
       PDRproxy.then(
         function(pproxy)
         {
-          pproxy.setProperty(
-            component.props.psrol.rolinstance,
-            component.props.propertyname,
-            val,
-            component.props.myroletype );
+          pproxy
+            .setProperty(
+              component.props.psrol.rolinstance,
+              component.props.propertyname,
+              val,
+              component.props.myroletype )
+            .catch(e => UserMessagingPromise.then( um => 
+              um.addMessageForEndUser(
+                { title: i18next.t("setProperty_title", { ns: 'preact' }) 
+                , message: i18next.t("setProperty_message", {ns: 'preact', property: component.props.propertyname})
+                , error: e.toString()
+                })));
         });
     }
   }

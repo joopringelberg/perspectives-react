@@ -4,6 +4,8 @@ const PDRproxy = require("perspectives-proxy").PDRproxy;
 import PerspectivesComponent from "./perspectivescomponent.js";
 
 import {PSContext} from "./reactcontexts.js"
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 export default function RemoveBinding (props)
 {

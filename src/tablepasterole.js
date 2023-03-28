@@ -26,6 +26,8 @@ import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRoleInstances} from "./reactcontexts";
 import { default as ModelDependencies } from "./modelDependencies.js";
 import {ClippyIcon} from '@primer/octicons-react';
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 
@@ -120,14 +122,23 @@ export default class TablePasteRole extends PerspectivesComponent
         PDRproxy.then(
           function (pproxy)
           {
-            pproxy.bind(
-              component.props.contextinstance,
-              component.props.roletype, // may be a local name.
-              component.props.contexttype,
-              {properties: {}, binding: roleOnClipboard},
-              component.props.myroletype,
-              function( /*rolId*/ ){});
-          });
+            pproxy
+              .bind(
+                component.props.contextinstance,
+                component.props.roletype, // may be a local name.
+                component.props.contexttype,
+                {properties: {}, binding: roleOnClipboard},
+                component.props.myroletype)
+              .catch(e => UserMessagingPromise.then( um => 
+                {
+                  um.addMessageForEndUser(
+                    { title: i18next.t("fillRole_title", { ns: 'preact' }) 
+                    , message: i18next.t("fillRole_message", {ns: 'preact' })
+                    , error: e.toString()
+                  });
+                  component.setState({showRemoveContextModal: false})
+                }));
+            });
       }
     }
   }

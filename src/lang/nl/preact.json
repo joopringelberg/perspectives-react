@@ -40,4 +40,6 @@
 , "roleinstance_removecontextmessage": "Wil je de context die deze rol vult, ook verwijderen?"
 , "removeContext_title": "Context"
 , "removeContext_message": "Kon deze context niet verwijderen."
+, "fillRole_title": "Vul een rol"
+, "fillRole_message": "Kon deze rol niet vullen."
 }

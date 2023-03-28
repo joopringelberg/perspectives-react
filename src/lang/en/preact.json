@@ -40,4 +40,6 @@
 , "roleinstance_removecontextmessage": "Do you want to remove the context that fills the role as well?"
 , "removeContext_title": "Context"
 , "removeContext_message": "Could not remove this context."
+, "fillRole_title": "Fill a role"
+, "fillRole_message": "Could not fill this role."
 }

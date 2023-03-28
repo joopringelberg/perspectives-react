@@ -173,13 +173,22 @@ class RoleInstanceIterator_ extends PerspectivesComponent
                         {
                           if ( psbool[0] === "true" )
                           {
-                            pproxy.bind(
-                              component.context.contextinstance,
-                              component.context.roltype,
-                              component.context.contexttype,
-                              {properties: {}, binding: rolinstance},
-                              component.context.myroletype,
-                              function( /*rolId*/ ){});
+                            pproxy
+                              .bind(
+                                component.context.contextinstance,
+                                component.context.roltype,
+                                component.context.contexttype,
+                                {properties: {}, binding: rolinstance},
+                                component.context.myroletype)
+                              .catch(e => UserMessagingPromise.then( um => 
+                                {
+                                  um.addMessageForEndUser(
+                                    { title: i18next.t("fillRole_title", { ns: 'preact' }) 
+                                    , message: i18next.t("fillRole_message", {ns: 'preact' })
+                                    , error: e.toString()
+                                  });
+                                  component.setState({showRemoveContextModal: false})
+                                }));
                           }
                           else
                           {

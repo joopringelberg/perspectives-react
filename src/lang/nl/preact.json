@@ -22,8 +22,12 @@
 , "importTransaction_message": "Kan transactie niet verwerken."
 , "clipboardSet_title": "Klembord"
 , "clipboardSet_message": "Kon deze rol niet op het klembord zetten."
+, "clipboardEmpty_title": "Klembord"
+, "clipboardEmpty_message": "Kon het klembord niet leegmaken."
 , "setProperty_title": "Eigenschap"
 , "setProperty_message": "Kon deze eigenschap niet veranderen: {{- property}}."
+, "deleteProperty_title": "Eigenschap"
+, "deleteProperty_message": "Kon deze eigenschap niet verwijderen: {{- property}}."
 , "screen_IsOnScreen_title": "De context sluiten"
 , "screen_IsOnScreen_message": "kon niet goed vastleggen dat deze context gesloten is. Andere betrokkenen kunnen daar niet van op de hoogte worden gebracht."
 }

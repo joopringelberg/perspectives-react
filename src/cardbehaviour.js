@@ -3,6 +3,8 @@
 import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
 import {isQualifiedName} from "./urifunctions.js";
 import { default as ModelDependencies } from "./modelDependencies.js";
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 /*
 This module gives functions that add behaviour to a component that represents a role.
@@ -214,7 +216,13 @@ export function addFillWithRole(domEl, component)
             PDRproxy.then( pproxy => pproxy.deleteProperty(
               component.props.systemExternalRole,
               ModelDependencies.cardClipBoard,
-              modelDependencies.sysUser) );
+              modelDependencies.sysUser) )
+            .catch(e => UserMessagingPromise.then( um => 
+              um.addMessageForEndUser(
+                { title: i18next.t("clipboardEmpty_title", { ns: 'preact' }) 
+                , message: i18next.t("clipboardEmpty_message", {ns: 'preact'})
+                , error: e.toString()
+                })));  
           }
           else {
             component.eventDiv.current.classList.add("border-danger", "border");

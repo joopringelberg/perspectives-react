@@ -8,6 +8,8 @@ import { default as ModelDependencies } from "./modelDependencies.js";
 
 // const PDRproxy = require("perspectives-proxy").PDRproxy;
 import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 ////////////////////////////////////////////////////////////////////////////////
 // ROLEDROPZONE
@@ -96,8 +98,14 @@ class RoleDropZone_ extends PerspectivesComponent
             PDRproxy.then( pproxy => pproxy.deleteProperty(
               component.props.systemExternalRole,
               ModelDependencies.cardClipBoard,
-              ModelDependencies.sysUser) );
-          }
+              ModelDependencies.sysUser) )
+            .catch(e => UserMessagingPromise.then( um => 
+              um.addMessageForEndUser(
+                { title: i18next.t("clipboardEmpty_title", { ns: 'preact' }) 
+                , message: i18next.t("clipboardEmpty_message", {ns: 'preact'})
+                , error: e.toString()
+                })));
+            }
           else {
             component.eventDiv.current.classList.add("failure");
             component.eventDiv.current.focus();

@@ -60,8 +60,14 @@ class View_ extends PerspectivesComponent
         pproxy.deleteProperty(
           component.state.rolinstance,
           qualifiedPropertyName,
-          component.props.myroletype);
-      }
+          component.props.myroletype)
+        .catch(e => UserMessagingPromise.then( um => 
+          um.addMessageForEndUser(
+            { title: i18next.t("deleteProperty_title", { ns: 'preact' }) 
+            , message: i18next.t("deleteProperty_message", {ns: 'preact', property: qualifiedPropertyName})
+            , error: e.toString()
+            })));
+    }
     );
   }
 

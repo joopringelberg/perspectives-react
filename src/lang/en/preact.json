@@ -22,8 +22,12 @@
 , "importTransaction_message": "Could not import transaction."
 , "clipboardSet_title": "Clipboard"
 , "clipboardSet_message": "Could not put this role on the clipboard."
+, "clipboardEmpty_title": "Clipboard"
+, "clipboardEmpty_message": "Could not clear the clipboard."
 , "setProperty_title": "Property"
 , "setProperty_message": "Could not change the property {{- property}}."
+, "deleteProperty_title": "Property"
+, "deleteProperty_message": "Could not delete the property {{- property}}."
 , "screen_IsOnScreen_title": "Closing/opening the context"
 , "screen_IsOnScreen_message": "Could not property register that this context is closed or opened. Your peers will not know you have closed or opened it."
 }

@@ -334,11 +334,21 @@ export default class RoleInstance extends PerspectivesComponent
       PDRproxy.then(
         function (pproxy)
         {
-          pproxy.removeRol(
-            component.state.roltype,
-            component.state.rolinstance,
-            component.context.myroletype,
-            () => component.setState({showRemoveContextModal: false}));
+          pproxy
+            .removeRol(
+              component.state.roltype,
+              component.state.rolinstance,
+              component.context.myroletype)
+            .then( () => component.setState({showRemoveContextModal: false}) )
+            .catch(e => UserMessagingPromise.then( um => 
+              {
+                um.addMessageForEndUser(
+                  { title: i18next.t("removeRole_title", { ns: 'preact' }) 
+                  , message: i18next.t("removeRole_message", {ns: 'preact' })
+                  , error: e.toString()
+                });
+                component.setState({showRemoveContextModal: false})
+              }))
         });
 
   }
@@ -366,8 +376,8 @@ export default class RoleInstance extends PerspectivesComponent
                     {children}
                   </PSRol.Provider>
                   <BinaryModal
-                    title="Remove context?"
-                    message="Do you want to remove the context that fills the role as well?"
+                    title={i18next.t("roleinstance_removecontext_title", { ns: 'preact' })}
+                    message={i18next.t("roleinstance_removecontextmessage", { ns: 'preact' })}
                     show={component.state.showRemoveContextModal}
                     yes={component.removeWithContext}
                     no={component.removeWithoutContext}

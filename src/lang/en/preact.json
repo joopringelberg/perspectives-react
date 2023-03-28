@@ -34,4 +34,8 @@
 , "action_message": "Could not execute the action {{- action}}."
 , "unfill_title": "Role filler"
 , "unfill_message": "Could not remove the filler of this role."
+, "removeRole_title": "Role"
+, "removeRole_message": "Could not remove this role."
+, "roleinstance_removecontext_title": "Remove context?"
+, "roleinstance_removecontextmessage": "Do you want to remove the context that fills the role as well?"
 }

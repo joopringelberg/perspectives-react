@@ -34,4 +34,8 @@
 , "action_message": "Kon de actie {{- action}} niet uitvoeren."
 , "unfill_title": "Rolvuller"
 , "unfill_message": "Kon de vuller van deze rol niet verwijderen."
+, "removeRole_title": "Rol"
+, "removeRole_message": "Kon deze rol niet verwijderen."
+, "roleinstance_removecontext_title": "Context verwijderen?"
+, "roleinstance_removecontextmessage": "Wil je de context die deze rol vult, ook verwijderen?"
 }

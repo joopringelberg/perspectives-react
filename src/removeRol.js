@@ -3,6 +3,8 @@ const PDRproxy = require("perspectives-proxy").PDRproxy;
 import {PSContext} from "./reactcontexts.js";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 export default function RemoveRol (props)
 {
@@ -29,7 +31,14 @@ class RemoveRol_ extends PerspectivesComponent
               PDRproxy.then(
                 function (pproxy)
                 {
-                  pproxy.removeRol( roltype, rolinstance, component.props.myroletype );
+                  pproxy
+                    .removeRol( roltype, rolinstance, component.props.myroletype )
+                    .catch(e => UserMessagingPromise.then( um => 
+                      um.addMessageForEndUser(
+                        { title: i18next.t("removeRole_title", { ns: 'preact' }) 
+                        , message: i18next.t("removeRole_message", {ns: 'preact' })
+                        , error: e.toString()
+                        })));              
                 }
               );
             }

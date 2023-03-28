@@ -4,6 +4,8 @@ const PDRproxy = require("perspectives-proxy").PDRproxy;//3
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRol, PSRoleInstances, PSContext} from "./reactcontexts";
 import BinaryModal from "./binarymodal.js";
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 // This component requires a PSRoleInstances context and iterates over its instances.
 // It provides the PSRol context to each role instance. PSRol contains the functions:
@@ -122,12 +124,22 @@ class RoleInstanceIterator_ extends PerspectivesComponent
     PDRproxy.then(
       function (pproxy)
       {
-        pproxy.removeRol(
-          component.context.roltype,
-          component.context.cursor,
-          component.props.myroletype,
-          () => component.setState({showRemoveContextModal: false}));
-      });
+        pproxy
+          .removeRol(
+            component.context.roltype,
+            component.context.cursor,
+            component.props.myroletype)
+          .then( () => component.setState({showRemoveContextModal: false}) )
+          .catch(e => UserMessagingPromise.then( um => 
+            {
+              um.addMessageForEndUser(
+                { title: i18next.t("removeRole_title", { ns: 'preact' }) 
+                , message: i18next.t("removeRole_message", {ns: 'preact' })
+                , error: e.toString()
+              });
+              component.setState({showRemoveContextModal: false})
+            }))
+    });
   }
 
   componentDidMount ()
@@ -225,8 +237,8 @@ class RoleInstanceIterator_ extends PerspectivesComponent
                               </PSRol.Provider>;
                   })}
                 <BinaryModal
-                  title="Remove context?"
-                  message="Do you want to remove the context that fills the role as well?"
+                  title={i18next.t("roleinstance_removecontext_title", { ns: 'preact' })}
+                  message={i18next.t("roleinstance_removecontextmessage", { ns: 'preact' })}
                   show={component.state.showRemoveContextModal}
                   yes={component.removeWithContext}
                   no={component.removeWithoutContext}

@@ -366,8 +366,15 @@ export function addRemoveFiller(domEl, component)
               {
                 if ( rolIdArr[0] )
                  {
-                   pproxy.removeBinding( component.context.rolinstance, rolIdArr[0], component.props.myroletype );
-                 }
+                   pproxy
+                    .removeBinding( component.context.rolinstance, rolIdArr[0], component.props.myroletype )
+                    .catch(e => UserMessagingPromise.then( um => 
+                      um.addMessageForEndUser(
+                        { title: i18next.t("unfill_title", { ns: 'preact' }) 
+                        , message: i18next.t("unfill_message", {ns: 'preact'})
+                        , error: e.toString()
+                        })));              
+                  }
               }));
             event.preventDefault();
             event.stopPropagation();

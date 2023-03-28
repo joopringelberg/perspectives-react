@@ -32,4 +32,6 @@
 , "screen_IsOnScreen_message": "kon niet goed vastleggen dat deze context gesloten is. Andere betrokkenen kunnen daar niet van op de hoogte worden gebracht."
 , "action_title": "Actie"
 , "action_message": "Kon de actie {{- action}} niet uitvoeren."
+, "unfill_title": "Rolvuller"
+, "unfill_message": "Kon de vuller van deze rol niet verwijderen."
 }

@@ -28,7 +28,14 @@ class RemoveBinding_ extends PerspectivesComponent
               PDRproxy.then(
                 function (pproxy)
                 {
-                  pproxy.removeBinding( rolinstance, component.props.myroletype );
+                  pproxy
+                    .removeBinding( rolinstance, component.props.myroletype )
+                    .catch(e => UserMessagingPromise.then( um => 
+                      um.addMessageForEndUser(
+                        { title: i18next.t("unfill_title", { ns: 'preact' }) 
+                        , message: i18next.t("unfill_message", {ns: 'preact' })
+                        , error: e.toString()
+                        })));              
                 }
               );
             }

@@ -32,4 +32,6 @@
 , "screen_IsOnScreen_message": "Could not property register that this context is closed or opened. Your peers will not know you have closed or opened it."
 , "action_title": "Action"
 , "action_message": "Could not execute the action {{- action}}."
+, "unfill_title": "Role filler"
+, "unfill_message": "Could not remove the filler of this role."
 }

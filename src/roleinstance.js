@@ -320,11 +320,21 @@ export default class RoleInstance extends PerspectivesComponent
     PDRproxy.then(
       function (pproxy)
       {
-        pproxy.removeContext(
-          component.state.rolinstance,
-          component.state.roltype, // is always qualified.
-          component.context.myroletype,
-          () => component.setState({showRemoveContextModal: false}));
+        pproxy
+          .removeContext(
+            component.state.rolinstance,
+            component.state.roltype, // is always qualified.
+            component.context.myroletype)
+          .then( () => component.setState({showRemoveContextModal: false}))
+          .catch(e => UserMessagingPromise.then( um => 
+            {
+              um.addMessageForEndUser(
+                { title: i18next.t("removeContext_title", { ns: 'preact' }) 
+                , message: i18next.t("removeContext_message", {ns: 'preact' })
+                , error: e.toString()
+              });
+              component.setState({showRemoveContextModal: false});
+            }));
       });
   }
 

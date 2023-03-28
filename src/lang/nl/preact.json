@@ -38,4 +38,6 @@
 , "removeRole_message": "Kon deze rol niet verwijderen."
 , "roleinstance_removecontext_title": "Context verwijderen?"
 , "roleinstance_removecontextmessage": "Wil je de context die deze rol vult, ook verwijderen?"
+, "removeContext_title": "Context"
+, "removeContext_message": "Kon deze context niet verwijderen."
 }

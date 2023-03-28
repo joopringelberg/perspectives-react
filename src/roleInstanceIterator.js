@@ -113,8 +113,17 @@ class RoleInstanceIterator_ extends PerspectivesComponent
         pproxy.removeContext(
           component.context.cursor,
           component.context.roltype,
-          component.props.myroletype,
-          () => component.setState({showRemoveContextModal: false}));
+          component.props.myroletype)
+        .then( () => component.setState({showRemoveContextModal: false}))
+        .catch(e => UserMessagingPromise.then( um => 
+          {
+            um.addMessageForEndUser(
+              { title: i18next.t("removeContext_title", { ns: 'preact' }) 
+              , message: i18next.t("removeContext_message", {ns: 'preact' })
+              , error: e.toString()
+            });
+            component.setState({showRemoveContextModal: false});
+          }))
       });
   }
 

@@ -163,11 +163,12 @@ export default class RoleInstance extends PerspectivesComponent
             };
         }
 
+        // returns a promise for a boolean value.
         function bind ({rolinstance})
         {
           if (rolinstance)
           {
-            pproxy
+            return pproxy
               .bind(
                 component.contextInstance(),
                 component.props.role, // may be a local name.
@@ -184,6 +185,7 @@ export default class RoleInstance extends PerspectivesComponent
                   component.setState({showRemoveContextModal: false})
                 }));
           }
+          else return new Promise((resolve, reject) => { reject(false) });
         }
 
         function checkbinding({rolinstance}, callback)

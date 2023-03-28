@@ -57,6 +57,7 @@ export default class RoleInstances extends PerspectivesComponent
     }
   }
 
+  // Returns a promise for a boolean value.
   bind ({rolinstance})
   {
     const component = this;
@@ -83,6 +84,7 @@ export default class RoleInstances extends PerspectivesComponent
               }));
         });
     }
+    else return new Promise((resolve, reject) => { reject(false) });
   }
 
   checkBinding({rolinstance}, callback)

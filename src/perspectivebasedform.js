@@ -141,19 +141,18 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
     );
   }
 
-  checkBinding({rolinstance}, callback)
+  // returns a promise for a boolean value.
+  checkBinding({rolinstance})
   {
     const component = this;
-    PDRproxy.then( pproxy =>
-    // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
-    pproxy.checkBinding(
-      component.props.contexttype,
-      component.props.perspective.roleType,
-      rolinstance,
-      function(psbool)
-      {
-        callback( psbool[0] === "true" );
-      }));
+    return PDRproxy.then( pproxy =>
+      // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
+      pproxy
+        .checkBindingP(
+          component.props.contexttype,
+          component.props.perspective.roleType,
+          rolinstance)
+        .then( psbool => psbool[0] === "true") )
   }
 
   bind_(rolInstance)

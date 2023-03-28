@@ -158,14 +158,15 @@ class RoleInstanceIterator_ extends PerspectivesComponent
       { rolBindingContext:
           { contextinstance: component.context.contextinstance
           , contexttype: component.context.contexttype
+          // Returns a promise for a boolean value.
           , bind: function({rolinstance})
               {
                 if (rolinstance)
                 {
-                  PDRproxy.then(
+                  return PDRproxy.then(
                     function (pproxy)
                     {
-                      pproxy.checkBinding(
+                      return pproxy.checkBindingP(
                         component.context.contexttype,
                         component.context.roltype,
                         rolinstance,
@@ -173,7 +174,7 @@ class RoleInstanceIterator_ extends PerspectivesComponent
                         {
                           if ( psbool[0] === "true" )
                           {
-                            pproxy
+                            return pproxy
                               .bind(
                                 component.context.contextinstance,
                                 component.context.roltype,
@@ -192,12 +193,19 @@ class RoleInstanceIterator_ extends PerspectivesComponent
                           }
                           else
                           {
-                            alert("Cannot bind!");
+                            um.addMessageForEndUser(
+                              { title: i18next.t("fillerNotAllowed_title", { ns: 'preact' }) 
+                              , message: i18next.t("fillerNotAllowed_message", {ns: 'preact' })
+                              , error: e.toString()
+                            });
+                            component.setState({showRemoveContextModal: false});
+                            return new Promise((resolve, reject) => { reject(false) });
                           }
                         });
                     });
                   // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
                 }
+                else return new Promise((resolve, reject) => { reject(false) });
               }
           , checkbinding: component.context.checkbinding
           }

@@ -87,7 +87,7 @@ class RoleDropZone_ extends PerspectivesComponent
     const component = this;
     if ( addedBehaviour.includes("fillARole"))
     {
-      component.props.checkbinding( roleData,
+      component.props.checkbinding( roleData ).then(
         function( bindingAllowed )
         {
           if ( bindingAllowed)

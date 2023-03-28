@@ -42,4 +42,6 @@
 , "removeContext_message": "Could not remove this context."
 , "fillRole_title": "Fill a role"
 , "fillRole_message": "Could not fill this role."
+, "fillerNotAllowed_title": "Filler rejected"
+, "fillerNotAllowed_message": "This type of filler is not allowed here!"
 }

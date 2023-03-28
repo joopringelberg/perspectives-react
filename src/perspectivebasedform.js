@@ -36,6 +36,8 @@ import
   , Navbar
   } from "react-bootstrap";
 const PropTypes = require("prop-types");
+import {UserMessagingPromise} from "./userMessaging.js";
+import i18next from "i18next";
 
 ////////////////////////////////////////////////////////////////////////////////
 // PERSPECTIVEBASEDFORM
@@ -331,7 +333,13 @@ class FormControls extends PerspectivesComponent
             , component.props.contextinstance
             , component.props.perspective.id
             , actionName
-            , component.props.myroletype); // authoringRole
+            , component.props.myroletype) // authoringRole
+          .catch(e => UserMessagingPromise.then( um => 
+            um.addMessageForEndUser(
+              { title: i18next.t("action_title", { ns: 'preact' }) 
+              , message: i18next.t("action_message", {ns: 'preact', action: actionName})
+              , error: e.toString()
+              })));              
       });
   }
 

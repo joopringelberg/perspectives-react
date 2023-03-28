@@ -30,4 +30,6 @@
 , "deleteProperty_message": "Kon deze eigenschap niet verwijderen: {{- property}}."
 , "screen_IsOnScreen_title": "De context sluiten"
 , "screen_IsOnScreen_message": "kon niet goed vastleggen dat deze context gesloten is. Andere betrokkenen kunnen daar niet van op de hoogte worden gebracht."
+, "action_title": "Actie"
+, "action_message": "Kon de actie {{- action}} niet uitvoeren."
 }

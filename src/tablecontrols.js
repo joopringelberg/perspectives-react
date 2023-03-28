@@ -118,7 +118,13 @@ export default class TableControls extends PerspectivesComponent
             , component.props.perspective.contextInstance
             , component.props.perspective.id
             , actionName
-            , component.props.perspective.userRoleType); // authoringRole
+            , component.props.perspective.userRoleType) // authoringRole
+          .catch(e => UserMessagingPromise.then( um => 
+            um.addMessageForEndUser(
+              { title: i18next.t("action_title", { ns: 'preact' }) 
+              , message: i18next.t("action_message", {ns: 'preact', action: actionName})
+              , error: e.toString()
+              })));  
       });
   }
 

@@ -87,30 +87,42 @@ class RoleDropZone_ extends PerspectivesComponent
     const component = this;
     if ( addedBehaviour.includes("fillARole"))
     {
-      component.props.checkbinding( roleData ).then(
-        function( bindingAllowed )
-        {
-          if ( bindingAllowed)
+      component.props
+        .checkbinding( roleData )
+        .then(
+          function( bindingAllowed )
           {
-            component.props.bind( roleData );
-            // Empty clipboard.
-            // {request: "DeleteProperty", subject: rolID, predicate: propertyName, authoringRole: myroletype}
-            PDRproxy.then( pproxy => pproxy.deleteProperty(
-              component.props.systemExternalRole,
-              ModelDependencies.cardClipBoard,
-              ModelDependencies.sysUser) )
-            .catch(e => UserMessagingPromise.then( um => 
-              um.addMessageForEndUser(
-                { title: i18next.t("clipboardEmpty_title", { ns: 'preact' }) 
-                , message: i18next.t("clipboardEmpty_message", {ns: 'preact'})
-                , error: e.toString()
-                })));
+            if ( bindingAllowed)
+            {
+              component.props
+                // bind catches its own errors.
+                .bind( roleData )
+                .then( () =>
+                  // Empty clipboard.
+                  // {request: "DeleteProperty", subject: rolID, predicate: propertyName, authoringRole: myroletype}
+                  PDRproxy.then( pproxy => pproxy.deleteProperty(
+                    component.props.systemExternalRole,
+                    ModelDependencies.cardClipBoard,
+                    ModelDependencies.sysUser) )
+                  .catch(e => UserMessagingPromise.then( um => 
+                    um.addMessageForEndUser(
+                      { title: i18next.t("clipboardEmpty_title", { ns: 'preact' }) 
+                      , message: i18next.t("clipboardEmpty_message", {ns: 'preact'})
+                      , error: e.toString()
+                      })))
+                  );
+              }
+            else {
+              component.eventDiv.current.classList.add("failure");
+              component.eventDiv.current.focus();
+              UserMessagingPromise.then( um => 
+                um.addMessageForEndUser(
+                  { title: i18next.t("fillerNotAllowed_title", { ns: 'preact' }) 
+                  , message: i18next.t("fillerNotAllowed_message", {ns: 'preact'})
+                  , error: ""
+                  }));
             }
-          else {
-            component.eventDiv.current.classList.add("failure");
-            component.eventDiv.current.focus();
-          }
-        } );
+          } );
       }
   }
 

@@ -129,51 +129,42 @@ export default class RoleInstance extends PerspectivesComponent
     PDRproxy.then(
       function (pproxy)
       {
-        function bind_(rolInstance)
+        function bind_(filledRole)
         {
-          return function({rolinstance})
+          return function ({filler})
+          {
+            if (filler)
             {
-              if (rolinstance)
-              {
-                // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
-                PDRproxy.then(
-                  function (pproxy)
+              return pproxy
+                .bind_(
+                  filledRole,
+                  filler,
+                  component.context.myroletype)
+                .catch(e => UserMessagingPromise.then( um => 
                   {
-                    pproxy.checkBinding(
-                      component.context.contexttype,
-                      component.state.roltype,
-                      rolinstance,
-                      function(psbool)
-                      {
-                        if ( psbool[0] === "true" )
-                        {
-                          pproxy.bind_(
-                            rolInstance, // binder: component.state.rolinstance?
-                            rolinstance, // binding
-                            component.context.myroletype,
-                            function( /*rolId*/ ){});
-                        }
-                        else
-                        {
-                          alert("Cannot bind_!");
-                        }
-                      });
-                });
-              }
-            };
+                    um.addMessageForEndUser(
+                      { title: i18next.t("fillRole_title", { ns: 'preact' }) 
+                      , message: i18next.t("fillRole_message", {ns: 'preact' })
+                      , error: e.toString()
+                    });
+                    component.setState({showRemoveContextModal: false})
+                  }));
+            }
+            else return new Promise((resolve, reject) => { reject(false) });
+          }
         }
 
         // returns a promise for a boolean value.
-        function bind ({rolinstance})
+        function bind ({filler})
         {
-          if (rolinstance)
+          if (filler)
           {
             return pproxy
               .bind(
                 component.contextInstance(),
                 component.props.role, // may be a local name.
                 component.context.contexttype,
-                {properties: {}, binding: rolinstance},
+                {properties: {}, binding: filler},
                 component.context.myroletype)
               .catch(e => UserMessagingPromise.then( um => 
                 {
@@ -188,18 +179,17 @@ export default class RoleInstance extends PerspectivesComponent
           else return new Promise((resolve, reject) => { reject(false) });
         }
 
-        function checkbinding({rolinstance}, callback)
+        // returns a promise for a boolean value.
+        function checkbinding({rolinstance})
         {
           // checkBinding( <contexttype>, <(local)RolName>, <binding>, [() -> undefined] )
           // Where (local)RolName identifies the role in <contexttype> whose binding specification we want to compare with <binding>.
-          pproxy.checkBinding(
-            component.context.contexttype,
-            component.state.roltype,
-            rolinstance,
-            function(psbool)
-            {
-              callback( psbool[0] === "true" );
-            });
+          return pproxy
+            .checkBindingP(
+              component.context.contexttype,
+              component.state.roltype,
+              rolinstance)
+            .then( psbool => psbool[0] === "true");
         }
 
         function removerol()

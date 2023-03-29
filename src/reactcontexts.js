@@ -1,5 +1,15 @@
 const React = require("react");
 
+// Two contexts, PSRol and PSRoleInstances, have the functions bind, bind_ and checkBinding. 
+// All return promises.
+// Their implementation is built along these decisions:
+//    * each calls a proxy function and handles its errors by itself, displaying a message for the end user;
+//    * bind and bind_ do NOT check whether the binding is allowed.
+// Hence, in all situations where the bind and bind_ functions from these contexts are applied, 
+// the programmer should make sure that the binding is actually allowed. 
+// He can use checkBinding for that purpose. It returns a promise for a Boolean value.
+// If the result is `false`, the situation might require that a message for the end user is displayed.
+
 export const PSContext = React.createContext(
   { contextinstance: ""
   , contexttype: ""

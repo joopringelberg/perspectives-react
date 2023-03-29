@@ -46,6 +46,8 @@ export default class FormPasteRole extends PerspectivesComponent
     PDRproxy.then(
       function(pproxy)
       {
+        // getProperty is a live query. If the clipboard content changes, 
+        // we will again check whether it can fill the role that is in this form.
         pproxy.getProperty(
           component.props.systemexternalrole,
           ModelDependencies.cardClipBoard,
@@ -57,12 +59,11 @@ export default class FormPasteRole extends PerspectivesComponent
               clipboardContent = JSON.parse( valArr[0]);
               if ( clipboardContent.roleData && clipboardContent.roleData.rolinstance )
               {
-                component.context.checkbinding(
-                  {rolinstance: clipboardContent.roleData.rolinstance},
-                  function(compatibleRole)
-                  {
-                    component.setState({compatibleRole, roleOnClipboard: clipboardContent.roleData.rolinstance});
-                  });
+                // checkBinding catches its own errors. We do not display a message if the binding is not allowed;
+                // instead the button will be disabled.
+                component.context
+                  .checkbinding( {rolinstance: clipboardContent.roleData.rolinstance} )
+                  .then( compatibleRole => component.setState({compatibleRole, roleOnClipboard: clipboardContent.roleData.rolinstance}));
               }
             }
           });
@@ -87,8 +88,10 @@ export default class FormPasteRole extends PerspectivesComponent
     const {roleOnClipboard, compatibleRole} = component.state;
     if ( roleOnClipboard )
     {
+      // No need to call checkBinding; it was done on mounting.
       if (compatibleRole && component.context.rolinstance )
       {
+        // bind_ catches its own errors and we do not give a message on success.
         component.context.bind_( {rolinstance: roleOnClipboard} );
       }
       else if ( compatibleRole )

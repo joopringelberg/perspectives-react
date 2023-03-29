@@ -46,6 +46,7 @@ class RoleInstanceIterator_ extends PerspectivesComponent
   computeInstanceData (rolInstance, rolBindingContext)
   {
     const component = this;
+    // returns a function that returns a promise.
     function bind_(rolInstance)
     {
       return function({rolinstance})
@@ -53,30 +54,22 @@ class RoleInstanceIterator_ extends PerspectivesComponent
           if (rolinstance)
           {
             // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
-            PDRproxy.then(
-              function (pproxy)
-              {
-                pproxy.checkBinding(
-                  component.context.contexttype,
-                  component.context.roltype,
+            return PDRproxy.then( pproxy =>
+              pproxy
+                .bind_(
+                  rolInstance,
                   rolinstance,
-                  function(psbool)
+                  component.props.myroletype))
+                .catch(e => UserMessagingPromise.then( um => 
                   {
-                    if ( psbool[0] === "true" )
-                    {
-                      pproxy.bind_(
-                        rolInstance,
-                        rolinstance,
-                        component.props.myroletype,
-                        function( /*rolId*/ ){});
-                    }
-                    else
-                    {
-                      alert("Cannot bind_!");
-                    }
-                  });
-            });
-          }
+                    um.addMessageForEndUser(
+                      { title: i18next.t("fillRole_title", { ns: 'preact' }) 
+                      , message: i18next.t("fillRole_message", {ns: 'preact' })
+                      , error: e.toString()
+                    })
+                  }))
+              }
+          else return new Promise((resolve, reject) => { reject(false) });          
         };
     }
     return (
@@ -166,44 +159,23 @@ class RoleInstanceIterator_ extends PerspectivesComponent
                   return PDRproxy.then(
                     function (pproxy)
                     {
-                      return pproxy.checkBindingP(
-                        component.context.contexttype,
-                        component.context.roltype,
-                        rolinstance,
-                        function(psbool)
-                        {
-                          if ( psbool[0] === "true" )
-                          {
-                            return pproxy
-                              .bind(
-                                component.context.contextinstance,
-                                component.context.roltype,
-                                component.context.contexttype,
-                                {properties: {}, binding: rolinstance},
-                                component.context.myroletype)
-                              .catch(e => UserMessagingPromise.then( um => 
-                                {
-                                  um.addMessageForEndUser(
-                                    { title: i18next.t("fillRole_title", { ns: 'preact' }) 
-                                    , message: i18next.t("fillRole_message", {ns: 'preact' })
-                                    , error: e.toString()
-                                  });
-                                  component.setState({showRemoveContextModal: false})
-                                }));
-                          }
-                          else
+                      return pproxy
+                        .bind(
+                          component.context.contextinstance,
+                          component.context.roltype,
+                          component.context.contexttype,
+                          {properties: {}, binding: rolinstance},
+                          component.context.myroletype)
+                        .catch(e => UserMessagingPromise.then( um => 
                           {
                             um.addMessageForEndUser(
-                              { title: i18next.t("fillerNotAllowed_title", { ns: 'preact' }) 
-                              , message: i18next.t("fillerNotAllowed_message", {ns: 'preact' })
+                              { title: i18next.t("fillRole_title", { ns: 'preact' }) 
+                              , message: i18next.t("fillRole_message", {ns: 'preact' })
                               , error: e.toString()
                             });
-                            component.setState({showRemoveContextModal: false});
-                            return new Promise((resolve, reject) => { reject(false) });
-                          }
-                        });
+                            component.setState({showRemoveContextModal: false})
+                          }));
                     });
-                  // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
                 }
                 else return new Promise((resolve, reject) => { reject(false) });
               }

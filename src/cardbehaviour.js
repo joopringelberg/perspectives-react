@@ -226,7 +226,13 @@ export function addFillWithRole(domEl, component)
           }
           else {
             component.eventDiv.current.classList.add("border-danger", "border");
-          }
+            UserMessagingPromise.then( um => 
+              um.addMessageForEndUser(
+                { title: i18next.t("fillerNotAllowed_title", { ns: 'preact' }) 
+                , message: i18next.t("fillerNotAllowed_message", {ns: 'preact'})
+                , error: ""
+                }));
+        }
         } );
       }
   }

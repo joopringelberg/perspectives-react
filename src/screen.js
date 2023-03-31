@@ -237,6 +237,8 @@ class Screen_ extends PerspectivesComponent
   {
     // Modify the external role so we know the screen will close.
     const component = this;
+    // Need to call the super explicitly, so it will unsubscribe.
+    super.componentWillUnmount();
     // window.removeEventListener( "beforeUnload", component.beforeUnloadListener, {capture: true} );
     lifecycle.removeUnsavedChanges("Context");
     component

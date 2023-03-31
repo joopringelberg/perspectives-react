@@ -133,10 +133,17 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
     PDRproxy.then(
       function (pproxy)
       {
-        pproxy.createRole(
-          component.props.contextinstance,
-          component.props.perspective.roleType,
-          component.props.myroletype);
+        return pproxy
+          .createRole(
+            component.props.contextinstance,
+            component.props.perspective.roleType,
+            component.props.myroletype)
+          .catch(e => UserMessagingPromise.then( um => 
+            um.addMessageForEndUser(
+              { title: i18next.t("createRole_title", { ns: 'preact' }) 
+              , message: i18next.t("createRole_message", {ns: 'preact', roletype: component.props.perspective.roleType})
+              , error: e.toString()
+              })));
       }
     );
   }

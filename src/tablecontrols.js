@@ -82,15 +82,19 @@ export default class TableControls extends PerspectivesComponent
       }
       else if (roleType)
       {
-        pproxy.createRole (
-          component.props.perspective.contextInstance,
-          roleType,
-          component.props.perspective.userRoleType,
-          function(newRoleId_)
-          {
-            receiveResponse( newRoleId_[0] );
-          });
-      }
+        pproxy
+          .createRole (
+            component.props.perspective.contextInstance,
+            roleType,
+            component.props.perspective.userRoleType)
+          .then( newRoleId_ => receiveResponse( newRoleId_[0] ) )
+          .catch(e => UserMessagingPromise.then( um => 
+            um.addMessageForEndUser(
+              { title: i18next.t("createRole_title", { ns: 'preact' }) 
+              , message: i18next.t("createRole_message", {ns: 'preact', roletype: roleType})
+              , error: e.toString()
+              })))
+    }
     });
   }
 

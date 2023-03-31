@@ -160,16 +160,19 @@ export default class RoleInstances extends PerspectivesComponent
                       }
                       else
                       {
-                        pproxy.createRole (
-                          component.context.contextinstance,
-                          rolType,
-                          component.context.myroletype,
-                          function(newRoleId_)
-                          {
-                            receiveResponse( newRoleId_[0] );
-                          });
-                      }
-                    });
+                        pproxy
+                          .createRole (
+                            component.context.contextinstance,
+                            rolType,
+                            component.context.myroletype)
+                          .then( newRoleId_ => receiveResponse( newRoleId_[0] ) )
+                          .catch(e => UserMessagingPromise.then( um => 
+                            um.addMessageForEndUser(
+                              { title: i18next.t("createRole_title", { ns: 'preact' }) 
+                              , message: i18next.t("createRole_message", {ns: 'preact', roletype: rolType})
+                              , error: e.toString()
+                              })))
+                      }});
                   }
                 , bind: component.bind
                 , checkbinding: component.checkBinding

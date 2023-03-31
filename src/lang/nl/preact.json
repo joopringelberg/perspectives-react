@@ -44,4 +44,6 @@
 , "fillRole_message": "Kon deze rol niet vullen."
 , "fillerNotAllowed_title": "Vuller afgewezen"
 , "fillerNotAllowed_message": "Dit type vuller is hier niet toegestaan!"
+, "createRole_title": "Rol aanmaken mislukt"
+, "createRole_message": "Het is niet gelukt om een rol van type {{-roletype}} te maken in deze context!"
 }

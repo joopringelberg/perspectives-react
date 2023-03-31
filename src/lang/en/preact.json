@@ -44,4 +44,6 @@
 , "fillRole_message": "Could not fill this role."
 , "fillerNotAllowed_title": "Filler rejected"
 , "fillerNotAllowed_message": "This type of filler is not allowed here!"
+, "createRole_title": "Role creation failed"
+, "createRole_message": "Could not create an instance of role type {{-roletype}} in this context!"
 }

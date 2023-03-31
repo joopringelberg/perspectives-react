@@ -128,11 +128,18 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
         }
         else
         {
-          pproxy.createRole(
-                component.props.contextinstance,
-                perspective.roleType,
-                component.props.myroletype);
-        }
+          pproxy
+            .createRole(
+              component.props.contextinstance,
+              perspective.roleType,
+              component.props.myroletype)
+            .catch(e => UserMessagingPromise.then( um => 
+              um.addMessageForEndUser(
+                { title: i18next.t("createRole_title", { ns: 'preact' }) 
+                , message: i18next.t("createRole_message", {ns: 'preact', roletype: perspective.roleType})
+                , error: e.toString()
+                })))
+}
       });
   }
   handleKeyDown (event, perspective)

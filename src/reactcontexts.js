@@ -38,6 +38,7 @@ export const PSRoleInstances = React.createContext(
   , roleKind: ""
   , instances: []
   , cursor: ""
+  // Handles its own errors and returns a promise.
   , createRole: function(){ console.warn("Default (no-op) createRole called. You likely miss a PSRoleInstances.Provider!");}
   , bind: function(){console.warn("Default (no-op) bind called. You likely miss a PSRoleInstances.Provider!");}
   , checkbinding: function(){console.warn("Default (no-op) checkbinding called. You likely miss a PSRol.Provider or PSRoleInstances.Provider!");}

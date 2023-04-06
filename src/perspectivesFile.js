@@ -226,7 +226,7 @@ export default class PerspectivesFile extends PerspectivesComponent
         event.preventDefault();
         event.stopPropagation();   
         // previousState is still EMPTY.
-        component.setState({state: EMPTY, fileName: "", mimeType: "", uploadedFile: undefined});
+        component.setState({state: EMPTY, fileName: "", mimeType: "", uploadedFile: undefined, url:undefined});
 
         break;
       }
@@ -392,7 +392,7 @@ export default class PerspectivesFile extends PerspectivesComponent
     switch (component.state.state) {
       case FILLED:
         return (
-          <div onKeyDown={e => component.handleKeyDownInFilled(e)} tabIndex="-1">
+          <div onKeyDown={e => component.handleKeyDownInFilled(e)} tabIndex={component.state.url ? -1 : 0}>
             <Form.Row>
               <Col lg="3">
                 <Form.Control readOnly value={ component.state.fileName } tabIndex="-1" size="sm"/>
@@ -407,7 +407,7 @@ export default class PerspectivesFile extends PerspectivesComponent
                   id={component.props.serialisedProperty.id + '_download'}
                   onClick={ e => component.download(e) }
                   onKeyDown={ e => component.download(e) }
-                  tabIndex="0"
+                  tabIndex={component.state.url ? 0 : -1}
                   >
                   <DownloadIcon 
                     aria-label={ i18next.t("perspectivesFile_download", { ns: 'preact' }) }
@@ -455,7 +455,7 @@ export default class PerspectivesFile extends PerspectivesComponent
                   id={component.props.serialisedProperty.id + '_download'}
                   onClick={ e => component.download(e) }
                   onKeyDown={ e => component.download(e) }
-                  tabIndex="0"
+                  tabIndex="-1"
                   >
                   <DownloadIcon 
                     aria-label={ i18next.t("perspectivesFile_download", { ns: 'preact' }) }
@@ -467,7 +467,7 @@ export default class PerspectivesFile extends PerspectivesComponent
                   id={component.props.serialisedProperty.id + '_upload'}
                   onClick={ e => component.upload(e) }
                   onKeyDown={ e => component.upload(e) }
-                  tabIndex="0"
+                  tabIndex="-1"
                   >
                   <UploadIcon 
                       aria-label={ i18next.t("perspectivesFile_upload", { ns: 'preact' }) }
@@ -497,6 +497,7 @@ export default class PerspectivesFile extends PerspectivesComponent
                 pattern="^[^\./]+\.[^\./]+$"
                 size="sm"
                 placeholder={ i18next.t("perspectivesFile_fileName_label", { ns: 'preact' }) }
+                tabIndex="0"
                 />
               </Col>
               <Col lg="2">
@@ -511,6 +512,7 @@ export default class PerspectivesFile extends PerspectivesComponent
                   pattern="^[^\./]+\/[^\./]+$"
                   size="sm"
                   placeholder={ i18next.t("perspectivesFile_mimeType_label", { ns: 'preact' }) }
+                  tabIndex="-1"
                   />
               </Col>
               <Col lg="1">
@@ -520,7 +522,7 @@ export default class PerspectivesFile extends PerspectivesComponent
                     id={component.props.serialisedProperty.id + '_upload'}
                     onClick={ e => component.upload(e) }
                     onKeyDown={ e => component.upload(e) }
-                    tabIndex="0"
+                    tabIndex="-1"
                     >
                     <UploadIcon 
                         aria-label={ i18next.t("perspectivesFile_upload", { ns: 'preact' }) }

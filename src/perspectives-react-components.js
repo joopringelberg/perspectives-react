@@ -39,8 +39,9 @@ export {default as PerspectiveTable} from "./perspectivetable.js";
 export {default as ActionDropDown} from "./actiondropdown.js";
 export {default as Alert} from "./alert.js";
 export {default as BinaryModal} from "./binarymodal.js";
-export {default as ModelDependencies} from "./modelDependencies.js"
+export {default as ModelDependencies} from "./modelDependencies.js";
 export * from "./userMessaging.js";
+export {default as PerspectivesFile} from "./perspectivesFile";
 
 export async function getPreact(LANG_KEY)
 {

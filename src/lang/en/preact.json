@@ -46,4 +46,12 @@
 , "fillerNotAllowed_message": "This type of filler is not allowed here!"
 , "createRole_title": "Role creation failed"
 , "createRole_message": "Could not create an instance of role type {{-roletype}} in this context!"
+, "perspectivesFile_fileName": "Enter a valid filename with extension." 
+, "perspectivesFile_mimeType": "Enter a valid MIME type, e.g. 'text/arc'."
+, "perspectivesFile_fileName_label": "File name"
+, "perspectivesFile_mimeType_label": "MIME type"
+, "perspectivesFile_download": "Download"
+, "perspectivesFile_upload": "Upload"
+, "saveFile_title": "Save file"
+, "saveFile_message": "Could not save the file or the property."
 }

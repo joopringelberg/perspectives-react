@@ -46,4 +46,12 @@
 , "fillerNotAllowed_message": "Dit type vuller is hier niet toegestaan!"
 , "createRole_title": "Rol aanmaken mislukt"
 , "createRole_message": "Het is niet gelukt om een rol van type {{-roletype}} te maken in deze context!"
+, "perspectivesFile_fileName": "Voer een geldige bestandsnaam in, met extensie." 
+, "perspectivesFile_mimeType": "Voer een geldig MIME type in, b.v. 'text/arc'."
+, "perspectivesFile_fileName_label": "Bestandsnaam"
+, "perspectivesFile_mimeType_label": "MIME type"
+, "perspectivesFile_download": "Download"
+, "perspectivesFile_upload": "Upload"
+, "saveFile_title": "Bewaar bestand"
+, "saveFile_message": "Kon het bestands of de property niet opslaan."
 }

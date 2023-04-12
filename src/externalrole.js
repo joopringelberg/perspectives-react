@@ -20,32 +20,29 @@ export default class ExternalRole extends PerspectivesComponent
     PDRproxy.then(
       function (pproxy)
       {
-        component.addUnsubscriber(
-          pproxy.getRolType(externalRole( component.context.contextinstance )
-            .then(
-              function(rolType)
-              {
-                const updater = {value:
-                  { contextinstance: component.context.contextinstance
-                  , contexttype: component.context.contexttype
-                  , roltype: rolType[0]
-                  , rolinstance: externalRole( component.context.contextinstance)
-                  , bind_: function(){}
-                  , checkbinding: function(ignore, callback){ callback(true);}
-                  , removerol: function(){}
-                  , isselected: false
-                  }};
-                component.setState( updater );
-              })
-            .catch(e => UserMessagingPromise.then( um => 
-              um.addMessageForEndUser(
-                { title: i18next.t("role_title", { ns: 'preact' }) 
-                , message: i18next.t("role_message", {ns: 'preact', role: externalRole( component.context.contextinstance )})
-                , error: e.toString()
-                }))))
-          );
-      }
-    );
+        pproxy.getRolType(externalRole( component.context.contextinstance ))
+          .then(
+            function(rolType)
+            {
+              const updater = {value:
+                { contextinstance: component.context.contextinstance
+                , contexttype: component.context.contexttype
+                , roltype: rolType[0]
+                , rolinstance: externalRole( component.context.contextinstance)
+                , bind_: function(){}
+                , checkbinding: function(ignore, callback){ callback(true);}
+                , removerol: function(){}
+                , isselected: false
+                }};
+              component.setState( updater );
+            })
+          .catch(e => UserMessagingPromise.then( um => 
+            um.addMessageForEndUser(
+              { title: i18next.t("role_title", { ns: 'preact' }) 
+              , message: i18next.t("role_message", {ns: 'preact', role: externalRole( component.context.contextinstance )})
+              , error: e.toString()
+              })));
+      });
   }
 
   render ()

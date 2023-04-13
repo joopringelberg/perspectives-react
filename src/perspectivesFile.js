@@ -53,7 +53,7 @@ export default class PerspectivesFile extends PerspectivesComponent
     this.state = 
       { fileName: fileProp.fileName || "" // cannot be undefined as we pass it to the value prop of the input element.
       , mimeType: fileProp.mimeType || ""
-      , url: fileProp.database
+      , database: fileProp.database
       , roleFileName: fileProp.roleFileName
       , state: (this.readOnly || !props.roleId) ? READONLY : (fileProp.fileName ? FILLED : EMPTY)
       , previousState: EMPTY
@@ -256,7 +256,7 @@ export default class PerspectivesFile extends PerspectivesComponent
 
         parsedPropertyValue = component.parsePropertyValue(component.props.propertyValues.values[0]);
         if (component.state.fileName !== parsedPropertyValue.fileName && 
-            this.reportValidity(component.state.fileName, i18next.t("fileName_invalid", {ns: 'preact'})) )
+            this.reportValidity(event.target, i18next.t("fileName_invalid", {ns: 'preact'})) )
         {
           // If state.fileName is not equal to the value stored in the property value, just set the property value.
           // We know the file has not been uploaded AFTER changing the fileName, because we save the file and property
@@ -269,7 +269,7 @@ export default class PerspectivesFile extends PerspectivesComponent
                   component.props.roleId,
                   component.props.serialisedProperty.id,
                   JSON.stringify(
-                    { name: component.state.fileName
+                    { fileName: component.state.fileName
                     , mimeType: component.state.mimeType
                     // database and roleFileName will be decided by the PDR, see below.
                     }),
@@ -322,7 +322,7 @@ export default class PerspectivesFile extends PerspectivesComponent
             component.props.roleId,
             component.props.serialisedProperty.id,
             JSON.stringify(
-              { name: theFile.name
+              { fileName: theFile.name
               , mimeType: theFile.type
               // database and roleFileName will be decided by the PDR, see below.
               }),

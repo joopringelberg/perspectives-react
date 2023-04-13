@@ -64,7 +64,7 @@ export default class PerspectivesFile extends PerspectivesComponent
 
   componentDidUpdate(prevProps)
   {
-    let fileProp, prevFileProp = {};
+    let fileProp, prevFileProp = {}, updater = {};
     if ( prevProps.propertyValues.values[0] )
     {
       prevFileProp = JSON.parse( prevProps.propertyValues.values[0] );
@@ -75,13 +75,18 @@ export default class PerspectivesFile extends PerspectivesComponent
     }
     if ( fileProp && prevFileProp.fileName != fileProp.fileName )
     {
-      this.setState(
+      updater = 
         { fileName: fileProp.fileName || ""
         , mimeType: fileProp.mimeType || ""
         , database: fileProp.database
         , roleFileName: fileProp.roleFileName
-        });
+        };
     }
+    if (!prevProps.roleId && this.props.roleId)
+    {
+      updater.state = EMPTY;
+    }
+    this.setState(updater);
   }
 
   parsePropertyValue(pval)
@@ -271,7 +276,8 @@ export default class PerspectivesFile extends PerspectivesComponent
                   JSON.stringify(
                     { fileName: component.state.fileName
                     , mimeType: component.state.mimeType
-                    // database and roleFileName will be decided by the PDR, see below.
+                    , database: component.state.database
+                    , roleFileName: component.state.roleFileName
                     }),
                   component.props.myRoletype )
                 .then( () => 

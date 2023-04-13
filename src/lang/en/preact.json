@@ -54,4 +54,7 @@
 , "perspectivesFile_upload": "Upload"
 , "saveFile_title": "Save file"
 , "saveFile_message": "Could not save the file or the property."
+, "retrieveFile_title": "Retrieve file"
+, "retrieveFile_message": "Could not retieve the file or the property."
+, "fileName_invalid": "Provide a valid filename."
 }

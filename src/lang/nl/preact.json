@@ -53,5 +53,8 @@
 , "perspectivesFile_download": "Download"
 , "perspectivesFile_upload": "Upload"
 , "saveFile_title": "Bewaar bestand"
-, "saveFile_message": "Kon het bestands of de property niet opslaan."
+, "saveFile_message": "Kon het bestand of de property niet opslaan."
+, "retrieveFile_title": "Bestand ophalen"
+, "retrieveFile_message": "Kon het bestand niet ophalen."
+, "fileName_invalid": "Geef een geldige bestandsnaam."
 }

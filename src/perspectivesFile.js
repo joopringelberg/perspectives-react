@@ -1,23 +1,25 @@
 import React from 'react';
 
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 
-// import {PDRproxy} from "perspectives-proxy";
-const PDRproxy = new Promise( function(resolve)
-  {
-    resolve(
-      { setProperty: function(i1, i2, value){ alert("Stub: saving property value: " + value); return new Promise(resolver => resolver(true));}
-      , saveFile: function(){ alert("Stub: saving file."); return new Promise(resolver => resolver(true));}
-      }
-    )
-  })
+import {PDRproxy} from "perspectives-proxy";
+// const PDRproxy = new Promise( function(resolve)
+//   {
+//     resolve(
+//       { setProperty: function(i1, i2, value){ alert("Stub: saving property value: " + value); return new Promise(resolver => resolver(true));}
+//       , saveFile: function(){ alert("Stub: saving file."); return new Promise(resolver => resolver(true));}
+//       }
+//     )
+//   })
 import PropTypes from "prop-types";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {serialisedProperty, propertyValues} from "./perspectiveshape.js";
 import i18next from "i18next";
 import { Col } from 'react-bootstrap';
 import { UploadIcon, DownloadIcon} from '@primer/octicons-react';
+import Pouchdb from "pouchdb-browser";
+import {deconstructLocalName} from "./urifunctions.js";
+import {UserMessagingPromise} from "./userMessaging.js";
 
 // As the real action happens in handleFile as it is presented on the props of FileDropZone,
 // an error boundary is of no good here.
@@ -25,6 +27,7 @@ import { UploadIcon, DownloadIcon} from '@primer/octicons-react';
 // States
 const EMPTY = "empty";
 const FILLED = "filled";
+const READONLY = "readonly";
 const UPLOAD = "upload";
 const DOWNLOAD = "download";
 const EDITABLE = "editable";
@@ -35,7 +38,8 @@ const filePropShape =
   PropTypes.shape(
     { fileName: PropTypes.string.isRequired
     , mimeType: PropTypes.string.isRequired
-    , url: PropTypes.url
+    , database: PropTypes.string
+    , roleFileName: PropTypes.string
     }
   )
 
@@ -44,49 +48,86 @@ export default class PerspectivesFile extends PerspectivesComponent
   constructor(props)
   {
     super(props);
-    let fileProp = {};
-    if (props.propertyValues.values[0])
-    {
-      fileProp = JSON.parse( props.propertyValues.values[0] );
-    }
+    const fileProp = this.parsePropertyValue(this.props.propertyValues.values[0]);
+    this.readOnly = this.propertyOnlyConsultable();
     this.state = 
       { fileName: fileProp.fileName || "" // cannot be undefined as we pass it to the value prop of the input element.
       , mimeType: fileProp.mimeType || ""
-      , state: EMPTY
+      , url: fileProp.database
+      , roleFileName: fileProp.roleFileName
+      , state: (this.readOnly || !props.roleId) ? READONLY : (fileProp.fileName ? FILLED : EMPTY)
       , previousState: EMPTY
       , selectedField: undefined
       , uploadedFile: undefined
-      , url: fileProp.url
       }
   }
 
-  componentDidUpdate()
+  componentDidUpdate(prevProps)
   {
-    let fileProp;
+    let fileProp, prevFileProp = {};
+    if ( prevProps.propertyValues.values[0] )
+    {
+      prevFileProp = JSON.parse( prevProps.propertyValues.values[0] );
+    }
     if (this.props.propertyValues.values[0])
     {
       fileProp = JSON.parse( this.props.propertyValues.values[0] );
-      this.setState({fileName: fileProp.fileName, mimeType: fileProp.mimeType, url: fileProp.url});
+    }
+    if ( fileProp && prevFileProp.fileName != fileProp.fileName )
+    {
+      this.setState(
+        { fileName: fileProp.fileName || ""
+        , mimeType: fileProp.mimeType || ""
+        , database: fileProp.database
+        , roleFileName: fileProp.roleFileName
+        });
     }
   }
 
-  handleKeyDown(event)
+  parsePropertyValue(pval)
+  {
+    if (pval)
+    {
+      return JSON.parse( pval );
+    }
+    else
+    {
+      return {};
+    }
+  }
+
+    // The property is only consultable when it just has the verb Consult,
+  // or when it is calculated. It will be shown disabled as a consequence.
+  propertyOnlyConsultable()
+  {
+    if (this.props.propertyValues)
+    {
+      const propertyVerbs = this.props.propertyValues.propertyVerbs;
+      const property = this.props.serialisedProperty;
+      return (propertyVerbs.indexOf("Consult") > -1 
+        && propertyVerbs.length == 1)
+        || property.isCalculated;
+    }
+    else
+    {
+      return false;
+    }
+  }
+
+  handleKeyDownInReadOnly(event)
   {
     const component = this;
-    switch (component.state.state) {
-      case FILLED:
-        
-        break;
-    
-      case EDITABLE:
-        
-        break;
+    switch(event.keyCode){
 
-      // EMPTY is the default.
-      case EMPTY:
-      default:
-        handleKeyDownInEmpty(event);
-        break;
+      case 39: // right arrow
+        // If we have a file (as can be seen from the url property), we may move to the download button.
+        if (component.state.database)
+        {
+          event.preventDefault();
+          event.stopPropagation();      
+          component.focusDownload();
+          break;
+        }
     }
   }
 
@@ -131,9 +172,10 @@ export default class PerspectivesFile extends PerspectivesComponent
         if ( this.reportValidity(fileName, "Provide a valid filename.") && this.reportValidity(mimeType, "Provide a valid mimeType."))
         {
           // Create the file and save it and the property value itself.
-          component.saveFileAndProperty( new File([""], component.state.fileName, {type: component.state.mimeType}) ).then( () => 
+          newFile = new File([""], component.state.fileName, {type: component.state.mimeType});
+          component.saveFileAndProperty( newFile ).then( () => 
             // Change state (previousState is still EMPTY).
-            component.setState({uploadedFile: theFile, state: FILLED}) );
+            component.setState({uploadedFile: newFile, state: FILLED}) );
         }
       
         break;
@@ -154,22 +196,29 @@ export default class PerspectivesFile extends PerspectivesComponent
     const component = this;
     switch(event.keyCode){
       case 13: // Enter
-      // Use values to create a file.
-      // Both fields must be filled.
-      event.preventDefault();
-      event.stopPropagation();      
+        event.preventDefault();
+        event.stopPropagation();      
 
-      // previousState is still EMPTY.
-      component.setState({state: EDITABLE, selectedField: FILENAME})
-    
-      break;
+        // previousState is still EMPTY.
+        component.setState({state: EDITABLE, selectedField: FILENAME})
+        break;
+
+      case 39: // right arrow
+        // If we have a file (as can be seen from the url property), we may move to the download button.
+        if (component.state.database)
+        {
+          event.preventDefault();
+          event.stopPropagation();      
+          component.focusDownload();
+          break;
+        }
     }
   }
 
   handleKeyDownInEditable(event)
   {
     const component = this;
-    let fileName;
+    let parsedPropertyValue;
     switch(event.keyCode){
       // case 9: // horizontal tab; vertical tab is 11
       case 39: // right arrow
@@ -178,7 +227,7 @@ export default class PerspectivesFile extends PerspectivesComponent
           event.preventDefault();
           event.stopPropagation();      
           // the fileName field saves its value on losing focus; move focus to the other field
-          if (component.state.url)
+          if (component.state.database)
           {
             component.focusDownload();
           }
@@ -202,36 +251,66 @@ export default class PerspectivesFile extends PerspectivesComponent
         break;
 
       case 13: // Enter
-        // Use values to create a file.
-        // Both fields must be filled; this is guaranteed by the validityCheck.
-        // Also, either the name or the file name must have changed.
         event.preventDefault();
         event.stopPropagation();      
 
-        fileName = document.getElementById(this.props.serialisedProperty.id + '_fileName');
-        if ( this.valuesChanged() && this.reportValidity(fileName, "Provide a valid filename.") )
+        parsedPropertyValue = component.parsePropertyValue(component.props.propertyValues.values[0]);
+        if (component.state.fileName !== parsedPropertyValue.fileName && 
+            this.reportValidity(component.state.fileName, i18next.t("fileName_invalid", {ns: 'preact'})) )
         {
-          // Save the property value.
-          // Save the file
-          component.saveFileAndProperty( component.state.uploadedFile ).then( () => 
-            // Change state (previousState is still EMPTY). 
-            // If a new file had been uploaded, it is registered in state already.
-            component.setState({state: FILLED}) );
+          // If state.fileName is not equal to the value stored in the property value, just set the property value.
+          // We know the file has not been uploaded AFTER changing the fileName, because we save the file and property
+          // immediately on uploading.
+          return PDRproxy.then( pproxy => 
+            {
+              pproxy
+                // Construct and save the property's compound value.
+                .setProperty(
+                  component.props.roleId,
+                  component.props.serialisedProperty.id,
+                  JSON.stringify(
+                    { name: component.state.fileName
+                    , mimeType: component.state.mimeType
+                    // database and roleFileName will be decided by the PDR, see below.
+                    }),
+                  component.props.myRoletype )
+                .then( () => 
+                  // Change state (previousState is still EMPTY). 
+                  // If a new file had been uploaded, it is registered in state already.
+                  component.setState({state: FILLED}) )
+                .catch(e => UserMessagingPromise.then( um => 
+                  um.addMessageForEndUser(
+                    { title: i18next.t("saveFile_title", { ns: 'preact' }) 
+                    , message: i18next.t("saveFile_message", {ns: 'preact'})
+                    , error: e.toString()
+                    })))
+            } );
         }
-      
         break;
 
       case 27: // Escape
-        // Discard changes.
+        // Discard changes (revert to saved values, if any)
         event.preventDefault();
         event.stopPropagation();   
         // previousState is still EMPTY.
-        component.setState({state: EMPTY, fileName: "", mimeType: "", uploadedFile: undefined, url:undefined});
+        parsedPropertyValue = component.parsePropertyValue(component.props.propertyValues.values[0]);
+        component.setState(
+          { state: FILLED
+          , fileName: parsedPropertyValue.fileName || ""
+          , mimeType: parsedPropertyValue.mimeType || ""
+          , uploadedFile: undefined
+          , database: parsedPropertyValue.database
+          , roleFileName: parsedPropertyValue.roleFileName
+        });
 
         break;
       }
   }
 
+  // Sends the file to the PDR.
+  // Stores the property value.
+  // Sets state.database
+  // Returns a promise.
   saveFileAndProperty(theFile)
   {
     const component = this;
@@ -243,9 +322,9 @@ export default class PerspectivesFile extends PerspectivesComponent
             component.props.roleId,
             component.props.serialisedProperty.id,
             JSON.stringify(
-              { fileName: component.state.fileName
-              , mimeType: component.state.mimeType
-              // the url will be decided by the PDR.
+              { name: theFile.name
+              , mimeType: theFile.type
+              // database and roleFileName will be decided by the PDR, see below.
               }),
             component.props.myRoletype )
           .then( () => 
@@ -253,8 +332,15 @@ export default class PerspectivesFile extends PerspectivesComponent
             pproxy.saveFile(
               component.props.roleId,
               component.props.serialisedProperty.id,
-              theFile
+              component.state.mimeType,
+              theFile,
+              component.props.myRoletype 
             ) )
+          .then( pval => 
+            {
+              const {database, roleFileName} = component.parsePropertyValue(pval);
+              component.setState({ database, roleFileName });
+            })
           .catch(e => UserMessagingPromise.then( um => 
             um.addMessageForEndUser(
               { title: i18next.t("saveFile_title", { ns: 'preact' }) 
@@ -264,13 +350,19 @@ export default class PerspectivesFile extends PerspectivesComponent
       } );
   }
 
-  // True iff either the file name or a file has been uploaded. 
-  // NOTE: if the user uploads the same file twice in a row, we'll handle the second case
-  // as if it were a new file even though we cannot really know.
-  valuesChanged()
+  // Returns a promise for the file.
+  // Only call when we have a value for state.database!
+  retrieveFile()
   {
-    return this.props.propertyValues.values[0] != this.state.fileName
-      || !!this.state.uploadedFile
+    const db = new Pouchdb( this.state.database );
+    return db
+      .getAttachment( this.state.roleFileName, deconstructLocalName( this.props.serialisedProperty.id ))
+      .catch(e => UserMessagingPromise.then( um => 
+        um.addMessageForEndUser(
+          { title: i18next.t("retrieveFile_title", { ns: 'preact' }) 
+          , message: i18next.t("retrieveFile_message", {ns: 'preact'})
+          , error: e.toString()
+          })));
   }
 
   // Focus on the fileName field. The mimeType field will save its value automatically in state.
@@ -303,11 +395,12 @@ export default class PerspectivesFile extends PerspectivesComponent
 
   upload(event)
   {
+    const component = this;
     function doit()
     {
       event.preventDefault();
       event.stopPropagation();   
-      document.getElementById('selectedFile').click();
+      document.getElementById(component.props.serialisedProperty.id + '_selectedFile').click();
     }
     if (event.type == "click")
     {
@@ -319,6 +412,8 @@ export default class PerspectivesFile extends PerspectivesComponent
     }
   }
 
+  // After uploading, we discard the file in state.
+  // This enables us to detect that a new file has been uploaded.
   handleFileSelect(fileList)
   {
     const theFile = fileList.item(0);
@@ -329,43 +424,38 @@ export default class PerspectivesFile extends PerspectivesComponent
           { fileName: theFile.name
           , mimeType: theFile.type
           , state: FILLED
-          , uploadedFile: theFile}));
+          , uploadedFile: undefined}));
     }
   }
 
   download(event)
   {
+    const component = this;
     function doit()
     {
-      const element = document.createElement('a');
+      event.stopPropagation();
       event.preventDefault();
-      event.stopPropagation();   
-
-      element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(text));
-      element.setAttribute('download', filename);
-  
-      element.style.display = 'none';
-      document.body.appendChild(element);
-  
-      element.click();
-  
-      document.body.removeChild(element);
-      }
-    if ( this.state.url && event.type == "click")
+      component.retrieveFile()
+        .then( file => 
+          {
+            const element = document.createElement('a');
+            const url = window.URL.createObjectURL(file);
+            element.style.display = 'none';
+            element.href = url;
+            element.setAttribute('download', component.state.fileName);
+            document.body.appendChild(element);  
+            element.click();
+            document.body.removeChild(element);
+            window.URL.revokeObjectURL(url);
+          } );
+    }
+    if ( this.state.database && event.type == "click")
     {
       doit();
     }
-    else if (this.state.url && event.keyCode == 32 )
+    else if (this.state.database && event.keyCode == 32 )
     {
       doit();
-    }
-  }
-
-  setFileName(event)
-  {
-    if (this.reportValidity(event, "Provide a valid filename."))
-    {
-      this.setState({fileName: event.target.value});
     }
   }
 
@@ -385,14 +475,26 @@ export default class PerspectivesFile extends PerspectivesComponent
     }
     return el.reportValidity();
   }
-  
+
+  handleDroppedFile(theFile)
+  {
+    this.saveFileAndProperty(theFile)
+      .then( () => 
+        this.setState(
+          { fileName: theFile.name
+          , mimeType: theFile.type
+          , state: FILLED
+          }
+        ));
+  }
+
   render()
   {
     const component = this;
     switch (component.state.state) {
-      case FILLED:
+      case READONLY:
         return (
-          <div onKeyDown={e => component.handleKeyDownInFilled(e)} tabIndex={component.state.url ? -1 : 0}>
+          <div onKeyDown={e => component.handleKeyDownInReadOnly(e)} tabIndex={component.state.database ? -1 : 0}>
             <Form.Row>
               <Col lg="3">
                 <Form.Control readOnly value={ component.state.fileName } tabIndex="-1" size="sm"/>
@@ -403,11 +505,11 @@ export default class PerspectivesFile extends PerspectivesComponent
               <Col lg="1">
               <div style={{display: "flex"}}>
                 <div 
-                  style={{flexShrink: 1, opacity: component.state.url ? 1 : 0.5}}
+                  style={{flexShrink: 1, opacity: component.state.database ? 1 : 0.5}}
                   id={component.props.serialisedProperty.id + '_download'}
                   onClick={ e => component.download(e) }
                   onKeyDown={ e => component.download(e) }
-                  tabIndex={component.state.url ? 0 : -1}
+                  tabIndex={component.state.database ? 0 : -1}
                   >
                   <DownloadIcon 
                     aria-label={ i18next.t("perspectivesFile_download", { ns: 'preact' }) }
@@ -417,12 +519,52 @@ export default class PerspectivesFile extends PerspectivesComponent
               </div>
             </Col>
             </Form.Row>
-            <input type="file" id="selectedFile" style={{display: "none"}} onChange={ev => component.handleFileSelect(ev.target.files)}/>
+          </div>);
+
+      case FILLED:
+        return (
+          <div onKeyDown={e => component.handleKeyDownInFilled(e)} tabIndex={component.state.database ? -1 : 0}>
+            <Form.Row>
+              <Col lg="3">
+                <Form.Control readOnly value={ component.state.fileName } tabIndex="-1" size="sm"/>
+              </Col>
+              <Col lg="2">
+                <Form.Control readOnly value={ component.state.mimeType } tabIndex="-1" size="sm"/>
+              </Col>
+              <Col lg="1">
+              <div style={{display: "flex"}}>
+                <div 
+                  style={{flexShrink: 1, opacity: component.state.database ? 1 : 0.5}}
+                  id={component.props.serialisedProperty.id + '_download'}
+                  onClick={ e => component.download(e) }
+                  onKeyDown={ e => component.download(e) }
+                  tabIndex={component.state.database ? 0 : -1}
+                  >
+                  <DownloadIcon 
+                    aria-label={ i18next.t("perspectivesFile_download", { ns: 'preact' }) }
+                    size='medium'
+                  />
+                </div>
+              </div>
+            </Col>
+            </Form.Row>
           </div>);
     
       case EDITABLE:
         return (
-          <div onKeyDown={e => component.handleKeyDownInEditable(e)}>
+          <div 
+            onKeyDown={e => component.handleKeyDownInEditable(e)}
+            onDragOver={ev => ev.preventDefault()}
+            onDragEnter={ev => ev.target.classList.add("border-primary") }
+            onDragLeave={ev => ev.target.classList.remove("border-primary")}
+            onDrop={ ev => 
+              {
+                component.handleDroppedFile( ev.dataTransfer.files[0] ) 
+                ev.target.classList.remove("border-primary");
+                ev.preventDefault();
+                ev.stopPropagation();
+              }}
+          >
             <Form.Row>
               <Col lg="3">
                 <Form.Control
@@ -451,7 +593,7 @@ export default class PerspectivesFile extends PerspectivesComponent
             <Col lg="1">
               <div style={{display: "flex"}}>
                 <div 
-                  style={{flexShrink: 1, opacity: component.state.url ? 1 : 0.5}}
+                  style={{flexShrink: 1, opacity: component.state.database ? 1 : 0.5}}
                   id={component.props.serialisedProperty.id + '_download'}
                   onClick={ e => component.download(e) }
                   onKeyDown={ e => component.download(e) }
@@ -476,14 +618,31 @@ export default class PerspectivesFile extends PerspectivesComponent
               </div>
             </Col>
             </Form.Row>
-            <input type="file" id="selectedFile" style={{display: "none"}} onChange={ev => component.handleFileSelect(ev.target.files)}/>
+            <input 
+              type="file" 
+              id={component.props.serialisedProperty.id + '_selectedFile'} 
+              style={{display: "none"}} 
+              onChange={ev => component.handleFileSelect(ev.target.files)}
+            />
           </div>);
 
       // EMPTY is the default.
       case EMPTY:
       default:
         return (
-          <div onKeyDown={e => component.handleKeyDownInEmpty(e)}>
+          <div 
+            onKeyDown={e => component.handleKeyDownInEmpty(e)}
+            onDragOver={ev => ev.preventDefault()}
+            onDragEnter={ev => ev.target.classList.add("border-primary") }
+            onDragLeave={ev => ev.target.classList.remove("border-primary")}
+            onDrop={ ev => 
+              {
+                component.handleDroppedFile( ev.dataTransfer.files[0] ) 
+                ev.target.classList.remove("border-primary");
+                ev.preventDefault();
+                ev.stopPropagation();
+              }}
+          >
             <Form.Row>
               <Col lg="3">
                 <Form.Control
@@ -531,7 +690,15 @@ export default class PerspectivesFile extends PerspectivesComponent
                 </div>
               </Col>
             </Form.Row>
-            <input type="file" id="selectedFile" style={{display: "none"}} onChange={ev => component.handleFileSelect(ev.target.files)}/>
+            <input 
+              type="file" 
+              id={component.props.serialisedProperty.id + '_selectedFile'} 
+              style={{display: "none"}} 
+              onChange={ ev => 
+              {
+                component.handleFileSelect(ev.target.files)
+              }}
+            />
           </div>);
     }
   }
@@ -540,6 +707,6 @@ export default class PerspectivesFile extends PerspectivesComponent
 PerspectivesFile.propTypes =
   { serialisedProperty: serialisedProperty.isRequired 
   , propertyValues: propertyValues
-  , roleId: PropTypes.string.isRequired
+  , roleId: PropTypes.string
   , myRoletype: PropTypes.string.isRequired
 }

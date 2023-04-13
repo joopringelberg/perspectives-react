@@ -31,6 +31,7 @@ const PropTypes = require("prop-types");
 import {serialisedProperty, propertyValues} from "./perspectiveshape.js";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
+import PerspectivesFile from "./perspectivesFile.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 // TABINDEX VALUES
@@ -88,6 +89,10 @@ export default class SmartFieldControl extends Component
         return "input";
       }
     }
+    if (controlType == "file")
+    {
+      return "PerspectivesFile";
+    }
   }
 
   // Returns the first value in the `propertyValues` prop, or the empty string.
@@ -117,6 +122,8 @@ export default class SmartFieldControl extends Component
         return "number";
       case "PEmail":
         return "email";
+      case "PFile":
+        return "file";
     }
   }
 
@@ -328,6 +335,15 @@ export default class SmartFieldControl extends Component
             }
             </Form.Control>
           </div>);
+      case "PerspectivesFile":
+        return (
+          <PerspectivesFile
+            serialisedProperty={component.props.serialisedProperty}
+            propertyValues={component.props.propertyValues}
+            roleId={component.props.roleId}
+            myRoletype={component.props.myroletype}>
+          </PerspectivesFile>
+        );
       default:
         return (
           <div onKeyDown={e => component.handleKeyDown(e, e.target.value)}>

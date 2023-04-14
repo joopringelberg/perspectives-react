@@ -57,4 +57,5 @@
 , "retrieveFile_title": "Bestand ophalen"
 , "retrieveFile_message": "Kon het bestand niet ophalen."
 , "fileName_invalid": "Geef een geldige bestandsnaam."
+, "mimeType_invalid": "Geef een geldig MIME type."
 }

@@ -174,7 +174,10 @@ export default class PerspectivesFile extends PerspectivesComponent
 
         fileName = document.getElementById(this.props.serialisedProperty.id + '_fileName');
         mimeType = document.getElementById(this.props.serialisedProperty.id + '_mimeType');
-        if ( this.reportValidity(fileName, "Provide a valid filename.") && this.reportValidity(mimeType, "Provide a valid mimeType."))
+        if  ( this.reportValidity(fileName, i18next.t("fileName_invalid", { ns: 'preact' })) && 
+              this.reportValidity(mimeType, 
+                component.props.serialisedProperty.constrainingFacets.pattern.label || i18next.t("mimeType_invalid", { ns: 'preact' }))
+            )
         {
           // Create the file and save it and the property value itself.
           newFile = new File([""], component.state.fileName, {type: component.state.mimeType});
@@ -497,6 +500,20 @@ export default class PerspectivesFile extends PerspectivesComponent
   render()
   {
     const component = this;
+    // KEEP THIS CODE ALIGNED WITH smartfieldcontrol.js.
+    // `patternFacet` will be an object of this shape (or undefined):
+    // { regex: PropTypes.string.isRequired
+    // , label: PropTypes.string.isRequired}
+    // `pattern` is the string that represents just the regex, no flags.
+    // label has the shape /regex/flags.
+    // flags will be ignored.
+    const patternFacet = component.props.serialisedProperty.constrainingFacets.pattern;
+    let pattern;
+    if ( patternFacet )
+    {
+      pattern = patternFacet.regex.match( /\/(.*)\// )[1];
+    }
+
     switch (component.state.state) {
       case READONLY:
         return (
@@ -674,7 +691,7 @@ export default class PerspectivesFile extends PerspectivesComponent
                   onChange={e => component.setState({mimeType: e.target.value}) }
                   type="text"
                   required={true}
-                  pattern="^[^\./]+\/[^\./]+$"
+                  pattern={ pattern ? pattern : "^[^\./]+\/[^\./]+$" }
                   size="sm"
                   placeholder={ i18next.t("perspectivesFile_mimeType_label", { ns: 'preact' }) }
                   tabIndex="-1"

@@ -57,4 +57,5 @@
 , "retrieveFile_title": "Retrieve file"
 , "retrieveFile_message": "Could not retieve the file or the property."
 , "fileName_invalid": "Provide a valid filename."
+, "mimeType_invalid": "Provide a valid MIME type."
 }

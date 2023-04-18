@@ -80,13 +80,17 @@ export default class PerspectivesFile extends PerspectivesComponent
         , mimeType: fileProp.mimeType || ""
         , database: fileProp.database
         , roleFileName: fileProp.roleFileName
+        , state: FILLED
         };
     }
     if (!prevProps.roleId && this.props.roleId)
     {
       updater.state = EMPTY;
     }
-    this.setState(updater);
+    if (Object.keys(updater).length > 0)
+    {
+      this.setState(updater);
+    }
   }
 
   parsePropertyValue(pval)
@@ -600,7 +604,7 @@ export default class PerspectivesFile extends PerspectivesComponent
                 onBlur={e => component.setState({fileName: e.target.value}) }
                 type="text"
                 required={true}
-                pattern="^[^\./]+\.[^\./]+$"
+                pattern="[^\./]+\.[^\./]+,u"
                 placeholder={ i18next.t("perspectivesFile_fileName_label", { ns: 'preact' }) }
                 size="sm"
               />
@@ -676,7 +680,7 @@ export default class PerspectivesFile extends PerspectivesComponent
                 onChange={e => component.setState({fileName: e.target.value}) }
                 type="text"
                 required={true}
-                pattern="^[^\./]+\.[^\./]+$"
+                pattern="[^\./]+\.[^\./]+,u"
                 size="sm"
                 placeholder={ i18next.t("perspectivesFile_fileName_label", { ns: 'preact' }) }
                 tabIndex="0"
@@ -691,7 +695,7 @@ export default class PerspectivesFile extends PerspectivesComponent
                   onChange={e => component.setState({mimeType: e.target.value}) }
                   type="text"
                   required={true}
-                  pattern={ pattern ? pattern : "^[^\./]+\/[^\./]+$" }
+                  pattern={ pattern ? pattern : "[^\./]+\/[^\./]+" }
                   size="sm"
                   placeholder={ i18next.t("perspectivesFile_mimeType_label", { ns: 'preact' }) }
                   tabIndex="-1"

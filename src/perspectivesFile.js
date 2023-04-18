@@ -364,12 +364,23 @@ export default class PerspectivesFile extends PerspectivesComponent
   }
 
   // Returns a promise for the file.
-  // Only call when we have a value for state.database!
+  // Only call when we have a value in propertyValues that includes a value for database!
   retrieveFile()
   {
-    const db = new Pouchdb( this.state.database );
-    return db
-      .getAttachment( this.state.roleFileName, deconstructLocalName( this.props.serialisedProperty.id ))
+    const component = this; 
+    return PDRproxy
+      .then( pproxy => pproxy.getFile( component.props.roleId, component.props.serialisedProperty.id ) )
+      .then( fileArray => 
+        {
+          if (fileArray[0])
+          { 
+            return fileArray[0];
+          }
+          else
+          {
+            throw "";
+          }
+        })
       .catch(e => UserMessagingPromise.then( um => 
         um.addMessageForEndUser(
           { title: i18next.t("retrieveFile_title", { ns: 'preact' }) 

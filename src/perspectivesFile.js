@@ -17,9 +17,8 @@ import {serialisedProperty, propertyValues} from "./perspectiveshape.js";
 import i18next from "i18next";
 import { Col } from 'react-bootstrap';
 import { UploadIcon, DownloadIcon} from '@primer/octicons-react';
-import Pouchdb from "pouchdb-browser";
-import {deconstructLocalName} from "./urifunctions.js";
 import {UserMessagingPromise} from "./userMessaging.js";
+import {AsyncImage} from "./asyncImage.js";
 
 // As the real action happens in handleFile as it is presented on the props of FileDropZone,
 // an error boundary is of no good here.
@@ -512,6 +511,11 @@ export default class PerspectivesFile extends PerspectivesComponent
         ));
   }
 
+  fileIsImage()
+  {
+    return this.state.mimeType.match(/image/);
+  }
+
   render()
   {
     const component = this;
@@ -534,12 +538,19 @@ export default class PerspectivesFile extends PerspectivesComponent
         return (
           <div onKeyDown={e => component.handleKeyDownInReadOnly(e)} tabIndex={component.state.database ? -1 : 0}>
             <Form.Row>
-              <Col lg="3">
-                <Form.Control readOnly value={ component.state.fileName } tabIndex="-1" size="sm"/>
-              </Col>
-              <Col lg="2">
-                <Form.Control readOnly value={ component.state.mimeType } tabIndex="-1" size="sm"/>
-              </Col>
+              {
+                  component.fileIsImage() && component.state.database ?
+                    <AsyncImage roleId={ component.props.roleId } propId={ component.props.serialisedProperty.id } fileName={component.state.fileName}/>
+                    :
+                    <>
+                      <Col lg="3">
+                        <Form.Control readOnly value={ component.state.fileName } tabIndex="-1" size="sm"/>
+                      </Col>
+                      <Col lg="2">
+                        <Form.Control readOnly value={ component.state.mimeType } tabIndex="-1" size="sm"/>
+                      </Col>
+                    </>
+                }
               <Col lg="1">
               <div style={{display: "flex"}}>
                 <div 
@@ -563,12 +574,20 @@ export default class PerspectivesFile extends PerspectivesComponent
         return (
           <div onKeyDown={e => component.handleKeyDownInFilled(e)} tabIndex={component.state.database ? -1 : 0}>
             <Form.Row>
-              <Col lg="3">
-                <Form.Control readOnly value={ component.state.fileName } tabIndex="-1" size="sm"/>
-              </Col>
-              <Col lg="2">
-                <Form.Control readOnly value={ component.state.mimeType } tabIndex="-1" size="sm"/>
-              </Col>
+              {
+                component.fileIsImage() ?
+                  <AsyncImage roleId={ component.props.roleId } propId={ component.props.serialisedProperty.id } fileName={component.state.fileName}/>
+                  :
+                  <>
+                    <Col lg="3">
+                      <Form.Control readOnly value={ component.state.fileName } tabIndex="-1" size="sm"/>
+                    </Col>
+                    <Col lg="2">
+                      <Form.Control readOnly value={ component.state.mimeType } tabIndex="-1" size="sm"/>
+                    </Col>
+                  </>
+              }
+              {/* If the file is an image, display that instead of the next two columns. */}
               <Col lg="1">
               <div style={{display: "flex"}}>
                 <div 
@@ -591,19 +610,20 @@ export default class PerspectivesFile extends PerspectivesComponent
       case EDITABLE:
         return (
           <div 
-            onKeyDown={e => component.handleKeyDownInEditable(e)}
-            onDragOver={ev => ev.preventDefault()}
-            onDragEnter={ev => ev.target.classList.add("border-primary") }
-            onDragLeave={ev => ev.target.classList.remove("border-primary")}
-            onDrop={ ev => 
-              {
-                component.handleDroppedFile( ev.dataTransfer.files[0] ) 
-                ev.target.classList.remove("border-primary");
-                ev.preventDefault();
-                ev.stopPropagation();
-              }}
           >
-            <Form.Row>
+            <Form.Row
+                onKeyDown={e => component.handleKeyDownInEditable(e)}
+                onDragOver={ev => ev.preventDefault()}
+                onDragEnter={ev => ev.target.classList.add("border-primary", "border") }
+                onDragLeave={ev => ev.target.classList.remove("border-primary", "border")}
+                onDrop={ ev => 
+                  {
+                    component.handleDroppedFile( ev.dataTransfer.files[0] ) 
+                    ev.target.classList.remove("border-primary", "border");
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                  }}
+            >
               <Col lg="3">
                 <Form.Control
                 id={component.props.serialisedProperty.id + '_fileName'}
@@ -615,10 +635,10 @@ export default class PerspectivesFile extends PerspectivesComponent
                 onBlur={e => component.setState({fileName: e.target.value}) }
                 type="text"
                 required={true}
-                pattern="[^\./]+\.[^\./]+,u"
+                pattern="[^\./]+\.[^\./]+"
                 placeholder={ i18next.t("perspectivesFile_fileName_label", { ns: 'preact' }) }
                 size="sm"
-              />
+                  />
             </Col>
             <Col lg="2">
               <Form.Control 
@@ -668,20 +688,20 @@ export default class PerspectivesFile extends PerspectivesComponent
       case EMPTY:
       default:
         return (
-          <div 
-            onKeyDown={e => component.handleKeyDownInEmpty(e)}
-            onDragOver={ev => ev.preventDefault()}
-            onDragEnter={ev => ev.target.classList.add("border-primary") }
-            onDragLeave={ev => ev.target.classList.remove("border-primary")}
-            onDrop={ ev => 
-              {
-                component.handleDroppedFile( ev.dataTransfer.files[0] ) 
-                ev.target.classList.remove("border-primary");
-                ev.preventDefault();
-                ev.stopPropagation();
-              }}
-          >
-            <Form.Row>
+          <div>
+            <Form.Row
+              onKeyDown={e => component.handleKeyDownInEmpty(e)}
+              onDragOver={ev => ev.preventDefault()}
+              onDragEnter={ev => ev.target.classList.add("border-primary", "border") }
+              onDragLeave={ev => ev.target.classList.remove("border-primary", "border")}
+              onDrop={ ev => 
+                {
+                  component.handleDroppedFile( ev.dataTransfer.files[0] ) 
+                  ev.target.classList.remove("border-primary", "border");
+                  ev.preventDefault();
+                  ev.stopPropagation();
+                }}
+            >
               <Col lg="3">
                 <Form.Control
                 id={component.props.serialisedProperty.id + '_fileName'}
@@ -691,7 +711,7 @@ export default class PerspectivesFile extends PerspectivesComponent
                 onChange={e => component.setState({fileName: e.target.value}) }
                 type="text"
                 required={true}
-                pattern="[^\./]+\.[^\./]+,u"
+                pattern="[^\./]+\.[^\./]+"
                 size="sm"
                 placeholder={ i18next.t("perspectivesFile_fileName_label", { ns: 'preact' }) }
                 tabIndex="0"

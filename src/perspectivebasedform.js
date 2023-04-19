@@ -202,15 +202,21 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
                   myroletype={component.props.myroletype}
                   create={ component.createRoleInstance }
                   />
-                <FormControls
-                  createButton={ false }
-                  perspective={ component.props.perspective}
-                  contextinstance={ component.props.contextinstance }
-                  roleinstance={component.state.roleInstanceWithProps ? component.state.roleInstanceWithProps.roleId : null}
-                  myroletype={component.props.myroletype}
-                  create={ component.createRoleInstance }
-                  card={ <DraggableCard labelProperty={component.props.cardtitle} title={title && title[0] ? title[0] : component.props.perspective.displayName}/> }
-                />
+                <RoleDropZone
+                  bind={component.bind_}
+                  checkbinding={component.checkBinding}
+                  ariaLabel="To fill the role whose properties are displayed here, drag another role onto it."
+                >
+                  <FormControls
+                    createButton={ false }
+                    perspective={ component.props.perspective}
+                    contextinstance={ component.props.contextinstance }
+                    roleinstance={component.state.roleInstanceWithProps ? component.state.roleInstanceWithProps.roleId : null}
+                    myroletype={component.props.myroletype}
+                    create={ component.createRoleInstance }
+                    card={ <DraggableCard labelProperty={component.props.cardtitle} title={title && title[0] ? title[0] : component.props.perspective.displayName}/> }
+                  />
+                </RoleDropZone>
               </RoleInstance>;
     }
 
@@ -226,11 +232,6 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
       title = component.findValue(component.props.cardtitle);
       return (
         <>
-          <RoleDropZone
-            bind={component.bind_}
-            checkbinding={component.checkBinding}
-            ariaLabel="To fill the role whose properties are displayed here, drag another role onto it."
-          >
           {
             Object.values(perspective.properties).map(serialisedProperty =>
               <SmartFieldControlGroup
@@ -242,7 +243,6 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
               />
             )
           }
-          </RoleDropZone>
           <Controls/>
         </>);
     }      
@@ -376,7 +376,7 @@ class FormControls extends PerspectivesComponent
     const component = this;
     if ( component.stateIsComplete() )
     {
-      return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for table">
+      return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for form" className="mt-2">
                 {
                   component.props.createButton ?
                   <div

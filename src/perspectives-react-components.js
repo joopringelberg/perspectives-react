@@ -42,6 +42,8 @@ export {default as BinaryModal} from "./binarymodal.js";
 export {default as ModelDependencies} from "./modelDependencies.js";
 export * from "./userMessaging.js";
 export {default as PerspectivesFile} from "./perspectivesFile";
+export {ArcViewer} from "./arcViewer.js";
+export {AsyncImage} from "./asyncImage.js";
 
 export async function getPreact(LANG_KEY)
 {

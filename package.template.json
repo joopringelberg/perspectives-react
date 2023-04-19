@@ -51,7 +51,8 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
-    "i18next": "^22.4.13",
-    "page-lifecycle": "^0.1.2"
+    "highlight.js": "^11.7.0",
+    "page-lifecycle": "^0.1.2",
+    "perspectives-highlightjs": "github:joopringelberg/perspectives-highlightjs#PERSPECTIVESHIGHLIGHT"
   }
 }

@@ -6,5 +6,8 @@
 # * package.json
 
 PERSPECTIVESPROXY=v1.16.0
+PERSPECTIVESHIGHLIGHT=v1.3.0
 
-sed "s/PERSPECTIVESPROXY/${PERSPECTIVESPROXY}/g;" package.template.json > package.json
+sed "s/PERSPECTIVESPROXY/${PERSPECTIVESPROXY}/g;\
+  s/PERSPECTIVESHIGHLIGHT${PERSPECTIVESHIGHLIGHT}/g\
+  " package.template.json > package.json

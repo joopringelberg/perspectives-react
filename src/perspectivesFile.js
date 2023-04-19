@@ -19,6 +19,7 @@ import { Col } from 'react-bootstrap';
 import { UploadIcon, DownloadIcon} from '@primer/octicons-react';
 import {UserMessagingPromise} from "./userMessaging.js";
 import {AsyncImage} from "./asyncImage.js";
+import {ArcViewer} from "././arcViewer.js";
 
 // As the real action happens in handleFile as it is presented on the props of FileDropZone,
 // an error boundary is of no good here.
@@ -335,7 +336,7 @@ export default class PerspectivesFile extends PerspectivesComponent
             component.props.serialisedProperty.id,
             JSON.stringify(
               { fileName: theFile.name
-              , mimeType: theFile.type
+              , mimeType: component.mapMimeType( theFile.type, theFile.name )
               // database and roleFileName will be decided by the PDR, see below.
               }),
             component.props.myRoletype )
@@ -440,14 +441,27 @@ export default class PerspectivesFile extends PerspectivesComponent
   handleFileSelect(fileList)
   {
     const theFile = fileList.item(0);
+    const component = this;
     if ( theFile )
     {
       this.saveFileAndProperty( theFile ).then( () => 
         this.setState(
           { fileName: theFile.name
-          , mimeType: theFile.type
+          , mimeType: component.mapMimeType( theFile.type, theFile.name )
           , state: FILLED
           , uploadedFile: undefined}));
+    }
+  }
+
+  mapMimeType( mime, fileName )
+  {
+    if ( fileName.match(/\.arc/))
+    {
+      return "text/arc";
+    }
+    else 
+    {
+      return mime;
     }
   }
 
@@ -505,7 +519,7 @@ export default class PerspectivesFile extends PerspectivesComponent
       .then( () => 
         this.setState(
           { fileName: theFile.name
-          , mimeType: theFile.type
+          , mimeType: component.mapMimeType( theFile.type, theFile.name )
           , state: FILLED
           }
         ));
@@ -514,6 +528,11 @@ export default class PerspectivesFile extends PerspectivesComponent
   fileIsImage()
   {
     return this.state.mimeType.match(/image/);
+  }
+
+  fileIsArc()
+  {
+    return this.state.mimeType.match(/text\/arc/);
   }
 
   render()
@@ -577,6 +596,9 @@ export default class PerspectivesFile extends PerspectivesComponent
               {
                 component.fileIsImage() ?
                   <AsyncImage roleId={ component.props.roleId } propId={ component.props.serialisedProperty.id } fileName={component.state.fileName}/>
+                  :
+                  component.fileIsArc() ?
+                  <ArcViewer roleId={ component.props.roleId } propId={ component.props.serialisedProperty.id } fileName={component.state.fileName}/>
                   :
                   <>
                     <Col lg="3">

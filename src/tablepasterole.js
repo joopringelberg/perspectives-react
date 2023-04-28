@@ -147,12 +147,12 @@ export default class TablePasteRole extends PerspectivesComponent
   {
     const component = this;
     const renderTooltip = (props) => (
-    <Tooltip id="formPasteRole-tooltip" {...props} show={
+    <Tooltip id="tablePasteRole-tooltip" {...props} show={
        // eslint-disable-next-line react/prop-types
       props.show.toString()}>
       { ( component.state.compatibleRole
-          ? "Create a new role for this form and then fill it with the role on the clipboard."
-          : "The role on the clipboard cannot fill a role in this form."
+          ? i18next.t("tablePasteRole_Create", {ns: "preact"})
+          : i18next.t("tablePasteRole_Incompatible", {ns: "preact"})
         )
       }
     </Tooltip> );
@@ -169,14 +169,14 @@ export default class TablePasteRole extends PerspectivesComponent
                     <div
                         ref={eventDiv}
                         className="ml-3 mr-3"
-                        aria-describedby="formPasteRole-tooltip"
+                        aria-describedby="tablePasteRole-tooltip"
                         tabIndex="0"
                         onKeyDown={ e => component.handleKeyDown(e) }
                         onClick={ () => component.pasteRole()}
                     >
                     <ClippyIcon
-                      alt="Paste the role on the clipboard"
-                      aria-label="Paste the role on the clipboard"
+                      alt={ i18next.t("tablePasteRole_Alt", {ns: "preact"}) }
+                      aria-label={ i18next.t("tablePasteRole_Alt", {ns: "preact"}) }
                       disabled={component.state.compatibleRole}
                       className={component.state.compatibleRole ? "iconStyle" : "disabledIconStyle"}
                       size="medium"

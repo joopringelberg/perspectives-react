@@ -26,6 +26,7 @@ import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRol} from "./reactcontexts";
 import { default as ModelDependencies } from "./modelDependencies.js";
 import {ClippyIcon} from '@primer/octicons-react';
+import i18next from "i18next";
 
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 
@@ -110,12 +111,12 @@ export default class FormPasteRole extends PerspectivesComponent
       props.show.toString()}>
       { component.context.rolinstance
         ? ( component.state.compatibleRole
-            ? "Fill the role in this form with the role on the clipboard."
-            : "The role on the clipboard cannot fill the role in this form."
+            ? i18next.t("formPasteRole_Fill", {ns: "preact"})
+            : i18next.t("tablePasteRole_Incompatible", {ns: "preact"})
           )
         : ( component.state.compatibleRole
-            ? "Create a new role for this form and then fill it with the role on the clipboard."
-            : "The role on the clipboard cannot fill the role in this form."
+            ? i18next.t("tablePasteRole_Create", {ns: "preact"})
+            : i18next.t("tablePasteRole_Incompatible", {ns: "preact"})
           )
       }
     </Tooltip> );
@@ -138,8 +139,8 @@ export default class FormPasteRole extends PerspectivesComponent
                         onClick={ () => component.pasteRole()}
                     >
                     <ClippyIcon
-                      alt="Paste the role on the clipboard"
-                      aria-label="Paste the role on the clipboard"
+                      alt={ i18next.t("tablePasteRole_Alt", {ns: "preact"}) }
+                      aria-label={ i18next.t("tablePasteRole_Alt", {ns: "preact"}) }
                       disabled={component.state.compatibleRole}
                       className={component.state.compatibleRole ? "iconStyle" : "disabledIconStyle"}
                       size="medium"

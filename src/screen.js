@@ -148,7 +148,7 @@ class Screen_ extends PerspectivesComponent
               })));
             }
       });
-    }
+  }
 
   // Returns a promise.
   setIsOnScreen (roleInstance, value)

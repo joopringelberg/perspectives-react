@@ -26,6 +26,7 @@ import ActionDropDown from "./actiondropdown.js";
 import CreateContextDropDown from "./createContextDropdown.js";
 import {PSContext} from "./reactcontexts";
 import TablePasteRole from "./tablepasterole.js";
+import OpenPublicResource from "./openpublicresource.js";
 import { SerialisedPerspective } from "./perspectiveshape.js";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
@@ -153,6 +154,7 @@ export default class TableControls extends PerspectivesComponent
     const component = this;
     const actions = component.computeActions();
     const instances = component.props.perspective.roleInstances;
+    const instance = instances[component.props.selectedroleinstance];
     if ( component.stateIsComplete(["currentRoleInstance"]) )
     {
       return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for table">
@@ -175,12 +177,18 @@ export default class TableControls extends PerspectivesComponent
                     /> 
                   }
                 </AppContext.Consumer>
-                { actions.length > 0 && Object.keys(instances).length > 0?
+                { actions.length > 0 && Object.keys(instances).length > 0 ?
                   <ActionDropDown
                     actions={ actions }
                     runaction={component.runAction}
                   />
                   : null }
+                {
+                  instance && instance.publicUrl ?
+                  <OpenPublicResource publicurl={ instance.publicUrl } rolekind={ component.props.perspective.roleKind }/>
+                  :
+                  null
+                }
               </Navbar>;
     }
     else

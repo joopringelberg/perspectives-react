@@ -114,7 +114,7 @@ export default class StandardScreen extends PerspectivesComponent
         {
           pproxy.createContext (
               {
-                id: "", // will be set in the core.
+                //id will be set in the core.
                 prototype : undefined,
                 ctype: perspective.contextTypesToCreate[0], // Arbitrary choice, for now.
                 rollen: {},

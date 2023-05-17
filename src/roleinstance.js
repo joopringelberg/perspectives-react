@@ -138,14 +138,14 @@ export default class RoleInstance extends PerspectivesComponent
       {
         function bind_(filledRole)
         {
-          return function ({filler})
+          return function ({rolinstance})
           {
-            if (filler)
+            if (rolinstance)
             {
               return pproxy
                 .bind_(
                   filledRole,
-                  filler,
+                  rolinstance,
                   component.context.myroletype)
                 .catch(e => UserMessagingPromise.then( um => 
                   {
@@ -162,16 +162,16 @@ export default class RoleInstance extends PerspectivesComponent
         }
 
         // returns a promise for a boolean value.
-        function bind ({filler})
+        function bind ({rolinstance})
         {
-          if (filler)
+          if (rolinstance)
           {
             return pproxy
               .bind(
                 component.contextInstance(),
                 component.props.role, // may be a local name.
                 component.context.contexttype,
-                {properties: {}, binding: filler},
+                {properties: {}, binding: rolinstance},
                 component.context.myroletype)
               .catch(e => UserMessagingPromise.then( um => 
                 {

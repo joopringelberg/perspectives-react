@@ -189,11 +189,10 @@ export default class RoleInstance extends PerspectivesComponent
         // returns a promise for a boolean value.
         function checkbinding({rolinstance})
         {
-          // checkBinding( <contexttype>, <(local)RolName>, <binding>, [() -> undefined] )
-          // Where (local)RolName identifies the role in <contexttype> whose binding specification we want to compare with <binding>.
+          // checkBinding( <(QUALIFIED)RolName>, <binding>, [() -> undefined] )
+          // Where RolName identifies the role whose binding specification we want to compare with <binding>.
           return pproxy
             .checkBindingP(
-              component.context.contexttype,
               component.state.roltype,
               rolinstance)
             .then( psbool => psbool[0] === "true");

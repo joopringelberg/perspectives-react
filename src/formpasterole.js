@@ -58,7 +58,7 @@ export default class FormPasteRole extends PerspectivesComponent
             if (valArr[0])
             {
               clipboardContent = JSON.parse( valArr[0]);
-              if ( clipboardContent.roleData && clipboardContent.roleData.rolinstance )
+              if ( clipboardContent.roleData && clipboardContent.roleData.rolinstance && clipboardContent.roleData.rolinstance != component.state.roleOnClipboard  )
               {
                 // checkBinding catches its own errors. We do not display a message if the binding is not allowed;
                 // instead the button will be disabled.

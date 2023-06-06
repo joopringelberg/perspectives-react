@@ -156,7 +156,6 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
       // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
       pproxy
         .checkBindingP(
-          component.props.contexttype,
           component.props.perspective.roleType,
           rolinstance)
         .then( psbool => psbool[0] === "true") )

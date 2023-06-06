@@ -90,12 +90,11 @@ export default class RoleInstances extends PerspectivesComponent
   checkBinding({rolinstance}, callback)
   {
     const component = this;
-    // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
+    // checkBinding( <(QUALIFIED)RolName>, <binding>, [() -> undefined] )
     PDRproxy.then(
       function (pproxy)
       {
         pproxy.checkBinding(
-          component.context.contexttype,
           component.state.roltype,
           rolinstance,
           function(psbool)

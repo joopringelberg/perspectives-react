@@ -38,7 +38,8 @@ export default class TablePasteRole extends PerspectivesComponent
     super(props);
     this.state =
       { compatibleRole: false
-      , roleOnClipboard: undefined};
+      , roleOnClipboard: undefined
+    };
   }
 
   componentDidMount()
@@ -54,30 +55,22 @@ export default class TablePasteRole extends PerspectivesComponent
           ModelDependencies.systemExternal,
           function (valArr)
           {
-            if (valArr[0])
+            if ( valArr[0] && valArr[0] )
             {
               clipboardContent = JSON.parse( valArr[0]);
-              if ( clipboardContent.roleData && clipboardContent.roleData.rolinstance )
+              if ( clipboardContent.roleData && clipboardContent.roleData.rolinstance && clipboardContent.roleData.rolinstance != component.state.roleOnClipboard )
               {
-                // component.context.checkbinding(
-                //   {rolinstance: clipboardContent.roleData.rolinstance},
-                  // function(compatibleRole)
-                  // {
-                  //   component.setState({compatibleRole, roleOnClipboard: clipboardContent.roleData.rolinstance});
-                  // });
-                // checkBinding( <contexttype>, <localRolName>, <binding>, [() -> undefined] )
+                // checkBinding( <(QUALIFIED)RolName>, <binding>, [() -> undefined] )
                 PDRproxy.then(
                   function (pproxy)
                   {
                     pproxy.checkBinding(
-                      component.props.contexttype,
                       component.props.roletype,
                       clipboardContent.roleData.rolinstance,
                       function(compatibleRole)
                       {
                         component.setState({compatibleRole, roleOnClipboard: clipboardContent.roleData.rolinstance});
-                      },
-                      FIREANDFORGET);
+                      });
                   });                
               }
             }

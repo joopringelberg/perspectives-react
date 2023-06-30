@@ -23,12 +23,12 @@ export default class MySystem extends PerspectivesComponent
     PDRproxy.then(
       function (pproxy)
       {
-        pproxy.getUserIdentifier(
-          function(sysId)
-          {
-            component.setState({contextinstance: "def:#" + sysId[0]});
-          }
-        );
+        pproxy.getUserIdentifier()
+          .then(
+            function(sysId)
+            {
+              component.setState({contextinstance: "def:#" + sysId[0]});
+            });
       });
   }
 

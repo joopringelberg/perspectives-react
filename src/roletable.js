@@ -97,7 +97,7 @@ export default class RoleTable extends PerspectivesComponent
                 cardcolumn={component.props.cardcolumn}
                 roleRepresentation={roleRepresentation}
                 />
-              <TableControls createButton={ component.props.createButton }/>
+              <TableControls mayCreate={ component.props.createButton }/>
             </RoleDropZone>
           }</PSRoleInstances.Consumer>
       </RoleInstances>);

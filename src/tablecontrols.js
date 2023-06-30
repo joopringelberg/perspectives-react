@@ -159,14 +159,16 @@ export default class TableControls extends PerspectivesComponent
     {
       return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for table">
                 {
-                  component.props.createButton ?
+                  component.props.mayCreate ?
                   <CreateContextDropDown 
                     contexts={component.props.perspective.contextTypesToCreate}
                     create={ contextToCreate => component.createRole( function() {}, contextToCreate)}
                   />
                   : null
                 }
-                <AppContext.Consumer>
+                {
+                  component.props.mayCreate ?
+                  <AppContext.Consumer>
                   { appcontext => <TablePasteRole 
                     systemexternalrole={appcontext.systemExternalRole}
                     contextinstance={component.props.perspective.contextInstance}
@@ -177,6 +179,8 @@ export default class TableControls extends PerspectivesComponent
                     /> 
                   }
                 </AppContext.Consumer>
+                  : null
+                }
                 { actions.length > 0 && Object.keys(instances).length > 0 ?
                   <ActionDropDown
                     actions={ actions }
@@ -201,7 +205,7 @@ export default class TableControls extends PerspectivesComponent
 TableControls.contextType = PSContext;
 
 TableControls.propTypes =
-  { createButton: PropTypes.bool.isRequired
+  { mayCreate: PropTypes.bool.isRequired
   , perspective: PropTypes.shape( SerialisedPerspective ).isRequired
   // This is the row that is selected in the table, possibly none.
   , selectedroleinstance: PropTypes.string

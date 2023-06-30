@@ -252,7 +252,7 @@ export default class PerspectiveTable extends PerspectivesComponent
           </tbody>
         </Table>
         <TableControls
-          createButton={ component.mayCreateInstance() }
+          mayCreate={ component.mayCreateInstance() }
           perspective={ perspective}
           selectedroleinstance={component.state.row}
         />

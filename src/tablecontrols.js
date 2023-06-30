@@ -155,7 +155,11 @@ export default class TableControls extends PerspectivesComponent
     const actions = component.computeActions();
     const instances = component.props.perspective.roleInstances;
     const instance = instances[component.props.selectedroleinstance];
-    if ( component.stateIsComplete(["currentRoleInstance"]) )
+    if  ( component.stateIsComplete(["currentRoleInstance"]) && 
+          component.props.mayCreate ||
+          actions.length > 0 && Object.keys(instances).length > 0 ||
+          instance && instance.publicUrl
+        )
     {
       return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for table">
                 {

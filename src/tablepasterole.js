@@ -21,7 +21,7 @@
 import React from 'react';
 const PropTypes = require("prop-types");
 
-import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
+import {PDRproxy} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRoleInstances} from "./reactcontexts";
 import { default as ModelDependencies } from "./modelDependencies.js";
@@ -61,17 +61,7 @@ export default class TablePasteRole extends PerspectivesComponent
               if ( clipboardContent.roleData && clipboardContent.roleData.rolinstance && clipboardContent.roleData.rolinstance != component.state.roleOnClipboard )
               {
                 // checkBinding( <(QUALIFIED)RolName>, <binding>, [() -> undefined] )
-                PDRproxy.then(
-                  function (pproxy)
-                  {
-                    pproxy.checkBinding(
-                      component.props.roletype,
-                      clipboardContent.roleData.rolinstance,
-                      function(compatibleRole)
-                      {
-                        component.setState({compatibleRole, roleOnClipboard: clipboardContent.roleData.rolinstance});
-                      });
-                  });                
+                PDRproxy.then( pproxy => pproxy.checkBindingP( component.props.roletype, clipboardContent.roleData.rolinstance ).then( compatibleRole => component.setState({compatibleRole, roleOnClipboard: clipboardContent.roleData.rolinstance})));
               }
             }
           });

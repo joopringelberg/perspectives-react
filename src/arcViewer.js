@@ -30,6 +30,9 @@ import hljs from 'highlight.js';
 // Import perspectives-arc as a third party language
 import perspectivesarc from 'perspectives-highlightjs';
 
+import i18next from "i18next";
+import {UserMessagingPromise} from "./userMessaging.js";
+
 // Import a stylesheet
 import "highlight.js/styles/base16/solar-flare.css";
 

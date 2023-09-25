@@ -282,6 +282,7 @@ export default class PerspectivesFile extends PerspectivesComponent
                   component.props.serialisedProperty.id,
                   JSON.stringify(
                     { fileName: component.state.fileName
+                    , propertyType: component.props.serialisedProperty.id
                     , mimeType: component.state.mimeType
                     , database: component.state.database
                     , roleFileName: component.state.roleFileName
@@ -336,6 +337,7 @@ export default class PerspectivesFile extends PerspectivesComponent
             component.props.serialisedProperty.id,
             JSON.stringify(
               { fileName: theFile.name
+              , propertyType: component.props.serialisedProperty.id
               , mimeType: component.mapMimeType( theFile.type, theFile.name )
               // database and roleFileName will be decided by the PDR, see below.
               }),

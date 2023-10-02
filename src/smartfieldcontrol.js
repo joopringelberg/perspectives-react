@@ -50,10 +50,11 @@ export default class SmartFieldControl extends Component
   constructor(props)
   {
     super(props);
-    // `value` is a string.
+    this.inputType = this.mapRange( this.props.serialisedProperty.range );
+    // If the range is PDateTime, `value` is a string that represents an Epoch. We convert it to a DateTime format that the input control accepts.
+    // before storing it, we convert it back to an Epoch.
     this.state = { value: this.valueOnProps() };
     this.leaveControl = this.leaveControl.bind(this);
-    this.inputType = this.mapRange( this.props.serialisedProperty.range );
     this.controlType = this.htmlControlType();
   }
 
@@ -98,9 +99,30 @@ export default class SmartFieldControl extends Component
   // Returns the first value in the `propertyValues` prop, or the empty string.
   valueOnProps()
   {
+    function epoch_to_datetime_local (epoch)
+    {
+      const dt = new Date( parseInt( epoch ) );
+      dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
+      return dt.toISOString().slice(0,16);
+    }
+  
     if (this.props.propertyValues)
     {
-      return this.props.propertyValues.values[0] || "";
+      if (this.props.propertyValues.values[0])
+      {
+        if (this.inputType == "datetime-local")
+        {
+          return epoch_to_datetime_local( this.props.propertyValues.values[0] );
+        }
+        else
+        {
+          return this.props.propertyValues.values[0];
+        }
+      }
+      else 
+      {
+        return "";
+      }
     }
     else
     {
@@ -117,7 +139,7 @@ export default class SmartFieldControl extends Component
       case "PBool":
         return "checkbox";
       case "PDate":
-        return "date";
+        return "datetime-local";
       case "PNumber":
         return "number";
       case "PEmail":
@@ -140,7 +162,8 @@ export default class SmartFieldControl extends Component
           pproxy.setProperty(
             component.props.roleId,
             component.props.serialisedProperty.id,
-            val,
+            // convert to Epoch value as a string, which is what we store.
+            new Date(val).valueOf() + "",
             component.props.myroletype )
             .catch(e => UserMessagingPromise.then( um => 
               um.addMessageForEndUser(

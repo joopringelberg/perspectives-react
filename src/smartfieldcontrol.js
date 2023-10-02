@@ -163,7 +163,7 @@ export default class SmartFieldControl extends Component
             component.props.roleId,
             component.props.serialisedProperty.id,
             // convert to Epoch value as a string, which is what we store.
-            new Date(val).valueOf() + "",
+            (component.inputType == "datetime-local" ? new Date(val).valueOf() + "" : val),
             component.props.myroletype )
             .catch(e => UserMessagingPromise.then( um => 
               um.addMessageForEndUser(

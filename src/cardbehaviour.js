@@ -5,6 +5,7 @@ import {isQualifiedName} from "./urifunctions.js";
 import { default as ModelDependencies } from "./modelDependencies.js";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
+// import { useLongPress } from 'use-long-press';
 
 /*
 This module gives functions that add behaviour to a component that represents a role.
@@ -263,78 +264,75 @@ export function addFillWithRole(domEl, component)
 // Adds keydown behaviour: ctrl-c will put the Card on the Card clipboard.
 export function addFillARole(domEl, component)
 {
+  // const bind = useLongPress( copy, {detect: "touch"} );
+
   function handleKeyDown (event)
   {
     switch(event.keyCode){
       case 67: // 'c'
         if (event.ctrlKey)
         {
-          // Set information in the CardClipboard external property of "model://perspectives.domains#System$PerspectivesSystem".
-          if (isQualifiedName (component.props.labelProperty))
-          {
-            PDRproxy.then( pproxy =>
-              pproxy.getProperty(
-                component.context.rolinstance,
-                component.props.labelProperty,
-                component.context.roltype,
-                function(valArr)
-                {
-                  pproxy
-                    .setProperty(
-                      component.props.systemExternalRole,
-                      ModelDependencies.cardClipBoard,
-                      JSON.stringify(
-                          { roleData:
-                            { rolinstance: component.context.rolinstance
-                            , cardTitle: (valArr[0] || "No title")
-                            , roleType: component.context.roltype
-                            , contextType: component.context.contexttype
-                            }
-                          , addedBehaviour: component.addedBehaviour
-                          , myroletype: component.props.myroletype
-                          }),
-                      component.props.myroletype )
-                    .catch(e => UserMessagingPromise.then( um => 
-                      um.addMessageForEndUser(
-                        { title: i18next.t("clipboardSet_title", { ns: 'preact' }) 
-                        , message: i18next.t("clipboardSet_message", {ns: 'preact'})
-                        , error: e.toString()
-                        })));
-                }));
-          }
-          else
-          {
-            PDRproxy.then( pproxy =>
-              pproxy.getPropertyFromLocalName(
-                component.context.rolinstance,
-                component.props.labelProperty,
-                component.context.roltype,
-                function(valArr)
-                {
-                  pproxy.setProperty(
-                    component.props.systemExternalRole,
-                    ModelDependencies.cardClipBoard,
-                    JSON.stringify(
-                      { roleData:
-                        { rolinstance: component.context.rolinstance
-                        , cardTitle: (valArr[0] || "No title")
-                        , roleType: component.context.roltype
-                        , contextType: component.context.contexttype
-                        }
-                      , addedBehaviour: component.addedBehaviour
-                      , myroletype: component.props.myroletype
-                      }),
-                    component.props.myroletype );
-                }
-              )
-            );
-          }
-          event.preventDefault();
-          event.stopPropagation();
+          copy(event);
         }
     }
   }
 
+  function withLabelProperty( f )
+  {
+    if (isQualifiedName (component.props.labelProperty))
+    {
+      PDRproxy.then( pproxy =>
+        pproxy.getProperty(
+          component.context.rolinstance,
+          component.props.labelProperty,
+          component.context.roltype,
+          f));
+    }
+    else
+    {
+      PDRproxy.then( pproxy =>
+        pproxy.getPropertyFromLocalName(
+          component.context.rolinstance,
+          component.props.labelProperty,
+          component.context.roltype,
+          f
+        )
+      );
+    }
+  }
+
+  function copy( event )
+  {
+    withLabelProperty(
+      function(valArr)
+      {
+        // Set information in the CardClipboard external property of "model://perspectives.domains#System$PerspectivesSystem".
+        pproxy
+          .setProperty(
+            component.props.systemExternalRole,
+            ModelDependencies.cardClipBoard,
+            JSON.stringify(
+                { roleData:
+                  { rolinstance: component.context.rolinstance
+                  , cardTitle: (valArr[0] || "No title")
+                  , roleType: component.context.roltype
+                  , contextType: component.context.contexttype
+                  }
+                , addedBehaviour: component.addedBehaviour
+                , myroletype: component.props.myroletype
+                }),
+            component.props.myroletype )
+          .catch(e => UserMessagingPromise.then( um => 
+            um.addMessageForEndUser(
+              { title: i18next.t("clipboardSet_title", { ns: 'preact' }) 
+              , message: i18next.t("clipboardSet_message", {ns: 'preact'})
+              , error: e.toString()
+              })));
+      }
+    );
+    event.preventDefault();
+    event.stopPropagation();
+  }
   addBehaviourAnnotation( component, "fillARole");
 
   // Notice that this code is highly contextual.
@@ -342,19 +340,26 @@ export function addFillARole(domEl, component)
   // change.
   if (!domEl.ondragstart)
   {
+    withLabelProperty( valArr =>
     domEl.ondragstart = ev =>
     {
       const payload = JSON.stringify(
         { roleData: component.context
+        , cardTitle: (valArr[0] || "No title")
         , addedBehaviour: component.addedBehaviour
         , myroletype: component.props.myroletype
         }
       );
-      ev.dataTransfer.setData("PSRol", payload);
-    };
+      ev.dataTransfer.setData("PSRol", payload);    
+    });
   }
   domEl.draggable = true;
   domEl.addEventListener( "keydown", handleKeyDown);
+  // Add tap-hold listeners here?
+  // domEl.addEventListener( "onTouchStart", bind.onTouchStart );
+  // domEl.addEventListener( "onTouchMove", bind.onTouchMove );
+  // domEl.addEventListener( "onTouchEnd", bind.onTouchEnd );
+  
 }
 
 // Makes the Card draggable, so it can be dropped in the Unbind tool.

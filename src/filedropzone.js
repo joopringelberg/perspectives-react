@@ -27,7 +27,6 @@ export default function FileDropZone(props)
   function handleClick(event)
   {
     document.getElementById('selectedFile').click();
-    event.preventDefault();
   }
   function handleFileSelect(event)
   {
@@ -73,7 +72,7 @@ export default function FileDropZone(props)
                         ev.preventDefault();
                         ev.stopPropagation();
                       }}
-                      onClick={() => handleClick()}
+                      onClick={ev => handleClick(ev)}
                       onDragEnter={ev => ev.target.classList.add("border", "border-primary") }
                       onDragLeave={ev => ev.target.classList.remove("border", "border-primary")}
                       onKeyDown={ev => handleKeyDown(ev)}
@@ -86,7 +85,6 @@ export default function FileDropZone(props)
   else
   {
     return  <div onDragOver={ev => ev.preventDefault()}
-              aria-dropeffect="execute"
               aria-describedby="Select a file"
               tabIndex="0"
               className="dropzone"
@@ -96,7 +94,7 @@ export default function FileDropZone(props)
                 ev.preventDefault();
                 ev.stopPropagation();
               }}
-              onClick={() => handleClick()}
+              onClick={ev => handleClick(ev)}
               onDragEnter={ev => ev.target.classList.add("border", "border-primary") }
               onDragLeave={ev => ev.target.classList.remove("border", "border-primary")}
               onKeyDown={ev => handleKeyDown(ev)}

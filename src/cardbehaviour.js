@@ -279,25 +279,28 @@ export function addFillARole(domEl, component)
 
   function withLabelProperty( f )
   {
-    if (isQualifiedName (component.props.labelProperty))
+    if (component.context.rolinstance != "" && component.context.roltype != "")
     {
-      PDRproxy.then( pproxy =>
-        pproxy.getProperty(
-          component.context.rolinstance,
-          component.props.labelProperty,
-          component.context.roltype,
-          f));
-    }
-    else
-    {
-      PDRproxy.then( pproxy =>
-        pproxy.getPropertyFromLocalName(
-          component.context.rolinstance,
-          component.props.labelProperty,
-          component.context.roltype,
-          f
-        )
-      );
+      if (isQualifiedName (component.props.labelProperty))
+      {
+        PDRproxy.then( pproxy =>
+          pproxy.getProperty(
+            component.context.rolinstance,
+            component.props.labelProperty,
+            component.context.roltype,
+            f));
+      }
+      else
+      {
+        PDRproxy.then( pproxy =>
+          pproxy.getPropertyFromLocalName(
+            component.context.rolinstance,
+            component.props.labelProperty,
+            component.context.roltype,
+            f
+          )
+        );
+      }
     }
   }
 

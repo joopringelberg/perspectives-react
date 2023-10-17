@@ -310,27 +310,28 @@ export function addFillARole(domEl, component)
       function(valArr)
       {
         // Set information in the CardClipboard external property of "model://perspectives.domains#System$PerspectivesSystem".
-        pproxy
-          .setProperty(
-            component.props.systemExternalRole,
-            ModelDependencies.cardClipBoard,
-            JSON.stringify(
-                { roleData:
-                  { rolinstance: component.context.rolinstance
-                  , cardTitle: (valArr[0] || "No title")
-                  , roleType: component.context.roltype
-                  , contextType: component.context.contexttype
-                  }
-                , addedBehaviour: component.addedBehaviour
-                , myroletype: component.props.myroletype
-                }),
-            component.props.myroletype )
-          .catch(e => UserMessagingPromise.then( um => 
-            um.addMessageForEndUser(
-              { title: i18next.t("clipboardSet_title", { ns: 'preact' }) 
-              , message: i18next.t("clipboardSet_message", {ns: 'preact'})
-              , error: e.toString()
-              })));
+        PDRproxy.then( pproxy =>
+          pproxy
+            .setProperty(
+              component.props.systemExternalRole,
+              ModelDependencies.cardClipBoard,
+              JSON.stringify(
+                  { roleData:
+                    { rolinstance: component.context.rolinstance
+                    , cardTitle: (valArr[0] || "No title")
+                    , roleType: component.context.roltype
+                    , contextType: component.context.contexttype
+                    }
+                  , addedBehaviour: component.addedBehaviour
+                  , myroletype: component.props.myroletype
+                  }),
+              component.props.myroletype )
+            .catch(e => UserMessagingPromise.then( um => 
+              um.addMessageForEndUser(
+                { title: i18next.t("clipboardSet_title", { ns: 'preact' }) 
+                , message: i18next.t("clipboardSet_message", {ns: 'preact'})
+                , error: e.toString()
+                }))) )
       }
     );
     event.preventDefault();

@@ -6,7 +6,8 @@ import PerspectivesComponent from "./perspectivescomponent.js";
 
 import {PSRol, PSContext} from "./reactcontexts";
 
-const PDRproxy = require("perspectives-proxy").PDRproxy;
+import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
+
 
 import {isQualifiedName} from "./urifunctions.js";
 import BinaryModal from "./binarymodal.js";
@@ -202,12 +203,21 @@ export default class RoleInstance extends PerspectivesComponent
         {
           if (component.state.roleKind == "ContextRole")
           {
-            // Ask the user whether she wants to remove the context as well.
-            component.setState({showRemoveContextModal: true});
-          }
-          else
-          {
-            component.removeWithoutContext();
+            pproxy.getBinding (
+              component.props.roleinstance, 
+              function( values )
+              {
+                if (values.length == 0)
+                {
+                  component.removeWithoutContext();
+                }
+                else 
+                {
+                  // Ask the user whether she wants to remove the context as well.
+                  component.setState({showRemoveContextModal: true});
+                }      
+              }, 
+              FIREANDFORGET)
           }
         }
 

@@ -18,8 +18,7 @@
 // Full text of this license can be found in the LICENSE file in the projects root.
 // END LICENSE
 
-const React = require("react"); // 2
-// const ReactDOM = require("react-dom");
+import React from "react"; // 2
 import ReactDOM from "react-dom";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {deconstructLocalName} from "./urifunctions.js";
@@ -28,7 +27,7 @@ import RoleInstance from "./roleinstance.js";
 import {serialisedProperty, propertyValues} from "./perspectiveshape.js";
 
 import "./components.css";
-const PropTypes = require("prop-types");
+import PropTypes from "prop-types";
 
 ////////////////////////////////////////////////////////////////////////////////
 // NAVIGATING IN A GRID AND A CELL

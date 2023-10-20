@@ -20,13 +20,13 @@
 
 // This Component is built upon the data sent from the PDR for a single property.
 
-const React = require("react");
+import React from "react";
 const Component = React.PureComponent;
-const PDRproxy = require("perspectives-proxy").PDRproxy;
+import {PDRproxy} from "perspectives-proxy";
 import
   { Form
   } from "react-bootstrap";
-const PropTypes = require("prop-types");
+import PropTypes from "prop-types";
 
 import {serialisedProperty, propertyValues} from "./perspectiveshape.js";
 import {UserMessagingPromise} from "./userMessaging.js";

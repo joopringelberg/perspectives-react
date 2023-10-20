@@ -21,7 +21,7 @@
 import React, { Component } from "react";
 import {Dropdown} from 'react-bootstrap';
 import {ZapIcon} from '@primer/octicons-react';
-const PropTypes = require("prop-types");
+import PropTypes from "prop-types";
 
 export default class ActionDropDown extends Component
 {

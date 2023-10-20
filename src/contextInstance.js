@@ -1,9 +1,9 @@
-const React = require("react");
-const PDRproxy = require("perspectives-proxy").PDRproxy;
+import React from "react";
+import {PDRproxy} from "perspectives-proxy";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext} from "./reactcontexts";
-const PropTypes = require("prop-types");
+import PropTypes from "prop-types";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
 

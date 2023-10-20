@@ -1,4 +1,4 @@
-const React = require("react");
+import React from "react";
 import {deconstructLocalName} from "./urifunctions.js";
 import RoleInstance from "./roleinstance.js";
 import View from "./view.js";
@@ -15,7 +15,7 @@ import
   , Form
   , Card
   } from "react-bootstrap";
-const PropTypes = require("prop-types");
+import PropTypes from "prop-types";
 
 ////////////////////////////////////////////////////////////////////////////////
 // ROLEFORM

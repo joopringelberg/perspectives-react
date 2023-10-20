@@ -1,6 +1,6 @@
-const React = require("react");
-const PropTypes = require("prop-types");
-const PDRproxy = require("perspectives-proxy").PDRproxy;
+import React from "react";
+import PropTypes from "prop-types";
+import {PDRproxy} from "perspectives-proxy";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRol} from "./reactcontexts";

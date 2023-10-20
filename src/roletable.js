@@ -1,8 +1,8 @@
-const React = require("react"); // 2
+import React from "react"; // 2
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 
-const PDRproxy = require("perspectives-proxy").PDRproxy;
+import {PDRproxy} from "perspectives-proxy";
 
 import {PSRoleInstances, PSRol, PSContext} from "./reactcontexts";
 
@@ -31,7 +31,7 @@ import
 
 import "./components.css";
 
-const PropTypes = require("prop-types");
+import PropTypes from "prop-types";
 
 ////////////////////////////////////////////////////////////////////////////////
 // CARD

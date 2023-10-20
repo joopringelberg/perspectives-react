@@ -18,10 +18,10 @@
 // Full text of this license can be found in the LICENSE file in the projects root.
 // END LICENSE
 
-const React = require("react");
+import React from "react";
 const Component = React.PureComponent;
 import {PSRol, AppContext} from "./reactcontexts.js";
-const PDRproxy = require("perspectives-proxy").PDRproxy;
+import {PDRproxy} from "perspectives-proxy";
 import RoleDropZone from "./roleDropzone.js";
 import {addBehaviour} from "./behaviourcomponent.js";
 import PerspectivesComponent from "./perspectivescomponent.js";
@@ -35,7 +35,7 @@ import
   { Card
   , Navbar
   } from "react-bootstrap";
-const PropTypes = require("prop-types");
+import PropTypes from "prop-types";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
 

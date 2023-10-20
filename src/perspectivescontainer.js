@@ -1,4 +1,4 @@
-const React = require("react");
+import React from "react";
 const Component = React.PureComponent;
 
 import PropTypes from "prop-types";

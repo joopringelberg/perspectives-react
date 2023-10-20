@@ -47,14 +47,14 @@
 //   , verbs :: Array String
 //   }
 
-const React = require("react");
+import React from "react";
 const Component = React.PureComponent;
 import
   { Row
   , Col
   , Form
   } from "react-bootstrap";
-const PropTypes = require("prop-types");
+import PropTypes from "prop-types";
 import SmartFieldControl from "./smartfieldcontrol.js";
 
 export default class SmartFieldControlGroup extends Component

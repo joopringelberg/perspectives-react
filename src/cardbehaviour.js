@@ -1,4 +1,4 @@
-// const PDRproxy = require("perspectives-proxy").PDRproxy;
+// import {PDRproxy} from "perspectives-proxy";
 
 import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
 import {isQualifiedName} from "./urifunctions.js";

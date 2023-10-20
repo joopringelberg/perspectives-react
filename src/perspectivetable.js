@@ -1,4 +1,4 @@
-const React = require("react"); // 2
+import React from "react"; // 2
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRol, PSContext} from "./reactcontexts";
 import {addBehaviour} from "./behaviourcomponent.js";
@@ -11,7 +11,7 @@ import
   , Form
   } from "react-bootstrap";
 import "./components.css";
-const PropTypes = require("prop-types");
+import PropTypes from "prop-types";
 
 ////////////////////////////////////////////////////////////////////////////////
 // CARD

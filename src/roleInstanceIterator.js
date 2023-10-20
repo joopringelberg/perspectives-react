@@ -1,5 +1,5 @@
-const React = require("react");
-const PDRproxy = require("perspectives-proxy").PDRproxy;//3
+import React from "react";
+import {PDRproxy} from "perspectives-proxy";//3
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRol, PSRoleInstances, PSContext} from "./reactcontexts";

@@ -1,7 +1,7 @@
-const React = require("react");
+import React from "react";
 
-const PropTypes = require("prop-types");
-const PDRproxy = require("perspectives-proxy").PDRproxy;
+import PropTypes from "prop-types";
+import {PDRproxy} from "perspectives-proxy";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {getQualifiedPropertyName} from "./urifunctions.js";

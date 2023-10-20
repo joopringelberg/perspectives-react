@@ -1,4 +1,4 @@
-const React = require("react");
+import React from "react";
 
 // Two contexts, PSRol and PSRoleInstances, have the functions bind, bind_ and checkBinding. 
 // All return promises.

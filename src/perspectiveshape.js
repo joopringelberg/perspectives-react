@@ -20,7 +20,7 @@
 
 // The shape of structures sent from the PDR, describing screens and perspectives.
 
-const PropTypes = require("prop-types");
+import PropTypes from "prop-types";
 
 export const serialisedProperty =
   PropTypes.shape(

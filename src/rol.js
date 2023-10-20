@@ -1,5 +1,5 @@
-const React = require("react");
-const PropTypes = require("prop-types");
+import React from "react";
+import PropTypes from "prop-types";
 
 import RoleInstanceIterator from "./roleinstanceiterator.js";
 import RoleInstances from "./roleinstances.js";

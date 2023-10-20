@@ -26,7 +26,7 @@ import
 // import React, { useState } from 'react';
 import React from 'react';
 
-const PropTypes = require("prop-types");
+import PropTypes from "prop-types";
 
 export default function Alert(props) {
   // const [show, setShow] = useState(false);

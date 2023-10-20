@@ -1,5 +1,5 @@
-const React = require("react");
-const PropTypes = require("prop-types");
+import React from "react";
+import PropTypes from "prop-types";
 import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
 
 import PerspectivesComponent from "./perspectivescomponent.js";

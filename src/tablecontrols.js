@@ -18,9 +18,9 @@
 // Full text of this license can be found in the LICENSE file in the projects root.
 // END LICENSE
 
-const React = require("react"); // 2
+import React from "react"; // 2
 import PerspectivesComponent from "./perspectivescomponent.js";
-const PDRproxy = require("perspectives-proxy").PDRproxy;
+import {PDRproxy} from "perspectives-proxy";
 import {AppContext} from "./reactcontexts";
 import ActionDropDown from "./actiondropdown.js";
 import CreateContextDropDown from "./createContextDropdown.js";
@@ -35,7 +35,7 @@ import
   { Navbar
   } from "react-bootstrap";
 import "./components.css";
-const PropTypes = require("prop-types");
+import PropTypes from "prop-types";
 
 ////////////////////////////////////////////////////////////////////////////////
 // TABLECONTROLS

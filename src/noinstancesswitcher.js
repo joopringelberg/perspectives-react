@@ -1,4 +1,4 @@
-const React = require("react");
+import React from "react";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRoleInstances} from "./reactcontexts.js";
 

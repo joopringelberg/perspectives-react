@@ -1,5 +1,5 @@
 import React from "react";
-const PropTypes = require("prop-types");
+import PropTypes from "prop-types";
 
 import
   { Button

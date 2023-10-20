@@ -6,7 +6,7 @@ import {AppContext} from "./reactcontexts.js";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import { default as ModelDependencies } from "./modelDependencies.js";
 
-// const PDRproxy = require("perspectives-proxy").PDRproxy;
+// import {PDRproxy} from "perspectives-proxy";
 import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";

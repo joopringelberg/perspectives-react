@@ -1,4 +1,4 @@
-const PDRproxy = require("perspectives-proxy").PDRproxy;
+import {PDRproxy} from "perspectives-proxy";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
 

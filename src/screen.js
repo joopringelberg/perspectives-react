@@ -2,7 +2,7 @@ import "regenerator-runtime/runtime";
 
 import React from 'react';
 
-const PropTypes = require("prop-types");
+import PropTypes from "prop-types";
 import { PDRproxy, CONTINUOUS } from 'perspectives-proxy';
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext, AppContext} from "./reactcontexts.js";

@@ -18,11 +18,11 @@
 // Full text of this license can be found in the LICENSE file in the projects root.
 // END LICENSE
 
-const React = require("react");
-const PDRproxy = require("perspectives-proxy").PDRproxy;
+import React from "react";
+import {PDRproxy} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import PerspectiveBasedForm from "./perspectivebasedform.js";
-const PropTypes = require("prop-types");
+import PropTypes from "prop-types";
 import mapRoleVerbsToBehaviours from "./maproleverbstobehaviours.js";
 
 ////////////////////////////////////////////////////////////////////////////////

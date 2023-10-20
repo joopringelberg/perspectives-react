@@ -18,11 +18,11 @@
 // Full text of this license can be found in the LICENSE file in the projects root.
 // END LICENSE
 
-const React = require("react"); // 2
+import React from "react"; // 2
 import PerspectivesComponent from "./perspectivescomponent.js";
 import TableCell from "./tablecell.js";
 import "./components.css";
-const PropTypes = require("prop-types");
+import PropTypes from "prop-types";
 import {roleinstancewithprops, serialisedProperty} from "./perspectiveshape.js";
 
 ////////////////////////////////////////////////////////////////////////////////

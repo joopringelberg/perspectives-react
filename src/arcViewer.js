@@ -25,7 +25,7 @@ import {PDRproxy} from "perspectives-proxy";
 
 // Import highlight library (NOTE: this is the complete module, can be done with smaller footprint!)
 // https://highlightjs.readthedocs.io/en/latest/readme.html#es6-modules-import
-import hljs from 'highlight.js';
+import hljs from 'highlight.js/lib/core';
 
 // Import perspectives-arc as a third party language
 import perspectivesarc from 'perspectives-highlightjs';

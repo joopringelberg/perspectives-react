@@ -25,7 +25,7 @@ export const PSContext = React.createContext(
     , roleId: undefined
     , myRoleType: undefined
     // The user identifier (his GUID).
-    , systemUser: undefined
+    , systemIdentifier: undefined
     , setEventDispatcher: function(){}
     , couchdbUrl: undefined
     });

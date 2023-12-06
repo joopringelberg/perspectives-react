@@ -30,10 +30,10 @@ import lifecycle from '../node_modules/page-lifecycle/dist/lifecycle.es5.js';
 // Pouchdb will handle both.
 // Returns a promise for a module.
 // WHEN the explicitly stored value for 'me' in the context instance changes, the screen is recomputed.
-function fetchModuleFromPouchdb( modelName, systemUser, couchdbUrl )
+function fetchModuleFromPouchdb( modelName, systemIdentifier, couchdbUrl )
 {
   // The IndexedDB database "localUsers"
-  const modelsDatabaseName = couchdbUrl ? couchdbUrl + systemUser + "_models" : systemUser + "_models";
+  const modelsDatabaseName = couchdbUrl ? couchdbUrl + systemIdentifier + "_models" : systemIdentifier + "_models";
   const modelsDatabase = new Pouchdb( modelsDatabaseName );
 
   return modelsDatabase.getAttachment( modelName, "screens.js").then(
@@ -106,7 +106,7 @@ export default function Screen(props)
 {
   return  <AppContext.Consumer>
           {
-            ({couchdbUrl, systemUser}) => <Screen_ couchdbUrl={couchdbUrl} systemUser={systemUser} {...props}/>
+            ({couchdbUrl, systemIdentifier}) => <Screen_ couchdbUrl={couchdbUrl} systemIdentifier={systemIdentifier} {...props}/>
           }
           </AppContext.Consumer>;
 }
@@ -183,7 +183,7 @@ class Screen_ extends PerspectivesComponent
   {
     const component = this;
     const externalRole = component.props.externalroleinstance;
-    const userIdentifier = component.props.systemUser;
+    const userIdentifier = component.props.systemIdentifier;
     let pproxy, contextId, contextType;
     PDRproxy
       .then( p => pproxy = p)
@@ -331,5 +331,5 @@ Screen_.propTypes =
   , setMyRoleType: PropTypes.func.isRequired
   // Own props (values come from AppContext).
   , couchdbUrl: PropTypes.string.isRequired
-  , systemUser: PropTypes.string.isRequired
+  , systemIdentifier: PropTypes.string.isRequired
   };

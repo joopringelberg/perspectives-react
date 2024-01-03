@@ -7,9 +7,8 @@ export default function importTransaction(theFile)
   // A slight check.
   function isTransaction (t)
   {
-    if ( !t.contents ) { return false; }
-    if ( !t.contents.timeStamp ) { return false; }
-    if ( !t.contents.deltas ) { return false; }
+    if ( !t.timeStamp ) { return false; }
+    if ( !t.deltas ) { return false; }
     return true;
   }
   if (theFile)

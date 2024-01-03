@@ -52,7 +52,7 @@ export default class OpenPublicResource extends PerspectivesComponent
     e.preventDefault();
     if (component.props.rolekind == "ContextRole" || component.props.rolekind == "ExternalRole")
     {
-      window.open("/?opencontext=" + component.props.publicurl);
+      window.open("/?opencontext=" + encodeURIComponent( component.props.publicurl) );
     }
     else
     {

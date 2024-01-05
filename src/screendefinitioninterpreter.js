@@ -194,62 +194,56 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
   screenElement(element, index)
   {
     const component = this;
-    if (element.row)
-    {
-      return component.buildRow( element.row, index );
-    }
-    else if (element.column)
-    {
-      return component.buildColumn( element.column, index );
-    }
-    else if (element.table)
-    {
-      return (
-        <div
-          className="border-bottom pb-4 pt-4 widget"
-          key={index}
-          >
-        { element.table.title ? <h4>{element.table.title}</h4> : null }
-        { component.buildTable( element.table, index ) }
-        </div>);
-    }
-    else if (element.form)
-    {
-      return (
-        <div
-          className="border-bottom pb-4 pt-4 widget"
-          key={index}
-          >
-        { element.form.title ? <h4>{element.form.title}</h4> : null }
-        { component.buildForm( element.form, index ) }
-        </div>);
+    switch (element.elementType){
+      case "RowElementD":
+        return component.buildRow( element.element, index );
+      case "ColumnElementD":
+        return component.buildColumn( element.element, index );    
+      case "TableElementD":
+        return (
+          <div
+            className="border-bottom pb-4 pt-4 widget"
+            key={index}
+            >
+          { element.element.title ? <h4>{element.element.title}</h4> : null }
+          { component.buildTable( element.element, index ) }
+          </div>);
+      case "FormElementD":
+        return (
+          <div
+            className="border-bottom pb-4 pt-4 widget"
+            key={index}
+            >
+          { element.element.title ? <h4>{element.element.title}</h4> : null }
+          { component.buildForm( element.element, index ) }
+          </div>);
     }
   }
-  buildRow(screenElements, index)
+  buildRow({elements}, index)
   {
     const component = this;
     return (
       <Row key={index}>
       {
-        screenElements.map(component.screenElement)
+        elements.map(component.screenElement)
       }
       </Row>
     );
   }
-  buildColumn(screenElements, index)
+  buildColumn({elements}, index)
   {
     const component = this;
     return (
       <Col key={index}>
       {
-        screenElements.map(component.screenElement)
+        elements.map(component.screenElement)
       }
       </Col>
     );
   }
-  buildTable(widgetCommonFields)
+  buildTable({fields})
   {
-    const perspective = widgetCommonFields.perspective;
+    const perspective = fields.perspective;
     // const title = widgetCommonFields.title;
     return (
       <PerspectiveTable
@@ -258,10 +252,10 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
         perspective={perspective}
         />);
   }
-  buildForm(widgetCommonFields)
+  buildForm({fields})
   {
     const component = this;
-    const perspective = widgetCommonFields.perspective;
+    const perspective = fields.perspective;
     // const title = widgetCommonFields.title;
     return (
       <PerspectiveBasedForm

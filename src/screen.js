@@ -36,20 +36,22 @@ function fetchModuleFromPouchdb( modelName, systemIdentifier, couchdbUrl )
   const modelsDatabaseName = couchdbUrl ? couchdbUrl + systemIdentifier + "_models" : systemIdentifier + "_models";
   const modelsDatabase = new Pouchdb( modelsDatabaseName );
 
-  return modelsDatabase.getAttachment( modelName, "screens.js").then(
-    function(jstext)
-    {
-      return jstext.text().then( function(t)
+  return modelsDatabase.getAttachment( modelName, "screens.js")
+    .then(
+      function(jstext)
       {
-        /* The module text, as produces by Webpack using "var" as libraryTarget
-        (see: https://webpack.js.org/guides/author-libraries/#expose-the-library)
-        ends on export statements.
-        By removing those lines, we obtain a text that can actually be constructed into a function
-        and then applied to obtain the module!
-        */
-        return Function('"use strict";' + t.match(/^(.*)export \{/ms)[1] + "\nreturn perspectivesScreens;")();
-      });
-    }).catch( e => console.log( e ));
+        return jstext.text().then( function(t)
+        {
+          /* The module text, as produces by Webpack using "var" as libraryTarget
+          (see: https://webpack.js.org/guides/author-libraries/#expose-the-library)
+          ends on export statements.
+          By removing those lines, we obtain a text that can actually be constructed into a function
+          and then applied to obtain the module!
+          */
+          return Function('"use strict";' + t.match(/^(.*)export \{/ms)[1] + "\nreturn perspectivesScreens;")();
+        });
+        })
+    .catch( e => {});
 }
 
 // Returns a promise that resolves to an array, possibly empty, of objects of the form {roleName :: String, module :: <A React Component> }.

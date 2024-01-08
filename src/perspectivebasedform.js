@@ -77,7 +77,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
   findValue( propId )
   {
     const component = this;
-    if (component.state.roleInstanceWithProps)
+    if (component.state.roleInstanceWithProps && component.state.roleInstanceWithProps.propertyValues[propId])
     {
       return component.state.roleInstanceWithProps.propertyValues[propId].values;
     }

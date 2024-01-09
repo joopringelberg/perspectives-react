@@ -63,4 +63,5 @@
 , "tablePasteRole_Alt": "Paste the role on the clipboard"
 , "formPasteRole_Fill": "Fill the role in this form with the role on the clipboard."
 , "openPublicResource": "Open the public perspective on this role or context."
+, "openContext": "Please wait while this context is being loaded..."
 }

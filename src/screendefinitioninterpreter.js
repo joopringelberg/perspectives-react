@@ -330,7 +330,9 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
     }
     else
     {
-      return null;
+      return  <Container>
+                <h3 className="text-center pt-5">{ i18next.t( "openContext", { ns: 'preact' }) }</h3>
+              </Container>
     }
   }
 }

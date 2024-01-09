@@ -18,6 +18,7 @@ import
   { Col
   , Row
   , Card
+  , Container
   } from "react-bootstrap";
 
 import lifecycle from '../node_modules/page-lifecycle/dist/lifecycle.es5.js';
@@ -320,8 +321,11 @@ class Screen_ extends PerspectivesComponent
       }
     }
     else
-      return null;
-  }
+      return  <Container>
+                <h3 className="text-center pt-5">{ i18next.t( "openContext", { ns: 'preact' }) }</h3>
+              </Container>
+;
+}
 }
 
 Screen_.contextType = PSContext;

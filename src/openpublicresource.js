@@ -22,6 +22,7 @@ import React from 'react';
 import PropTypes from "prop-types";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
+import { thisAppsLocation } from './utilities.js';
 import {LinkExternalIcon} from '@primer/octicons-react';
 import i18next from "i18next";
 
@@ -52,12 +53,12 @@ export default class OpenPublicResource extends PerspectivesComponent
     e.preventDefault();
     if (component.props.rolekind == "ContextRole" || component.props.rolekind == "ExternalRole")
     {
-      window.open("/?opencontext=" + encodeURIComponent( component.props.publicurl) );
+      window.open(thisAppsLocation() + "?opencontext=" + encodeURIComponent( component.props.publicurl) );
     }
     else
     {
       // TODO. RoleForm openen werkt niet meer.
-      window.open("/?openroleform=" + component.props.publicurl
+      window.open(thisAppsLocation() + "?openroleform=" + component.props.publicurl
         // This information is not (yet) available.
         // + "&viewname=" + viewname +
         // (component.props.cardprop ? "&cardprop=" + component.props.cardprop : "")

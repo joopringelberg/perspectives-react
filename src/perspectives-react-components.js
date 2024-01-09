@@ -45,6 +45,7 @@ export {default as PerspectivesFile} from "./perspectivesFile";
 export {ArcViewer} from "./arcViewer.js";
 export {AsyncImage} from "./asyncImage.js";
 export {default as OpenPublicResource} from "./openpublicresource.js";
+export {thisAppsLocation} from "./utilities.js";
 
 export async function getPreact(LANG_KEY)
 {

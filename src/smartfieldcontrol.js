@@ -77,7 +77,7 @@ export default class SmartFieldControl extends Component
     }
     if (controlType == "text")
     {
-      if (this.minLength(controlType) > 80)
+      if (this.maxLength(controlType) > 80 || this.minLength(controlType) > 80 || this.state.value.length > 80)
       {
         return "textarea";
       }

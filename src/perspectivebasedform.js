@@ -213,7 +213,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
                     roleinstance={component.state.roleInstanceWithProps ? component.state.roleInstanceWithProps.roleId : null}
                     myroletype={component.props.myroletype}
                     create={ component.createRoleInstance }
-                    card={ <DraggableCard labelProperty={component.props.cardtitle} title={title && title[0] ? title[0] : component.props.perspective.displayName}/> }
+                    card={ <DraggableCard labelProperty={component.props.cardtitle} title={title ? title : component.props.perspective.displayName}/> }
                   />
                 </RoleDropZone>
               </RoleInstance>;
@@ -228,7 +228,15 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
     }
     else
     {
-      title = component.findValue(component.props.cardtitle);
+      title = component.findValue(component.props.cardtitle)[0];
+      if (title)
+      {
+        title = title.substring(0,25);
+        if (title.length == 25)
+        {
+          title = title + "..."
+        }
+      }
       return (
         <>
           {

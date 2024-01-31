@@ -105,18 +105,51 @@ export default class SmartFieldControl extends Component
       dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
       return dt.toISOString().slice(0,16);
     }
+
+    // returns either "hh:mm" or "hh:mm.ss"
+    function milliseconds_to_time (millis)
+    {
+      // If I don't subtract 
+      const tm = new Date( parseInt( millis ) );
+      return pad(tm.getUTCHours()) + ":" + pad(tm.getUTCMinutes()) + (tm.getUTCSeconds() ? ":" + pad(tm.getUTCMilliseconds()) : "");
+    }
+
+    // returns "yyyy-mm-dd"
+    function epoch_to_date( epoch )
+    {
+      const dt = new Date( parseInt( epoch ) );
+      return dt.getFullYear() + "-" + pad( (dt.getMonth() + 1) ) + "-" + pad( dt.getDate() );
+    }
+    function pad(n)
+    {
+      if (n < 10)
+      {
+        return "0" + n;
+      }
+      else
+      {
+        return n + "";
+      }
+    }
   
     if (this.props.propertyValues)
     {
       if (this.props.propertyValues.values[0])
       {
-        if (this.inputType == "datetime-local")
-        {
-          return epoch_to_datetime_local( this.props.propertyValues.values[0] );
-        }
-        else
-        {
-          return this.props.propertyValues.values[0];
+        switch (this.inputType) {
+          case "datetime-local":
+            // a datetime is represented as a timestamp (milliseconds sinds epoch).
+            return epoch_to_datetime_local( this.props.propertyValues.values[0] );  
+          case "date":
+            // A date is represented as a timestamp, but without a time component.
+            return epoch_to_date ( this.props.propertyValues.values[0] );
+          case "time":
+            // a time is represented in terms of milliseconds.
+            // We have to provide a string in the form "hh:mm"
+            return milliseconds_to_time ( this.props.propertyValues.values[0] );
+            return
+          default:
+            return this.props.propertyValues.values[0];
         }
       }
       else 
@@ -138,9 +171,13 @@ export default class SmartFieldControl extends Component
         return "text";
       case "PBool":
         return "checkbox";
-      case "PDate":
+      case "PDateTime":
         return "datetime-local";
-      case "PNumber":
+      case "PDate":
+        return "date";
+      case "PTime":
+        return "time";
+        case "PNumber":
         return "number";
       case "PEmail":
         return "email";
@@ -152,6 +189,23 @@ export default class SmartFieldControl extends Component
   // `val` is a string.
   changeValue (val)
   {
+    function inputVal_to_value()
+    {
+      switch (component.inputType) {
+        case "datetime-local":
+          // return the timestamp (milliseconds since the epoch).
+          return new Date(val).valueOf() + "";
+        case "date":
+          // return the timestamp (milliseconds since the epoch).
+          return new Date(val).valueOf() + "";
+        case "time":
+          // val is a string in the format "hh:mm" or " hh:mm:ss"
+          // We return the corresponding milliseconds.
+          return (new Date("1970-01-01T" + val).valueOf() - new Date('1970-01-01T00:00').valueOf() ) + "";
+        default:
+          return val
+      }
+    }
     const component = this;
     const oldValue = component.valueOnProps();
     if ( oldValue != val )
@@ -162,8 +216,7 @@ export default class SmartFieldControl extends Component
           pproxy.setProperty(
             component.props.roleId,
             component.props.serialisedProperty.id,
-            // convert to Epoch value as a string, which is what we store.
-            (component.inputType == "datetime-local" ? new Date(val).valueOf() + "" : val),
+            inputVal_to_value(),
             component.props.myroletype )
             .catch(e => UserMessagingPromise.then( um => 
               um.addMessageForEndUser(

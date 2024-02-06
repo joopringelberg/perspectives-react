@@ -219,6 +219,10 @@ export default class RoleInstance extends PerspectivesComponent
               }, 
               FIREANDFORGET)
           }
+          else
+          {
+            component.removeWithoutContext();
+          }
         }
 
         // Will be called exactly once, with the qualified name of the role.

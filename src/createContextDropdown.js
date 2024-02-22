@@ -22,6 +22,7 @@ import React, { Component } from "react";
 import {Dropdown} from 'react-bootstrap';
 import {PlusIcon} from '@primer/octicons-react';
 import PropTypes from "prop-types";
+import i18next from "i18next";
 
 export default class CreateContextDropDown extends Component
 {
@@ -34,6 +35,23 @@ export default class CreateContextDropDown extends Component
   render()
   {
     const component = this;
+    const items = component.props.contexts.map(
+      function(contextName)
+      {
+        return    <Dropdown.Item
+                    key={contextName}
+                    eventKey={contextName}
+                  >{
+                    contextName // TODO This must be a displayname.
+                  }</Dropdown.Item>;
+      });
+    items.unshift(    <Dropdown.Item
+                        key="JustTheRole"
+                        eventKey="JustTheRole"
+                      >{
+                        i18next.t("contextDropdown_title", { ns: 'preact' }) 
+                      }</Dropdown.Item> );
+      
     if (component.props.contexts.length == 0)
     {
       return  <div
@@ -57,21 +75,7 @@ export default class CreateContextDropDown extends Component
                 <Dropdown.Toggle as={CustomToggle} id="CreateContext_Toggle" disabled={component.props.contexts.length == 0}>
                   <PlusIcon alt="Contexts to create" aria-label="Contexts to create" size="medium"/>
                 </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    {
-                      component.props.contexts.map(
-                        function(contextName)
-                        {
-                          return    <Dropdown.Item
-                                      key={contextName}
-                                      eventKey={contextName}
-                                    >{
-                                      contextName // TODO This must be a displayname.
-                                    }</Dropdown.Item>;
-                        }
-                      )
-                    }
-                  </Dropdown.Menu>
+                  <Dropdown.Menu>{ items }</Dropdown.Menu>
               </Dropdown>;
     }
   }

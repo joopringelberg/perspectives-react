@@ -64,4 +64,5 @@
 , "formPasteRole_Fill": "Vul de rol in dit formulier met de rol op het klembord."
 , "openPublicResource": "Open het publieke perspectief op deze rol of context."
 , "openContext": "Een moment terwijl de context wordt geopend..."
+, "contextDropdown_title": "Alleen de rol"
 }

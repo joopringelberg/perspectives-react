@@ -57,6 +57,7 @@ export default class TableControls extends PerspectivesComponent
       // If a ContextRole Kind, create a new context, too.
       if (  component.props.perspective.roleKind == "ContextRole" &&
             contextToCreate &&
+            contextToCreate != "JustTheRole" &&
             roleType)
       {
         pproxy.createContext (

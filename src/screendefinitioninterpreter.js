@@ -21,7 +21,7 @@
 import React from 'react';
 import PropTypes from "prop-types";
 
-import {PDRproxy} from "perspectives-proxy";
+import {PDRproxy, CONTINUOUS} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext} from "./reactcontexts";
 import PerspectiveBasedForm from "./perspectivebasedform.js";
@@ -80,13 +80,14 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
           ,component.props.contexttype
           ,function( screens )
           {
-            if (screens[0])
-            {
-              console.log( screens[0] );
-              component.setState({screen: screens[0]});
-            }
+            console.log( screens[0] );
+            component.setState({screen: screens[0] ? screens[0] : "TryAnotherRole"});
           }
-          // ,FIREANDFORGET
+          ,CONTINUOUS
+          ,function()
+          {
+            component.setState({screen: "Reload"});
+          }
         ).then( function(unsubscriber)
           {
             unsubscriber.request = "Unsubscribe";
@@ -309,23 +310,33 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
     if (component.stateIsComplete())
     {
       screen = component.state.screen;
-      // Fetched perspectives from the server, but do we have one?
-      if (screen)
-      {
-        return component.buildScreen(screen);
-      }
-      else
-      {
-        return    <Container>
-                    <Card>
-                      <Card.Body>
-                        <Card.Title>An error condition occurred</Card.Title>
-                        <Card.Text>
-                          The role you currently have in this context has no perspectives. Try another role.
-                        </Card.Text>
-                      </Card.Body>
-                      </Card>
-                  </Container>;
+      switch (screen) {
+        case "Reload":
+          return    <Container>
+                      <Card>
+                        <Card.Body>
+                          <Card.Title>An error condition occurred</Card.Title>
+                          <Card.Text>
+                            The program could not compute a screen. This may be caused by missing data.
+                            This may have been fixed automatically. Try navigating back and forth again.
+                          </Card.Text>
+                        </Card.Body>
+                        </Card>
+                    </Container>;
+          break;
+        case "TryAnotherRole":
+          return    <Container>
+                      <Card>
+                        <Card.Body>
+                          <Card.Title>Nothing to show</Card.Title>
+                          <Card.Text>
+                            It may be that the role you currently have in this context has no perspectives. Try another role.
+                          </Card.Text>
+                        </Card.Body>
+                        </Card>
+                    </Container>;
+        default:
+          return component.buildScreen(screen);;
       }
     }
     else

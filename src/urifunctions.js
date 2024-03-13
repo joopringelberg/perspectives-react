@@ -15,7 +15,7 @@ export function deconstructSegments(s) {
 
 // From "model://some.authority#Modelname$Sometype$Subtype" return "Subtype";
 export function deconstructLocalName(s){
-  const localNameRegEx = new RegExp("^model://[^/]+#[A-Z][^#/]+\\$([A-Z][^\\$/]+)$");
+  const localNameRegEx = new RegExp("^model://[^/]+#[A-Z][^#/]+\\$([A-Z][^\\$/]*)$");
   try
   {
     return s.match(localNameRegEx)[1];

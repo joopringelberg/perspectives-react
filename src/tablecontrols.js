@@ -56,7 +56,6 @@ export default class TableControls extends PerspectivesComponent
     {
       // If a ContextRole Kind, create a new context, too.
       if (  component.props.perspective.roleKind == "ContextRole" &&
-            contextToCreate &&
             contextToCreate != "JustTheRole" &&
             roleType)
       {
@@ -150,28 +149,54 @@ export default class TableControls extends PerspectivesComponent
     return perspective.actions.concat( objectStateActions );
   }
 
+  mayCreateInstance()
+  {
+    const perspective = this.props.perspective;
+    return !perspective.isCalculated &&
+      (perspective.verbs.includes("Create") && !perspective.verbs.includes("CreateAndFill"));
+  }
+
+  mayCreateContext()
+  {
+    const perspective = this.props.perspective;
+    return !perspective.isCalculated &&
+      perspective.verbs.includes("CreateAndFill");
+  }
+
   render ()
   {
     const component = this;
     const actions = component.computeActions();
     const instances = component.props.perspective.roleInstances;
     const instance = instances[component.props.selectedroleinstance];
-    if  ( component.props.mayCreate ||
+    const mayCreateContext = component.mayCreateContext()
+    const mayCreateRoleInstance = component.mayCreateInstance();
+    if  ( mayCreateContext || 
+          mayCreateRoleInstance ||
           actions.length > 0 && Object.keys(instances).length > 0 ||
           instance && instance.publicUrl
         )
     {
       return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for table">
                 {
-                  component.props.mayCreate ?
+                  mayCreateContext ?
                   <CreateContextDropDown 
                     contexts={component.props.perspective.contextTypesToCreate}
                     create={ contextToCreate => component.createRole( function() {}, contextToCreate)}
+                    createcontext={mayCreateContext}
+                    createinstance={mayCreateRoleInstance}
+                  />
+                  : this.mayCreateInstance ?
+                  <CreateContextDropDown 
+                    contexts={[]}
+                    create={ () => component.createRole( function() {}, "JustTheRole")}
+                    createcontext={mayCreateContext}
+                    createinstance={mayCreateRoleInstance}
                   />
                   : null
                 }
                 {
-                  component.props.mayCreate ?
+                  mayCreateContext ?
                   <AppContext.Consumer>
                   { appcontext => <TablePasteRole 
                     systemexternalrole={appcontext.systemExternalRole}
@@ -209,8 +234,7 @@ export default class TableControls extends PerspectivesComponent
 TableControls.contextType = PSContext;
 
 TableControls.propTypes =
-  { mayCreate: PropTypes.bool.isRequired
-  , perspective: PropTypes.shape( SerialisedPerspective ).isRequired
+  { perspective: PropTypes.shape( SerialisedPerspective ).isRequired
   // This is the row that is selected in the table, possibly none.
   , selectedroleinstance: PropTypes.string
   };

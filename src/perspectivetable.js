@@ -199,13 +199,6 @@ export default class PerspectiveTable extends PerspectivesComponent
       }
   }
 
-  mayCreateInstance()
-  {
-    const perspective = this.props.perspective;
-    return !perspective.isCalculated &&
-      (perspective.verbs.includes("Create") || perspective.verbs.includes("CreateAndFill"));
-  }
-
   render()
   {
     const component = this,
@@ -252,7 +245,6 @@ export default class PerspectiveTable extends PerspectivesComponent
           </tbody>
         </Table>
         <TableControls
-          mayCreate={ component.mayCreateInstance() }
           perspective={ perspective}
           selectedroleinstance={component.state.row}
         />

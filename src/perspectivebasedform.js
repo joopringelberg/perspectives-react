@@ -29,8 +29,8 @@ import RoleInstance from "./roleinstance.js";
 import ActionDropDown from "./actiondropdown.js";
 import FormPasteRole from "./formpasterole.js";
 import SmartFieldControlGroup from "./smartfieldcontrolgroup.js";
-import {PlusIcon} from '@primer/octicons-react';
 import { SerialisedPerspective } from "./perspectiveshape.js";
+import CreateContextDropDown from "./createContextDropdown.js";
 import
   { Card
   , Navbar
@@ -199,7 +199,6 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
                   contextinstance={ component.props.contextinstance }
                   // No roleinstance.
                   myroletype={component.props.myroletype}
-                  create={ component.createRoleInstance }
                   />
                 <RoleDropZone
                   bind={component.bind_}
@@ -212,7 +211,6 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
                     contextinstance={ component.props.contextinstance }
                     roleinstance={component.state.roleInstanceWithProps ? component.state.roleInstanceWithProps.roleId : null}
                     myroletype={component.props.myroletype}
-                    create={ component.createRoleInstance }
                     card={ <DraggableCard labelProperty={component.props.cardtitle} title={title ? title : component.props.perspective.displayName}/> }
                   />
                 </RoleDropZone>
@@ -258,6 +256,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
 
 PerspectiveBasedForm.propTypes =
   { perspective: PropTypes.shape( SerialisedPerspective ).isRequired
+  // Used to index the roleinstances in the perspective! NOT REQUIRED.
   , roleinstance: PropTypes.string
   , myroletype: PropTypes.string.isRequired
   , contextinstance: PropTypes.string.isRequired
@@ -304,19 +303,6 @@ class FormControls extends PerspectivesComponent
     this.state = {actions: []};
   }
 
-  handleKeyDown (event)
-    {
-      const component = this;
-        switch(event.keyCode){
-          case 13: // Return
-          case 32: // Space
-            component.props.create();
-            event.preventDefault();
-            event.stopPropagation();
-            break;
-        }
-  }
-
   componentDidMount()
   {
     this.setState( { actions: this.computeActions() } );
@@ -333,6 +319,56 @@ class FormControls extends PerspectivesComponent
         { actions: component.computeActions()
         });
     }
+  }
+  createRole (receiveResponse, contextToCreate)
+  {
+    const component = this;
+    const roleType = component.props.perspective.roleType;
+    PDRproxy.then( function (pproxy)
+    {
+      // If a ContextRole Kind, create a new context, too.
+      if (  component.props.perspective.roleKind == "ContextRole" &&
+            contextToCreate != "JustTheRole" &&
+            roleType)
+      {
+        pproxy.createContext (
+            {
+              //id will be set in the core.
+              prototype : undefined,
+              ctype: contextToCreate,
+              rollen: {},
+              externeProperties: {}
+            },
+            roleType,
+            component.props.perspective.contextInstance,
+            // The type of the embedding context.
+            component.props.perspective.contextType,
+            component.props.perspective.userRoleType)
+          .then(contextAndExternalRole => contextAndExternalRole[1])
+          .catch(e => UserMessagingPromise.then( um => 
+            um.addMessageForEndUser(
+              { title: i18next.t("createContext_title", { ns: 'preact' }) 
+              , message: i18next.t("createContext_message", {ns: 'preact', type: component.context.contexttype})
+              , error: e.toString()
+              })));
+        ;
+      }
+      else if (roleType)
+      {
+        pproxy
+          .createRole (
+            component.props.perspective.contextInstance,
+            roleType,
+            component.props.perspective.userRoleType)
+          .then( newRoleId_ => receiveResponse( newRoleId_[0] ) )
+          .catch(e => UserMessagingPromise.then( um => 
+            um.addMessageForEndUser(
+              { title: i18next.t("createRole_title", { ns: 'preact' }) 
+              , message: i18next.t("createRole_message", {ns: 'preact', roletype: roleType})
+              , error: e.toString()
+              })))
+    }
+    });
   }
 
   runAction( actionName )
@@ -377,23 +413,44 @@ class FormControls extends PerspectivesComponent
       return [];
     }
   }
+  mayCreateInstance()
+  {
+    const perspective = this.props.perspective;
+    return !perspective.isCalculated &&
+      (perspective.verbs.includes("Create") && !perspective.verbs.includes("CreateAndFill"));
+  }
+
+  mayCreateContext()
+  {
+    const perspective = this.props.perspective;
+    return !perspective.isCalculated &&
+      perspective.verbs.includes("CreateAndFill");
+  }
 
   render ()
   {
     const component = this;
+    const mayCreateContext = component.mayCreateContext()
+    const mayCreateRoleInstance = component.mayCreateInstance();
+
     if ( component.stateIsComplete() )
     {
       return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for form" className="mt-2">
                 {
-                  component.props.createButton ?
-                  <div
-                    className="ml-3 mr-3"
-                    tabIndex="0"
-                    onClick={ component.props.create }
-                    onKeyDown={ ev => component.handleKeyDown(ev)}
-                  >
-                    <PlusIcon alt="Add row" aria-label="Click to add a row" size='medium'/>
-                  </div>
+                  mayCreateContext ?
+                  <CreateContextDropDown 
+                    contexts={component.props.perspective.contextTypesToCreate}
+                    create={ contextToCreate => component.createRole( function() {}, contextToCreate)}
+                    createcontext={mayCreateContext}
+                    createinstance={mayCreateRoleInstance}
+                  />
+                  : this.mayCreateInstance ?
+                  <CreateContextDropDown 
+                    contexts={[]}
+                    create={ () => component.createRole( function() {}, "JustTheRole")}
+                    createcontext={mayCreateContext}
+                    createinstance={mayCreateRoleInstance}
+                  />
                   : null
                 }
                 <AppContext.Consumer>
@@ -421,6 +478,5 @@ FormControls.propTypes =
   , contextinstance: PropTypes.string.isRequired
   , roleinstance: PropTypes.string
   , myroletype: PropTypes.string.isRequired
-  , create: PropTypes.func
   , card: PropTypes.element
   };

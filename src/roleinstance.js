@@ -92,9 +92,8 @@ export default class RoleInstance extends PerspectivesComponent
                   rollen: {},
                   externeProperties: {}
                 },
-                component.state.roltype,
-                component.contextInstance(),
-                component.context.contexttype,
+                component.state.roltype,      // qualified role name
+                component.contextInstance(),  // context instance to add to.
                 component.context.myroletype)
               .then( function(contextAndExternalRole)
                 {

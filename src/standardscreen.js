@@ -120,9 +120,8 @@ export default class StandardScreen extends PerspectivesComponent
                 rollen: {},
                 externeProperties: {}
               },
-              perspective.roleType,
-              component.props.contextinstance,
-              component.props.contexttype,
+              perspective.roleType,                           // qualified role name.
+              component.props.contextIdToAddRoleInstanceTo,   // context instance to add to.
               component.props.myroletype)
             .catch(e => UserMessagingPromise.then( um => 
               um.addMessageForEndUser(

@@ -324,12 +324,14 @@ class FormControls extends PerspectivesComponent
   {
     const component = this;
     const roleType = component.props.perspective.roleType;
+    const contextTypeToCreateIn = component.props.perspective.contextTypeToCreateIn;
     PDRproxy.then( function (pproxy)
     {
       // If a ContextRole Kind, create a new context, too.
       if (  component.props.perspective.roleKind == "ContextRole" &&
             contextToCreate != "JustTheRole" &&
-            roleType)
+            roleType &&
+            contextTypeToCreateIn)
       {
         pproxy.createContext (
             {
@@ -339,11 +341,12 @@ class FormControls extends PerspectivesComponent
               rollen: {},
               externeProperties: {}
             },
+            // the qualified identifier of the role type to create.
             roleType,
-            component.props.perspective.contextInstance,
-            // The type of the embedding context.
-            component.props.perspective.contextType,
-            component.props.perspective.userRoleType)
+            // The context instance to create the role instance in.
+            component.props.perspective.contextIdToAddRoleInstanceTo,
+            component.props.perspective.userRoleType
+            )
           .then(contextAndExternalRole => contextAndExternalRole[1])
           .catch(e => UserMessagingPromise.then( um => 
             um.addMessageForEndUser(
@@ -357,7 +360,7 @@ class FormControls extends PerspectivesComponent
       {
         pproxy
           .createRole (
-            component.props.perspective.contextInstance,
+            component.props.perspective.contextIdToAddRoleInstanceTo,
             roleType,
             component.props.perspective.userRoleType)
           .then( newRoleId_ => receiveResponse( newRoleId_[0] ) )

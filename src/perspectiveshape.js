@@ -91,6 +91,7 @@ export const SerialisedPerspective =
   , roleType: /*OPTIONAL*/ PropTypes.string
   , roleKind: /*OPTIONAL*/ PropTypes.string
   , contextType: PropTypes.string
+  , contextIdToAddRoleInstanceTo: PropTypes.string
   , contextTypesToCreate: PropTypes.arrayOf(PropTypes.string)
   , identifyingProperty: PropTypes.string.isRequired
   ////

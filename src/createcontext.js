@@ -27,9 +27,8 @@ export default class CreateContext extends PerspectivesComponent
     return PDRproxy
       .then( pproxy => pproxy.createContext(
         defaultContextDescription,
-        component.props.rolname, // local role name
-        component.context.contextinstance,
-        component.context.contexttype,
+        component.props.rolname, // qualified role name
+        component.context.contextinstance, // context instance to add to
         component.context.myroletype ))
       .then( contextIds => contextIds[0] )
       .catch(e => UserMessagingPromise.then( um => 

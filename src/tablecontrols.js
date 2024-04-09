@@ -67,10 +67,8 @@ export default class TableControls extends PerspectivesComponent
               rollen: {},
               externeProperties: {}
             },
-            roleType,
-            component.props.perspective.contextInstance,
-            // The type of the embedding context.
-            component.context.contexttype,
+            roleType,                                                   // qualified role name
+            component.props.perspective.contextIdToAddRoleInstanceTo,   // the context instance to add to.
             component.props.perspective.userRoleType)
           .then(contextAndExternalRole => contextAndExternalRole[1])
           .catch(e => UserMessagingPromise.then( um => 
@@ -85,7 +83,7 @@ export default class TableControls extends PerspectivesComponent
       {
         pproxy
           .createRole (
-            component.props.perspective.contextInstance,
+            component.props.perspective.contextIdToAddRoleInstanceTo,
             roleType,
             component.props.perspective.userRoleType)
           .then( newRoleId_ => receiveResponse( newRoleId_[0] ) )

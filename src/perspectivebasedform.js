@@ -324,14 +324,14 @@ class FormControls extends PerspectivesComponent
   {
     const component = this;
     const roleType = component.props.perspective.roleType;
-    const contextTypeToCreateIn = component.props.perspective.contextTypeToCreateIn;
+    const contextIdToAddRoleInstanceTo = component.props.perspective.contextIdToAddRoleInstanceTo;
     PDRproxy.then( function (pproxy)
     {
       // If a ContextRole Kind, create a new context, too.
       if (  component.props.perspective.roleKind == "ContextRole" &&
             contextToCreate != "JustTheRole" &&
             roleType &&
-            contextTypeToCreateIn)
+            contextIdToAddRoleInstanceTo)
       {
         pproxy.createContext (
             {

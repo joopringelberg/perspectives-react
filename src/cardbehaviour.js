@@ -55,11 +55,12 @@ export function addOpenContextOrRoleForm(domEl, component)
     const roleKind = component.context.roleKind;
     const viewname = component.props.viewname ? component.props.viewname : "allProperties";
     const cardprop = component.props.cardprop;
+    const appLocation = location.origin + location.pathname;
     if (roleKind == "ContextRole" || roleKind == "ExternalRole")
     {
       if ( onNewTab )
       {
-        window.open("/?opentcontext=" + component.context.rolinstance, "mycontexts", "left=100,top=100,width=800,height=600");
+        window.open(appLocation + "?opencontext=" + encodeURIComponent( component.context.rolinstance ), "mycontexts", "left=100,top=100,width=800,height=600");
       }
       else
       {
@@ -71,7 +72,7 @@ export function addOpenContextOrRoleForm(domEl, component)
     {
       if ( onNewTab )
       {
-        window.open("/?openroleform=" + component.context.rolinstance + "&viewname=" + viewname + "&cardprop=" + cardprop, "mycontexts", "left=100,top=100,width=800,height=600");
+        window.open(appLocation + "?openroleform=" + encodeURIComponent( component.context.rolinstance ) + "&viewname=" + viewname + "&cardprop=" + cardprop, "mycontexts", "left=100,top=100,width=800,height=600");
       }
       else
       {

@@ -164,7 +164,11 @@ class RoleDropZone_ extends PerspectivesComponent
               onDragLeave={ ev => ev.target.classList.remove("dropHere")}
               onBlur={ ev => ev.target.classList.remove("dropHere", "failure")}
 
-              onDrop={ ev => component.tryToBind( ev, JSON.parse( ev.dataTransfer.getData("PSRol") ) ) }
+              onDrop={ ev => {
+                ev.preventDefault();
+                ev.stopPropagation()
+                component.tryToBind( ev, JSON.parse( ev.dataTransfer.getData("PSRol") ) ) }
+                }
               onKeyDown={ ev => component.handleKeyDown( ev )}
 
               style={ {flexGrow: 1} }

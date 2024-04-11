@@ -84,8 +84,6 @@ export default class PerspectiveForm extends PerspectivesComponent
       return  <PerspectiveBasedForm
                 perspective={perspective}
                 roleinstance={component.props.roleinstance}
-                myroletype={component.props.myroletype ? component.props.myroletype : perspective.userRoleType}
-                contextinstance={component.props.contextinstance ? component.props.contextinstance : perspective.contextInstance}
                 behaviours={mapRoleVerbsToBehaviours( perspective )}
                 cardtitle={ perspective.identifyingProperty }
               />;

@@ -135,3 +135,14 @@ export const ScreenDefinition = PropTypes.shape(
   , rows: /*OPTIONAL*/    PropTypes.arrayOf(ScreenElementDef)
   , columns: /*OPTIONAL*/ PropTypes.arrayOf(ScreenElementDef)
 });
+
+export const RoleData =
+  { addedBehaviour: PropTypes.arrayOf(PropTypes.string)
+    , myroletype: PropTypes.string
+    , roleData:
+      { rolinstance: PropTypes.string
+      , cardTitle: PropTypes.string
+      , roleType: PropTypes.string
+      , contextType: PropTypes.string
+      }
+  };

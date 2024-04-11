@@ -89,9 +89,6 @@ export default class StandardScreen extends PerspectivesComponent
               { perspective.isFunctional ?
                 <PerspectiveBasedForm
                   perspective={perspective}
-                  myroletype={component.props.myroletype}
-                  contextinstance={component.props.contextinstance}
-                  contexttype={component.props.contexttype}
                   behaviours={mapRoleVerbsToBehaviours( perspective )}
                   cardtitle={ perspective.identifyingProperty }
                   />

@@ -78,7 +78,7 @@ class RoleInstanceIterator_ extends PerspectivesComponent
       , roltype: component.context.roltype
       , roleKind: component.context.roleKind
       , bind_: bind_( rolInstance )
-      , bind: function(){} // A stub: we should not call this function in a MultiRole context.
+      , bind: rolBindingContext.bind
       , checkbinding: rolBindingContext.checkbinding
       , removerol: function()
         {
@@ -152,6 +152,7 @@ class RoleInstanceIterator_ extends PerspectivesComponent
           { contextinstance: component.context.contextinstance
           , contexttype: component.context.contexttype
           // Returns a promise for a boolean value.
+          // see RoleData (in perspectivesshape.js) for the structure of the roleData argument that binds to the parameter.
           , bind: function({rolinstance})
               {
                 if (rolinstance)

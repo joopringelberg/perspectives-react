@@ -49,8 +49,11 @@ export const PSRol = React.createContext(
   , contexttype: ""
   , roltype: ""
   , roleKind: "" // RoleInContext | ContextRole | ExternalRole | UserRole | BotRole
+  // see RoleData (in perspectivesshape.js) for the structure of the roleData argument that binds to the parameter.
   , bind_: function(){console.warn("Default (no-op) bind_ called. You likely miss a PSRol.Provider!");}
+  // see RoleData (in perspectivesshape.js) for the structure of the roleData argument that binds to the parameter.
   , bind:  function(){console.warn("Default (no-op) bind called. You likely miss a PSRol.Provider!");}
+  // see RoleData (in perspectivesshape.js) for the structure of the roleData argument that binds to the parameter.
   , checkbinding: function(){console.warn("Default (no-op) checkbinding called. You likely miss a PSRoleInstances.Provider or PSRol.Provider!");}
   , removerol: function(){console.warn("Default (no-op) removerol called. You likely miss a PSRol.Provider!");}
   , rolinstance: ""

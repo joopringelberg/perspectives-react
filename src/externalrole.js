@@ -28,8 +28,10 @@ export default class ExternalRole extends PerspectivesComponent
                 { contextinstance: component.context.contextinstance
                 , contexttype: component.context.contexttype
                 , roltype: rolType[0]
+                , roleKind: "ExternalRole"
                 , rolinstance: externalRole( component.context.contextinstance)
                 , bind_: function(){}
+                , bind: function(){}
                 , checkbinding: function(ignore, callback){ callback(true);}
                 , removerol: function(){}
                 , isselected: false

@@ -7,7 +7,6 @@ import { PDRproxy, CONTINUOUS } from 'perspectives-proxy';
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext, AppContext} from "./reactcontexts.js";
 import { deconstructModelName, deconstructSegments/*, isExternalRole*/ } from "./urifunctions.js";
-import {BackButton} from "./perspectivescontainer.js";
 import ScreenDefinitionInterpreter from "./screendefinitioninterpreter.js";
 import { default as ModelDependencies } from "./modelDependencies.js";
 import Pouchdb from "pouchdb-browser";
@@ -19,6 +18,7 @@ import
   , Row
   , Card
   , Container
+  , Button
   } from "react-bootstrap";
 
 import lifecycle from '../node_modules/page-lifecycle/dist/lifecycle.es5.js';
@@ -339,3 +339,13 @@ Screen_.propTypes =
   , couchdbUrl: PropTypes.string.isRequired
   , systemIdentifier: PropTypes.string.isRequired
   };
+
+  // Use like this:
+//  <BackButton buttontext="Back to all chats"/>
+export function BackButton(props)
+{
+  const ref = React.createRef();
+  return <Button ref={ref} href="#" onClick={() => history.back()}>{ props.buttontext }</Button>;
+}
+
+BackButton.propTypes = {buttontext: PropTypes.string.isRequired};

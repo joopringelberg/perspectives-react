@@ -106,6 +106,7 @@ export function addOpenContextOrRoleForm(domEl, component)
   const previousOnDragStart = domEl.ondragstart;
 
   // This function is provided as the value of the App member
+  // see RoleData (in perspectivesshape.js) for the structure of roleData.
   function eventDispatcher ( {roleData, addedBehaviour} )
   {
     if (roleData.rolinstance == component.context.rolinstance && addedBehaviour.includes("openContextOrRoleForm"))
@@ -140,6 +141,7 @@ export function addOpenContextOrRoleForm(domEl, component)
     domEl.ondragstart = function(ev)
     {
       const payload = JSON.stringify(
+        // see RoleData (in perspectivesshape.js) for the structure of roleData.
         { roleData: component.context
         , addedBehaviour: component.addedBehaviour
         , myroletype: component.props.myroletype
@@ -198,6 +200,7 @@ export function addFillWithRole(domEl, component)
     }
   }
 
+  // see RoleData (in perspectivesshape.js) for the structure of roleData.
   function tryToBind (event, {roleData, addedBehaviour} )
   {
     if ( addedBehaviour.includes("fillARole"))
@@ -212,7 +215,7 @@ export function addFillWithRole(domEl, component)
             PDRproxy.then( pproxy => pproxy.deleteProperty(
               component.props.systemExternalRole,
               ModelDependencies.cardClipBoard,
-              modelDependencies.sysUser) )
+              ModelDependencies.sysUser) )
             .catch(e => UserMessagingPromise.then( um => 
               um.addMessageForEndUser(
                 { title: i18next.t("clipboardEmpty_title", { ns: 'preact' }) 

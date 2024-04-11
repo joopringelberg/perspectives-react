@@ -20,20 +20,17 @@
 
 import React from "react";
 const Component = React.PureComponent;
-import {PSRol, AppContext} from "./reactcontexts.js";
+import {PSRol} from "./reactcontexts.js";
 import {PDRproxy} from "perspectives-proxy";
 import RoleDropZone from "./roleDropzone.js";
 import {addBehaviour} from "./behaviourcomponent.js";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import RoleInstance from "./roleinstance.js";
-import ActionDropDown from "./actiondropdown.js";
-import FormPasteRole from "./formpasterole.js";
 import SmartFieldControlGroup from "./smartfieldcontrolgroup.js";
 import { SerialisedPerspective } from "./perspectiveshape.js";
-import CreateContextDropDown from "./createContextDropdown.js";
+import FormControls from "./formcontrols.js";
 import
   { Card
-  , Navbar
   } from "react-bootstrap";
 import PropTypes from "prop-types";
 import {UserMessagingPromise} from "./userMessaging.js";
@@ -51,6 +48,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
   constructor(props)
   {
     super(props);
+    // Note that rolintanceWithprops may be undefined.
     this.state = {roleInstanceWithProps: this.computeRoleInstanceWithProps()};
     this.checkBinding = this.checkBinding.bind(this);
     this.bind_ = this.bind_.bind(this);
@@ -58,6 +56,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
     this.DraggableCard = addBehaviour( RoleCard, this.props.behaviours );
   }
 
+  // Possibly returns an object with this shape: roleinstancewithprops (see perspectivesshape.js).
   computeRoleInstanceWithProps()
   {
     const component = this;
@@ -135,9 +134,9 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
       {
         return pproxy
           .createRole(
-            component.props.contextinstance,
+            component.props.perspective.contextInstance,
             component.props.perspective.roleType,
-            component.props.myroletype)
+            component.props.perspective.userRoleType)
           .catch(e => UserMessagingPromise.then( um => 
             um.addMessageForEndUser(
               { title: i18next.t("createRole_title", { ns: 'preact' }) 
@@ -173,7 +172,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
           pproxy.bind_(
             component.state.roleInstanceWithProps.roleId,
             rolinstance, // binding
-            component.props.myroletype,
+            component.props.perspective.userRoleType,
             function( /*rolId*/ ){});
         });
     }
@@ -190,27 +189,33 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
     {
       return  <RoleInstance
                 roleinstance={component.state.roleInstanceWithProps ? component.state.roleInstanceWithProps.roleId : null}
-                role={component.props.perspective.roleType}
-                contextinstance={component.props.contextinstance}
+                roletype={component.props.perspective.roleType}
+                rolekind={component.props.perspective.roleKind}
+                contextinstance={component.props.perspective.contextInstance}
+                contexttype={component.props.perspective.contextType}
+                myroletype={component.props.perspective.userRoleType}
               >
+                {/* The default element for the RoleInstance. The controls will have a create button. 
+                When there is no role instance, this will be rendered by the RoleInstance component.
+                */}
                 <FormControls
-                  createButton={ true }
                   perspective={ component.props.perspective}
-                  contextinstance={ component.props.contextinstance }
+                  contextinstance={ component.props.perspective.contextInstance }
                   // No roleinstance.
-                  myroletype={component.props.myroletype}
+                  myroletype={component.props.perspective.userRoleType}
                   />
+
+                {/* This will be displayed by RoleInstance if there is a role instance. */}
                 <RoleDropZone
                   bind={component.bind_}
                   checkbinding={component.checkBinding}
                   ariaLabel="To fill the role whose properties are displayed here, drag another role onto it."
                 >
                   <FormControls
-                    createButton={ false }
                     perspective={ component.props.perspective}
-                    contextinstance={ component.props.contextinstance }
+                    contextinstance={ component.props.perspective.contextInstance }
                     roleinstance={component.state.roleInstanceWithProps ? component.state.roleInstanceWithProps.roleId : null}
-                    myroletype={component.props.myroletype}
+                    myroletype={component.props.perspective.userRoleType}
                     card={ <DraggableCard labelProperty={component.props.cardtitle} title={title ? title : component.props.perspective.displayName}/> }
                   />
                 </RoleDropZone>
@@ -219,7 +224,6 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
 
     // If there are no properties defined on this role type,
     // Just show the form controls.
-
     if (Object.keys( component.props.perspective.properties).length === 0 )
     {
       return <Controls/>;
@@ -244,13 +248,13 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
                 serialisedProperty={serialisedProperty}
                 propertyValues={component.findValues( serialisedProperty.id )}
                 roleId={component.state.roleInstanceWithProps ? component.state.roleInstanceWithProps.roleId : null}
-                myroletype={component.props.myroletype}
+                myroletype={component.props.perspective.userRoleType}
               />
             )
           }
           <Controls/>
         </>);
-    }      
+    }
   }
 }
 
@@ -258,8 +262,6 @@ PerspectiveBasedForm.propTypes =
   { perspective: PropTypes.shape( SerialisedPerspective ).isRequired
   // Used to index the roleinstances in the perspective! NOT REQUIRED.
   , roleinstance: PropTypes.string
-  , myroletype: PropTypes.string.isRequired
-  , contextinstance: PropTypes.string.isRequired
   , behaviours: PropTypes.arrayOf(PropTypes.func)
   , cardtitle: PropTypes.string.isRequired
   };
@@ -291,195 +293,3 @@ RoleCard.propTypes =
 
   };
 
-////////////////////////////////////////////////////////////////////////////////
-// FORMCONTROLS
-////////////////////////////////////////////////////////////////////////////////
-class FormControls extends PerspectivesComponent
-{
-  constructor()
-  {
-    super();
-    this.runAction = this.runAction.bind(this);
-    this.state = {actions: []};
-  }
-
-  componentDidMount()
-  {
-    this.setState( { actions: this.computeActions() } );
-  }
-
-  componentDidUpdate()
-  {
-    const component = this;
-    // Set state if the current role instance has changed, or if the perspective has changed.
-    if (!component.props.perspective.seenInControls)
-    {
-      component.props.perspective.seenInControls = true;
-      component.setState(
-        { actions: component.computeActions()
-        });
-    }
-  }
-  createRole (receiveResponse, contextToCreate)
-  {
-    const component = this;
-    const roleType = component.props.perspective.roleType;
-    const contextIdToAddRoleInstanceTo = component.props.perspective.contextIdToAddRoleInstanceTo;
-    PDRproxy.then( function (pproxy)
-    {
-      // If a ContextRole Kind, create a new context, too.
-      if (  component.props.perspective.roleKind == "ContextRole" &&
-            contextToCreate != "JustTheRole" &&
-            roleType &&
-            contextIdToAddRoleInstanceTo)
-      {
-        pproxy.createContext (
-            {
-              //id will be set in the core.
-              prototype : undefined,
-              ctype: contextToCreate,
-              rollen: {},
-              externeProperties: {}
-            },
-            // the qualified identifier of the role type to create.
-            roleType,
-            // The context instance to create the role instance in.
-            component.props.perspective.contextIdToAddRoleInstanceTo,
-            component.props.perspective.userRoleType
-            )
-          .then(contextAndExternalRole => contextAndExternalRole[1])
-          .catch(e => UserMessagingPromise.then( um => 
-            um.addMessageForEndUser(
-              { title: i18next.t("createContext_title", { ns: 'preact' }) 
-              , message: i18next.t("createContext_message", {ns: 'preact', type: component.context.contexttype})
-              , error: e.toString()
-              })));
-        ;
-      }
-      else if (roleType)
-      {
-        pproxy
-          .createRole (
-            component.props.perspective.contextIdToAddRoleInstanceTo,
-            roleType,
-            component.props.perspective.userRoleType)
-          .then( newRoleId_ => receiveResponse( newRoleId_[0] ) )
-          .catch(e => UserMessagingPromise.then( um => 
-            um.addMessageForEndUser(
-              { title: i18next.t("createRole_title", { ns: 'preact' }) 
-              , message: i18next.t("createRole_message", {ns: 'preact', roletype: roleType})
-              , error: e.toString()
-              })))
-    }
-    });
-  }
-
-  runAction( actionName )
-  {
-    const component = this;
-    PDRproxy.then(
-      function (pproxy)
-      {
-          pproxy.action(
-            component.props.roleinstance
-            , component.props.contextinstance
-            , component.props.perspective.id
-            , actionName
-            , component.props.myroletype) // authoringRole
-          .catch(e => UserMessagingPromise.then( um => 
-            um.addMessageForEndUser(
-              { title: i18next.t("action_title", { ns: 'preact' }) 
-              , message: i18next.t("action_message", {ns: 'preact', action: actionName})
-              , error: e.toString()
-              })));              
-      });
-  }
-
-  computeActions()
-  {
-    const component = this;
-    let roleInstance;
-    if (component.props.roleinstance)
-    {
-      roleInstance = component.props.perspective.roleInstances[ component.props.roleinstance ];
-      if (roleInstance)
-      {
-        return component.props.perspective.actions.concat( roleInstance.actions );
-      }
-      else
-      {
-        return [];
-      }
-    }
-    else
-    {
-      return [];
-    }
-  }
-  mayCreateInstance()
-  {
-    const perspective = this.props.perspective;
-    return !perspective.isCalculated &&
-      (perspective.verbs.includes("Create") && !perspective.verbs.includes("CreateAndFill"));
-  }
-
-  mayCreateContext()
-  {
-    const perspective = this.props.perspective;
-    return !perspective.isCalculated &&
-      perspective.verbs.includes("CreateAndFill");
-  }
-
-  render ()
-  {
-    const component = this;
-    const mayCreateContext = component.mayCreateContext()
-    const mayCreateRoleInstance = component.mayCreateInstance();
-
-    if ( component.stateIsComplete() )
-    {
-      return  <Navbar bg="light" expand="lg" role="banner" aria-label="Controls for form" className="mt-2">
-                {
-                  mayCreateContext ?
-                  <CreateContextDropDown 
-                    contexts={component.props.perspective.contextTypesToCreate}
-                    create={ contextToCreate => component.createRole( function() {}, contextToCreate)}
-                    createcontext={mayCreateContext}
-                    createinstance={mayCreateRoleInstance}
-                  />
-                  : this.mayCreateInstance ?
-                  <CreateContextDropDown 
-                    contexts={[]}
-                    create={ () => component.createRole( function() {}, "JustTheRole")}
-                    createcontext={mayCreateContext}
-                    createinstance={mayCreateRoleInstance}
-                  />
-                  : null
-                }
-                <AppContext.Consumer>
-                  { appcontext => <FormPasteRole systemexternalrole={appcontext.systemExternalRole}/> }
-                </AppContext.Consumer>
-                { component.state.actions.length > 0 && component.props.roleinstance ?
-                  <ActionDropDown
-                    actions={ component.state.actions }
-                    runaction={component.runAction}
-                  />
-                  : null }
-                { component.props.card }
-              </Navbar>;
-    }
-    else
-    {
-      return null;
-    }
-  }
-}
-
-FormControls.propTypes =
-  { createButton: PropTypes.bool
-  , perspective: PropTypes.shape( SerialisedPerspective ).isRequired
-  , contextinstance: PropTypes.string.isRequired
-  , roleinstance: PropTypes.string
-  , myroletype: PropTypes.string.isRequired
-  , card: PropTypes.element
-  };

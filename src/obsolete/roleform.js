@@ -1,13 +1,15 @@
+// OBSOLETE
+
 import React from "react";
-import {deconstructLocalName} from "./urifunctions.js";
-import RoleInstance from "./roleinstance.js";
-import View from "./view.js";
-import {PSView, PSRol} from "./reactcontexts.js";
-import ExternalRole from "./externalrole.js";
-import RoleDropZone from "./roleDropzone.js";
-import {makeSingleRolePresentation} from "./cards.js";
-import {addBehaviour} from "./behaviourcomponent.js";
-import {addFillARole, addOpenContextOrRoleForm} from "./cardbehaviour.js";
+import {deconstructLocalName} from "../urifunctions.js";
+import RoleInstance from "../roleinstance.js";
+import View from "../view.js";
+import {PSView, PSRol} from "../reactcontexts.js";
+import ExternalRole from "../externalrole.js";
+import RoleDropZone from "../roleDropzone.js";
+import {makeSingleRolePresentation} from "../cards.js";
+import {addBehaviour} from "../behaviourcomponent.js";
+import {addFillARole, addOpenContextOrRoleForm} from "../cardbehaviour.js";
 
 import
   { Row

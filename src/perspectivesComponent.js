@@ -62,6 +62,7 @@ export default class PerspectivesComponent extends Component
     }
   }
 
+ // Returns true if all state members have a value, unless they are a boolean, or an array, or are excluded. 
   stateIsComplete (excludedProps = [])
   {
     const component = this;

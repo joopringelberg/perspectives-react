@@ -1,15 +1,17 @@
+// OBSOLETE
+
 import React from "react";
 const Component = React.PureComponent;
 
 import PropTypes from "prop-types";
 
-import Screen from "./screen.js";
+import Screen from "../screen.js";
 
 import {RoleFormInView} from "./roleform.js";
 
-import View from "./view.js";
+import View from "../view.js";
 
-import RoleInstance from "./roleinstance.js";
+import RoleInstance from "../roleinstance.js";
 
 import
   { Button
@@ -128,12 +130,3 @@ PerspectivesContainer.propTypes =
   , selectedroleinstance: PropTypes.string
   };
 
-// Use like this:
-//  <BackButton buttontext="Back to all chats"/>
-export function BackButton(props)
-{
-  const ref = React.createRef();
-  return <Button ref={ref} href="#" onClick={() => history.back()}>{ props.buttontext }</Button>;
-}
-
-BackButton.propTypes = {buttontext: PropTypes.string.isRequired};

@@ -286,7 +286,8 @@ export function addFillARole(domEl, component)
             component.context.rolinstance,
             component.props.labelProperty,
             component.context.roltype,
-            f));
+            f,
+            FIREANDFORGET));
       }
       else
       {
@@ -295,7 +296,8 @@ export function addFillARole(domEl, component)
             component.context.rolinstance,
             component.props.labelProperty,
             component.context.roltype,
-            f
+            f,
+            FIREANDFORGET
           )
         );
       }

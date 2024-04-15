@@ -49,19 +49,31 @@ export default class FormControls extends PerspectivesComponent
 
   componentDidMount()
   {
-    this.setState( { actions: this.computeActions() } );
+    const component = this;
+    const actions = component.computeActions();
+      if (actions.length > 0)
+      {
+        component.setState(
+          { actions
+          });  
+      }
   }
 
   componentDidUpdate()
   {
     const component = this;
+    let actions;
     // Set state if the current role instance has changed, or if the perspective has changed.
     if (!component.props.perspective.seenInControls)
     {
       component.props.perspective.seenInControls = true;
-      component.setState(
-        { actions: component.computeActions()
-        });
+      actions = component.computeActions();
+      if (actions.length > 0)
+      {
+        component.setState(
+          { actions
+          });  
+      }
     }
   }
   createRole (receiveResponse, contextToCreate)

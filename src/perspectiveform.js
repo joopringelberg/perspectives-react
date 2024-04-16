@@ -50,11 +50,10 @@ export default class PerspectiveForm extends PerspectivesComponent
     PDRproxy.then(function(pproxy)
       {
         component.addUnsubscriber(
-          // (contextInstance, userRoleType, roleInstance, receiveValues, fireAndForget)
+          // getPerspective (roleInstanceOfContext, perspectiveObjectRoleType /*OPTIONAL*/, receiveValues, fireAndForget, errorHandler)
           pproxy.getPerspective(
-            component.props.contextinstance || "",
-            component.props.userRoleType || "",
             component.props.roleinstance
+            , ""
             ,function( perspective )
             {
               console.log(perspective);

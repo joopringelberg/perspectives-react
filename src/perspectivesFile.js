@@ -19,7 +19,7 @@ import { Col } from 'react-bootstrap';
 import { UploadIcon, DownloadIcon} from '@primer/octicons-react';
 import {UserMessagingPromise} from "./userMessaging.js";
 import {AsyncImage} from "./asyncImage.js";
-import {ArcViewer} from "././arcViewer.js";
+import {ArcViewer} from "./arcViewer.js";
 
 // As the real action happens in handleFile as it is presented on the props of FileDropZone,
 // an error boundary is of no good here.

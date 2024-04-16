@@ -13,7 +13,7 @@ import
 
 import {PSView, PSRol} from "../reactcontexts.js";
 import {ViewOnExternalRole} from "../views.js";
-import SetBoolAsCheckbox from "../setboolascheckbox.js";
+import SetBoolAsCheckbox from "./setboolascheckbox.js";
 import RolInstance from "../roleinstance.js";
 import {makeRoleInListPresentation} from "../cards.js";
 import ExternalRole from "../externalrole.js";

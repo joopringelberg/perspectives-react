@@ -337,32 +337,37 @@ export function addFillARole(domEl, component)
     event.preventDefault();
     event.stopPropagation();
   }
-  addBehaviourAnnotation( component, "fillARole");
-
-  // Notice that this code is highly contextual.
-  // It may have to change if the other behaviours that add dragstart methods
-  // change.
-  if (!domEl.ondragstart)
+  
+  if (!component.addedBehaviour.find( b => b == "fillWithARole"))
   {
-    withLabelProperty( valArr =>
-    domEl.ondragstart = ev =>
+    addBehaviourAnnotation( component, "fillARole");
+
+    // Notice that this code is highly contextual.
+    // It may have to change if the other behaviours that add dragstart methods
+    // change.
+    if (!domEl.ondragstart)
     {
-      const payload = JSON.stringify(
-        { roleData: component.context
-        , cardTitle: (valArr[0] || "No title")
-        , addedBehaviour: component.addedBehaviour
-        , myroletype: component.props.myroletype
-        }
-      );
-      ev.dataTransfer.setData("PSRol", payload);    
-    });
+      withLabelProperty( valArr =>
+      domEl.ondragstart = ev =>
+      {
+        const payload = JSON.stringify(
+          { roleData: component.context
+          , cardTitle: (valArr[0] || "No title")
+          , addedBehaviour: component.addedBehaviour
+          , myroletype: component.props.myroletype
+          }
+        );
+        ev.dataTransfer.setData("PSRol", payload);    
+      });
+    }
+    domEl.draggable = true;
+    domEl.addEventListener( "keydown", handleKeyDown);
+    // Add tap-hold listeners here?
+    // domEl.addEventListener( "onTouchStart", bind.onTouchStart );
+    // domEl.addEventListener( "onTouchMove", bind.onTouchMove );
+    // domEl.addEventListener( "onTouchEnd", bind.onTouchEnd );  
   }
-  domEl.draggable = true;
-  domEl.addEventListener( "keydown", handleKeyDown);
-  // Add tap-hold listeners here?
-  // domEl.addEventListener( "onTouchStart", bind.onTouchStart );
-  // domEl.addEventListener( "onTouchMove", bind.onTouchMove );
-  // domEl.addEventListener( "onTouchEnd", bind.onTouchEnd );
+
   
 }
 
@@ -460,7 +465,10 @@ function addBehaviourAnnotation( component, behaviour )
 {
   if (component.addedBehaviour)
   {
-    component.addedBehaviour.push( behaviour );
+    if (!component.addedBehaviour.find( b => b == behaviour ))
+    {
+      component.addedBehaviour.push( behaviour );
+    }
   }
   else
   {

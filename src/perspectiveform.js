@@ -19,7 +19,7 @@
 // END LICENSE
 
 import React from "react";
-import {PDRproxy} from "perspectives-proxy";
+import {PDRproxy, CONTINUOUS} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import PerspectiveBasedForm from "./perspectivebasedform.js";
 import PropTypes from "prop-types";
@@ -69,7 +69,7 @@ export default class PerspectiveForm extends PerspectivesComponent
                 }
               }
             }
-            // ,FIREANDFORGET
+            ,CONTINUOUS
           ));
       });
   }

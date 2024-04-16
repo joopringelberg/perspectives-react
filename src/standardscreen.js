@@ -21,7 +21,7 @@
 import React from 'react';
 import PropTypes from "prop-types";
 
-import {PDRproxy} from "perspectives-proxy";
+import {PDRproxy, CONTINUOUS} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext} from "./reactcontexts";
 import PerspectiveBasedForm from "./perspectivebasedform.js";
@@ -70,7 +70,7 @@ export default class StandardScreen extends PerspectivesComponent
               console.log(perspectives);
               component.setState({perspectives: perspectives});
             }
-            // ,FIREANDFORGET
+            ,CONTINUOUS
           ));
       });
   }

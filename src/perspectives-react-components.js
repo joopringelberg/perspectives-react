@@ -1,6 +1,4 @@
 // No items are included from the folder notinuse.
-export {default as View} from "./view.js";
-export {default as ContextOfRole} from "./contextofrole.js";
 export {ViewOnExternalRole} from "./views.js";
 export {default as importTransaction} from "./importTransaction.js";
 export * from "./reactcontexts";

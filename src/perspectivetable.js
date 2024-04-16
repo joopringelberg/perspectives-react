@@ -1,6 +1,6 @@
 import React from "react"; // 2
 import PerspectivesComponent from "./perspectivescomponent.js";
-import {PSRol, PSContext} from "./reactcontexts";
+import {PSRol} from "./reactcontexts";
 import {addBehaviour} from "./behaviourcomponent.js";
 import mapRoleVerbsToBehaviours from "./maproleverbstobehaviours.js";
 import TableRow from "./tablerow.js";
@@ -254,8 +254,6 @@ export default class PerspectiveTable extends PerspectivesComponent
       );
   }
 }
-
-PerspectiveTable.contextType = PSContext;
 
 PerspectiveTable.propTypes =
   {

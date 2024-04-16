@@ -390,7 +390,8 @@ export function addRemoveFiller(domEl, component)
                         , error: e.toString()
                         })));              
                   }
-              }));
+              },
+              FIREANDFORGET));
             event.preventDefault();
             event.stopPropagation();
       }

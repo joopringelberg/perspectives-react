@@ -121,36 +121,39 @@ export function addOpenContextOrRoleForm(domEl, component)
     }
   }
 
-  domEl.addEventListener( "keydown", handleKeyDown);
-  domEl.addEventListener( "dblclick", handleClick);
-
-  addBehaviourAnnotation( component, "openContextOrRoleForm");
-  // Notice that this code is highly contextual.
-  // It may have to change if the other behaviours that add dragstart methods
-  // change.
-  if (previousOnDragStart)
-  {
-    domEl.ondragstart = function(ev)
+  addBehaviour( component, "openContextOrRoleForm",
+    function(component)
     {
-      previousOnDragStart(ev);
-      component.props.setEventDispatcher(eventDispatcher);
-    };
-  }
-  else
-  {
-    domEl.ondragstart = function(ev)
+      domEl.addEventListener( "keydown", handleKeyDown);
+      domEl.addEventListener( "dblclick", handleClick);
+    
+        // Notice that this code is highly contextual.
+    // It may have to change if the other behaviours that add dragstart methods
+    // change.
+    if (previousOnDragStart)
     {
-      const payload = JSON.stringify(
-        // see RoleData (in perspectivesshape.js) for the structure of roleData.
-        { roleData: component.context
-        , addedBehaviour: component.addedBehaviour
-        , myroletype: component.props.myroletype
-        }
-      );
-      ev.dataTransfer.setData("PSRol", payload);
-      component.props.setEventDispatcher(eventDispatcher);
-    };
-  }
+      domEl.ondragstart = function(ev)
+      {
+        previousOnDragStart(ev);
+        component.props.setEventDispatcher(eventDispatcher);
+      };
+    }
+    else
+    {
+      domEl.ondragstart = function(ev)
+      {
+        const payload = JSON.stringify(
+          // see RoleData (in perspectivesshape.js) for the structure of roleData.
+          { roleData: component.context
+          , addedBehaviour: component.addedBehaviour
+          , myroletype: component.props.myroletype
+          }
+        );
+        ev.dataTransfer.setData("PSRol", payload);
+        component.props.setEventDispatcher(eventDispatcher);
+      };
+    }
+  });
 }
 
 // On dropping a role and on trying to paste the role on the clipboard, we check whether
@@ -236,26 +239,27 @@ export function addFillWithRole(domEl, component)
       }
   }
 
-  addBehaviourAnnotation( component, "fillWithARole");
-
-  domEl.dragenter = event => {
-      event.preventDefault();
-      event.stopPropagation();
-      component.eventDiv.current.tabIndex = 0;
-      component.eventDiv.current.focus();
-    };
-    // No drop without this...
-  domEl.dragover = event => {
-      event.preventDefault();
-      event.stopPropagation();
+  addBehaviour( component, "fillWithARole",
+    function(component)
+    {
+      domEl.dragenter = event => {
+        event.preventDefault();
+        event.stopPropagation();
+        component.eventDiv.current.tabIndex = 0;
+        component.eventDiv.current.focus();
       };
-  domEl.dragleave = ev => ev.target.classList.remove("border-danger", "border", "border-success");
-  domEl.blur = ev => ev.target.classList.remove("border-danger", "border", "border-success");
-
-  domEl.drop = ev => tryToBind( ev, JSON.parse( ev.dataTransfer.getData("PSRol") ) );
-
-  domEl.addEventListener( "keydown", handleKeyDown );
-
+      // No drop without this...
+      domEl.dragover = event => {
+          event.preventDefault();
+          event.stopPropagation();
+          };
+      domEl.dragleave = ev => ev.target.classList.remove("border-danger", "border", "border-success");
+      domEl.blur = ev => ev.target.classList.remove("border-danger", "border", "border-success");
+    
+      domEl.drop = ev => tryToBind( ev, JSON.parse( ev.dataTransfer.getData("PSRol") ) );
+    
+      domEl.addEventListener( "keydown", handleKeyDown );        
+    });
 }
 
 // Makes the Card draggable.
@@ -338,37 +342,34 @@ export function addFillARole(domEl, component)
     event.stopPropagation();
   }
   
-  if (!component.addedBehaviour.find( b => b == "fillWithARole"))
-  {
-    addBehaviourAnnotation( component, "fillARole");
-
-    // Notice that this code is highly contextual.
-    // It may have to change if the other behaviours that add dragstart methods
-    // change.
-    if (!domEl.ondragstart)
+  addBehaviour( component, "fillARole",
+    function(component)
     {
-      withLabelProperty( valArr =>
-      domEl.ondragstart = ev =>
+      // Notice that this code is highly contextual.
+      // It may have to change if the other behaviours that add dragstart methods
+      // change.
+      if (!domEl.ondragstart)
       {
-        const payload = JSON.stringify(
-          { roleData: component.context
-          , cardTitle: (valArr[0] || "No title")
-          , addedBehaviour: component.addedBehaviour
-          , myroletype: component.props.myroletype
-          }
-        );
-        ev.dataTransfer.setData("PSRol", payload);    
-      });
-    }
-    domEl.draggable = true;
-    domEl.addEventListener( "keydown", handleKeyDown);
-    // Add tap-hold listeners here?
-    // domEl.addEventListener( "onTouchStart", bind.onTouchStart );
-    // domEl.addEventListener( "onTouchMove", bind.onTouchMove );
-    // domEl.addEventListener( "onTouchEnd", bind.onTouchEnd );  
-  }
-
-  
+        withLabelProperty( valArr =>
+        domEl.ondragstart = ev =>
+        {
+          const payload = JSON.stringify(
+            { roleData: component.context
+            , cardTitle: (valArr[0] || "No title")
+            , addedBehaviour: component.addedBehaviour
+            , myroletype: component.props.myroletype
+            }
+          );
+          ev.dataTransfer.setData("PSRol", payload);    
+        });
+      }
+      domEl.draggable = true;
+      domEl.addEventListener( "keydown", handleKeyDown);
+      // Add tap-hold listeners here?
+      // domEl.addEventListener( "onTouchStart", bind.onTouchStart );
+      // domEl.addEventListener( "onTouchMove", bind.onTouchMove );
+      // domEl.addEventListener( "onTouchEnd", bind.onTouchEnd );  
+    });
 }
 
 // Makes the Card draggable, so it can be dropped in the Unbind tool.
@@ -402,27 +403,29 @@ export function addRemoveFiller(domEl, component)
       }
       }
     }
-  domEl.addEventListener( "keydown", handleKeyDown);
-  domEl.draggable = true;
 
-  addBehaviourAnnotation( component, "removeFiller");
-
-  // Notice that this code is highly contextual.
-  // It may have to change if the other behaviours that add dragstart methods
-  // change.
-  if (!domEl.ondragstart)
-  {
-    domEl.ondragstart = ev =>
+  addBehaviour( component, "removeFiller",
+    function(component)
+    {
+      domEl.addEventListener( "keydown", handleKeyDown);
+      domEl.draggable = true;
+      // Notice that this code is highly contextual.
+      // It may have to change if the other behaviours that add dragstart methods
+      // change.
+      if (!domEl.ondragstart)
       {
-        const payload = JSON.stringify(
-          { roleData: component.context
-          , addedBehaviour: component.addedBehaviour
-          , myroletype: component.props.myroletype
-          }
-        );
-        ev.dataTransfer.setData("PSRol", payload);
-      };
-  }
+        domEl.ondragstart = ev =>
+          {
+            const payload = JSON.stringify(
+              { roleData: component.context
+              , addedBehaviour: component.addedBehaviour
+              , myroletype: component.props.myroletype
+              }
+            );
+            ev.dataTransfer.setData("PSRol", payload);
+          };
+      }          
+    });
 }
 
 // Makes the Card draggable, so it can be dropped in the Trash.
@@ -439,39 +442,43 @@ export function addRemoveRoleFromContext(domEl, component)
       }
     }
 
-  addBehaviourAnnotation( component, "removeRoleFromContext");
-
-  domEl.addEventListener( "keydown", handleKeyDown);
-  domEl.draggable = true;
-  // Notice that this code is highly contextual.
-  // It may have to change if the other behaviours that add dragstart methods
-  // change.
-  if (!domEl.ondragstart)
-  {
-    domEl.ondragstart = ev =>
+  addBehaviour( component, "removeRoleFromContext",
+    function(component)
       {
-        const payload = JSON.stringify(
-          { roleData: component.context
-          , addedBehaviour: component.addedBehaviour
-          , myroletype: component.props.myroletype
-          }
-        );
-        ev.dataTransfer.setData("PSRol", payload);
-      };
-  }
+        domEl.addEventListener( "keydown", handleKeyDown);
+        domEl.draggable = true;
+        // Notice that this code is highly contextual.
+        // It may have to change if the other behaviours that add dragstart methods
+        // change.
+        if (!domEl.ondragstart)
+        {
+          domEl.ondragstart = ev =>
+            {
+              const payload = JSON.stringify(
+                { roleData: component.context
+                , addedBehaviour: component.addedBehaviour
+                , myroletype: component.props.myroletype
+                }
+              );
+              ev.dataTransfer.setData("PSRol", payload);
+            };
+        }      
+      });
 }
 
-function addBehaviourAnnotation( component, behaviour )
+function addBehaviour( component, behaviour, behaviourAdder )
 {
   if (component.addedBehaviour)
   {
     if (!component.addedBehaviour.find( b => b == behaviour ))
     {
       component.addedBehaviour.push( behaviour );
+      behaviourAdder( component );
     }
   }
   else
   {
     component.addedBehaviour = [behaviour];
+    behaviourAdder( component );
   }
 }

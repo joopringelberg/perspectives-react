@@ -205,7 +205,7 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
             className="border-bottom pb-4 pt-4 widget"
             key={index}
             >
-          { element.element.title ? <h4>{element.element.title}</h4> : null }
+          { element.element.fields.title ? <h4>{element.element.fields.title}</h4> : null }
           { component.buildTable( element.element, index ) }
           </div>);
       case "FormElementD":
@@ -214,7 +214,7 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
             className="border-bottom pb-4 pt-4 widget"
             key={index}
             >
-          { element.element.title ? <h4>{element.element.title}</h4> : null }
+          { element.element.fields.title ? <h4>{element.element.fields.title}</h4> : null }
           { component.buildForm( element.element, index ) }
           </div>);
     }

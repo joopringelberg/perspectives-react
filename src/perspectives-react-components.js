@@ -3,7 +3,7 @@ export {ViewOnExternalRole} from "./views.js";
 export {default as importTransaction} from "./importTransaction.js";
 export * from "./reactcontexts";
 export {default as ExternalRole} from "./externalrole.js";
-export {deconstructModelName, deconstructSegments, isExternalRole, deconstructContext, isQualifiedName, externalRole, deconstructLocalName, isSchemedResourceIdentifier} from "./urifunctions.js";
+export {deconstructModelName, deconstructSegments, isExternalRole, deconstructContext, isQualifiedName, externalRole, deconstructLocalName, isSchemedResourceIdentifier, takeCUID} from "./urifunctions.js";
 export {default as Screen} from "./screen.js";
 export {default as RemoveRol} from  "./removeRol.js";
 export {default as MySystem} from  "./mysystem.js";

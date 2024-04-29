@@ -101,3 +101,13 @@ export function isSchemedResourceIdentifier(s)
   const schemedResourceRegEx = new RegExp( "^(def|loc|rem|pub|model|):(.*)$" );
   return s.match(schemedResourceRegEx);
 }
+
+export function takeCUID(s)
+{
+  const r = new RegExp("^[^#$]+#(.+)");
+  const result = s.match(r);
+  if (result)
+  {
+    return result[1];
+  }
+}

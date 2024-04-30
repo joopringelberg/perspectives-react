@@ -150,15 +150,13 @@ export default class TableControls extends PerspectivesComponent
   mayCreateInstance()
   {
     const perspective = this.props.perspective;
-    return !perspective.isCalculated &&
-      (perspective.verbs.includes("Create") && !perspective.verbs.includes("CreateAndFill"));
+    return !perspective.isCalculated && perspective.verbs.includes("Create");
   }
 
   mayCreateContext()
   {
     const perspective = this.props.perspective;
-    return !perspective.isCalculated &&
-      perspective.verbs.includes("CreateAndFill");
+    return !perspective.isCalculated && perspective.verbs.includes("CreateAndFill");
   }
 
   render ()
@@ -184,7 +182,7 @@ export default class TableControls extends PerspectivesComponent
                     createcontext={mayCreateContext}
                     createinstance={mayCreateRoleInstance}
                   />
-                  : this.mayCreateInstance ?
+                  : mayCreateRoleInstance ?
                   <CreateContextDropDown 
                     contexts={[]}
                     create={ () => component.createRole( function() {}, "JustTheRole")}
@@ -194,7 +192,7 @@ export default class TableControls extends PerspectivesComponent
                   : null
                 }
                 {
-                  mayCreateContext ?
+                  mayCreateContext || mayCreateRoleInstance ?
                   <AppContext.Consumer>
                   { appcontext => <TablePasteRole 
                     systemexternalrole={appcontext.systemExternalRole}

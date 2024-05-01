@@ -81,7 +81,7 @@ export default class RoleInstance extends PerspectivesComponent
               .bind(
                 component.props.contextinstance,
                 component.props.roletype,
-                component.context.contexttype,
+                component.props.contexttype,
                 {properties: {}, binding: rolinstance},
                 component.props.myroletype)
               .catch(e => UserMessagingPromise.then( um => 

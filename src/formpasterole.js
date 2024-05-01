@@ -47,27 +47,29 @@ export default class FormPasteRole extends PerspectivesComponent
     PDRproxy.then(
       function(pproxy)
       {
-        // getProperty is a live query. If the clipboard content changes, 
-        // we will again check whether it can fill the role that is in this form.
-        pproxy.getProperty(
-          component.props.systemexternalrole,
-          ModelDependencies.cardClipBoard,
-          ModelDependencies.systemExternal,
-          function (valArr)
-          {
-            if (valArr[0])
+        component.addUnsubscriber(
+          // getProperty is a live query. If the clipboard content changes, 
+          // we will again check whether it can fill the role that is in this form.
+          pproxy.getProperty(
+            component.props.systemexternalrole,
+            ModelDependencies.cardClipBoard,
+            ModelDependencies.systemExternal,
+            function (valArr)
             {
-              clipboardContent = JSON.parse( valArr[0]);
-              if ( clipboardContent.roleData && clipboardContent.roleData.rolinstance && clipboardContent.roleData.rolinstance != component.state.roleOnClipboard  )
+              if (valArr[0])
               {
-                // checkBinding catches its own errors. We do not display a message if the binding is not allowed;
-                // instead the button will be disabled.
-                component.context
-                  .checkbinding( {rolinstance: clipboardContent.roleData.rolinstance} )
-                  .then( compatibleRole => component.setState({compatibleRole, roleOnClipboard: clipboardContent.roleData.rolinstance}));
+                clipboardContent = JSON.parse( valArr[0]);
+                if ( clipboardContent.roleData && clipboardContent.roleData.rolinstance && clipboardContent.roleData.rolinstance != component.state.roleOnClipboard  )
+                {
+                  // checkBinding catches its own errors. We do not display a message if the binding is not allowed;
+                  // instead the button will be disabled.
+                  // checkBinding currently comes from RoleInstance only and relies on checkBindingP.
+                  component.context
+                    .checkbinding( {rolinstance: clipboardContent.roleData.rolinstance} )
+                    .then( compatibleRole => component.setState({compatibleRole, roleOnClipboard: clipboardContent.roleData.rolinstance}));
+                }
               }
-            }
-          });
+            }));
       });
   }
 

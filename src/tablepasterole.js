@@ -49,30 +49,31 @@ export default class TablePasteRole extends PerspectivesComponent
     PDRproxy.then(
       function(pproxy)
       {
-        pproxy.getProperty(
-          component.props.systemexternalrole,
-          ModelDependencies.cardClipBoard,
-          ModelDependencies.systemExternal,
-          function (valArr)
-          {
-            if ( valArr[0] )
+        component.addUnsubscriber(
+          pproxy.getProperty(
+            component.props.systemexternalrole,
+            ModelDependencies.cardClipBoard,
+            ModelDependencies.systemExternal,
+            function (valArr)
             {
-              clipboardContent = JSON.parse( valArr[0]);
-              if  ( clipboardContent.roleData && 
-                    clipboardContent.roleData.rolinstance && 
-                    clipboardContent.roleData.rolinstance != component.state.roleOnClipboard 
-                  )
+              if ( valArr[0] )
               {
-                // checkBinding( <(QUALIFIED)RolName>, <binding>, [() -> undefined] )
-                PDRproxy.then( pproxy => pproxy.checkBindingP( component.props.roletype, clipboardContent.roleData.rolinstance )
-                  .then( compatibleRole => component.setState({compatibleRole, roleOnClipboard: clipboardContent.roleData.rolinstance})));
+                clipboardContent = JSON.parse( valArr[0]);
+                if  ( clipboardContent.roleData && 
+                      clipboardContent.roleData.rolinstance && 
+                      clipboardContent.roleData.rolinstance != component.state.roleOnClipboard 
+                    )
+                {
+                  // checkBinding( <(QUALIFIED)RolName>, <binding>, [() -> undefined] )
+                  PDRproxy.then( pproxy => pproxy.checkBindingP( component.props.roletype, clipboardContent.roleData.rolinstance )
+                    .then( compatibleRole => component.setState({compatibleRole, roleOnClipboard: clipboardContent.roleData.rolinstance})));
+                }
               }
-            }
-            else
-            {
-              component.setState({compatibleRole: false, roleOnClipboard: undefined})
-            }
-          });
+              else
+              {
+                component.setState({compatibleRole: false, roleOnClipboard: undefined})
+              }
+            }));
       });
   }
 

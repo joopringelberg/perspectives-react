@@ -23,7 +23,7 @@ export default class MySystem extends PerspectivesComponent
     PDRproxy.then(
       function (pproxy)
       {
-        pproxy.getUserIdentifier()
+        pproxy.getSystemIdentifier()
           .then(
             function(sysId)
             {

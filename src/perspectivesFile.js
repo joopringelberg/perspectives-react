@@ -130,7 +130,7 @@ export default class PerspectivesFile extends PerspectivesComponent
 
       case 39: // right arrow
         // If we have a file (as can be seen from the url property), we may move to the download button.
-        if (component.state.database)
+        if (component.state.roleFileName)
         {
           event.preventDefault();
           event.stopPropagation();      
@@ -217,7 +217,7 @@ export default class PerspectivesFile extends PerspectivesComponent
 
       case 39: // right arrow
         // If we have a file (as can be seen from the url property), we may move to the download button.
-        if (component.state.database)
+        if (component.state.roleFileName)
         {
           event.preventDefault();
           event.stopPropagation();      
@@ -239,7 +239,7 @@ export default class PerspectivesFile extends PerspectivesComponent
           event.preventDefault();
           event.stopPropagation();      
           // the fileName field saves its value on losing focus; move focus to the other field
-          if (component.state.database)
+          if (component.state.roleFileName)
           {
             component.focusDownload();
           }
@@ -488,11 +488,11 @@ export default class PerspectivesFile extends PerspectivesComponent
             window.URL.revokeObjectURL(url);
           } );
     }
-    if ( this.state.database && event.type == "click")
+    if ( this.state.roleFileName && event.type == "click")
     {
       doit();
     }
-    else if (this.state.database && event.keyCode == 32 )
+    else if (this.state.roleFileName && event.keyCode == 32 )
     {
       doit();
     }
@@ -557,10 +557,10 @@ export default class PerspectivesFile extends PerspectivesComponent
     switch (component.state.state) {
       case READONLY:
         return (
-          <div onKeyDown={e => component.handleKeyDownInReadOnly(e)} tabIndex={component.state.database ? -1 : 0}>
+          <div onKeyDown={e => component.handleKeyDownInReadOnly(e)} tabIndex={component.state.roleFileName ? -1 : 0}>
             <Form.Row>
               {
-                  component.fileIsImage() && component.state.database ?
+                  component.fileIsImage() && component.state.roleFileName ?
                     <AsyncImage roleId={ component.props.roleId } propId={ component.props.serialisedProperty.id } fileName={component.state.fileName}/>
                     :
                     <>
@@ -575,11 +575,11 @@ export default class PerspectivesFile extends PerspectivesComponent
               <Col lg="1">
               <div style={{display: "flex"}}>
                 <div 
-                  style={{flexShrink: 1, opacity: component.state.database ? 1 : 0.5}}
+                  style={{flexShrink: 1, opacity: component.state.roleFileName ? 1 : 0.5}}
                   id={component.props.serialisedProperty.id + '_download'}
                   onClick={ e => component.download(e) }
                   onKeyDown={ e => component.download(e) }
-                  tabIndex={component.state.database ? 0 : -1}
+                  tabIndex={component.state.roleFileName ? 0 : -1}
                   >
                   <DownloadIcon 
                     aria-label={ i18next.t("perspectivesFile_download", { ns: 'preact' }) }
@@ -593,7 +593,7 @@ export default class PerspectivesFile extends PerspectivesComponent
 
       case FILLED:
         return (
-          <div onKeyDown={e => component.handleKeyDownInFilled(e)} tabIndex={component.state.database ? -1 : 0}>
+          <div onKeyDown={e => component.handleKeyDownInFilled(e)} tabIndex={component.state.roleFileName ? -1 : 0}>
             <Form.Row>
               {
                 component.fileIsImage() ?
@@ -615,11 +615,11 @@ export default class PerspectivesFile extends PerspectivesComponent
               <Col lg="1">
               <div style={{display: "flex"}}>
                 <div 
-                  style={{flexShrink: 1, opacity: component.state.database ? 1 : 0.5}}
+                  style={{flexShrink: 1, opacity: component.state.roleFileName ? 1 : 0.5}}
                   id={component.props.serialisedProperty.id + '_download'}
                   onClick={ e => component.download(e) }
                   onKeyDown={ e => component.download(e) }
-                  tabIndex={component.state.database ? 0 : -1}
+                  tabIndex={component.state.roleFileName ? 0 : -1}
                   >
                   <DownloadIcon 
                     aria-label={ i18next.t("perspectivesFile_download", { ns: 'preact' }) }
@@ -675,7 +675,7 @@ export default class PerspectivesFile extends PerspectivesComponent
             <Col lg="1">
               <div style={{display: "flex"}}>
                 <div 
-                  style={{flexShrink: 1, opacity: component.state.database ? 1 : 0.5}}
+                  style={{flexShrink: 1, opacity: component.state.roleFileName ? 1 : 0.5}}
                   id={component.props.serialisedProperty.id + '_download'}
                   onClick={ e => component.download(e) }
                   onKeyDown={ e => component.download(e) }

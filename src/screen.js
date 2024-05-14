@@ -153,6 +153,11 @@ class Screen_ extends PerspectivesComponent
       });
   }
 
+  componentWillUnmount ()
+  {
+    window.removeEventListener("visibilitychange")
+  }
+
   // Returns a promise.
   setIsOnScreen (roleInstance, value)
   {

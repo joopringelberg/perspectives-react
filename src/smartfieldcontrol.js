@@ -32,6 +32,7 @@ import {serialisedProperty, propertyValues} from "./perspectiveshape.js";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
 import PerspectivesFile from "./perspectivesFile.js";
+import MarkDownWidget from "./markdownWidget.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 // TABINDEX VALUES
@@ -94,6 +95,10 @@ export default class SmartFieldControl extends Component
     {
       return "PerspectivesFile";
     }
+    if (controlType == "markdown")
+      {
+        return "MarkDownWidget";
+      }
   }
 
   // Returns the first value in the `propertyValues` prop, or the empty string.
@@ -163,7 +168,8 @@ export default class SmartFieldControl extends Component
     }
   }
 
-  // Zie: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
+  // See: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
+  // We add "markdown"
   mapRange( range )
   {
     switch (range) {
@@ -183,6 +189,8 @@ export default class SmartFieldControl extends Component
         return "email";
       case "PFile":
         return "file";
+      case "PMarkDown":
+        return "markdown"
     }
   }
 
@@ -281,7 +289,8 @@ export default class SmartFieldControl extends Component
   {
     // A ValidityState object. See: https://developer.mozilla.org/en-US/docs/Web/API/ValidityState
     const validity = event.target.validity;
-    if (validity.patternMismatch)
+    // We have no validity check for MarkDown.
+    if (validity && validity.patternMismatch)
     {
       // We now expect a pattern in the perspective.
       const label = this.pattern(this.inputType).label;
@@ -298,7 +307,7 @@ export default class SmartFieldControl extends Component
   minLength()
   {
     const component = this;
-    if (["text", "search", "url", "tel", "email", "password"].indexOf(this.inputType) >= 0)
+    if (["text", "search", "url", "tel", "email", "password", "markdown"].indexOf(this.inputType) >= 0)
     {
       return component.props.serialisedProperty.constrainingFacets.minLength;
     }
@@ -308,7 +317,7 @@ export default class SmartFieldControl extends Component
   maxLength()
   {
     const component = this;
-    if (["text", "search", "url", "tel", "email", "password"].indexOf(this.inputType) >= 0)
+    if (["text", "search", "url", "tel", "email", "password", "markdown"].indexOf(this.inputType) >= 0)
     {
       return component.props.serialisedProperty.constrainingFacets.maxLength;
     }
@@ -420,6 +429,36 @@ export default class SmartFieldControl extends Component
             myRoletype={component.props.myroletype}>
           </PerspectivesFile>
         );
+      case "MarkDownWidget":
+          if (component.props.disabled)
+            {
+              // Just render the html for a read-only perspective on this property.
+              return <MarkDownWidget markdown={component.state.value}/>;
+            }
+          else
+          {
+            // Create an editor. Currently, this is just an html input or a textarea, depdending on minInclusive.
+            return (
+              <div>
+                <Form.Control
+                  as={component.minLength("markdown") > 80 ? "textarea" : "input"}
+                  ref= { component.props.inputRef}
+                  tabIndex={component.props.isselected ? receiveFocusByKeyboard : focusable}
+                  aria-label={ pattern? pattern.label : component.props.serialisedProperty.displayName }
+                  readOnly={ component.props.disabled }
+                  value={ component.state.value }
+                  onChange={e => component.setState({value: e.target.value}) }
+                  onBlur={component.leaveControl}
+                  type="text"
+                  required={mandatory}
+                  minLength={component.minLength()}
+                  maxLength={component.maxLength()}
+                  min={component.minInclusive()}
+                  max={component.maxInclusive()}
+                  pattern={ pattern ? patternToSource(pattern) : null }
+                />
+              </div>);
+              }
       default:
         return (
           <div onKeyDown={e => component.handleKeyDown(e, e.target.value)}>

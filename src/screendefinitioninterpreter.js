@@ -31,7 +31,9 @@ import PerspectivesTabs from "./perspectivestabs.js";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
 
-import {Tabs, Tab, Container, Card, Button, Row, Col, Nav, Navbar} from "react-bootstrap";
+import {Tabs, Tab, Container, Card, Button, Row, Col} from "react-bootstrap";
+import MarkDownWidget from './markdownWidget.js';
+import SmartFieldControl from './smartfieldcontrol.js';
 
 export default class ScreenDefinitionInterpreter extends PerspectivesComponent
 {
@@ -217,6 +219,12 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
           { element.element.fields.title ? <h4>{element.element.fields.title}</h4> : null }
           { component.buildForm( element.element, index ) }
           </div>);
+      case "MarkDownElementD":
+        return (
+          <div 
+            key={index}
+          >{ component.buildMarkDown( element.element, index)}</div>
+        )
     }
   }
   buildRow({elements}, index)
@@ -264,6 +272,57 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
         behaviours={mapRoleVerbsToBehaviours( perspective )}
         cardtitle={ perspective.identifyingProperty }
         />);
+  }
+  buildMarkDown({tag, element})
+  {
+      // The property is only consultable when it just has the verb Consult,
+      // or when it is calculated. It will be shown disabled as a consequence.
+      function propertyOnlyConsultable()
+      {
+        if (roleInstance.propertyValues)
+        {
+          const property = serialisedProperty;
+          const propertyVerbs = roleInstance.propertyValues[ property.id ].propertyVerbs;
+          return (propertyVerbs.indexOf("Consult") > -1 
+            && propertyVerbs.length == 1)
+            || property.isCalculated;
+        }
+        else
+        {
+          return false;
+        }
+      }
+
+      let perspective, roleInstance, serialisedProperty;
+      switch (tag) {
+      case "MarkDownConstantDef":
+        return <MarkDownWidget markdown={element.text}/>;
+      case "MarkDownExpressionDef":
+        // LET OP: text is maybe hier.
+        if (element.text)
+          {
+            return <MarkDownWidget markdown={element.text}/>;
+          }
+        else
+        {
+          return null;
+        }
+      case "MarkDownPerspectiveDef":
+        perspective = element.widgetFields.perspective;
+        roleInstance = Object.values( perspective.roleInstances )[0];
+        serialisedProperty = Object.values( perspective.properties )[0];  
+        
+        return <SmartFieldControl
+                // By construction, a single property is allowed and it must be the property with the MarkDown Range.
+                serialisedProperty = { serialisedProperty }
+                propertyValues = { roleInstance.propertyValues[ serialisedProperty.id ] }
+                roleId = { roleInstance.roleId }
+                myroletype = { perspective.userRoleType }
+                disabled={ propertyOnlyConsultable() || !roleInstance.roleId }
+                isselected={true}
+              />
+
+    }
   }
   widgetOrButton(widgetCommonFields, widgetFunction, index)
   {

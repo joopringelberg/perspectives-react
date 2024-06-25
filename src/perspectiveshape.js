@@ -122,6 +122,7 @@ export const ScreenElementDef = PropTypes.shape(
   , column: /*OPTIONAL*/  PropTypes.arrayOf( PropTypes.object )
   , table: /*OPTIONAL*/   PropTypes.shape(WidgetCommonFields)
   , form: /*OPTIONAL*/    PropTypes.shape(WidgetCommonFields)
+  // , MarkDownElementD MarkDownDef
 });
 
 export const TabDef = PropTypes.shape(

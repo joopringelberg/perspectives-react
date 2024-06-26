@@ -210,6 +210,7 @@ export default class TableCell extends PerspectivesComponent
                 myroletype={component.props.myroletype}
                 disabled={false}
                 isselected={component.props.isselected}
+                contextinstance={component.props.perspective.contextInstance}
               />
             </td>);
         }
@@ -268,6 +269,7 @@ export default class TableCell extends PerspectivesComponent
             myroletype={component.props.myroletype}
             disabled={!component.state.editable}
             isselected={component.props.isselected}
+            contextinstance={component.props.perspective.contextInstance}
           />
         </td>);
     }

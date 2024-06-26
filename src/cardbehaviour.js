@@ -313,6 +313,7 @@ export function addFillARole(domEl, component)
     withLabelProperty(
       function(valArr)
       {
+        navigator.clipboard.writeText(component.context.rolinstance);
         // Set information in the CardClipboard external property of "model://perspectives.domains#System$PerspectivesSystem".
         PDRproxy.then( pproxy =>
           pproxy

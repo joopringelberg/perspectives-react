@@ -275,6 +275,7 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
   }
   buildMarkDown({tag, element})
   {
+    const component = this;
       // The property is only consultable when it just has the verb Consult,
       // or when it is calculated. It will be shown disabled as a consequence.
       function propertyOnlyConsultable()
@@ -296,12 +297,12 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
       let perspective, roleInstance, serialisedProperty;
       switch (tag) {
       case "MarkDownConstantDef":
-        return <MarkDownWidget markdown={element.text}/>;
+        return <MarkDownWidget markdown={element.text} contextid={component.props.contextinstance} myroletype={component.props.myroletype}/>;
       case "MarkDownExpressionDef":
         // LET OP: text is maybe hier.
         if (element.text)
           {
-            return <MarkDownWidget markdown={element.text}/>;
+            return <MarkDownWidget markdown={element.text} contextid={component.props.contextinstance} myroletype={component.props.myroletype}/>;
           }
         else
         {
@@ -320,6 +321,7 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
                 myroletype = { perspective.userRoleType }
                 disabled={ propertyOnlyConsultable() || !roleInstance.roleId }
                 isselected={true}
+                contextinstance={component.props.contextinstance}
               />
 
     }

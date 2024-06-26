@@ -20,9 +20,45 @@
 
 import { Component } from "react";
 import PropTypes from "prop-types";
+import {PDRproxy} from "perspectives-proxy";
 
 import markdownit from 'markdown-it'
 const md = markdownit();
+
+const markdownPerspectives = require('./perspectives-markdown');
+
+md.use(markdownPerspectives);
+
+window.$perspectives_entry_point_for_markdown$ = 
+  { opencontext: function(event, roleIdentifier)
+      {
+        event.preventDefault();
+        event.stopPropagation();
+        // NOTICE dependency on MyContexts App.js!
+        (document.getElementById('__MyContextsContainer__')).dispatchEvent( new CustomEvent('OpenContext', { detail: roleIdentifier, bubbles: true }) );
+      }
+  , runaction: function(event, actionName, contextid, myroletype)
+      {
+        event.preventDefault();
+        event.stopPropagation();
+
+        PDRproxy.then(
+          function (pproxy)
+          {
+              pproxy.contextAction(
+                contextid
+                , myroletype  // authoringRole
+                , actionName)
+              .catch(e => UserMessagingPromise.then( um => 
+                um.addMessageForEndUser(
+                  { title: i18next.t("action_title", { ns: 'preact' }) 
+                  , message: i18next.t("action_message", {ns: 'preact', action: actionName})
+                  , error: e.toString()
+                  })));  
+            });
+      }
+
+  }
 
 export default class MarkDownWidget extends Component
 {
@@ -34,11 +70,14 @@ export default class MarkDownWidget extends Component
   {
     const component = this;
     const htmlString = md.render( component.props.markdown );
-    return <div dangerouslySetInnerHTML={{ __html: htmlString }} />
+    const htmlString_ = htmlString.replace(/__contextid__/g, component.props.contextid).replace( /__myroletype__/g, component.props.myroletype);
+
+    return <div dangerouslySetInnerHTML={{ __html: htmlString_ }} />
   }
 }
 
 MarkDownWidget.propTypes = 
-  {
-    markdown: PropTypes.string
+  { markdown: PropTypes.string.isRequired
+  , contextid: PropTypes.string.isRequired
+  , myroletype: PropTypes.string.isRequired
   };

@@ -433,7 +433,7 @@ export default class SmartFieldControl extends Component
           if (component.props.disabled)
             {
               // Just render the html for a read-only perspective on this property.
-              return <MarkDownWidget markdown={component.state.value}/>;
+              return <MarkDownWidget markdown={component.state.value} contextid={component.props.contextinstance} myroletype={component.props.myroletype}/>;
             }
           else
           {
@@ -500,4 +500,6 @@ SmartFieldControl.propTypes =
   , disabled: PropTypes.bool.isRequired
 
   , isselected: PropTypes.bool.isRequired
+
+  , contextinstance: PropTypes.string.isRequired
   };

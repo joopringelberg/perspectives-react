@@ -249,6 +249,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
                 propertyValues={component.findValues( serialisedProperty.id )}
                 roleId={component.state.roleInstanceWithProps ? component.state.roleInstanceWithProps.roleId : null}
                 myroletype={component.props.perspective.userRoleType}
+                contextinstance={component.props.perspective.contextInstance}
               />
             )
           }

@@ -114,6 +114,7 @@ export default class SmartFieldControlGroup extends Component
             myroletype = { component.props.myroletype }
             disabled={ component.propertyOnlyConsultable() || !component.props.roleId }
             isselected={true}
+            contextinstance={component.props.contextinstance}
           />
         </Col>
       </Form.Group>);
@@ -141,4 +142,5 @@ SmartFieldControlGroup.propTypes =
   , roleId: PropTypes.string
 
   , myroletype: PropTypes.string.isRequired
+  , contextinstance: PropTypes.string.isRequired
   };

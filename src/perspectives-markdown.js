@@ -9,11 +9,11 @@ module.exports = function (md) {
       return false;
     }
 
-    if (marker !== 0x3C /* < */ || state.src.charCodeAt(start + 1) !== 0x3C /* < */) {
+    if (marker !== 0x5B /* [ */ || state.src.charCodeAt(start + 1) !== 0x5B /* [ */) {
       return false;
     }
 
-    const match = state.src.slice(start).match(/<<.*?>>/);
+    const match = state.src.slice(start).match(/\[\[.*?\]\]/);
     if (!match) {
       return false;
     }
@@ -65,11 +65,11 @@ function render (s)
 
 }
 
-// <<link: <roleIdentifier>|Leesbare link tekst>>
+// [[link: <roleIdentifier>|Leesbare link tekst]]
 const linkRegEx = /link:\s*([^|]+)\s*\|\s*(.+)/;
-// <<action: <action name>| leesbare actie tekst >>
+// [[action: <action name>| leesbare actie tekst ]]
 const actionRegEx = /action:\s*(.+)\s*\|\s*(.+)/;
-// <<expression: <expression> >>
+// [[expression: <expression> ]]
 
 // Check whether the string represents valid Perspectives extension syntax.
 function isPerspectivesSyntax(s)

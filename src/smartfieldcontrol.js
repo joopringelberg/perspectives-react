@@ -256,15 +256,22 @@ export default class SmartFieldControl extends Component
           event.stopPropagation();
           break;
         case 13: // Return
-          // Safe changes, allow event to bubble.
-          if (component.reportValidity(event))
-          {
-            component.changeValue(newvalue);
-          }
+          if ( !event.shiftKey )
+            {
+              // Safe changes, allow event to bubble.
+              if (component.reportValidity(event))
+                {
+                  component.changeValue(newvalue);
+                }
+                else
+                {
+                  event.stopPropagation();
+                }  
+            }
           else
-          {
-            event.stopPropagation();
-          }
+            {
+              event.stopPropagation();
+            }
           break;
         case 27: // Escape
           // Discard changes, allow event to bubble.
@@ -439,7 +446,7 @@ export default class SmartFieldControl extends Component
           {
             // Create an editor. Currently, this is just an html input or a textarea, depdending on minInclusive.
             return (
-              <div>
+              <div onKeyDown={e => component.handleKeyDown(e, e.target.value)}>
                 <Form.Control
                   as={component.minLength("markdown") > 80 ? "textarea" : "input"}
                   ref= { component.props.inputRef}

@@ -173,7 +173,7 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
         contents = screen.columns.map( component.screenElement );
       }
     return  (<Container role="application">
-            { screen.title != "" ? <h3>{screen.title}</h3> : null }
+            { screen.title ? <h3>{screen.title}</h3> : null }
             {
               contents
             }
@@ -278,15 +278,14 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
     const component = this;
       // The property is only consultable when it just has the verb Consult,
       // or when it is calculated. It will be shown disabled as a consequence.
-      function propertyOnlyConsultable()
+      function propertyOnlyConsultable(roleInstance)
       {
         if (roleInstance.propertyValues)
         {
-          const property = serialisedProperty;
-          const propertyVerbs = roleInstance.propertyValues[ property.id ].propertyVerbs;
+          const propertyVerbs = roleInstance.propertyValues[ markDownProperty ].propertyVerbs;
           return (propertyVerbs.indexOf("Consult") > -1 
             && propertyVerbs.length == 1)
-            || property.isCalculated;
+            || perspective.properties[markDownProperty].isCalculated;
         }
         else
         {
@@ -294,12 +293,14 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
         }
       }
 
-      let perspective, roleInstance, serialisedProperty;
+      let perspective, markDownProperty, conditionProperty;
       switch (tag) {
-      case "MarkDownConstantDef":
+        // MarkDownConstant is by construction functional.
+        case "MarkDownConstantDef":
         return <MarkDownWidget markdown={element.text} contextid={component.props.contextinstance} myroletype={component.props.myroletype}/>;
-      case "MarkDownExpressionDef":
-        // LET OP: text is maybe hier.
+        // MarkDownExpression is required to be functional.
+        case "MarkDownExpressionDef":
+        // text is wrapped in Maybe
         if (element.text)
           {
             return <MarkDownWidget markdown={element.text} contextid={component.props.contextinstance} myroletype={component.props.myroletype}/>;
@@ -308,22 +309,33 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
         {
           return null;
         }
+      // MarkDownPerspective may be on a relational role.
+      //   MarkDownPerspectiveDef { widgetFields :: WidgetCommonFieldsDef, conditionProperty :: Maybe PropertyType} |
       case "MarkDownPerspectiveDef":
         perspective = element.widgetFields.perspective;
-        roleInstance = Object.values( perspective.roleInstances )[0];
-        serialisedProperty = Object.values( perspective.properties )[0];  
-        
-        return <SmartFieldControl
-                // By construction, a single property is allowed and it must be the property with the MarkDown Range.
-                serialisedProperty = { serialisedProperty }
-                propertyValues = { roleInstance.propertyValues[ serialisedProperty.id ] }
-                roleId = { roleInstance.roleId }
-                myroletype = { perspective.userRoleType }
-                disabled={ propertyOnlyConsultable() || !roleInstance.roleId }
-                isselected={true}
-                contextinstance={component.props.contextinstance}
-              />
-
+        conditionProperty = element.conditionProperty ? element.conditionProperty.value : undefined;
+        markDownProperty = Object.keys( perspective.properties ).filter( prop => prop != conditionProperty )[0];  
+        return  <Container>{
+                  Object.values( perspective.roleInstances )
+                    .filter( roleInstance => !!conditionProperty ? roleInstance.propertyValues[ conditionProperty ].values[0] == "true" : true)
+                    .map( roleInstance => 
+                    <Row>
+                      <Col>
+                        <SmartFieldControl
+                          key= { roleInstance.roleId }
+                          // By construction, a single property is allowed and it must be the property with the MarkDown Range.
+                          serialisedProperty = { perspective.properties[ markDownProperty ] }
+                          propertyValues = { roleInstance.propertyValues[ markDownProperty ] }
+                          roleId = { roleInstance.roleId }
+                          myroletype = { perspective.userRoleType }
+                          disabled={ propertyOnlyConsultable(roleInstance) || !roleInstance.roleId }
+                          isselected={true}
+                          contextinstance={component.props.contextinstance}
+                        />
+                      </Col>
+                    </Row>
+                  )
+                }</Container>
     }
   }
   widgetOrButton(widgetCommonFields, widgetFunction, index)

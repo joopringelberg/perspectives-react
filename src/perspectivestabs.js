@@ -23,15 +23,13 @@ import PropTypes from "prop-types";
 
 import {TabDef} from "./perspectiveshape.js";
 
-import {Tab, Container, Nav, Navbar} from "react-bootstrap";
+import {Tab, Nav, Navbar} from "react-bootstrap";
 
 export default function PerspectivesTabs(props)
 {
-  const [activeTabKey, setKey] = useState('activeTabKey');
-  const component = this;
-  const defaultKey = props.tabs[0] ? 0 : "";
+  const [activeTabKey, setKey] = useState(props.activeTabKey);
   return (
-    <Tab.Container defaultActiveKey={defaultKey} id="perspective-tabs" activeKey={activeTabKey}>
+    <Tab.Container defaultActiveKey={props.defaultActiveKey} id="perspective-tabs" activeKey={activeTabKey}>
       <Navbar 
         collapseOnSelect 
         expand="md" 
@@ -60,4 +58,5 @@ export default function PerspectivesTabs(props)
 
 PerspectivesTabs.propTypes =
   { tabs: PropTypes.arrayOf(TabDef)
+  , defaultActiveKey: PropTypes.number.isRequired
   };

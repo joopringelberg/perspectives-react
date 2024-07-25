@@ -319,10 +319,9 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
                   Object.values( perspective.roleInstances )
                     .filter( roleInstance => !!conditionProperty ? roleInstance.propertyValues[ conditionProperty ].values[0] == "true" : true)
                     .map( roleInstance => 
-                    <Row>
+                    <Row key= { roleInstance.roleId }>
                       <Col>
                         <SmartFieldControl
-                          key= { roleInstance.roleId }
                           // By construction, a single property is allowed and it must be the property with the MarkDown Range.
                           serialisedProperty = { perspective.properties[ markDownProperty ] }
                           propertyValues = { roleInstance.propertyValues[ markDownProperty ] }

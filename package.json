@@ -1,6 +1,6 @@
 {
   "name": "perspectives-react",
-  "version": "0.24.0",
+  "version": "0.25.0",
   "description": "React components to build a GUI based on the perspectives-protocol (hides connection to perspectives-core).",
   "main": "dist/perspectives-react.js",
   "scripts": {
@@ -26,15 +26,15 @@
   },
   "homepage": "https://github.com/joopringelberg/perspectives-react#readme",
   "peerDependencies": {
-    "@babel/polyfill": "^7.12.1",
-    "@primer/octicons-react": "^11.0.0",
-    "i18next": "^22.4.13",
-    "perspectives-proxy": "https://github.com/joopringelberg/perspectives-proxy.git#v1.19.0",
-    "pouchdb-browser": "^7.2.2",
-    "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-bootstrap": "^1.6.4",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "@primer/octicons-react": "^11.0.0",
+    "@babel/polyfill": "^7.12.1",
+    "perspectives-proxy": "https://github.com/joopringelberg/perspectives-proxy.git#v1.20.0",
+    "prop-types": "^15.7.2",
+    "pouchdb-browser": "^7.2.2",
+    "i18next": "^22.4.13"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.1",

@@ -26,15 +26,15 @@
   },
   "homepage": "https://github.com/joopringelberg/perspectives-react#readme",
   "peerDependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "@primer/octicons-react": "^11.0.0",
+    "i18next": "^22.4.13",
+    "perspectives-proxy": "https://github.com/joopringelberg/perspectives-proxy.git#PERSPECTIVESPROXY",
+    "pouchdb-browser": "^7.2.2",
+    "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-bootstrap": "^1.6.4",
-    "react-dom": "^17.0.1",
-    "@primer/octicons-react": "^11.0.0",
-    "@babel/polyfill": "^7.12.1",
-    "perspectives-proxy": "https://github.com/joopringelberg/perspectives-proxy.git#PERSPECTIVESPROXY",
-    "prop-types": "^15.7.2",
-    "pouchdb-browser": "^7.2.2",
-    "i18next": "^22.4.13"
+    "react-dom": "^17.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.1",
@@ -52,6 +52,10 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
+    "@chatscope/chat-ui-kit-react": "^2.0.3",
+    "@chatscope/chat-ui-kit-styles": "^1.4.0",
+    "@dicebear/collection": "^9.2.1",
+    "@dicebear/core": "^9.2.1",
     "highlight.js": "^11.7.0",
     "markdown-it": "^14.1.0",
     "page-lifecycle": "^0.1.2",

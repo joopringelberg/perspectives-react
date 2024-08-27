@@ -38,6 +38,7 @@ export default class ChatComponent extends Component
   constructor(props)
   {
     super(props);
+    let storageType_, sharedStorageId_;
     const component = this;
     component.avatar = createAvatar(initials, {
             seed: "Joop Ringelberg",
@@ -47,13 +48,20 @@ export default class ChatComponent extends Component
       { messages: []
       , me: undefined
       , storage: undefined
+      , storageType: undefined
+      , sharedStorageId: undefined
       };
     PDRproxy
       .then( pproxy => pproxy.getFileShareCredentials() )
       // Mega storage.
       // Notice that for now we assume all storage is Mega. This might change in the future.
-      .then( ({accountName, password}) => new Storage({email: accountName, password, userAgent: "Perspectives", keepalive: false}).ready)
-      .then( storage => component.setState({storage}))
+      .then( ({accountName, password, storageType, sharedStorageId}) => 
+        {
+          storageType_ = storageType;
+          sharedStorageId_ = sharedStorageId;
+          return new Storage({email: accountName, password, userAgent: "Perspectives", keepalive: false}).ready
+        })
+      .then( storage => component.setState({storage, storageType: storageType_, sharedStorageId: sharedStorageId_}))
       .catch( e => console.log(e))
     component.sharedFileStore = {};
     // Request for permission to use audio and store a promise for the audioRecorder in `mediaRecorderPromise`.
@@ -234,13 +242,13 @@ export default class ChatComponent extends Component
                 PDRproxy.then( pproxy => pproxy.addProperty(
                   component.props.roleinstance,
                   component.props.mediaproperty,
-                  [JSON.stringify( file2PsharedFile(theFile, "myMegaStorageRoleId", "mega", megaUrl) ) ]
+                  [JSON.stringify( file2PsharedFile(theFile, component.state.sharedStorageId, component.state.storageType, megaUrl) ) ]
                 ));
                 // then create an object url and add to the map with the mega url as index
                 component.sharedFileStore[megaUrl] = URL.createObjectURL(theFile);
                 // then create and send a message with the mega url.
                 component.handleSend(
-                  { src: file2PsharedFile(theFile, "myMegaStorageRoleId", "mega", megaUrl)
+                  { src: file2PsharedFile(theFile, component.state.sharedStorageId, component.state.storageType, megaUrl)
                   , alt: theFile.name
                   , width: "100%"
                   })
@@ -314,11 +322,11 @@ export default class ChatComponent extends Component
                         PDRproxy.then( pproxy => pproxy.addProperty(
                           component.props.roleinstance,
                           component.props.mediaproperty,
-                          [JSON.stringify( file2PsharedFile(audioFile, "myMegaStorageRoleId", "mega", megaUrl) ) ]
+                          [JSON.stringify( file2PsharedFile(audioFile, component.state.sharedStorageId, component.state.storageType, megaUrl) ) ]
                         ));
                         // then create and send a message with the mega url.
                         component.handleSend(
-                          { src: file2PsharedFile(audioFile, "myMegaStorageRoleId", "mega", megaUrl)
+                          { src: file2PsharedFile(audioFile, component.state.sharedStorageId, component.state.storageType, megaUrl)
                           , alt: audioFile.name
                           , width: "100%"
                           })
@@ -355,7 +363,7 @@ export default class ChatComponent extends Component
     const component = this;
     if (typeof message.payload == 'string')
     {
-      return (<Message key={i} model={message} type='string'>
+      return (<Message key={i} model={message} type='text'>
           <Avatar name={message.sender} size="sm" src={component.getAvatar(message.sender)}/>
         </Message>);
     }

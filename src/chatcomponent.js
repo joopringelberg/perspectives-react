@@ -305,7 +305,7 @@ export default class ChatComponent extends Component
               // Clear the audioChunks array for future recordings
               audioChunks = [];
               // Save the audio file
-              const audioFile = new File([audioBlob], cuid2() + ".ogg", { type: 'audio/ogg; codecs=opus' }); 
+              const audioFile = new File([audioBlob], cuid2(), { type: mediaRecorder.mimeType }); 
               const objectUrl = URL.createObjectURL(audioBlob);
               
               const reader = new FileReader();

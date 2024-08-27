@@ -65,4 +65,5 @@
 , "openPublicResource": "Open the public perspective on this role or context."
 , "openContext": "Please wait while this context is being loaded..."
 , "contextDropdown_title": "Just the role"
+, "chatComponent_recordAudio": "Press and hold to record. Release to stop recording."
 }

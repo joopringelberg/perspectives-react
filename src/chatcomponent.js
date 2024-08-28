@@ -21,7 +21,7 @@ import { PropTypes } from "prop-types"
 import PerspectivesComponent from "./perspectivescomponent";
 import React, { Component } from "react";
 
-import { MainContainer, ChatContainer, MessageList, Message, MessageInput, ConversationHeader, Avatar, VoiceCallButton, VideoCallButton, InfoButton, TypingIndicator, MessageSeparator, SendButton, AttachmentButton } from '@chatscope/chat-ui-kit-react';
+import { MainContainer, ChatContainer, MessageList, Message, MessageInput, ConversationHeader, Avatar, VoiceCallButton, VideoCallButton, InfoButton, TypingIndicator, MessageSeparator, SendButton, AttachmentButton, AvatarGroup } from '@chatscope/chat-ui-kit-react';
 import styles from '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 
 import { createAvatar } from '@dicebear/core';
@@ -40,16 +40,13 @@ export default class ChatComponent extends Component
     super(props);
     let storageType_, sharedStorageId_;
     const component = this;
-    component.avatar = createAvatar(initials, {
-            seed: "Joop Ringelberg",
-          size: 128
-        }).toDataUri();
     component.state = 
       { messages: []
       , me: undefined
       , storage: undefined
       , storageType: undefined
       , sharedStorageId: undefined
+      , participants: []
       };
     PDRproxy
       .then( pproxy => pproxy.getFileShareCredentials() )
@@ -63,6 +60,10 @@ export default class ChatComponent extends Component
         })
       .then( storage => component.setState({storage, storageType: storageType_, sharedStorageId: sharedStorageId_}))
       .catch( e => console.log(e))
+    // Participants might change during the conversation.
+    PDRproxy.then( pproxy => pproxy.getChatParticipants(
+      component.props.roleinstance,
+      (participants => component.augmentParticipants(participants))));
     component.sharedFileStore = {};
     // Request for permission to use audio and store a promise for the audioRecorder in `mediaRecorderPromise`.
     this.mediaRecorderPromise = undefined;
@@ -78,124 +79,10 @@ export default class ChatComponent extends Component
             component.props.roleinstance,
             component.props.messagesproperty,
             component.props.roletype,
-            values => component.setState({messages: component.augmentMessages( values )}))
+            values => component.augmentMessages( values ).then( augmentedMessages => component.setState({messages: augmentedMessages}))
+          )
           proxy.getMe( component.props.externalrole ).then( me => component.setState({me: me}))
         });
-  }
-
-  // Add `direction`, `position` and if the payload is a PSharedFile, set the payload src to an object url.
-  // {
-  //   message: string, WE DON'T USE THIS BUT PAYLOAD INSTEAD!
-  //   sentTime: string,
-  //   sender: string,
-  //   direction: 'incoming' | 'outgoing' | 0 | 1,
-  //   position: 'single' | 'first' | 'normal' | 'last' | 0 | 1 | 2 | 3,
-  //   type: 'html' | 'text' | 'image' | 'custom',
-  //   payload: string | object | allowedChildren([MessageCustomContent])
-  // }
-  // If payload is not a string, it is an image object {src, alt, width} where src is a PSharedFile object.
-  augmentMessages( messages )
-  {
-    const component = this;
-    function isPSharedFile ({payload})
-    {
-      return typeof payload == 'object' && payload.src && payload.src.storageType;
-    }
-    return messages.map( (messageString, i) => 
-    {
-      const message = JSON.parse(messageString);
-      const previousMessage = messages[i-1];
-      const nextMessage = messages[i+1];
-      // Set direction.
-      if (message.sender == component.state.me)
-      {
-        message.direction = 'outgoing';
-      }
-      else
-      {
-        message.direction = 'incoming';
-      }
-      // Set position.
-      if (previousMessage && previousMessage.sender == message.sender)
-      {
-        // a A
-        if (nextMessage && nextMessage.sender == message.sender)  
-        {
-          // a A a
-          message.position = 'normal';
-        }
-        else
-        {
-          // a A b
-          message.position = 'last';
-        }
-      }
-      // b A
-      else if (nextMessage && message.sender == nextMessage.sender)
-      {
-        // b A a
-        message.position = 'first';
-      }
-      else
-      {
-        // b A b
-        message.position = 'single';
-      }
-      // Create an image payload where the src is an object url:
-      if (isPSharedFile(message))
-      {
-        if ( component.sharedFileStore[message.payload.src.url] )
-        {
-          // the mimeType property of payload is our own addition.
-          message.payload.mimeType = message.payload.src.type;
-          message.payload.src = component.sharedFileStore[message.payload.src.url];
-        }
-        else
-        {
-          component.retrieveFileFromStorage( message.payload )
-            .then( objectUrl => 
-              {
-                message.payload.mimeType = message.payload.src.type;
-                message.payload.src = objectUrl
-              } )
-        }
-      }
-      return message;
-    }
-    )
-  }
-
-  // returns a promise for an object url.
-  retrieveFileFromStorage(psharedFile)
-  {
-    switch (psharedFile.storageType) {
-      case "mega":
-        return this.retrieveFileFromMega(psharedFile)
-
-      default:
-        // TODO: possibly handle in another way, like provide a default image?
-        return new Promise((reject) => reject("Unknown storage type"));
-        break;
-    }
-  }
-
-  retrieveFileFromMega( {src, type} )
-  { 
-    const component = this;
-    // Get the file object from the URL
-    const file = MFile.fromURL(src)
-    // Load file attributes
-    return file.loadAttributes()
-      .then(() => file.downloadBuffer())
-      .then( data => 
-        {
-          const f = new Blob([data], {type})
-          // Now create an object url:
-          const objectUrl =  URL.createObjectURL(f)
-          component.sharedFileStore[src] = objectUrl
-          return objectUrl;  
-        }          
-      );
   }
 
   componentWillUnmount ()
@@ -203,23 +90,39 @@ export default class ChatComponent extends Component
     Object.values( this.sharedFileStore ).forEach( objectUrl => URL.revokeObjectURL( objectUrl ));
   }
 
-  // payload is either a string, or a {src, alt, width} structure where src is a PSharedFile.
-  handleSend( payload )
+  augmentParticipants(participants)
   {
     const component = this;
-    PDRproxy.then( proxy => 
-      proxy.addProperty(
-        component.props.roleinstance,
-        component.props.messagesproperty,
-        [JSON.stringify({
-          payload,
-          sender: component.state.me,
-          sentTime: '15 mins ago'
-        })]
-      )
-   ) 
+    Promise.all(
+      participants.map( participant =>
+      {
+        if (participant.avatar)
+        {
+          return component.getPsharedFile(participant.avatar)
+            .then( objectUrl => 
+              {
+                participant.avatar = objectUrl;
+                return participant;
+              } );
+        }
+        else
+        {
+          return new Promise( (resolve) =>
+          {
+            participant.avatar = createAvatar(initials, {
+              seed: participant.firstname + " " + participant.lastname,
+              size: 128
+              }).toDataUri();
+            resolve( participant );
+          })
+        }
+      }))
+      .then( participantsWithAvatars => component.setState({participants: participantsWithAvatars}))
   }
-  
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  ////            SHARING FILES
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
   handleFileUpload(fileList)
   {
     const theFile = fileList.item(0);
@@ -262,18 +165,58 @@ export default class ChatComponent extends Component
     }
   }
 
-  getAvatar( user )
+  // returns a promise for an object url.
+  // Invariant: the sharedFileStore will contain an entry for psharedFile.url holding the object url.
+  getPsharedFile( psharedFile )
   {
-    if (user == 'Emily')
-    {
-      return "https://chatscope.io/storybook/react/assets/emily-xzL8sDL2.svg";
-    }
-    else if (user == 'ThisUser')
-    {
-      return this.avatar;
+    const component = this;
+    if ( component.sharedFileStore[psharedFile.url] )
+      {
+        return new Promise((resolve) => resolve( component.sharedFileStore[psharedFile.url] ));
+      }
+      else
+      {
+        return component.retrieveFileFromStorage(psharedFile);
+      }
+  }
+  // returns a promise for an object url.
+  // Adds the object url to sharedFileStore under key psharedFile.url.
+  retrieveFileFromStorage(psharedFile)
+  {
+    switch (psharedFile.storageType) {
+      case "mega":
+        return this.retrieveFileFromMega(psharedFile)
+
+      default:
+        // TODO: possibly handle in another way, like provide a default image?
+        return new Promise((reject) => reject("Unknown storage type"));
+        break;
     }
   }
 
+  // Adds the object url to sharedFileStore under key psharedFile.url.
+  retrieveFileFromMega( {url, type} )
+  { 
+    const component = this;
+    // Get the file object from the URL
+    const file = MFile.fromURL(url)
+    // Load file attributes
+    return file.loadAttributes()
+      .then(() => file.downloadBuffer())
+      .then( data => 
+        {
+          const f = new Blob([data], {type})
+          // Now create an object url:
+          const objectUrl =  URL.createObjectURL(f)
+          component.sharedFileStore[url] = objectUrl
+          return objectUrl;  
+        }          
+      );
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  ////            AUDIO
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   // Creates a promise for the mediaRecorder in the component property `mediaRecorderPromise`.
   // When the recorder is started and then stopped:
   //    Saves the audio file to Mega.
@@ -354,6 +297,109 @@ export default class ChatComponent extends Component
     this.mediaRecorderPromise.then( mediaRecorder => mediaRecorder.stop());
   }
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  ////            SEND MESSAGE
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // payload is either a string, or a {src, alt, width} structure where src is a PSharedFile.
+  handleSend( payload )
+  {
+    const component = this;
+    PDRproxy.then( proxy => 
+      proxy.addProperty(
+        component.props.roleinstance,
+        component.props.messagesproperty,
+        [JSON.stringify({
+          payload,
+          sender: component.state.me,
+          sentTime: Date.now()
+        })]
+      )
+   ) 
+  }
+  
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  ////            CONSTRUCTING MESSAGES
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Returns a promise for augmented messages.
+  // Add `direction`, `position` and if the payload is an object whose src is a PSharedFile, set the payload src to an object url.
+  // {
+  //   message: string, WE DON'T USE THIS BUT PAYLOAD INSTEAD!
+  //   sentTime: string,
+  //   sender: string,
+  //   direction: 'incoming' | 'outgoing' | 0 | 1,
+  //   position: 'single' | 'first' | 'normal' | 'last' | 0 | 1 | 2 | 3,
+  //   type: 'html' | 'text' | 'image' | 'custom',
+  //   payload: string | object | allowedChildren([MessageCustomContent])
+  // }
+  // If payload is not a string, it is an image object {src, alt, width} where src is a PSharedFile object.
+  augmentMessages( messages )
+  {
+    const component = this;
+    function isPSharedFile ({payload})
+    {
+      return typeof payload == 'object' && payload.src && payload.src.storageType;
+    }
+    return Promise.all( messages.map( (messageString, i) => 
+    {
+      const message = JSON.parse(messageString);
+      const previousMessage = messages[i-1];
+      const nextMessage = messages[i+1];
+      // Make time readable
+      message.sentTime = new Date(message.sentTime).toLocaleTimeString();
+      // Set direction.
+      if (message.sender == component.state.me)
+      {
+        message.direction = 'outgoing';
+      }
+      else
+      {
+        message.direction = 'incoming';
+      }
+      // Set position.
+      if (previousMessage && previousMessage.sender == message.sender)
+      {
+        // a A
+        if (nextMessage && nextMessage.sender == message.sender)  
+        {
+          // a A a
+          message.position = 'normal';
+        }
+        else
+        {
+          // a A b
+          message.position = 'last';
+        }
+      }
+      // b A
+      else if (nextMessage && message.sender == nextMessage.sender)
+      {
+        // b A a
+        message.position = 'first';
+      }
+      else
+      {
+        // b A b
+        message.position = 'single';
+      }
+      // Create an image payload where the src is an object url:
+      if (isPSharedFile(message))
+      {
+        return component.getPsharedFile( message.payload.src )
+          .then( objectUrl => 
+            {
+              message.payload.mimeType = message.payload.src.type;
+              message.payload.src = objectUrl
+              return message
+            } )
+      }
+      else
+      {
+        return new Promise((resolve) => resolve(message));
+      }
+    }));
+  }
+
   // message types according to https://chatscope.io/storybook/react/?path=/docs/components-message--docs:
   // type: 'html' | 'text' | 'image' | 'custom'
   // Notice that here we work with payload.mimeType (a mime-type valued property we add to the payload structure that chatscope exclusively uses for images).
@@ -364,6 +410,7 @@ export default class ChatComponent extends Component
     if (typeof message.payload == 'string')
     {
       return (<Message key={i} model={message} type='text'>
+          <Message.Header sentTime={message.sentTime}/>
           <Avatar name={message.sender} size="sm" src={component.getAvatar(message.sender)}/>
         </Message>);
     }
@@ -386,33 +433,32 @@ export default class ChatComponent extends Component
       }
       else if (message.payload.mimeType.match(/^image/))
       {
-        // delegate the mapping to payload2Type. It will 
         return (<Message key={i} model={message} type='image'>
             <Avatar name={message.sender} size="sm" src={component.getAvatar(message.sender)}/>
           </Message>);
       }
     }
   }
-  // message types according to https://chatscope.io/storybook/react/?path=/docs/components-message--docs:
-  // type: 'html' | 'text' | 'image' | 'custom'
-  // Notice that here we map payload.mimeType (a mime-type valued property we add to the payload structure that chatscope exclusively uses for images)
-  // to message.type.
-  // payload = {type, ...}
-  payload2Type (payload)
+
+  buildMessageList()
   {
-    if ( payload.mimeType && payload.mimeType.match( /^text/))
+    const component = this;
+    const messageList = [];
+    for (let index = 0; index < component.state.messages.length; index++) {
+      const previousMessage = component.state.messages[index-1];
+      const currentMessage = component.state.messages[index];
+      if (previousMessage && new Date(previousMessage.sentTime).getDate() < new Date(currentMessage.sentTime).getDate())
       {
-        return 'text'
+        messageList.push( <MessageSeparator content={new Date(currentMessage.sentTime).toLocaleDateString()} /> )
       }
-    else if ( payload.mimeType && payload.mimeType.match( /^image/))
-    {
-      return 'image'
+      messageList.push( component.buildMessage(currentMessage, messageList.length));
     }
-    else 
-    {
-      // e.g. audio.
-      return 'custom';
-    }
+    return messageList;
+  }
+
+  getAvatar( userId )
+  {
+    return this.state.participants.find( ({roleInstance}) => roleInstance == userId ).avatar
   }
 
   render()
@@ -433,24 +479,17 @@ export default class ChatComponent extends Component
             }}
             >
             <ConversationHeader>
-                <Avatar
-                name="Emily"
-                src={component.avatar}
-                />
-                <ConversationHeader.Content
-                info="Active 10 mins ago"
-                userName="Emily"
-                />
+                <ConversationHeader.Content>
+                  <AvatarGroup>
+                    {
+                      component.state.participants.map( ({firstname, avatar}, i) => <Avatar key={i} name={firstname} src={avatar} />)
+                    }
+                  </AvatarGroup>
+                </ConversationHeader.Content>
                 <ConversationHeader.Actions>
                 </ConversationHeader.Actions>
             </ConversationHeader>
-            <MessageList>
-                <MessageSeparator content="Saturday, 30 November 2019" />
-                {
-                  // Handle custom type audio.
-                  component.state.messages.map( (message, i) => component.buildMessage(message, i) ) 
-                }
-            </MessageList>
+            <MessageList>{ component.buildMessageList()}</MessageList>
             <div as={MessageInput} style={{display:"flex", flexDirection:"row", borderTop: "1px dashed #d1dbe4"}}>
               <MessageInput
                 placeholder="Type message here" 

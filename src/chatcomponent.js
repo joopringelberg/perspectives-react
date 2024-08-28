@@ -63,6 +63,7 @@ export default class ChatComponent extends Component
     // Participants might change during the conversation.
     PDRproxy.then( pproxy => pproxy.getChatParticipants(
       component.props.roleinstance,
+      component.props.messagesproperty,
       (participants => component.augmentParticipants(participants))));
     component.sharedFileStore = {};
     // Request for permission to use audio and store a promise for the audioRecorder in `mediaRecorderPromise`.
@@ -81,7 +82,7 @@ export default class ChatComponent extends Component
             component.props.roletype,
             values => component.augmentMessages( values ).then( augmentedMessages => component.setState({messages: augmentedMessages}))
           )
-          proxy.getMe( component.props.externalrole ).then( me => component.setState({me: me}))
+          proxy.getMeInContext( component.props.externalrole ).then( me => component.setState({me: me}))
         });
   }
 

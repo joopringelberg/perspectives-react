@@ -122,6 +122,15 @@ export const ScreenElementDef = PropTypes.shape(
   , column: /*OPTIONAL*/  PropTypes.arrayOf( PropTypes.object )
   , table: /*OPTIONAL*/   PropTypes.shape(WidgetCommonFields)
   , form: /*OPTIONAL*/    PropTypes.shape(WidgetCommonFields)
+  , markDown: /*OPTIONAL*/PropTypes.object
+  , chat: /*OPTIONAL*/    PropTypes.shape(
+    { chatRole: PropTypes.string.isRequired
+    , chatInstance: PropTypes.string
+    , messagesProperty: PropTypes.string.isRequired
+    , mediaProperty: PropTypes.string.isRequired
+    }
+  )
+  , 
   // , MarkDownElementD MarkDownDef
 });
 

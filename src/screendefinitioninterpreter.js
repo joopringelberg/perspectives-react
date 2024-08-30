@@ -34,6 +34,8 @@ import i18next from "i18next";
 import {Tabs, Tab, Container, Card, Button, Row, Col} from "react-bootstrap";
 import MarkDownWidget from './markdownWidget.js';
 import SmartFieldControl from './smartfieldcontrol.js';
+import ChatComponent from './chatcomponent.js';
+import { externalRole } from './urifunctions.js';
 
 export default class ScreenDefinitionInterpreter extends PerspectivesComponent
 {
@@ -232,6 +234,12 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
             key={index}
           >{ component.buildMarkDown( element.element, index)}</div>
         )
+      case "ChatElementD":
+        return (
+          <div
+            key={index}
+          >{ component.buildChat( element.element.fields)}</div>
+        )
     }
   }
   buildRow({elements}, index)
@@ -244,7 +252,7 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
       }
       </Row>
     );
-  }
+  } 
   buildColumn({elements}, index)
   {
     const component = this;
@@ -275,10 +283,22 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
     return (
       <PerspectiveBasedForm
         perspective={perspective}
-        contextinstance={component.props.contextinstance}
         behaviours={mapRoleVerbsToBehaviours( perspective )}
         cardtitle={ perspective.identifyingProperty }
         />);
+  }
+  buildChat({chatRole, chatInstance, messageProperty, mediaProperty})
+  {
+    const component = this;
+    return <ChatComponent 
+            externalrole={externalRole( component.props.contextinstance) }
+            roleinstance={chatInstance}
+            roletype={chatRole}
+            messagesproperty={messageProperty}
+            mediaproperty={mediaProperty}
+            myroletype={component.props.myroletype}
+          >
+          </ChatComponent>
   }
   buildMarkDown({tag, element})
   {

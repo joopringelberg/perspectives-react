@@ -15,7 +15,7 @@
 // Full text of this license can be found in the LICENSE file in the projects root.
 // END LICENSE
 
-import PDRproxy from "./proxystub.js";
+import {PDRproxy} from "perspectives-proxy";
 
 import { PropTypes } from "prop-types"
 import PerspectivesComponent from "./perspectivescomponent";
@@ -82,7 +82,7 @@ export default class ChatComponent extends Component
             component.props.roletype,
             values => component.augmentMessages( values ).then( augmentedMessages => component.setState({messages: augmentedMessages}))
           )
-          proxy.getMeInContext( component.props.externalrole ).then( me => component.setState({me: me}))
+          proxy.getMeInContext( component.props.externalrole ).then( me => component.setState({me: me[0]}))
         });
   }
 
@@ -146,7 +146,8 @@ export default class ChatComponent extends Component
                 PDRproxy.then( pproxy => pproxy.addProperty(
                   component.props.roleinstance,
                   component.props.mediaproperty,
-                  [JSON.stringify( file2PsharedFile(theFile, component.state.sharedStorageId, component.state.storageType, megaUrl) ) ]
+                  JSON.stringify( file2PsharedFile(theFile, component.state.sharedStorageId, component.state.storageType, megaUrl) ),
+                  component.props.myroletype
                 ));
                 // then create an object url and add to the map with the mega url as index
                 component.sharedFileStore[megaUrl] = URL.createObjectURL(theFile);
@@ -266,7 +267,8 @@ export default class ChatComponent extends Component
                         PDRproxy.then( pproxy => pproxy.addProperty(
                           component.props.roleinstance,
                           component.props.mediaproperty,
-                          [JSON.stringify( file2PsharedFile(audioFile, component.state.sharedStorageId, component.state.storageType, megaUrl) ) ]
+                          JSON.stringify( file2PsharedFile(audioFile, component.state.sharedStorageId, component.state.storageType, megaUrl) ),
+                          component.props.myroletype
                         ));
                         // then create and send a message with the mega url.
                         component.handleSend(
@@ -309,11 +311,12 @@ export default class ChatComponent extends Component
       proxy.addProperty(
         component.props.roleinstance,
         component.props.messagesproperty,
-        [JSON.stringify({
+        JSON.stringify({
           payload,
           sender: component.state.me,
           sentTime: Date.now()
-        })]
+        }),
+        component.props.myroletype
       )
    ) 
   }
@@ -533,4 +536,5 @@ ChatComponent.propTypes =
   , roletype: PropTypes.string.isRequired
   , messagesproperty: PropTypes.string.isRequired
   , mediaproperty: PropTypes.string.isRequired
+  , myroletype: PropTypes.string.isRequired
   }

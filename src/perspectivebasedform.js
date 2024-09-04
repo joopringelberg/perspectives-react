@@ -194,6 +194,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
                 contextinstance={component.props.perspective.contextInstance}
                 contexttype={component.props.perspective.contextType}
                 myroletype={component.props.perspective.userRoleType}
+                allowedtoremovecontext={component.props.perspective.verbs.includes("RemoveContext") || component.props.perspective.verbs.includes("DeleteContext")}
               >
                 {/* The default element for the RoleInstance. The controls will have a create button. 
                 When there is no role instance, this will be rendered by the RoleInstance component.

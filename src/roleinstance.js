@@ -112,7 +112,7 @@ export default class RoleInstance extends PerspectivesComponent
 
         function removerol()
         {
-          if (component.state.roleKind == "ContextRole" && component.props.roleinstance)
+          if (component.state.roleKind == "ContextRole" && component.props.roleinstance && component.props.allowedtoremovecontext)
           {
             pproxy.getBinding (
               component.props.roleinstance, 
@@ -260,4 +260,5 @@ RoleInstance.propTypes =
   , contextinstance: PropTypes.string.isRequired
   , contexttype: PropTypes.string.isRequired
   , myroletype: PropTypes.string.isRequired
+  , allowedtoremovecontext: PropTypes.bool.isRequired
   };

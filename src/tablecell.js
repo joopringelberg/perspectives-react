@@ -225,6 +225,7 @@ export default class TableCell extends PerspectivesComponent
                 roletype={component.props.perspective.roleType}
                 rolekind={component.props.perspective.roleKind}
                 myroletype={component.props.myroletype}
+                allowedtoremovecontext={component.props.perspective.verbs.includes("RemoveContext") || component.props.perspective.verbs.includes("DeleteContext")}
               >
                 <RoleRepresentation
                   inputRef={component.inputRef}

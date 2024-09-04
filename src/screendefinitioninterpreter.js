@@ -290,15 +290,22 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent
   buildChat({chatRole, chatInstance, messageProperty, mediaProperty})
   {
     const component = this;
-    return <ChatComponent 
-            externalrole={externalRole( component.props.contextinstance) }
-            roleinstance={chatInstance}
-            roletype={chatRole}
-            messagesproperty={messageProperty}
-            mediaproperty={mediaProperty}
-            myroletype={component.props.myroletype}
-          >
-          </ChatComponent>
+    if (chatInstance)
+    {
+      return <ChatComponent 
+              externalrole={externalRole( component.props.contextinstance) }
+              roleinstance={chatInstance}
+              roletype={chatRole}
+              messagesproperty={messageProperty}
+              mediaproperty={mediaProperty}
+              myroletype={component.props.myroletype}
+            >
+            </ChatComponent>;
+    }
+    else
+    {
+      return <div/>;
+    }
   }
   buildMarkDown({tag, element})
   {

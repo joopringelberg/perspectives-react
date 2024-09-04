@@ -66,7 +66,7 @@ export default class TablePasteRole extends PerspectivesComponent
                 {
                   // checkBinding( <(QUALIFIED)RolName>, <binding>, [() -> undefined] )
                   PDRproxy.then( pproxy => pproxy.checkBindingP( component.props.roletype, clipboardContent.roleData.rolinstance )
-                    .then( compatibleRole => component.setState({compatibleRole, roleOnClipboard: clipboardContent.roleData.rolinstance})));
+                    .then( compatibleRole => component.setState({compatibleRole:  compatibleRole[0] === "true", roleOnClipboard: clipboardContent.roleData.rolinstance})));
                 }
               }
               else

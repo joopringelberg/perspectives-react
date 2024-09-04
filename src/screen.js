@@ -134,8 +134,7 @@ class Screen_ extends PerspectivesComponent
     //   };
     // window.addEventListener( "beforeUnload", component.beforeUnloadListener, {capture: true} );
     lifecycle.addUnsavedChanges("Context");
-    window.addEventListener( "visibilitychange", 
-      function()
+    this.visibilityChangeHandler = function()
       {
         // See: https://blog.bitsrc.io/page-lifecycle-api-a-browser-api-every-frontend-developer-should-know-b1c74948bd74
         // See: https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilitychange_event
@@ -150,12 +149,9 @@ class Screen_ extends PerspectivesComponent
               , error: e.toString()
               })));
             }
-      });
-  }
+      };
 
-  componentWillUnmount ()
-  {
-    window.removeEventListener("visibilitychange")
+    window.addEventListener( "visibilitychange", this.visibilityChangeHandler);
   }
 
   // Returns a promise.
@@ -247,6 +243,7 @@ class Screen_ extends PerspectivesComponent
     const component = this;
     // Need to call the super explicitly, so it will unsubscribe.
     super.componentWillUnmount();
+    window.removeEventListener("visibilitychange", this.visibilityChangeHandler);
     // window.removeEventListener( "beforeUnload", component.beforeUnloadListener, {capture: true} );
     lifecycle.removeUnsavedChanges("Context");
     component

@@ -48,6 +48,7 @@ export class AsyncImage extends Component
 
   componentWillUnmount ()
   {
+    super.componentWillUnmount();
     URL.revokeObjectURL( this.state.fileUrl );
   }
 

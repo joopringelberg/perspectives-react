@@ -33,7 +33,7 @@ import { file2PsharedFile } from "./PSharedFile.js";
 import { cuid2 } from "./cuid.js";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import i18next from "i18next";
-export default class ChatComponent extends Component
+export default class ChatComponent extends PerspectivesComponent
 {
   constructor(props)
   {
@@ -61,10 +61,11 @@ export default class ChatComponent extends Component
       .then( storage => component.setState({storage, storageType: storageType_, sharedStorageId: sharedStorageId_}))
       .catch( e => console.log(e))
     // Participants might change during the conversation.
-    PDRproxy.then( pproxy => pproxy.getChatParticipants(
-      component.props.roleinstance,
-      component.props.messagesproperty,
-      (participants => component.augmentParticipants(participants))));
+    PDRproxy.then( pproxy => component.addUnsubscriber (
+        pproxy.getChatParticipants(
+          component.props.roleinstance,
+          component.props.messagesproperty,
+          (participants => component.augmentParticipants(participants)))));
     component.sharedFileStore = {};
     // Request for permission to use audio and store a promise for the audioRecorder in `mediaRecorderPromise`.
     this.mediaRecorderPromise = undefined;
@@ -76,18 +77,20 @@ export default class ChatComponent extends Component
       const component = this;
       PDRproxy.then( proxy => 
         {
-          proxy.getProperty( 
-            component.props.roleinstance,
-            component.props.messagesproperty,
-            component.props.roletype,
-            values => component.augmentMessages( values ).then( augmentedMessages => component.setState({messages: augmentedMessages}))
-          )
+          component.addUnsubscriber(
+            proxy.getProperty( 
+              component.props.roleinstance,
+              component.props.messagesproperty,
+              component.props.roletype,
+              values => component.augmentMessages( values ).then( augmentedMessages => component.setState({messages: augmentedMessages}))
+            ));
           proxy.getMeInContext( component.props.externalrole ).then( me => component.setState({me: me[0]}))
         });
   }
 
   componentWillUnmount ()
   {
+    super.componentWillUnmount();
     Object.values( this.sharedFileStore ).forEach( objectUrl => URL.revokeObjectURL( objectUrl ));
   }
 

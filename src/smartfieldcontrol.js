@@ -216,7 +216,24 @@ export default class SmartFieldControl extends Component
     }
     const component = this;
     const oldValue = component.valueOnProps();
-    if ( oldValue != val )
+    if (val == "")
+    {
+      PDRproxy.then(
+        function(pproxy)
+        {
+          pproxy.deleteProperty(
+            component.props.roleId,
+            component.props.serialisedProperty.id,
+            component.props.myroletype )
+            .catch(e => UserMessagingPromise.then( um => 
+              um.addMessageForEndUser(
+                { title: i18next.t("setProperty_title", { ns: 'preact' }) 
+                , message: i18next.t("deleteProperty_message", {ns: 'preact', property: component.props.serialisedProperty.id})
+                , error: e.toString()
+                })));
+          });
+    }
+    else if ( oldValue != val )
     {
       PDRproxy.then(
         function(pproxy)

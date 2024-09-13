@@ -215,9 +215,13 @@ export default class FormControls extends PerspectivesComponent
                   />
                   : null
                 }
-                <AppContext.Consumer>
-                  { appcontext => <FormPasteRole systemexternalrole={appcontext.systemExternalRole}/> }
-                </AppContext.Consumer>
+                { !component.props.perspective.isCalculated ? 
+                    <AppContext.Consumer>
+                      { appcontext => <FormPasteRole systemexternalrole={appcontext.systemExternalRole}/> }
+                    </AppContext.Consumer>
+                    : 
+                    null
+                }
                 { component.state.actions.length > 0 && component.props.roleinstance ?
                   <ActionDropDown
                     actions={ component.state.actions }

@@ -194,6 +194,7 @@ export default class FormControls extends PerspectivesComponent
     const component = this;
     const mayCreateContext = component.mayCreateContext()
     const mayCreateRoleInstance = component.mayCreateInstance();
+    const roleInstance = component.props.perspective.roleInstances[ component.props.roleinstance ];
 
     if ( component.stateIsComplete(["roleinstance", "card"]) )
     {
@@ -215,7 +216,7 @@ export default class FormControls extends PerspectivesComponent
                   />
                   : null
                 }
-                { !component.props.perspective.isCalculated ? 
+                { !component.props.perspective.isCalculated && roleInstance && !roleInstance.filler ? 
                     <AppContext.Consumer>
                       { appcontext => <FormPasteRole systemexternalrole={appcontext.systemExternalRole}/> }
                     </AppContext.Consumer>

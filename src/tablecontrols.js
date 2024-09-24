@@ -192,7 +192,7 @@ export default class TableControls extends PerspectivesComponent
                   : null
                 }
                 {
-                  mayCreateContext || mayCreateRoleInstance ?
+                  (mayCreateContext || mayCreateRoleInstance) && instance && !instance.filler ?
                   <AppContext.Consumer>
                   { appcontext => <TablePasteRole 
                     systemexternalrole={appcontext.systemExternalRole}

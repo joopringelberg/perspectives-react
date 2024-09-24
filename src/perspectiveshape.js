@@ -73,6 +73,7 @@ export const roleinstancewithprops = PropTypes.shape(
       , value: PropTypes.string.isRequired
       }))
   , publicUrl: PropTypes.string
+  , filler : PropTypes.string
   });
 
 export const SerialisedPerspective =

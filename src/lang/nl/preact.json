@@ -8,6 +8,8 @@
 , "contextInstance_message": "Kan het type niet vinden van een context instantie."
 , "screen_computestate_title": "Schermopbouw"
 , "screen_computestate_message": "Er ging iets fout met de schermopbouw."
+, "screen_no_usertype_for_context_title": "Roltype in deze context onbepaald"
+, "screen_no_usertype_for_context_message": "Kon niet bepalen welk roltype je in deze context zou spelen. NOTA BENE: dit is waarschijnlijk een modelfout, in het bijzonder dat een berekende rol geen resultaat geeft."
 , "contextOfRole_title": "Context van een rol"
 , "contextOfRole_message": "Kan de context van deze rol instantie niet vinden: {{- role}}."
 , "role_title": "Roltype"
@@ -66,4 +68,9 @@
 , "openContext": "Een moment terwijl de context wordt geopend..."
 , "contextDropdown_title": "Alleen de rol"
 , "chatComponent_recordAudio": "Klik en houd vast om op te nemen. Laat los om te stoppen."
+, "ppsharedfilestorage_nofile": "De perspectives sharedfilestorage service ontving geen bestand."
+, "ppsharedfilestorage_nokey": "De perspectives sharedfilestorage service ontving geen sleutel."
+, "ppsharedfilestorage_keyunknown": "De perspectives sharedfilestorage service ontving een sleutel die niet door de service zelf werd uitgegeven."
+, "ppsharedfilestorage_maxfilesreached": "De perspectives sharedfilestorage accepteert niet meer bestanden."
+, "ppsharedfilestorage_serviceerror": "De perspectives sharedfilestorage functioneert niet goed. Zie de console voor technische informatie."
 }

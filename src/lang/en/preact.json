@@ -8,6 +8,8 @@
 , "contextInstance_message": "Could not find the type of a context instance."
 , "screen_computestate_title": "Constructing the screen"
 , "screen_computestate_message": "Something went wrong on constructing the screen."
+, "screen_no_usertype_for_context_title": "Role type in this context undetermined"
+, "screen_no_usertype_for_context_message": "Could not find what role type you have in this context. NOTE: this is likely a modelling error. More specifically, a calculated role probably gives no result."
 , "contextOfRole_title": "Context of a role"
 , "contextOfRole_message": "Cannot get the context of this role: {{- role}}."
 , "role_title": "Type of the role"
@@ -66,4 +68,9 @@
 , "openContext": "Please wait while this context is being loaded..."
 , "contextDropdown_title": "Just the role"
 , "chatComponent_recordAudio": "Press and hold to record. Release to stop recording."
+, "ppsharedfilestorage_nofile": "The perspectives sharedfilestorage service did not receive a file."
+, "ppsharedfilestorage_nokey": "The perspectives sharedfilestorage service did not receive a key."
+, "ppsharedfilestorage_keyunknown": "The perspectives sharedfilestorage service did not receive a key that has not been given out by the service itself."
+, "ppsharedfilestorage_maxfilesreached": "The perspectives sharedfilestorage does not accept more files."
+, "ppsharedfilestorage_serviceerror": "The perspectives sharedfilestorage does not function correctly. See the console for technical information."
 }

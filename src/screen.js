@@ -203,20 +203,33 @@ class Screen_ extends PerspectivesComponent
               // userRoles includes roles from aspects.
               function(userRoles)
               {
-                component
-                  .setIsOnScreen( component.props.externalroleinstance, "true") 
-                  .then( () => importScreens( userRoles, userIdentifier, component.props.couchdbUrl) )
-                  .then( screenModules => 
-                    {
-                      component.setState(
-                        { myroletype: userRoles[0]
-                        , contextinstance: contextId
-                        , contexttype: contextType
-                        , modules: screenModules
-                        });
-                      component.props.setMyRoleType( userRoles[0]);
-                    })
-                  .then( resolve, reject );
+                // It may happen that there are no user role types.
+                if ( userRoles.length == 0)
+                {
+                  UserMessagingPromise.then( um => 
+                    um.addMessageForEndUser(
+                      { title: i18next.t("screen_no_usertype_for_context_title", { ns: 'preact' }) 
+                      , message: i18next.t("screen_no_usertype_for_context_message", {ns: 'preact'})
+                      , error: "No result from GetMeFromContext"
+                      }));
+                }
+                else
+                {
+                  component
+                    .setIsOnScreen( component.props.externalroleinstance, "true") 
+                    .then( () => importScreens( userRoles, userIdentifier, component.props.couchdbUrl) )
+                    .then( screenModules => 
+                      {
+                        component.setState(
+                          { myroletype: userRoles[0]
+                          , contextinstance: contextId
+                          , contexttype: contextType
+                          , modules: screenModules
+                          });
+                        component.props.setMyRoleType( userRoles[0]);
+                      })
+                    .then( resolve, reject );
+                  }
               },
               CONTINUOUS,
               reject))

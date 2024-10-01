@@ -19,7 +19,7 @@ import {PDRproxy} from "perspectives-proxy";
 
 import { PropTypes } from "prop-types"
 import PerspectivesComponent from "./perspectivescomponent";
-import React, { Component } from "react";
+import React from "react";
 
 import { MainContainer, ChatContainer, MessageList, Message, MessageInput, ConversationHeader, Avatar, VoiceCallButton, VideoCallButton, InfoButton, TypingIndicator, MessageSeparator, SendButton, AttachmentButton, AvatarGroup } from '@chatscope/chat-ui-kit-react';
 import styles from '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
@@ -33,6 +33,10 @@ import { file2PsharedFile } from "./PSharedFile.js";
 import { cuid2 } from "./cuid.js";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import i18next from "i18next";
+import PPStorage from "./ppsharedfilestorage.js";
+
+const ppStorageLimit = parseInt( '__PPSTORAGELIMIT__');
+
 export default class ChatComponent extends PerspectivesComponent
 {
   constructor(props)
@@ -43,22 +47,48 @@ export default class ChatComponent extends PerspectivesComponent
     component.state = 
       { messages: []
       , me: undefined
+      // storage is either the Mega Storage object, or an instance of PPStorage.
       , storage: undefined
       , storageType: undefined
       , sharedStorageId: undefined
+      , sharedFileServerKey: undefined
       , participants: []
       };
     PDRproxy
       .then( pproxy => pproxy.getFileShareCredentials() )
       // Mega storage.
       // Notice that for now we assume all storage is Mega. This might change in the future.
-      .then( ({accountName, password, storageType, sharedStorageId}) => 
+      .then( (credentials) => 
         {
-          storageType_ = storageType;
-          sharedStorageId_ = sharedStorageId;
-          return new Storage({email: accountName, password, userAgent: "Perspectives", keepalive: false}).ready
+          if (credentials)
+          {
+            switch (credentials.storageType) {
+              case "ppstorage":
+                PDRproxy.then( pproxy => {
+                  component.addUnsubscriber(
+                    pproxy.getProperty( 
+                      component.props.roleinstance,
+                      component.props.mediaproperty,
+                      component.props.roletype,
+                      values => component.guardUploadLimit( values )
+                    ))});
+                // Notice that password is overloaded for ppstorage.
+                component.setState({storage: new PPStorage( credentials.password ), storageType: credentials.storageType} );
+                break;
+            
+              case "mega":
+                // {accountName, password, storageType, sharedStorageId}
+                storageType_ = credentials.storageType;
+                sharedStorageId_ = credentials.sharedStorageId;
+                new Storage({email: credentials.accountName, password: credentials.password, userAgent: "Perspectives", keepalive: false}).ready
+                  .then( storage => component.setState({storage, storageType: storageType_, sharedStorageId: sharedStorageId_}));
+
+              default:
+                break;
+            }
+          }
         })
-      .then( storage => component.setState({storage, storageType: storageType_, sharedStorageId: sharedStorageId_}))
+      // TODO: give proper feedback.
       .catch( e => console.log(e))
     // Participants might change during the conversation.
     PDRproxy.then( pproxy => component.addUnsubscriber (
@@ -68,8 +98,17 @@ export default class ChatComponent extends PerspectivesComponent
           (participants => component.augmentParticipants(participants)))));
     component.sharedFileStore = {};
     // Request for permission to use audio and store a promise for the audioRecorder in `mediaRecorderPromise`.
-    this.mediaRecorderPromise = undefined;
-    component.initializeAudio();
+    this.mediaRecorderPromise = new Promise((resolve) => component.mediaRecorderPromiseResolver = resolve);
+  }
+
+  componentDidUpdate(prevProps, prevState)
+  {
+    const component = this;
+    if (component.state.storage && ! prevState.storage)
+    {
+      // Only initialise the audio when we have storage!
+      component.initializeAudio();
+    }
   }
 
   componentDidMount()
@@ -92,6 +131,24 @@ export default class ChatComponent extends PerspectivesComponent
   {
     super.componentWillUnmount();
     Object.values( this.sharedFileStore ).forEach( objectUrl => URL.revokeObjectURL( objectUrl ));
+  }
+
+  guardUploadLimit(files)
+  {
+    const component = this;
+    if ( files.map( JSON.parse ).filter( ({storageType}) => storageType == "ppstorage").length > ppStorageLimit )
+    {
+      PDRproxy.then( pproxy => pproxy.setProperty(
+        component.props.roleinstance,
+        "model://perspectives.domains#SharedFileServices$SharedFileServices$DefaultFileServer$Disabled",
+        ["false"],
+        component.props.myroletype
+      ));
+      component.setState({storage: undefined, storageType: undefined});
+      component.mediaRecorderPromise = new Promise(() => {});
+      // TODO: provide better feedback.
+      alert( "Max number of file uploads reached!");
+    }
   }
 
   augmentParticipants(participants)
@@ -135,39 +192,61 @@ export default class ChatComponent extends PerspectivesComponent
     {
       if (component.state.storage)
       {
-        const reader = new FileReader();
+        component.uploadMediaFile( theFile )
+      }
+      // No storage. By now the client will have received an answer from the PDR, so we can safely assume
+      // the user has no private storage and has exceeded the complimentary storage limit.
+    }
+  }
 
+  uploadMediaFile( theFile )
+  {
+    const component = this;
+    switch (component.state.storageType) {
+      case "mega":
+        const reader = new FileReader();
         reader.onload = function(event) {
             const arrayBuffer = event.target.result; // ArrayBuffer from FileReader
             const uint8Array = new Uint8Array(arrayBuffer); // Create Uint8Array from ArrayBuffer
-    
             component.state.storage.upload( {name: theFile.name, size: theFile.size}, uint8Array ).complete
-              .then( file => file.link()
-              .then( megaUrl => 
-              {
-                // then save the mega url in the 'media' PDR property
-                PDRproxy.then( pproxy => pproxy.addProperty(
-                  component.props.roleinstance,
-                  component.props.mediaproperty,
-                  JSON.stringify( file2PsharedFile(theFile, component.state.sharedStorageId, component.state.storageType, megaUrl) ),
-                  component.props.myroletype
-                ));
-                // then create an object url and add to the map with the mega url as index
-                component.sharedFileStore[megaUrl] = URL.createObjectURL(theFile);
-                // then create and send a message with the mega url.
-                component.handleSend(
-                  { src: file2PsharedFile(theFile, component.state.sharedStorageId, component.state.storageType, megaUrl)
-                  , alt: theFile.name
-                  , width: "100%"
-                  })
-              }
-              ))
-      };
-    
-        reader.readAsArrayBuffer(theFile); // Read the file as an ArrayBuffer
-      }
-      // Provide some warning.
+              .then( file => file.link() )
+              // then add to the map with the mega url as index
+              .then( megaUrl => component.cacheAndSendMessage (theFile, megaUrl) )
+              // TODO: meldt in een dialog.
+              .catch( message => alert(message))
+              };
+        reader.readAsArrayBuffer(theFile);
+        break;
+
+      case "ppstorage":
+        component.state.storage.upload(theFile)
+          .then( megaUrl => component.cacheAndSendMessage( theFile, megaUrl ))
+          // TODO: meld in een dialog.
+          .catch( message => alert(message));
+      default:
+        break;
     }
+  }
+
+
+  cacheAndSendMessage (theFile, megaUrl)
+  {
+    const component = this;
+    // then save the mega url in the 'media' PDR property
+    PDRproxy.then( pproxy => pproxy.addProperty(
+      component.props.roleinstance,
+      component.props.mediaproperty,
+      JSON.stringify( file2PsharedFile(theFile, component.state.sharedStorageId, component.state.storageType, megaUrl) ),
+      component.props.myroletype
+    ));
+    // then create an object url and add to the map with the mega url as index
+    component.sharedFileStore[megaUrl] = URL.createObjectURL(theFile);
+    // then create and send a message with the mega url.
+    component.handleSend(
+      { src: file2PsharedFile(theFile, component.state.sharedStorageId, component.state.storageType, megaUrl)
+      , alt: theFile.name
+      , width: "100%"
+      })
   }
 
   // returns a promise for an object url.
@@ -189,6 +268,7 @@ export default class ChatComponent extends PerspectivesComponent
   retrieveFileFromStorage(psharedFile)
   {
     switch (psharedFile.storageType) {
+      case "ppstorage":
       case "mega":
         return this.retrieveFileFromMega(psharedFile)
 
@@ -228,12 +308,12 @@ export default class ChatComponent extends PerspectivesComponent
   //    Adds a megaUrl - objectUrl mapping to the local sharedFileStore.
   //    Saves a PSharedFile.
   //    Sends the recording as a message.
-  initializeAudio(ev)
+  initializeAudio()
   {
     const component = this;
 
     // Request access to the user's microphone
-    component.mediaRecorderPromise = navigator.mediaDevices.getUserMedia({ audio: true })
+    navigator.mediaDevices.getUserMedia({ audio: true })
       .then( stream => 
         {
           // Initialize the chunks.
@@ -254,36 +334,10 @@ export default class ChatComponent extends PerspectivesComponent
               audioChunks = [];
               // Save the audio file
               const audioFile = new File([audioBlob], cuid2(), { type: mediaRecorder.mimeType }); 
-              const objectUrl = URL.createObjectURL(audioBlob);
-              
-              const reader = new FileReader();
-              reader.onload = function(event) {
-                  const arrayBuffer = event.target.result; // ArrayBuffer from FileReader
-                  const uint8Array = new Uint8Array(arrayBuffer); // Create Uint8Array from ArrayBuffer
-                  component.state.storage.upload( {name: audioFile.name, size: audioFile.size}, uint8Array ).complete
-                    .then( file => file.link() )
-                    // then add to the map with the mega url as index
-                    .then( megaUrl => 
-                      {
-                        component.sharedFileStore[megaUrl] = objectUrl;
-                        // then save the audio url in the 'media' PDR property
-                        PDRproxy.then( pproxy => pproxy.addProperty(
-                          component.props.roleinstance,
-                          component.props.mediaproperty,
-                          JSON.stringify( file2PsharedFile(audioFile, component.state.sharedStorageId, component.state.storageType, megaUrl) ),
-                          component.props.myroletype
-                        ));
-                        // then create and send a message with the mega url.
-                        component.handleSend(
-                          { src: file2PsharedFile(audioFile, component.state.sharedStorageId, component.state.storageType, megaUrl)
-                          , alt: audioFile.name
-                          , width: "100%"
-                          })
-                      } )
-                    };
-              reader.readAsArrayBuffer(audioFile); // Read the file as an ArrayBuffer
+              component.uploadMediaFile( audioFile );
           };
-          return mediaRecorder
+          // Finally resolve the promise 'mediaRecorderPromise' created in the constructor.
+          component.mediaRecorderPromiseResolver( mediaRecorder );
         });
   }
 
@@ -478,6 +532,8 @@ export default class ChatComponent extends PerspectivesComponent
       </Tooltip> );
   
     const component = this;
+    let audioAvailabe = false;
+    component.mediaRecorderPromise.then( () => audioAvailabe = true);
     return (
       <MainContainer responsive>
             <ChatContainer
@@ -505,13 +561,17 @@ export default class ChatComponent extends PerspectivesComponent
                 onSend={text => component.handleSend(text)}
                 style={{ flexGrow: 1, borderTop: 0, flexShrink:"initial",  }} />
               <SendButton style={{fontSize:"1.2em", marginLeft:0, paddingLeft: "0.2em", paddingRight:"0.2em"}} />
-              <AttachmentButton onClick={ () => document.getElementById('__fileupload__').click()} style={{fontSize:"1.2em", paddingLeft: "0.2em", paddingRight:"0.2em"}} />
+              <AttachmentButton 
+                disabled={audioAvailabe}
+                onClick={ () => document.getElementById('__fileupload__').click()} style={{fontSize:"1.2em", paddingLeft: "0.2em", paddingRight:"0.2em"}} 
+              />
               <OverlayTrigger
                   placement="left"
                   delay={{ show: 250, hide: 400 }}
                   overlay={renderTooltip}
                 >
                 <MicrophoneButton 
+                  disabled={audioAvailabe}
                   onMouseDown={ ev => component.startRecording(ev)}
                   onMouseUp={ ev => component.stopRecording(ev)}
                   style={{fontSize:"1.2em", paddingLeft: "0.2em", paddingRight:"0.2em"}}  

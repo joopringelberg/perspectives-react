@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require('webpack');
 
 module.exports = {
   entry: path.join(__dirname, "src/perspectives-react-components.js" ),
@@ -34,6 +35,12 @@ module.exports = {
         use: [ 'style-loader', 'css-loader' ]
       }]
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      __PPSTORAGELIMIT__: 5,
+      __PPSTORAGEURL__: '"https://mycontexts.com/ppsfs/uploadfile"'
+    })        
+  ],
   externals:
     {
     "react": {

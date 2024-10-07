@@ -48,7 +48,7 @@ export default class PPStorage
         }).then( response => {
           if (response.ok) {
             // The mega url.
-            response.json().then( r => resolve( r ) );
+            response.json().then( r => resolve( r.megaUrl ) );
           } else {
             switch (response.body.error) {
               case NOFILE:

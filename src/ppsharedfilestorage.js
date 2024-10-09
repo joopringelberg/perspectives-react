@@ -46,32 +46,33 @@ export default class PPStorage
           method: 'POST',
           body: formData
         }).then( response => {
-          if (response.ok) {
+          if (response.status == 201) {
             // The mega url.
             response.json().then( r => resolve( r.megaUrl ) );
           } else {
-            switch (response.body.error) {
-              case NOFILE:
-                reject( i18next.t("ppsharedfilestorage_nofile", {ns: "preact"}) );
-                break;
-              
-              case NOKEY:
-                reject( i18next.t("ppsharedfilestorage_nokey", {ns: "preact"}) );
-                break;
-              
-              case KEYUNKNOWN:
-                reject( i18next.t("ppsharedfilestorage_keyunknown", {ns: "preact"}) );
-                break;
+            response.json().then( result =>
+            {
+              switch (result.error) {
+                case NOFILE:
+                  reject( {error: result.error, message: i18next.t("ppsharedfilestorage_nofile", {ns: "preact"})} );
+                  break;
+                
+                case NOKEY:
+                  reject( {error: result.error, message: i18next.t("ppsharedfilestorage_nokey", {ns: "preact"})} );
+                  break;
+                
+                case KEYUNKNOWN:
+                  reject( {error: result.error, message: i18next.t("ppsharedfilestorage_keyunknown", {ns: "preact"})} );
+                  break;
 
-              case MAXFILESREACHED:
-                reject( i18next.t("ppsharedfilestorage_maxfilesreached", {ns: "preact"}) );
-                break
-            }
-          }  
-        })
+                case MAXFILESREACHED:
+                  reject( {error: result.error, message: i18next.t("ppsharedfilestorage_maxfilesreached", {ns: "preact"})} );
+                  break
+            }} )
+        }})
       } catch (error) {
         console.error('Error:', error);
-        reject( i18next.t("ppsharedfilestorage_serviceerror", {ns: "preact"}) );
+        reject( {message: i18next.t("ppsharedfilestorage_serviceerror", {ns: "preact"})} );
       }
   
     })

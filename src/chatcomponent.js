@@ -95,6 +95,7 @@ export default class ChatComponent extends PerspectivesComponent
                 new Storage({email: credentials.accountName, password: credentials.password, userAgent: "Perspectives", keepalive: false}).ready
                   .then( storage => component.setState({storage, storageType: storageType_, sharedStorageId: sharedStorageId_}));
                 component.initializeAudio();
+                break;
 
               default:
                 component.setState({limitReached: true});

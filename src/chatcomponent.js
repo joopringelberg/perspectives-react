@@ -399,6 +399,7 @@ export default class ChatComponent extends PerspectivesComponent
 
   startRecording(ev)
   {
+    const component = this;
     ev.stopPropagation();
     ev.preventDefault();
     // console.log("Start recording.");
@@ -409,6 +410,7 @@ export default class ChatComponent extends PerspectivesComponent
 
   stopRecording(ev)
   {
+    const component = this;
     ev.stopPropagation();
     ev.preventDefault();
     // console.log("Stop recording.");
@@ -459,7 +461,7 @@ export default class ChatComponent extends PerspectivesComponent
     const component = this;
     function isPSharedFile ({payload})
     {
-      return typeof payload == 'object' && payload.src && payload.src.storageType;
+      return typeof payload == 'object' && payload.src && payload.src.type;
     }
     return Promise.all( messages.map( (messageString, i) => 
     {
@@ -547,7 +549,7 @@ export default class ChatComponent extends PerspectivesComponent
                   <Avatar name={message.sender} size="sm" src={component.getAvatar(message.sender)}/>
                   <Message.CustomContent>
                     <audio controls>
-                      <source src={message.payload.src} type={message.payload.mimeType}/>
+                      <source src={message.payload.src} type={message.payload.mimeType} preload="auto"/>
                     </audio>
                   </Message.CustomContent>
                 </Message>)

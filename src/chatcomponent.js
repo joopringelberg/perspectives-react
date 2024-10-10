@@ -21,7 +21,7 @@ import { PropTypes } from "prop-types"
 import PerspectivesComponent from "./perspectivescomponent";
 import React from "react";
 
-import { MainContainer, ChatContainer, MessageList, Message, MessageInput, ConversationHeader, Avatar, VoiceCallButton, VideoCallButton, InfoButton, TypingIndicator, MessageSeparator, SendButton, AttachmentButton, AvatarGroup } from '@chatscope/chat-ui-kit-react';
+import { MainContainer, ChatContainer, MessageList, Message, MessageInput, ConversationHeader, Avatar, VoiceCallButton, VideoCallButton, InfoButton, TypingIndicator, MessageSeparator, SendButton, AttachmentButton, AvatarGroup, ExpansionPanel } from '@chatscope/chat-ui-kit-react';
 import styles from '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 
 import { createAvatar } from '@dicebear/core';
@@ -34,8 +34,11 @@ import { cuid2 } from "./cuid.js";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import i18next from "i18next";
 import PPStorage from "./ppsharedfilestorage.js";
+import { UnboundMarkDownWidget, UserMessagingPromise } from "./perspectives-react-components.js";
+import modelDependencies, { default as ModelDependencies } from "./modelDependencies.js";
 
-const ppStorageLimit = parseInt( '__PPSTORAGELIMIT__');
+const ppStorageLimit = __PPSTORAGELIMIT__;
+const ppWarningLevel = __PPWARNINGLEVEL__
 
 export default class ChatComponent extends PerspectivesComponent
 {
@@ -50,9 +53,14 @@ export default class ChatComponent extends PerspectivesComponent
       // storage is either the Mega Storage object, or an instance of PPStorage.
       , storage: undefined
       , storageType: undefined
+      // The identifier of the role that represents the storage. Either the DefaultFileServer, or MySharedFileService,
       , sharedStorageId: undefined
       , sharedFileServerKey: undefined
       , participants: []
+      , warningLevelReached: false
+      , limitReached: false
+      , nrOfUploadedFiles: undefined
+      , mediaRecorder: undefined
       };
     PDRproxy
       .then( pproxy => pproxy.getFileShareCredentials() )
@@ -64,32 +72,48 @@ export default class ChatComponent extends PerspectivesComponent
           {
             switch (credentials.storageType) {
               case "ppstorage":
+                // DefaultFileServer
                 PDRproxy.then( pproxy => {
                   component.addUnsubscriber(
                     pproxy.getProperty( 
-                      component.props.roleinstance,
-                      component.props.mediaproperty,
+                      credentials.sharedStorageId,
+                      // Should be initialised to zero.
+                      ModelDependencies.nrOfUploadedFiles,
                       component.props.roletype,
                       values => component.guardUploadLimit( values )
                     ))});
                 // Notice that password is overloaded for ppstorage.
-                component.setState({storage: new PPStorage( credentials.password ), storageType: credentials.storageType} );
+                component.setState({storage: new PPStorage( credentials.password ), storageType: credentials.storageType, sharedStorageId: credentials.sharedStorageId} );
+                component.initializeAudio();
                 break;
             
+              // MySharedFileService.
               case "mega":
                 // {accountName, password, storageType, sharedStorageId}
                 storageType_ = credentials.storageType;
                 sharedStorageId_ = credentials.sharedStorageId;
                 new Storage({email: credentials.accountName, password: credentials.password, userAgent: "Perspectives", keepalive: false}).ready
                   .then( storage => component.setState({storage, storageType: storageType_, sharedStorageId: sharedStorageId_}));
+                component.initializeAudio();
 
               default:
+                component.setState({limitReached: true});
+                UserMessagingPromise.then( um => 
+                  um.addMessageForEndUser(
+                    { title: i18next.t("chatcomponent_nostorageservice_title", { ns: 'preact' }) 
+                    , message: i18next.t("chatcomponent_nostorageservice", {ns: 'preact'})
+                    , error: ""
+                    }))
                 break;
             }
           }
         })
-      // TODO: give proper feedback.
-      .catch( e => console.log(e))
+      .catch( e => UserMessagingPromise.then( um => 
+        um.addMessageForEndUser(
+          { title: i18next.t("chatcomponent_nostorageservice_title", { ns: 'preact' }) 
+          , message: i18next.t("chatcomponent_nostorageservice", {ns: 'preact'})
+          , error: e.toString()
+          })))
     // Participants might change during the conversation.
     PDRproxy.then( pproxy => component.addUnsubscriber (
         pproxy.getChatParticipants(
@@ -97,8 +121,6 @@ export default class ChatComponent extends PerspectivesComponent
           component.props.messagesproperty,
           (participants => component.augmentParticipants(participants)))));
     component.sharedFileStore = {};
-    // Request for permission to use audio and store a promise for the audioRecorder in `mediaRecorderPromise`.
-    this.mediaRecorderPromise = new Promise((resolve) => component.mediaRecorderPromiseResolver = resolve);
   }
 
   componentDidUpdate(prevProps, prevState)
@@ -133,22 +155,36 @@ export default class ChatComponent extends PerspectivesComponent
     Object.values( this.sharedFileStore ).forEach( objectUrl => URL.revokeObjectURL( objectUrl ));
   }
 
-  guardUploadLimit(files)
+  guardUploadLimit(nrArr)
   {
     const component = this;
-    if ( files.map( JSON.parse ).filter( ({storageType}) => storageType == "ppstorage").length > ppStorageLimit )
+    // The property is initialised on 0.
+    const nrOfUploadedFiles = parseInt( nrArr[0] );
+    
+    if ( nrOfUploadedFiles >= ppWarningLevel && nrOfUploadedFiles < ppStorageLimit)
     {
-      PDRproxy.then( pproxy => pproxy.setProperty(
-        component.props.roleinstance,
-        "model://perspectives.domains#SharedFileServices$SharedFileServices$DefaultFileServer$Disabled",
-        ["false"],
-        component.props.myroletype
-      ));
-      component.setState({storage: undefined, storageType: undefined});
-      component.mediaRecorderPromise = new Promise(() => {});
-      // TODO: provide better feedback.
-      alert( "Max number of file uploads reached!");
+      component.setState({warningLevelReached: true, nrOfUploadedFiles});
     }
+    if (nrOfUploadedFiles >= ppStorageLimit )
+    {
+      component.disablePPStorage(nrOfUploadedFiles);
+    }
+    else 
+    {
+      component.setState({nrOfUploadedFiles});
+    }
+  }
+
+  disablePPStorage(nrOfUploadedFiles)
+  {
+    const component = this;
+    PDRproxy.then( pproxy => pproxy.setProperty(
+      component.state.sharedStorageId,
+      modelDependencies.disabled,
+      "true",
+      component.props.myroletype
+    ));
+    component.setState({storage: undefined, storageType: undefined, limitReached: true, nrOfUploadedFiles, mediaRecorder: undefined});
   }
 
   augmentParticipants(participants)
@@ -221,8 +257,28 @@ export default class ChatComponent extends PerspectivesComponent
       case "ppstorage":
         component.state.storage.upload(theFile)
           .then( megaUrl => component.cacheAndSendMessage( theFile, megaUrl ))
-          // TODO: meld in een dialog.
-          .catch( message => alert(message));
+          .then( () => PDRproxy.then( pproxy => pproxy.setProperty(
+            component.state.sharedStorageId,
+            modelDependencies.nrOfUploadedFiles,
+            (component.state.nrOfUploadedFiles + 1).toString(),
+            component.props.myroletype
+            )))
+          .catch( ({error, message}) => 
+            {
+              switch (error) {
+                case MAXFILESREACHED:
+                  component.disablePPStorage(ppStorageLimit);
+                  break;
+              
+                default:
+                  UserMessagingPromise.then( um => 
+                    um.addMessageForEndUser(
+                      { title: i18next.t("ppsharedfilestorage_serviceerror", { ns: 'preact' }) 
+                      , message: message
+                      , error: e.toString()
+                      }))
+                  break;
+              }});
       default:
         break;
     }
@@ -302,7 +358,7 @@ export default class ChatComponent extends PerspectivesComponent
   /////////////////////////////////////////////////////////////////////////////////////////////////
   ////            AUDIO
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Creates a promise for the mediaRecorder in the component property `mediaRecorderPromise`.
+  // Creates the mediaRecorder in component state.
   // When the recorder is started and then stopped:
   //    Saves the audio file to Mega.
   //    Adds a megaUrl - objectUrl mapping to the local sharedFileStore.
@@ -336,8 +392,7 @@ export default class ChatComponent extends PerspectivesComponent
               const audioFile = new File([audioBlob], cuid2(), { type: mediaRecorder.mimeType }); 
               component.uploadMediaFile( audioFile );
           };
-          // Finally resolve the promise 'mediaRecorderPromise' created in the constructor.
-          component.mediaRecorderPromiseResolver( mediaRecorder );
+          component.setState({mediaRecorder});
         });
   }
 
@@ -345,16 +400,20 @@ export default class ChatComponent extends PerspectivesComponent
   {
     ev.stopPropagation();
     ev.preventDefault();
-    console.log("Start recording.");
-    this.mediaRecorderPromise.then( mediaRecorder => mediaRecorder.start());
+    // console.log("Start recording.");
+    if (component.state.mediaRecorder){
+      component.state.mediaRecorder.start();
+    }
   }
 
   stopRecording(ev)
   {
     ev.stopPropagation();
     ev.preventDefault();
-    console.log("Stop recording.");
-    this.mediaRecorderPromise.then( mediaRecorder => mediaRecorder.stop());
+    // console.log("Stop recording.");
+    if (component.state.mediaRecorder){
+      component.state.mediaRecorder.stop();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -532,11 +591,10 @@ export default class ChatComponent extends PerspectivesComponent
       </Tooltip> );
   
     const component = this;
-    let audioAvailabe = false;
-    component.mediaRecorderPromise.then( () => audioAvailabe = true);
+    let audioAvailabe = !!component.state.mediaRecorder;
     return (
-      <MainContainer responsive>
-            <ChatContainer
+      <MainContainer responsive style={{flexDirection: 'column'}}>
+           <ChatContainer
             style={{
                 height: '100%'
             }}
@@ -562,7 +620,7 @@ export default class ChatComponent extends PerspectivesComponent
                 style={{ flexGrow: 1, borderTop: 0, flexShrink:"initial",  }} />
               <SendButton style={{fontSize:"1.2em", marginLeft:0, paddingLeft: "0.2em", paddingRight:"0.2em"}} />
               <AttachmentButton 
-                disabled={audioAvailabe}
+                disabled={!audioAvailabe}
                 onClick={ () => document.getElementById('__fileupload__').click()} style={{fontSize:"1.2em", paddingLeft: "0.2em", paddingRight:"0.2em"}} 
               />
               <OverlayTrigger
@@ -571,14 +629,30 @@ export default class ChatComponent extends PerspectivesComponent
                   overlay={renderTooltip}
                 >
                 <MicrophoneButton 
-                  disabled={audioAvailabe}
+                  disabled={!audioAvailabe}
                   onMouseDown={ ev => component.startRecording(ev)}
                   onMouseUp={ ev => component.stopRecording(ev)}
                   style={{fontSize:"1.2em", paddingLeft: "0.2em", paddingRight:"0.2em"}}  
                   />
               </OverlayTrigger>
             </div>
-            </ChatContainer>
+          </ChatContainer>
+          {
+            (component.state.warningLevelReached && !component.state.limitReached) ? 
+            <ExpansionPanel title={i18next.t("chatComponent_instruction_title", { ns: 'preact' })} open={true}>
+              <UnboundMarkDownWidget markdown={i18next.t("chatComponent_instruction_body1", { ns: 'preact', remainingUploads: ppStorageLimit-ppWarningLevel})} open={true}/>
+            </ExpansionPanel>
+            : 
+            null
+          }
+          {
+            component.state.limitReached ? 
+            <ExpansionPanel title={i18next.t("chatComponent_instruction_title", { ns: 'preact' })} open={true} >
+              <UnboundMarkDownWidget markdown={i18next.t("chatComponent_instruction_body2", { ns: 'preact' })} open={true}/>
+            </ExpansionPanel>
+            : 
+            null
+          }
         <input 
             type="file" 
             id="__fileupload__"
@@ -601,3 +675,5 @@ ChatComponent.propTypes =
   , mediaproperty: PropTypes.string.isRequired
   , myroletype: PropTypes.string.isRequired
   }
+
+  const MAXFILESREACHED = 4;

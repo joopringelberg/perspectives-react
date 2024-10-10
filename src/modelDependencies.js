@@ -8,5 +8,6 @@ export default
 , allNotifications: "model://perspectives.domains#System$PerspectivesSystem$AllNotifications"
 , notificationMessage: "model://perspectives.domains#System$ContextWithNotification$Notifications$Message"
 , isOnScreen: "model://perspectives.domains#System$ContextWithScreenState$External$IsOnScreen"
-
+, nrOfUploadedFiles: "model://perspectives.domains#SharedFileServices$SharedFileServices$DefaultFileServer$NrOfUploadedFiles"
+, disabled: "model://perspectives.domains#SharedFileServices$SharedFileServices$DefaultFileServer$Disabled"
 }

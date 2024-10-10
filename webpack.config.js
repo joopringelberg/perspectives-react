@@ -37,7 +37,8 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      __PPSTORAGELIMIT__: 5,
+      __PPSTORAGELIMIT__: 10,
+      __PPWARNINGLEVEL__: 5, 
       __PPSTORAGEURL__: '"https://mycontexts.com/ppsfs/uploadfile"'
     })        
   ],

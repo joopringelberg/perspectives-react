@@ -27,6 +27,7 @@ export {default as PerspectivesFile} from "./perspectivesFile";
 export {default as OpenPublicResource} from "./openpublicresource.js";
 export {thisAppsLocation} from "./utilities.js";
 export {ArcViewer} from "./arcViewer.js";
+export {UnboundMarkDownWidget} from "./markdownWidget.js";
 
 export async function getPreact(LANG_KEY)
 {

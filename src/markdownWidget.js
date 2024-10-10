@@ -26,8 +26,17 @@ import markdownit from 'markdown-it'
 const md = markdownit();
 
 const markdownPerspectives = require('./perspectives-markdown');
+// https://www.npmjs.com/package/markdown-it-link-attributes
+var mila = require("markdown-it-link-attributes");
 
 md.use(markdownPerspectives);
+// All hyperlinks will open in a new tab or window.
+md.use(mila, {
+  attrs: {
+    target: "_blank"
+  },
+});
+
 
 if (!window.$perspectives_entry_point_for_markdown$)
 {

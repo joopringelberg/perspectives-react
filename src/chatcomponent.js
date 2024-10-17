@@ -276,7 +276,7 @@ export default class ChatComponent extends PerspectivesComponent
                     um.addMessageForEndUser(
                       { title: i18next.t("ppsharedfilestorage_serviceerror", { ns: 'preact' }) 
                       , message: message
-                      , error: e.toString()
+                      , error: "ppstorage errored with code: " + error
                       }))
                   break;
               }});

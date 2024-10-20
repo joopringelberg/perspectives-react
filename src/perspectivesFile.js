@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Form from 'react-bootstrap/Form';
+import {Form, Row} from 'react-bootstrap';
 
 import {PDRproxy} from "perspectives-proxy";
 // const PDRproxy = new Promise( function(resolve)
@@ -558,7 +558,7 @@ export default class PerspectivesFile extends PerspectivesComponent
       case READONLY:
         return (
           <div onKeyDown={e => component.handleKeyDownInReadOnly(e)} tabIndex={component.state.roleFileName ? -1 : 0}>
-            <Form.Row>
+            <Row>
               {
                   component.fileIsImage() && component.state.roleFileName ?
                     <AsyncImage roleId={ component.props.roleId } propId={ component.props.serialisedProperty.id } fileName={component.state.fileName}/>
@@ -588,13 +588,13 @@ export default class PerspectivesFile extends PerspectivesComponent
                 </div>
               </div>
             </Col>
-            </Form.Row>
+            </Row>
           </div>);
 
       case FILLED:
         return (
           <div onKeyDown={e => component.handleKeyDownInFilled(e)} tabIndex={component.state.roleFileName ? -1 : 0}>
-            <Form.Row>
+            <Row>
               {
                 component.fileIsImage() ?
                   <AsyncImage roleId={ component.props.roleId } propId={ component.props.serialisedProperty.id } fileName={component.state.fileName}/>
@@ -628,14 +628,14 @@ export default class PerspectivesFile extends PerspectivesComponent
                 </div>
               </div>
             </Col>
-            </Form.Row>
+            </Row>
           </div>);
     
       case EDITABLE:
         return (
           <div 
           >
-            <Form.Row
+            <Row
                 onKeyDown={e => component.handleKeyDownInEditable(e)}
                 onDragOver={ev => ev.preventDefault()}
                 onDragEnter={ev => ev.target.classList.add("border-primary", "border") }
@@ -699,7 +699,7 @@ export default class PerspectivesFile extends PerspectivesComponent
                 </div>
               </div>
             </Col>
-            </Form.Row>
+            </Row>
             <input 
               type="file" 
               id={component.props.serialisedProperty.id + '_selectedFile'} 
@@ -713,7 +713,7 @@ export default class PerspectivesFile extends PerspectivesComponent
       default:
         return (
           <div>
-            <Form.Row
+            <Row
               onKeyDown={e => component.handleKeyDownInEmpty(e)}
               onDragOver={ev => ev.preventDefault()}
               onDragEnter={ev => ev.target.classList.add("border-primary", "border") }
@@ -771,7 +771,7 @@ export default class PerspectivesFile extends PerspectivesComponent
                   </div>
                 </div>
               </Col>
-            </Form.Row>
+            </Row>
             <input 
               type="file" 
               id={component.props.serialisedProperty.id + '_selectedFile'} 

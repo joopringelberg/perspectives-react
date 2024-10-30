@@ -25,7 +25,7 @@ import {PDRproxy} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRol} from "./reactcontexts";
 import { default as ModelDependencies } from "./modelDependencies.js";
-import {ClippyIcon} from '@primer/octicons-react';
+import {PasteIcon} from '@primer/octicons-react';
 import i18next from "i18next";
 
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
@@ -140,7 +140,7 @@ export default class FormPasteRole extends PerspectivesComponent
                         onKeyDown={ e => component.handleKeyDown(e) }
                         onClick={ () => component.pasteRole()}
                     >
-                    <ClippyIcon
+                    <PasteIcon
                       alt={ i18next.t("tablePasteRole_Alt", {ns: "preact"}) }
                       aria-label={ i18next.t("tablePasteRole_Alt", {ns: "preact"}) }
                       disabled={component.state.compatibleRole}

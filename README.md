@@ -21,6 +21,13 @@ This package depends on:
 ## Dependency management
 See [Publishing a new version](https://github.com/joopringelberg/perspectives-core/blob/master/technical%20readme.md#publishing-a-new-version) in the Perspectives Core (PDR) project.
 
+### Publish new package version:
+4. In package.template.json: increase the package number.
+4. Update the versions in `bumpversions.sh` and run that script.
+5. Commit
+6. Create tag
+7. Push tag
+
 ## Bundled Dependencies
 `prop-types` and `react-loadable` are bundled with the distribution.
 

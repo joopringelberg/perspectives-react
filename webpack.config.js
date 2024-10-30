@@ -80,12 +80,7 @@ module.exports = {
       commonjs2: "perspectives-proxy",
       root: "perspectives-proxy"
     }
-    , "pouchdb-browser": {
-      amd: "pouchdb-browser",
-      commonjs: "pouchdb-browser",
-      commonjs2: "pouchdb-browser",
-      root: "pouchdb-browser"
-    },
+    , "pouchdb-browser": "commonjs pouchdb-browser",
      "i18next": {
       amd: "i18next",
       commonjs: "i18next",

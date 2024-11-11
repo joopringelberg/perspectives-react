@@ -28,9 +28,9 @@ import {ArcViewer} from "./arcViewer.js";
 const EMPTY = "empty";
 const FILLED = "filled";
 const READONLY = "readonly";
+const EDITABLE = "editable";
 const UPLOAD = "upload";
 const DOWNLOAD = "download";
-const EDITABLE = "editable";
 const FILENAME = "fileName";
 const MIMETYPE = "mimeType";
 
@@ -330,7 +330,7 @@ export default class PerspectivesFile extends PerspectivesComponent
     const component = this;
     return PDRproxy.then( pproxy => 
       {
-        pproxy
+        return pproxy
           // Construct and save the property's compound value.
           .setProperty(
             component.props.roleId,
@@ -354,7 +354,7 @@ export default class PerspectivesFile extends PerspectivesComponent
           .then( pval => 
             {
               const {database, roleFileName} = component.parsePropertyValue(pval);
-              component.setState({ database, roleFileName });
+              return component.setState({ database, roleFileName });
             })
           .catch(e => UserMessagingPromise.then( um => 
             um.addMessageForEndUser(

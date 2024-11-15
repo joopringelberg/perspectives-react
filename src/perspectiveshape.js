@@ -157,3 +157,11 @@ export const RoleData =
       , contextType: PropTypes.string
       }
   };
+
+export const PerspectivesFileShape = 
+  { fileName: PropTypes.string.isRequired                 // The name associated with the file on creating or uploading it. Use only client side.
+  , propertyType: PropTypes.string.isRequired             // The identifier of the attachment of the role instance.
+  , mimeType: PropTypes.string.isRequired                 // The property holding the PerspectivesFile.
+  , database: PropTypes.String                            // The database where the role instance is stored (is Nothing for IndexedDB).
+  , roleFileName: PropTypes.string.isRequired             // The name of the role instance document. 
+  }

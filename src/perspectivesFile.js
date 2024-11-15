@@ -331,30 +331,21 @@ export default class PerspectivesFile extends PerspectivesComponent
     return PDRproxy.then( pproxy => 
       {
         return pproxy
-          // Construct and save the property's compound value.
-          .setProperty(
-            component.props.roleId,
-            component.props.serialisedProperty.id,
-            JSON.stringify(
-              { fileName: theFile.name
-              , propertyType: component.props.serialisedProperty.id
-              , mimeType: component.mapMimeType( theFile.type, theFile.name )
-              // database and roleFileName will be decided by the PDR, see below.
-              }),
-            component.props.myRoletype )
-          .then( () => 
-            // Save the file.
-            pproxy.saveFile(
-              component.props.roleId,
-              component.props.serialisedProperty.id,
-              component.state.mimeType,
-              theFile,
-              component.props.myRoletype 
-            ) )
-          .then( pval => 
+          // Save a serialised PerspectivesFile shape and the file in a single call:
+          .saveFile( JSON.stringify (
+            { fileName: theFile.name
+            , propertyType: component.props.serialisedProperty.id
+            , mimeType: component.mapMimeType( theFile.type, theFile.name )
+            , database: null
+            , roleFileName: component.props.roleId
+            }),
+            theFile,
+            component.props.myRoleType
+          )
+          .then( perspectivesFile => 
             {
-              const {database, roleFileName} = component.parsePropertyValue(pval);
-              return component.setState({ database, roleFileName });
+              const {database} = component.parsePropertyValue(perspectivesFile);
+              return component.setState({ database });
             })
           .catch(e => UserMessagingPromise.then( um => 
             um.addMessageForEndUser(

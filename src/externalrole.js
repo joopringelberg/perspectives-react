@@ -34,6 +34,7 @@ export default class ExternalRole extends PerspectivesComponent
                 , bind: function(){}
                 , checkbinding: function(ignore, callback){ callback(true);}
                 , removerol: function(){}
+                , removecontext: function(){}
                 , isselected: false
                 }};
               component.setState( updater );

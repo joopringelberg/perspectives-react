@@ -27,8 +27,9 @@ export default function mapRoleVerbsToBehaviours(perspective)
   {
     switch (verb)
     {
+      case "RemoveContext":
+        return Behaviours.addRemoveContext;
       case "Remove":
-        return Behaviours.addRemoveRoleFromContext;
       case "Delete":
         return Behaviours.addRemoveRoleFromContext;
       case "Fill":

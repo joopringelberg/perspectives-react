@@ -467,6 +467,44 @@ export function addRemoveRoleFromContext(domEl, component)
       });
 }
 
+// Makes the Card draggable, so it can be dropped in the Trash.
+// Adds keydown behaviour for shift-delete.
+export function addRemoveContext(domEl, component)
+{
+  function handleKeyDown (event)
+  {
+    switch(event.keyCode){
+      case 8: // Backspace
+        component.context.removecontext();
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }
+
+  addBehaviour( component, "addRemoveContext",
+    function(component)
+      {
+        domEl.addEventListener( "keydown", handleKeyDown);
+        domEl.draggable = true;
+        // Notice that this code is highly contextual.
+        // It may have to change if the other behaviours that add dragstart methods
+        // change.
+        if (!domEl.ondragstart)
+        {
+          domEl.ondragstart = ev =>
+            {
+              const payload = JSON.stringify(
+                { roleData: component.context
+                , addedBehaviour: component.addedBehaviour
+                , myroletype: component.props.myroletype
+                }
+              );
+              ev.dataTransfer.setData("PSRol", payload);
+            };
+        }      
+      });
+}
+
 function addBehaviour( component, behaviour, behaviourAdder )
 {
   if (component.addedBehaviour)

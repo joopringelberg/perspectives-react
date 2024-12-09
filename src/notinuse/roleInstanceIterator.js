@@ -92,6 +92,10 @@ class RoleInstanceIterator_ extends PerspectivesComponent
             component.removeWithoutContext();
           }
         }
+      , removecontext: function()
+        {
+          component.removeWithContext();
+        }
       , rolinstance: rolInstance
       , isselected: component.context.cursor === rolInstance
       });

@@ -135,6 +135,10 @@ export default class RoleInstance extends PerspectivesComponent
             component.removeWithoutContext();
           }
         }
+        function removecontext()
+        {
+          component.removeWithContext();
+        }
         component.setState( 
           { contextinstance: component.props.contextinstance
           , contexttype: component.props.contexttype
@@ -144,6 +148,7 @@ export default class RoleInstance extends PerspectivesComponent
           , bind
           , checkbinding
           , removerol
+          , removecontext
           , rolinstance: component.props.roleinstance
           , isselected: true // To accommodate the PSRol definition.
         });

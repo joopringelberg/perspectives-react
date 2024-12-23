@@ -437,9 +437,9 @@ export function addRemoveRoleFromContext(domEl, component)
   {
     switch(event.keyCode){
       case 8: // Backspace
-        component.context.removerol();
         event.preventDefault();
         event.stopPropagation();
+        component.context.removerol();
       }
     }
 
@@ -475,9 +475,9 @@ export function addRemoveContext(domEl, component)
   {
     switch(event.keyCode){
       case 8: // Backspace
-        component.context.removecontext();
         event.preventDefault();
         event.stopPropagation();
+        component.context.removecontext();
       }
     }
 

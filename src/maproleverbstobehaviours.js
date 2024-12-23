@@ -23,6 +23,18 @@ import * as Behaviours from "./cardbehaviour.js";
 // Maps the role verbs in the perspective to an array of behaviours.
 export default function mapRoleVerbsToBehaviours(perspective)
 {
+  function prioritizeContextRemoval(verbs)
+  {
+    // if there is a RemoveContext, Remove and Delete are not needed.
+    if (verbs.includes("RemoveContext"))
+    {
+      return verbs.filter( verb => verb !== "Remove" && verb !== "Delete");
+    }
+    else
+    {
+      return verbs;
+    }
+  }
   function mapRoleVerb(verb)
   {
     switch (verb)
@@ -47,7 +59,7 @@ export default function mapRoleVerbsToBehaviours(perspective)
   }
   if (perspective)
   {
-    return [...new Set( perspective.verbs.map( mapRoleVerb ) )].concat(
+    return [...new Set( prioritizeContextRemoval( perspective.verbs ).map( mapRoleVerb ) )].concat(
       [Behaviours.addOpenContextOrRoleForm, Behaviours.addFillARole]);
   }
   else

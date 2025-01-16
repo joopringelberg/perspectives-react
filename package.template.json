@@ -28,7 +28,7 @@
   "peerDependencies": {
     "@babel/polyfill": "^7.12.1",
     "@primer/octicons-react": "^19.12.0",
-    "i18next": "^23.16.0",
+    "i18next": "^24.2.1",
     "perspectives-proxy": "https://github.com/joopringelberg/perspectives-proxy.git#PERSPECTIVESPROXY",
     "pouchdb-browser": "^9.0.0",
     "prop-types": "^15.8.1",

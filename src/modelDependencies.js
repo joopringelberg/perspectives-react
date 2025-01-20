@@ -1,6 +1,7 @@
 
 export default 
 { cardClipBoard: "model://perspectives.domains#System$PerspectivesSystem$External$CardClipBoard"
+, currentLanguage: "model://perspectives.domains#System$PerspectivesSystem$External$CurrentLanguage"
 , sysUser: "model://perspectives.domains#System$PerspectivesSystem$User"
 , system: "model://perspectives.domains#System$PerspectivesSystem"
 , systemExternal: "model://perspectives.domains#System$PerspectivesSystem$External"

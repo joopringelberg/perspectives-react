@@ -46,14 +46,14 @@ export default class ActionDropDown extends Component
               </Dropdown.Toggle>
                 <Dropdown.Menu>
                   {
-                    component.props.actions.map(
+                    Object.keys(component.props.actions).map(
                       function(actionName)
                       {
                         return    <Dropdown.Item
                                     key={actionName}
                                     eventKey={actionName}
                                   >{
-                                    actionName
+                                    component.props.actions[actionName]
                                   }</Dropdown.Item>;
                       }
                     )
@@ -65,7 +65,7 @@ export default class ActionDropDown extends Component
 
 ActionDropDown.propTypes =
   { runaction: PropTypes.func
-  , actions: PropTypes.arrayOf(PropTypes.string)
+  , actions: PropTypes.objectOf(PropTypes.string)
   };
 
 // eslint-disable-next-line react/display-name, react/prop-types

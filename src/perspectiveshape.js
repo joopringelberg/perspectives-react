@@ -65,7 +65,7 @@ export const roleinstancewithprops = PropTypes.shape(
       { values: PropTypes.arrayOf (PropTypes.string)
       , propertyVerbs: PropTypes.arrayOf (PropTypes.string)
       }))
-  , actions: PropTypes.arrayOf(PropTypes.string)
+  , actions: PropTypes.objectOf(PropTypes.string)
   // This member is not needed on the client side, but we need it to
   // compile a complete list of SerialisedProperties.
   , objectStateBasedProperties: PropTypes.arrayOf(PropTypes.shape(
@@ -108,7 +108,7 @@ export const SerialisedPerspective =
   // unified with all properties that are available given the Object states of
   // instances. In a table, we should create a column for each.
   , properties: PropTypes.objectOf(serialisedProperty)
-  , actions: PropTypes.arrayOf(PropTypes.string)
+  , actions: PropTypes.objectOf(PropTypes.string)
 };
 
 // Note we have a forward reference problem here if we try to define and use RowDef and ColumnDef.

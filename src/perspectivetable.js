@@ -5,6 +5,7 @@ import {addBehaviour} from "./behaviourcomponent.js";
 import mapRoleVerbsToBehaviours from "./maproleverbstobehaviours.js";
 import TableRow from "./tablerow.js";
 import TableControls from "./tablecontrols.js";
+import i18next from "i18next";
 
 import
   { Table
@@ -214,7 +215,7 @@ export default class PerspectiveTable extends PerspectivesComponent
           hover
           size="sm"
           className="mb-0">
-          <caption>Table for the role { perspective.displayName }</caption>
+          <caption>{ i18next.t("table_subscriptionLeader", {ns: 'preact'}) }{ perspective.displayName }</caption>
           <thead>
             <tr>
             { component.propertyNames.map( pn =>

@@ -245,7 +245,7 @@ class RoleTable_ extends PerspectivesComponent
       return (<PSContext.Consumer>{
                 pscontext =>
                   <Table responsive striped bordered hover size="sm" className="mb-0">
-                    <caption>Table for the role { deconstructLocalName( component.context.roltype )}</caption>
+                    <caption>{ i18next.t("table_subscriptionLeader", {ns: 'preact'}) } { deconstructLocalName( component.context.roltype )}</caption>
                     <thead>
                       <tr>
                       { component.state.propertyNames.map( pn => <th key={pn}>{ deconstructLocalName( pn ) }</th>) }

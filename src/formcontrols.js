@@ -51,7 +51,7 @@ export default class FormControls extends PerspectivesComponent
   {
     const component = this;
     const actions = component.computeActions();
-      if (actions.length > 0)
+      if (Object.keys( actions ).length > 0)
       {
         component.setState(
           { actions
@@ -68,7 +68,7 @@ export default class FormControls extends PerspectivesComponent
     {
       component.props.perspective.seenInControls = true;
       actions = component.computeActions();
-      if (actions.length > 0)
+      if (Object.keys( actions ) > 0)
       {
         component.setState(
           { actions
@@ -163,16 +163,16 @@ export default class FormControls extends PerspectivesComponent
       roleInstance = component.props.perspective.roleInstances[ component.props.roleinstance ];
       if (roleInstance)
       {
-        return component.props.perspective.actions.concat( roleInstance.actions );
+        return Object.assign( {}, component.props.perspective.actions, roleInstance.actions );
       }
       else
       {
-        return [];
+        return {};
       }
     }
     else
     {
-      return [];
+      return {};
     }
   }
   mayCreateInstance()
@@ -223,7 +223,7 @@ export default class FormControls extends PerspectivesComponent
                     : 
                     null
                 }
-                { component.state.actions.length > 0 && component.props.roleinstance ?
+                { Object.keys( component.state.actions ).length > 0 && component.props.roleinstance ?
                   <ActionDropDown
                     actions={ component.state.actions }
                     runaction={component.runAction}

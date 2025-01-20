@@ -137,14 +137,14 @@ export default class TableControls extends PerspectivesComponent
   {
     const props = this.props;
     const perspective = this.props.perspective;
-    let objectStateActions = [];
+    let objectStateActions = {};
     // It happens that the perspective is not always yet updated when we compute actions.
     // It also happens that the selectedroleinstance is not updated while the perspectives are?
     if (props.selectedroleinstance && perspective.roleInstances[ props.selectedroleinstance])
     {
       objectStateActions = perspective.roleInstances[ props.selectedroleinstance ].actions;
     }
-    return perspective.actions.concat( objectStateActions );
+    return Object.assign( {}, perspective.actions, objectStateActions );
   }
 
   mayCreateInstance()
@@ -169,7 +169,7 @@ export default class TableControls extends PerspectivesComponent
     const mayCreateRoleInstance = component.mayCreateInstance();
     if  ( mayCreateContext || 
           mayCreateRoleInstance ||
-          actions.length > 0 && Object.keys(instances).length > 0 ||
+          Object.keys( actions ).length > 0 && Object.keys(instances).length > 0 ||
           instance && instance.publicUrl
         )
     {
@@ -206,7 +206,7 @@ export default class TableControls extends PerspectivesComponent
                 </AppContext.Consumer>
                   : null
                 }
-                { actions.length > 0 && Object.keys(instances).length > 0 ?
+                { Object.keys( actions ).length > 0 && Object.keys(instances).length > 0 ?
                   <ActionDropDown
                     actions={ actions }
                     runaction={component.runAction}

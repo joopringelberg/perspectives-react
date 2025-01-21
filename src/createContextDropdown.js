@@ -35,14 +35,14 @@ export default class CreateContextDropDown extends Component
   render()
   {
     const component = this;
-    const items = component.props.contexts.map(
+    const items = Object.keys(component.props.contexts).map(
       function(contextName)
       {
         return    <Dropdown.Item
                     key={contextName}
                     eventKey={contextName}
                   >{
-                    contextName // TODO This must be a displayname.
+                    component.props.contexts[contextName]
                   }</Dropdown.Item>;
       });
     items.unshift(    <Dropdown.Item
@@ -52,7 +52,7 @@ export default class CreateContextDropDown extends Component
                         i18next.t("contextDropdown_title", { ns: 'preact' }) 
                       }</Dropdown.Item> );
       
-    if (component.props.contexts.length == 0)
+    if (Object.keys( component.props.contexts ).length == 0)
     {
       return  <div
                 className="ml-3 mr-3"
@@ -83,7 +83,7 @@ export default class CreateContextDropDown extends Component
 
 CreateContextDropDown.propTypes =
   { create: PropTypes.func
-  , contexts: PropTypes.arrayOf(PropTypes.string)
+  , contexts: PropTypes.objectOf(PropTypes.string)
   };
 
 // eslint-disable-next-line react/display-name, react/prop-types

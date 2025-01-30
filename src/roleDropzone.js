@@ -1,5 +1,5 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React, { createRef } from "react";
+import {string, func} from "prop-types";
 
 import {AppContext} from "./reactcontexts.js";
 
@@ -44,9 +44,9 @@ export default function RoleDropZone(props)
 
 RoleDropZone.propTypes =
   {
-    ariaLabel: PropTypes.string.isRequired
-  , bind: PropTypes.func.isRequired
-  , checkbinding: PropTypes.func.isRequired
+    ariaLabel: string.isRequired
+  , bind: func.isRequired
+  , checkbinding: func.isRequired
   };
 
 class RoleDropZone_ extends PerspectivesComponent
@@ -54,7 +54,7 @@ class RoleDropZone_ extends PerspectivesComponent
   constructor (props)
   {
     super(props);
-    this.eventDiv = React.createRef();
+    this.eventDiv = createRef();
   }
 
   readClipBoard( receiveResults )
@@ -184,8 +184,8 @@ class RoleDropZone_ extends PerspectivesComponent
 
 RoleDropZone_.propTypes =
   {
-    ariaLabel: PropTypes.string.isRequired
-  , bind: PropTypes.func.isRequired
-  , checkbinding: PropTypes.func.isRequired
-  , systemExternalRole: PropTypes.string.isRequired
+    ariaLabel: string.isRequired
+  , bind: func.isRequired
+  , checkbinding: func.isRequired
+  , systemExternalRole: string.isRequired
   };

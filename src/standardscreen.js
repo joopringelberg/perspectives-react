@@ -19,7 +19,7 @@
 // END LICENSE
 
 import React from 'react';
-import PropTypes from "prop-types";
+import {string} from "prop-types";
 
 import {PDRproxy, CONTINUOUS} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
@@ -234,7 +234,7 @@ StandardScreen.contextType = PSContext;
 // These are exactly the props in PSContext.
 // However, we need them as props to compare them with previous props in componentDidUpdate.
 StandardScreen.propTypes =
-  { contextinstance: PropTypes.string.isRequired
-  , contexttype: PropTypes.string.isRequired
-  , myroletype: PropTypes.string.isRequired
+  { contextinstance: string.isRequired
+  , contexttype: string.isRequired
+  , myroletype: string.isRequired
   };

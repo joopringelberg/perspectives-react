@@ -1,6 +1,6 @@
 // OBSOLETE
 
-import React from "react";
+import React, { forwardRef } from "react";
 import PropTypes from "prop-types";
 
 import
@@ -112,7 +112,7 @@ export function ViewIncomingInvitation(props)
 {
   const ContactCard = addBehaviour( makeRoleInListPresentation(
     // eslint-disable-next-line react/display-name
-    React.forwardRef( function(props, ref)
+    forwardRef( function(props, ref)
     {
       // eslint-disable-next-line react/prop-types
       return  <Card ref={ref} tabIndex={props.tabIndex} aria-label={props["aria-label"]}>

@@ -18,8 +18,8 @@
 // Full text of this license can be found in the LICENSE file in the projects root.
 // END LICENSE
 
-import React from 'react';
-import PropTypes from "prop-types";
+import React, { createRef } from 'react';
+import { string } from "prop-types";
 
 import {PDRproxy} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
@@ -123,7 +123,7 @@ export default class FormPasteRole extends PerspectivesComponent
       }
     </Tooltip> );
 
-    const eventDiv = React.createRef();
+    const eventDiv = createRef();
 
     if ( component.stateIsComplete(["roleOnClipboard"]) )
     {
@@ -158,4 +158,4 @@ export default class FormPasteRole extends PerspectivesComponent
 
 FormPasteRole.contextType = PSRol;
 
-FormPasteRole.propTypes = {systemexternalrole: PropTypes.string.isRequired };
+FormPasteRole.propTypes = {systemexternalrole: string.isRequired };

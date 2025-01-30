@@ -20,13 +20,13 @@
 
 // This Component is built upon the data sent from the PDR for a single property.
 
-import React from "react";
-const Component = React.PureComponent;
+import React, { PureComponent } from "react";
+const Component = PureComponent;
 import {PDRproxy} from "perspectives-proxy";
 import
   { Form
   } from "react-bootstrap";
-import PropTypes from "prop-types";
+import {string, bool, any} from "prop-types";
 
 import {serialisedProperty, propertyValues} from "./perspectiveshape.js";
 import {UserMessagingPromise} from "./userMessaging.js";
@@ -374,8 +374,8 @@ export default class SmartFieldControl extends Component
   }
 
   // Returns object of this shape:
-  // { regex: PropTypes.string.isRequired
-  // , label: PropTypes.string.isRequired}
+  // { regex: string.isRequired
+  // , label: string.isRequired}
   pattern()
   {
     const component = this;
@@ -396,8 +396,8 @@ export default class SmartFieldControl extends Component
       }
     }
     // Expects object of this shape:
-    // { regex: PropTypes.string.isRequired
-    // , label: PropTypes.string.isRequired}
+    // { regex: string.isRequired
+    // , label: string.isRequired}
     // Returns the string that represents just the regex, no flags.
     // label has the shape /regex/flags.
     // flags will be ignored.
@@ -515,15 +515,15 @@ SmartFieldControl.propTypes =
   // may not allow this property.
   , propertyValues: propertyValues
 
-  , roleId: PropTypes.string
+  , roleId: string
 
-  , myroletype: PropTypes.string.isRequired
+  , myroletype: string.isRequired
 
-  , inputRef: PropTypes.any
+  , inputRef: any
 
-  , disabled: PropTypes.bool.isRequired
+  , disabled: bool.isRequired
 
-  , isselected: PropTypes.bool.isRequired
+  , isselected: bool.isRequired
 
-  , contextinstance: PropTypes.string.isRequired
+  , contextinstance: string.isRequired
   };

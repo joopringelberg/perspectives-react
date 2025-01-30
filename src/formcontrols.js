@@ -31,7 +31,7 @@ import CreateContextDropDown from "./createContextDropdown.js";
 import
   { Navbar
   } from "react-bootstrap";
-import PropTypes from "prop-types";
+import { element, shape, string } from "prop-types";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
 
@@ -240,9 +240,9 @@ export default class FormControls extends PerspectivesComponent
 }
 
 FormControls.propTypes =
-  { perspective: PropTypes.shape( SerialisedPerspective ).isRequired
-  , contextinstance: PropTypes.string.isRequired
-  , roleinstance: PropTypes.string
-  , myroletype: PropTypes.string.isRequired
-  , card: PropTypes.element
+  { perspective: shape( SerialisedPerspective ).isRequired
+  , contextinstance: string.isRequired
+  , roleinstance: string
+  , myroletype: string.isRequired
+  , card: element
   };

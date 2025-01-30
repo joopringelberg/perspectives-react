@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Children, cloneElement } from "react";
 import PropTypes from "prop-types";
 import {PDRproxy} from "perspectives-proxy";
 
@@ -54,7 +54,7 @@ export default class CreateContext_ extends PerspectivesComponent
 
     function cloneChild (child)
     {
-      return React.cloneElement(
+      return cloneElement(
         child,
         {
           create: function(contextDescription)
@@ -66,7 +66,7 @@ export default class CreateContext_ extends PerspectivesComponent
 
     if (Array.isArray(component.props.children))
     {
-      return React.Children.map(
+      return Children.map(
         component.props.children,
         cloneChild);
     }

@@ -1,4 +1,4 @@
-import React from "react"; // 2
+import React, { Component, createRef } from "react"; // 2
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 
@@ -39,7 +39,7 @@ import PropTypes from "prop-types";
 // The default component to display in the card column. Shows a plain text control.
 // The behaviours granted to the table will be established on this Card component.
 // Displays the value of prop cardcolumn of RoleTable (a property of the role).
-class Card extends React.Component
+class Card extends Component
 {
   componentDidMount()
   {
@@ -139,7 +139,7 @@ class RoleTable_ extends PerspectivesComponent
     this.state.propertyNames = undefined;
     this.state.column = undefined;
     this.state.active = false;
-    this.eventDiv = React.createRef();
+    this.eventDiv = createRef();
     this.handleKeyDown = this.handleKeyDown.bind( this );
     // The first rendered cell sets this to false.
     // Each subsequent cell can than see it is not first.
@@ -305,7 +305,7 @@ class TableRow extends PerspectivesComponent
     super(props);
     this.handleClick = this.handleClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.ref = React.createRef();
+    this.ref = createRef();
   }
 
   handleClick (event)
@@ -411,7 +411,7 @@ class TableCell extends PerspectivesComponent
     // A reference to the Form.Control that handles input.
     // It is used to dispatch the custom SetCursor and SetColumn events.
     // It also receives focus.
-    this.inputRef = React.createRef();
+    this.inputRef = createRef();
   }
 
   componentDidMount ()

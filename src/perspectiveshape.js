@@ -20,60 +20,60 @@
 
 // The shape of structures sent from the PDR, describing screens and perspectives.
 
-import PropTypes from "prop-types";
+import {string, bool, shape, number, arrayOf, objectOf, object} from "prop-types";
 
 export const serialisedProperty =
-  PropTypes.shape(
-    { id: PropTypes.string.isRequired
-    , displayName: PropTypes.string.isRequired
-    , isFunctional: PropTypes.bool.isRequired
-    , isMandatory: PropTypes.bool.isRequired
-    , isCalculated: PropTypes.bool.isRequired
-    , range: PropTypes.string.isRequired
-    , constrainingFacets: PropTypes.shape(
-      { minLength: PropTypes.number
-      , maxLength: PropTypes.number
-      , pattern: PropTypes.shape(
-        { regex: PropTypes.string.isRequired
-        , label: PropTypes.string.isRequired}
+  shape(
+    { id: string.isRequired
+    , displayName: string.isRequired
+    , isFunctional: bool.isRequired
+    , isMandatory: bool.isRequired
+    , isCalculated: bool.isRequired
+    , range: string.isRequired
+    , constrainingFacets: shape(
+      { minLength: number
+      , maxLength: number
+      , pattern: shape(
+        { regex: string.isRequired
+        , label: string.isRequired}
       )
-      , whiteSpace: PropTypes.string
-      , enumeration: PropTypes.arrayOf(PropTypes.string)
-      , maxInclusive: PropTypes.string
-      , maxExclusive: PropTypes.string
-      , minInclusive: PropTypes.string
-      , minExclusive: PropTypes.string
-      , totalDigits: PropTypes.number
-      , fractionDigits: PropTypes.number
+      , whiteSpace: string
+      , enumeration: arrayOf(string)
+      , maxInclusive: string
+      , maxExclusive: string
+      , minInclusive: string
+      , minExclusive: string
+      , totalDigits: number
+      , fractionDigits: number
       }).isRequired
     });
 
 export const propertyValues =
-  PropTypes.shape(
-    { values: PropTypes.arrayOf( PropTypes.string ).isRequired
-    , propertyVerbs: PropTypes.arrayOf( PropTypes.string).isRequired
+  shape(
+    { values: arrayOf( string ).isRequired
+    , propertyVerbs: arrayOf( string).isRequired
   });
 
-export const roleinstancewithprops = PropTypes.shape(
-  { roleId: PropTypes.string
-  , objectStateBasedRoleVerbs: PropTypes.arrayOf(PropTypes.string)
+export const roleinstancewithprops = shape(
+  { roleId: string
+  , objectStateBasedRoleVerbs: arrayOf(string)
   // // keys are the string representation of PropertyType,
   // // so this map can be read as one from PropertyType to PropertyVerbs, too.
-  , propertyValues: PropTypes.objectOf(
+  , propertyValues: objectOf(
     // ValuesWithVerbs
-    PropTypes.shape(
-      { values: PropTypes.arrayOf (PropTypes.string)
-      , propertyVerbs: PropTypes.arrayOf (PropTypes.string)
+    shape(
+      { values: arrayOf (string)
+      , propertyVerbs: arrayOf (string)
       }))
-  , actions: PropTypes.objectOf(PropTypes.string)
+  , actions: objectOf(string)
   // This member is not needed on the client side, but we need it to
   // compile a complete list of SerialisedProperties.
-  , objectStateBasedProperties: PropTypes.arrayOf(PropTypes.shape(
-      { type: PropTypes.string.isRequired
-      , value: PropTypes.string.isRequired
+  , objectStateBasedProperties: arrayOf(shape(
+      { type: string.isRequired
+      , value: string.isRequired
       }))
-  , publicUrl: PropTypes.string
-  , filler : PropTypes.string
+  , publicUrl: string
+  , filler : string
   });
 
 export const SerialisedPerspective =
@@ -81,87 +81,87 @@ export const SerialisedPerspective =
   ////
   //// Type level properties
   ////
-  id: PropTypes.string.isRequired
-  , displayName: PropTypes.string.isRequired
-  , isFunctional: PropTypes.bool.isRequired
-  , isMandatory: PropTypes.bool.isRequired
-  , isCalculated: PropTypes.bool.isRequired
+  id: string.isRequired
+  , displayName: string.isRequired
+  , isFunctional: bool.isRequired
+  , isMandatory: bool.isRequired
+  , isCalculated: bool.isRequired
   // The RoleType having the Perspective.
-  , userRoleType: PropTypes.string.isRequired
+  , userRoleType: string.isRequired
   // The RoleType of the object of the Perspective.
-  , roleType: /*OPTIONAL*/ PropTypes.string
-  , roleKind: /*OPTIONAL*/ PropTypes.string
-  , contextType: PropTypes.string
-  , contextIdToAddRoleInstanceTo: PropTypes.string
-  , contextTypesToCreate: PropTypes.objectOf(PropTypes.string)
-  , identifyingProperty: PropTypes.string.isRequired
+  , roleType: /*OPTIONAL*/ string
+  , roleKind: /*OPTIONAL*/ string
+  , contextType: string
+  , contextIdToAddRoleInstanceTo: string
+  , contextTypesToCreate: objectOf(string)
+  , identifyingProperty: string.isRequired
   ////
   //// Instance properties
   ////
-  , contextInstance: PropTypes.string.isRequired
-  , roleInstances: PropTypes.objectOf(roleinstancewithprops)
+  , contextInstance: string.isRequired
+  , roleInstances: objectOf(roleinstancewithprops)
   ////
   //// State dependent properties
   ////
-  , verbs: PropTypes.arrayOf(PropTypes.string)
+  , verbs: arrayOf(string)
   // All properties that are available given Context and Subject state,
   // unified with all properties that are available given the Object states of
   // instances. In a table, we should create a column for each.
-  , properties: PropTypes.objectOf(serialisedProperty)
-  , actions: PropTypes.objectOf(PropTypes.string)
+  , properties: objectOf(serialisedProperty)
+  , actions: objectOf(string)
 };
 
 // Note we have a forward reference problem here if we try to define and use RowDef and ColumnDef.
 
-export const WidgetCommonFields = PropTypes.shape(
-  { title: PropTypes.string.isRequired
-  , perspective: PropTypes.shape( SerialisedPerspective ).isRequired
+export const WidgetCommonFields = shape(
+  { title: string.isRequired
+  , perspective: shape( SerialisedPerspective ).isRequired
 });
 
-export const ScreenElementDef = PropTypes.shape(
-  { row: /*OPTIONAL*/     PropTypes.arrayOf( PropTypes.object ) // ScreenElementDef
-  , column: /*OPTIONAL*/  PropTypes.arrayOf( PropTypes.object )
-  , table: /*OPTIONAL*/   PropTypes.shape(WidgetCommonFields)
-  , form: /*OPTIONAL*/    PropTypes.shape(WidgetCommonFields)
-  , markDown: /*OPTIONAL*/PropTypes.object
-  , chat: /*OPTIONAL*/    PropTypes.shape(
-    { chatRole: PropTypes.string.isRequired
-    , chatInstance: PropTypes.string
-    , messagesProperty: PropTypes.string.isRequired
-    , mediaProperty: PropTypes.string.isRequired
+export const ScreenElementDef = shape(
+  { row: /*OPTIONAL*/     arrayOf( object ) // ScreenElementDef
+  , column: /*OPTIONAL*/  arrayOf( object )
+  , table: /*OPTIONAL*/   shape(WidgetCommonFields)
+  , form: /*OPTIONAL*/    shape(WidgetCommonFields)
+  , markDown: /*OPTIONAL*/object
+  , chat: /*OPTIONAL*/    shape(
+    { chatRole: string.isRequired
+    , chatInstance: string
+    , messagesProperty: string.isRequired
+    , mediaProperty: string.isRequired
     }
   )
   , 
   // , MarkDownElementD MarkDownDef
 });
 
-export const TabDef = PropTypes.shape(
-  { title: PropTypes.string.isRequired
-  , elements: PropTypes.arrayOf(ScreenElementDef).isRequired
+export const TabDef = shape(
+  { title: string.isRequired
+  , elements: arrayOf(ScreenElementDef).isRequired
 });
 
-export const ScreenDefinition = PropTypes.shape(
-  { title: PropTypes.string.isRequired
-  , tabs: /*OPTIONAL*/    PropTypes.arrayOf(TabDef)
-  , rows: /*OPTIONAL*/    PropTypes.arrayOf(ScreenElementDef)
-  , columns: /*OPTIONAL*/ PropTypes.arrayOf(ScreenElementDef)
+export const ScreenDefinition = shape(
+  { title: string.isRequired
+  , tabs: /*OPTIONAL*/    arrayOf(TabDef)
+  , rows: /*OPTIONAL*/    arrayOf(ScreenElementDef)
+  , columns: /*OPTIONAL*/ arrayOf(ScreenElementDef)
 });
 
 export const RoleData =
-  { addedBehaviour: PropTypes.arrayOf(PropTypes.string)
-    , myroletype: PropTypes.string
+  { addedBehaviour: arrayOf(string)
+    , myroletype: string
     , roleData:
-      { rolinstance: PropTypes.string
-      , cardTitle: PropTypes.string
-      , roleType: PropTypes.string
-      , contextType: PropTypes.string
+      { rolinstance: string
+      , cardTitle: string
+      , roleType: string
+      , contextType: string
       }
   };
 
 export const PerspectivesFileShape = 
-  { fileName: PropTypes.string.isRequired                 // The name associated with the file on creating or uploading it. Use only client side.
-  , propertyType: PropTypes.string.isRequired             // The identifier of the attachment of the role instance.
-  , mimeType: PropTypes.string.isRequired                 // The property holding the PerspectivesFile.
-  , database: PropTypes.String                            // The database where the role instance is stored (is Nothing for IndexedDB).
-  , roleFileName: PropTypes.string.isRequired             // The name of the role instance document. 
+  { fileName: string.isRequired                 // The name associated with the file on creating or uploading it. Use only client side.
+  , propertyType: string.isRequired             // The identifier of the attachment of the role instance.
+  , mimeType: string.isRequired                 // The property holding the PerspectivesFile.
+  , database: String                            // The database where the role instance is stored (is Nothing for IndexedDB).
+  , roleFileName: string.isRequired             // The name of the role instance document. 
   }

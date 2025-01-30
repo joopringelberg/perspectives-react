@@ -1,4 +1,4 @@
-import React from "react";
+import React, {createContext} from "react";
 
 // Two contexts, PSRol and PSRoleInstances, have the functions bind, bind_ and checkBinding. 
 // All return promises.
@@ -10,14 +10,14 @@ import React from "react";
 // He can use checkBinding for that purpose. It returns a promise for a Boolean value.
 // If the result is `false`, the situation might require that a message for the end user is displayed.
 
-export const PSContext = React.createContext(
+export const PSContext = createContext(
   { contextinstance: ""
   , contexttype: ""
   // use this as value for authoringRole in calls to the PDR.
   , myroletype: ""
   });
 
-  export const AppContext = React.createContext(
+  export const AppContext = createContext(
     { systemExternalRole: undefined
     , externalRoleId: undefined
     // for roles that are opened
@@ -29,7 +29,7 @@ export const PSContext = React.createContext(
     , couchdbUrl: undefined
     });
 
-export const PSRoleInstances = React.createContext(
+export const PSRoleInstances = createContext(
   { contextinstance: ""
   , contexttype: ""
   , rol: ""
@@ -43,7 +43,7 @@ export const PSRoleInstances = React.createContext(
   , checkbinding: function(){console.warn("Default (no-op) checkbinding called. You likely miss a PSRol.Provider or PSRoleInstances.Provider!");}
   });
 
-export const PSRol = React.createContext(
+export const PSRol = createContext(
   { contextinstance: ""
   , contexttype: ""
   , roltype: ""
@@ -60,7 +60,7 @@ export const PSRol = React.createContext(
   , isselected: false
   });
 
-export const PSView = React.createContext(
+export const PSView = createContext(
   { contextinstance: ""
   , contexttype: ""
   , rolinstance: ""
@@ -72,7 +72,7 @@ export const PSView = React.createContext(
   // And there will be a member for each property, holding its values.
   });
 
-export const PSProperty = React.createContext(
+export const PSProperty = createContext(
   { defaultValue: ""
   , setvalue: function(){}
   }

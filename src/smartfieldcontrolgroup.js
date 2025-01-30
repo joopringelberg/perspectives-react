@@ -47,14 +47,14 @@
 //   , verbs :: Array String
 //   }
 
-import React from "react";
-const Component = React.PureComponent;
+import React, { PureComponent } from "react";
+const Component = PureComponent;
 import
   { Row
   , Col
   , Form
   } from "react-bootstrap";
-import PropTypes from "prop-types";
+import { bool, string, shape, arrayOf } from "prop-types";
 import SmartFieldControl from "./smartfieldcontrol.js";
 
 export default class SmartFieldControlGroup extends Component
@@ -123,24 +123,25 @@ export default class SmartFieldControlGroup extends Component
 
 SmartFieldControlGroup.propTypes =
   { serialisedProperty:
-      PropTypes.shape(
-        { id: PropTypes.string.isRequired
-        , displayName: PropTypes.string.isRequired
-        , isFunctional: PropTypes.bool.isRequired
-        , isMandatory: PropTypes.bool.isRequired
-        , isCalculated: PropTypes.bool.isRequired
-        , range: PropTypes.string.isRequired
+      shape
+       (
+        { id: string.isRequired
+        , displayName: string.isRequired
+        , isFunctional: bool.isRequired
+        , isMandatory: bool.isRequired
+        , isCalculated: bool.isRequired
+        , range: string.isRequired
         }).isRequired
   // This member is not required, because the state of the role instance
   // may not allow this property.
   , propertyValues:
-      PropTypes.shape(
-        { values: PropTypes.arrayOf( PropTypes.string ).isRequired
-        , propertyVerbs: PropTypes.arrayOf( PropTypes.string).isRequired
+      shape(
+        { values: arrayOf( string ).isRequired
+        , propertyVerbs: arrayOf( string).isRequired
       })
 
-  , roleId: PropTypes.string
+  , roleId: string
 
-  , myroletype: PropTypes.string.isRequired
-  , contextinstance: PropTypes.string.isRequired
+  , myroletype: string.isRequired
+  , contextinstance: string.isRequired
   };

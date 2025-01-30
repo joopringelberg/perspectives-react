@@ -18,8 +18,8 @@
 // Full text of this license can be found in the LICENSE file in the projects root.
 // END LICENSE
 
-import React from "react";
-const Component = React.PureComponent;
+import React, { PureComponent } from "react";
+const Component = PureComponent;
 import {PSRol} from "./reactcontexts.js";
 import {PDRproxy} from "perspectives-proxy";
 import RoleDropZone from "./roleDropzone.js";
@@ -32,7 +32,7 @@ import FormControls from "./formcontrols.js";
 import
   { Card
   } from "react-bootstrap";
-import PropTypes from "prop-types";
+import { func, shape, string, arrayOf } from "prop-types";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
 
@@ -261,11 +261,11 @@ export default class PerspectiveBasedForm extends PerspectivesComponent
 }
 
 PerspectiveBasedForm.propTypes =
-  { perspective: PropTypes.shape( SerialisedPerspective ).isRequired
+  { perspective: shape( SerialisedPerspective ).isRequired
   // Used to index the roleinstances in the perspective! NOT REQUIRED.
-  , roleinstance: PropTypes.string
-  , behaviours: PropTypes.arrayOf(PropTypes.func)
-  , cardtitle: PropTypes.string.isRequired
+  , roleinstance: string
+  , behaviours: arrayOf(func)
+  , cardtitle: string.isRequired
   };
 
 class RoleCard extends Component
@@ -289,9 +289,9 @@ class RoleCard extends Component
 RoleCard.contextType = PSRol;
 
 RoleCard.propTypes =
-  { setSelf: PropTypes.func
-  , title: PropTypes.string.isRequired
-  , labelProperty: PropTypes.string.isRequired
+  { setSelf: func
+  , title: string.isRequired
+  , labelProperty: string.isRequired
 
   };
 

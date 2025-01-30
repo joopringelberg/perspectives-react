@@ -11,7 +11,7 @@ import {PDRproxy} from "perspectives-proxy";
 //       }
 //     )
 //   })
-import PropTypes from "prop-types";
+import { shape, string } from "prop-types";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {serialisedProperty, propertyValues} from "./perspectiveshape.js";
 import i18next from "i18next";
@@ -35,11 +35,11 @@ const FILENAME = "fileName";
 const MIMETYPE = "mimeType";
 
 const filePropShape = 
-  PropTypes.shape(
-    { fileName: PropTypes.string.isRequired
-    , mimeType: PropTypes.string.isRequired
-    , database: PropTypes.string
-    , roleFileName: PropTypes.string
+  shape(
+    { fileName: string.isRequired
+    , mimeType: string.isRequired
+    , database: string
+    , roleFileName: string
     }
   )
 
@@ -780,6 +780,6 @@ export default class PerspectivesFile extends PerspectivesComponent
 PerspectivesFile.propTypes =
   { serialisedProperty: serialisedProperty.isRequired 
   , propertyValues: propertyValues
-  , roleId: PropTypes.string
-  , myRoletype: PropTypes.string.isRequired
+  , roleId: string
+  , myRoletype: string.isRequired
 }

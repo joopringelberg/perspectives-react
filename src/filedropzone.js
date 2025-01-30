@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Tooltip, OverlayTrigger} from 'react-bootstrap';
-import PropTypes from "prop-types";
+import { func, string } from "prop-types";
 
 // As the real action happens in handleFile as it is presented on the props of FileDropZone,
 // an error boundary is of no good here.
@@ -105,8 +105,8 @@ export default function FileDropZone(props)
 }
 
 FileDropZone.propTypes =
-  { tooltiptext: PropTypes.string
-  , handlefile: PropTypes.func.isRequired
-  , extension: PropTypes.string
-  , collapsenavbar: PropTypes.func.isRequired
+  { tooltiptext: string
+  , handlefile: func.isRequired
+  , extension: string
+  , collapsenavbar: func.isRequired
 };

@@ -1,8 +1,8 @@
 import "regenerator-runtime/runtime";
 
-import React from 'react';
+import React, { createRef } from 'react';
 
-import PropTypes from "prop-types";
+import {string, func} from "prop-types";
 import { PDRproxy, CONTINUOUS } from 'perspectives-proxy';
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext, AppContext} from "./reactcontexts.js";
@@ -115,8 +115,8 @@ export default function Screen(props)
 }
 
 Screen.propTypes =
-  { externalroleinstance: PropTypes.string.isRequired
-  , setMyRoleType: PropTypes.func.isRequired
+  { externalroleinstance: string.isRequired
+  , setMyRoleType: func.isRequired
   };
 
 // Screen_ loads the component in the context of the role `externalroleinstance` that it receives on its props.
@@ -348,19 +348,19 @@ Screen_.contextType = PSContext;
 Screen_.propTypes =
   {
   // Inherited from Screen:
-    externalroleinstance: PropTypes.string.isRequired
-  , setMyRoleType: PropTypes.func.isRequired
+    externalroleinstance: string.isRequired
+  , setMyRoleType: func.isRequired
   // Own props (values come from AppContext).
-  , couchdbUrl: PropTypes.string.isRequired
-  , systemIdentifier: PropTypes.string.isRequired
+  , couchdbUrl: string.isRequired
+  , systemIdentifier: string.isRequired
   };
 
   // Use like this:
 //  <BackButton buttontext="Back to all chats"/>
 export function BackButton(props)
 {
-  const ref = React.createRef();
+  const ref = createRef();
   return <Button ref={ref} href="#" onClick={() => history.back()}>{ props.buttontext }</Button>;
 }
 
-BackButton.propTypes = {buttontext: PropTypes.string.isRequired};
+BackButton.propTypes = {buttontext: string.isRequired};

@@ -1,6 +1,6 @@
 // OBSOLETE
 
-import React from "react";
+import React, { forwardRef } from "react";
 import {deconstructLocalName} from "../urifunctions.js";
 import RoleInstance from "../roleinstance.js";
 import View from "../view.js";
@@ -60,7 +60,7 @@ export function RoleFormInView(props)
     const DraggableCard = addBehaviour(
       makeSingleRolePresentation(
         // eslint-disable-next-line react/display-name
-        React.forwardRef( function(props, ref)
+        forwardRef( function(props, ref)
         {
           // eslint-disable-next-line react/prop-types
           return  <Card ref={ref} tabIndex={props.tabIndex} aria-label={props["aria-label"]}>

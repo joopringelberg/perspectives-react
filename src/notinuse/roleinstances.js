@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createRef } from "react";
 import PropTypes from "prop-types";
 import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
 
@@ -29,7 +29,7 @@ export default class RoleInstances extends PerspectivesComponent
     super(props);
     const component = this;
     component.state.instances = undefined;
-    this.eventDiv = React.createRef();
+    this.eventDiv = createRef();
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.bind = this.bind.bind(this);
     this.checkBinding = this.checkBinding.bind(this);

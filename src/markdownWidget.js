@@ -19,7 +19,7 @@
 // END LICENSE
 
 import { Component } from "react";
-import PropTypes from "prop-types";
+import { string } from "prop-types";
 import {PDRproxy} from "perspectives-proxy";
 
 import markdownit from 'markdown-it'
@@ -89,9 +89,9 @@ export class MarkDownWidget extends Component
 
 }
 MarkDownWidget.propTypes = 
-  { markdown: PropTypes.string.isRequired
-  , contextid: PropTypes.string.isRequired
-  , myroletype: PropTypes.string.isRequired
+  { markdown: string.isRequired
+  , contextid: string.isRequired
+  , myroletype: string.isRequired
   };
 
 // Use this component to create html from markdown that is provided as a property of the component itself, in the page.
@@ -110,5 +110,5 @@ export class UnboundMarkDownWidget extends Component
 }
 
 UnboundMarkDownWidget.propTypes = 
-  { markdown: PropTypes.string.isRequired
+  { markdown: string.isRequired
   };

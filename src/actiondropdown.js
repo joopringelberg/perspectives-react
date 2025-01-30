@@ -18,10 +18,10 @@
 // Full text of this license can be found in the LICENSE file in the projects root.
 // END LICENSE
 
-import React, { Component } from "react";
+import React, { Component, forwardRef } from "react";
 import {Dropdown} from 'react-bootstrap';
 import {ZapIcon} from '@primer/octicons-react';
-import PropTypes from "prop-types";
+import PropTypes, { func, objectOf, string } from "prop-types";
 
 export default class ActionDropDown extends Component
 {
@@ -64,12 +64,12 @@ export default class ActionDropDown extends Component
 }
 
 ActionDropDown.propTypes =
-  { runaction: PropTypes.func
-  , actions: PropTypes.objectOf(PropTypes.string)
+  { runaction: func
+  , actions: objectOf(string)
   };
 
 // eslint-disable-next-line react/display-name, react/prop-types
-const CustomToggle = React.forwardRef(({ children, onClick, disabled }, ref) => (
+const CustomToggle = forwardRef(({ children, onClick, disabled }, ref) => (
   <a
     href=""
     ref={ref}

@@ -19,7 +19,7 @@
 // END LICENSE
 
 import React, { useState } from 'react';
-import PropTypes from "prop-types";
+import { arrayOf, number } from "prop-types";
 
 import {TabDef} from "./perspectiveshape.js";
 
@@ -57,6 +57,6 @@ export default function PerspectivesTabs(props)
 }
 
 PerspectivesTabs.propTypes =
-  { tabs: PropTypes.arrayOf(TabDef)
-  , defaultActiveKey: PropTypes.number.isRequired
+  { tabs: arrayOf(TabDef)
+  , defaultActiveKey: number.isRequired
   };

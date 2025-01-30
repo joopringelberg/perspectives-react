@@ -18,11 +18,11 @@
 // Full text of this license can be found in the LICENSE file in the projects root.
 // END LICENSE
 
-import React from "react"; // 2
+import React, { createRef } from "react"; // 2
 import PerspectivesComponent from "./perspectivescomponent.js";
 import TableCell from "./tablecell.js";
 import "./components.css";
-import PropTypes from "prop-types";
+import { arrayOf, bool, func, object, string } from "prop-types";
 import {roleinstancewithprops, serialisedProperty} from "./perspectiveshape.js";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ export default class TableRow extends PerspectivesComponent
     super(props);
     this.handleClick = this.handleClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.ref = React.createRef();
+    this.ref = createRef();
   }
 
   handleClick (event)
@@ -98,13 +98,13 @@ export default class TableRow extends PerspectivesComponent
 }
 
 TableRow.propTypes =
-  { myroletype: PropTypes.string.isRequired
-  , roleinstance: PropTypes.string.isRequired
-  , column: PropTypes.string.isRequired
-  , isselected: PropTypes.bool.isRequired
-  , cardcolumn: PropTypes.string.isRequired
-  , roleRepresentation: PropTypes.func.isRequired
+  { myroletype: string.isRequired
+  , roleinstance: string.isRequired
+  , column: string.isRequired
+  , isselected: bool.isRequired
+  , cardcolumn: string.isRequired
+  , roleRepresentation: func.isRequired
   , roleinstancewithprops: roleinstancewithprops
-  , perspective: PropTypes.object.isRequired
-  , orderedProperties: PropTypes.arrayOf(serialisedProperty)
+  , perspective: object.isRequired
+  , orderedProperties: arrayOf(serialisedProperty)
 };

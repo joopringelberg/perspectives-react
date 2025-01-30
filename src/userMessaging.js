@@ -31,7 +31,7 @@
 
 
 import { Button, Card, Modal } from "react-bootstrap";
-import PropTypes from "prop-types";
+import {shape, string, func} from "prop-types";
 import PerspectivesComponent from "./perspectivescomponent";
 
 class UserMessaging
@@ -146,10 +146,10 @@ export class EndUserNotifier extends PerspectivesComponent
 }
 
 EndUserNotifier.propTypes = 
-  { message: PropTypes.shape(
-    { title: PropTypes.string
-    , message: PropTypes.string
-    , acknowledge: PropTypes.func
-    , error: PropTypes.string
+  { message: shape(
+    { title: string
+    , message: string
+    , acknowledge: func
+    , error: string
     }
   )};

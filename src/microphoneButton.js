@@ -1,6 +1,6 @@
 import React from "react";
 import { forwardRef } from 'react';
-import PropTypes from "prop-types";
+import { node, string } from "prop-types";
 import classNames from "classnames";
 import Button from "./button.js";
 
@@ -31,10 +31,10 @@ export const MicrophoneButton = forwardRef( (props, ref) => {
 
 MicrophoneButton.propTypes = {
   /** Primary content. */
-  children: PropTypes.node,
+  children: node,
 
   /** Additional classes. */
-  className: PropTypes.string,
+  className: string,
 };
 
 export default MicrophoneButton;

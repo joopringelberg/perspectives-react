@@ -1,5 +1,5 @@
 import React from "react";
-import PropTypes from "prop-types";
+import {string} from "prop-types";
 import {PDRproxy} from "perspectives-proxy";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
@@ -173,5 +173,5 @@ View_.contextType = PSRol;
 // View passes on a PSView:
 
 View.propTypes = {
-  viewname: PropTypes.string.isRequired
+  viewname: string.isRequired
 };

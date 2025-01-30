@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Children, cloneElement } from "react";
 
 import PropTypes from "prop-types";
 import {PDRproxy} from "perspectives-proxy";
@@ -107,7 +107,7 @@ class SetProperty_ extends PerspectivesComponent
       // We provide the children with props, AND we give them a React Context with the same props.
       // Hence for a child we can choose to use a Consumer, or a function with an argument to receive the props.
       return <PSProperty.Provider value={component.state}>
-              { React.Children.map( children, child => React.cloneElement( child, component.state) ) }
+              { Children.map( children, child => cloneElement( child, component.state) ) }
             </PSProperty.Provider>
     }
     else

@@ -18,8 +18,8 @@
 // Full text of this license can be found in the LICENSE file in the projects root.
 // END LICENSE
 
-import React from 'react';
-import PropTypes from "prop-types";
+import React, { createRef } from 'react';
+import { string } from "prop-types";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import { thisAppsLocation } from './utilities.js';
@@ -76,7 +76,7 @@ export default class OpenPublicResource extends PerspectivesComponent
       { i18next.t("openPublicResource", {ns: "preact"}) }
     </Tooltip> );
 
-    const eventDiv = React.createRef();
+    const eventDiv = createRef();
 
     return  <OverlayTrigger
                       placement="left"
@@ -103,6 +103,6 @@ export default class OpenPublicResource extends PerspectivesComponent
 }
 
 OpenPublicResource.propTypes = 
-  { publicurl: PropTypes.string.isRequired 
-  , rolekind: PropTypes.string.isRequired
+  { publicurl: string.isRequired 
+  , rolekind: string.isRequired
   };

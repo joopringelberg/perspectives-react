@@ -18,8 +18,8 @@
 // Full text of this license can be found in the LICENSE file in the projects root.
 // END LICENSE
 
-import React from 'react';
-import PropTypes from "prop-types";
+import React, { createRef } from 'react';
+import {string} from "prop-types";
 
 import {PDRproxy} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
@@ -149,7 +149,7 @@ export default class TablePasteRole extends PerspectivesComponent
       }
     </Tooltip> );
 
-    const eventDiv = React.createRef();
+    const eventDiv = createRef();
 
     if ( component.stateIsComplete(["roleOnClipboard"]) )
     {
@@ -185,10 +185,10 @@ export default class TablePasteRole extends PerspectivesComponent
 TablePasteRole.contextType = PSRoleInstances;
 
 TablePasteRole.propTypes = 
-  { systemexternalrole: PropTypes.string.isRequired 
-  , contextinstance: PropTypes.string.isRequired
-  , contexttype: PropTypes.string.isRequired
-  , roletype: PropTypes.string.isRequired
-  , selectedroleinstance: PropTypes.string
-  , myroletype: PropTypes.string.isRequired
+  { systemexternalrole: string.isRequired 
+  , contextinstance: string.isRequired
+  , contexttype: string.isRequired
+  , roletype: string.isRequired
+  , selectedroleinstance: string
+  , myroletype: string.isRequired
   };

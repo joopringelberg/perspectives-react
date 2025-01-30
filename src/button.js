@@ -1,5 +1,5 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React, { Children } from "react";
+import { bool, node, oneOf, string } from "prop-types";
 import classNames from "classnames";
 
 export const Button = ({
@@ -14,7 +14,7 @@ export const Button = ({
 
   const lPos = typeof labelPosition !== "undefined" ? labelPosition : "right";
   const labelPositionClassName =
-    React.Children.count(children) > 0 ? `${cName}--${lPos}` : "";
+    Children.count(children) > 0 ? `${cName}--${lPos}` : "";
   const borderClassName = border === true ? `${cName}--border` : "";
   return (
     <button
@@ -35,12 +35,12 @@ export const Button = ({
 
 Button.propTypes = {
   /** Primary content */
-  children: PropTypes.node,
+  children: node,
   /** Additional classes. */
-  className: PropTypes.string,
-  icon: PropTypes.node,
-  labelPosition: PropTypes.oneOf(["left", "right"]),
-  border: PropTypes.bool,
+  className: string,
+  icon: node,
+  labelPosition: oneOf(["left", "right"]),
+  border: bool,
 };
 
 export default Button;

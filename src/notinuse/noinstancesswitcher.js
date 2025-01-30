@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Children } from "react";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRoleInstances} from "./reactcontexts.js";
 
@@ -11,13 +11,13 @@ export default class NoInstancesSwitcher extends PerspectivesComponent
   {
     const component = this;
     let defaultElement, children;
-    if (React.Children.count( component.props.children ) == 1)
+    if (Children.count( component.props.children ) == 1)
     {
       children = component.props.children;
     }
     else
     {
-      children = React.Children.toArray( component.props.children );
+      children = Children.toArray( component.props.children );
       defaultElement = children[0];
       children = children.slice(1);
     }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { cloneElement } from "react";
 import PropTypes from "prop-types";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext} from "./reactcontexts.js";
@@ -44,7 +44,7 @@ export default class LocalRoleSpecialisation extends PerspectivesComponent
     const component = this;
     if (component.stateIsComplete())
     {
-      return React.cloneElement(
+      return cloneElement(
         component.props.children,
         { specialisedRole: component.state.specialisedRole });
     }

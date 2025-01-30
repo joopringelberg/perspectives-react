@@ -3,7 +3,7 @@ import {PDRproxy} from "perspectives-proxy";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSContext} from "./reactcontexts";
-import PropTypes from "prop-types";
+import {string} from "prop-types";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
 
@@ -64,4 +64,4 @@ export default class ContextInstance extends PerspectivesComponent
 
 ContextInstance.contextType = PSContext;
 
-ContextInstance.propTypes = { contextinstance: PropTypes.string.isRequired };
+ContextInstance.propTypes = { contextinstance: string.isRequired };

@@ -18,7 +18,7 @@
 // Full text of this license can be found in the LICENSE file in the projects root.
 // END LICENSE
 
-import React from "react"; // 2
+import React, { createRef } from "react"; // 2
 import ReactDOM from "react-dom";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {deconstructLocalName} from "./urifunctions.js";
@@ -27,7 +27,7 @@ import RoleInstance from "./roleinstance.js";
 import {serialisedProperty, propertyValues} from "./perspectiveshape.js";
 
 import "./components.css";
-import PropTypes from "prop-types";
+import {string, bool, func, object} from "prop-types";
 
 ////////////////////////////////////////////////////////////////////////////////
 // NAVIGATING IN A GRID AND A CELL
@@ -64,7 +64,7 @@ export default class TableCell extends PerspectivesComponent
     // A reference to the Form.Control that handles input.
     // It is used to dispatch the custom SetRow and SetColumn events.
     // It also receives focus.
-    this.inputRef = React.createRef();
+    this.inputRef = createRef();
   }
 
   componentDidMount()
@@ -278,15 +278,15 @@ export default class TableCell extends PerspectivesComponent
 }
 
 TableCell.propTypes =
-  { propertyname: PropTypes.string.isRequired
-  , myroletype: PropTypes.string.isRequired
-  , isselected: PropTypes.bool.isRequired
-  , iscard: PropTypes.bool.isRequired
-  , roleinstance: PropTypes.string.isRequired
-  , roleRepresentation: PropTypes.func.isRequired
+  { propertyname: string.isRequired
+  , myroletype: string.isRequired
+  , isselected: bool.isRequired
+  , iscard: bool.isRequired
+  , roleinstance: string.isRequired
+  , roleRepresentation: func.isRequired
   , serialisedProperty: serialisedProperty.isRequired
   // This member is not required, because the state of the role instance
   // may not allow this property.
   , propertyValues: propertyValues
-  , perspective: PropTypes.object.isRequired
+  , perspective: object.isRequired
 };

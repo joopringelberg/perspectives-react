@@ -1,6 +1,6 @@
-import React from "react";
+import React, {PureComponent as Component, createRef, cloneElement} from "react";
 
-import PropTypes from "prop-types";
+import { func } from "prop-types";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 
@@ -73,12 +73,12 @@ export function collectBehaviour( arrayOfBehaviours )
     supportMyRoletype = true;
   }
 
-  return class ComponentWithBehaviour extends React.Component
+  return class ComponentWithBehaviour extends Component
   {
     constructor(props)
     {
       super(props);
-      this.ref = React.createRef();
+      this.ref = createRef();
     }
     componentDidMount()
     {
@@ -102,7 +102,7 @@ export function collectBehaviour( arrayOfBehaviours )
                     <AppContext.Consumer>
                     {
                       // eslint-disable-next-line react/prop-types
-                      appcontext => <div ref={this.ref}>{ React.cloneElement( this.props.children,
+                      appcontext => <div ref={this.ref}>{ cloneElement( this.props.children,
                         { setSelf
                         , systemExternalRole: appcontext.systemExternalRole
                         , myroletype: pscontext.myroletype
@@ -116,7 +116,7 @@ export function collectBehaviour( arrayOfBehaviours )
           return  <AppContext.Consumer>
                   {
                     // eslint-disable-next-line react/prop-types
-                    appcontext => <div ref={this.ref}>{ React.cloneElement( this.props.children,
+                    appcontext => <div ref={this.ref}>{ cloneElement( this.props.children,
                       { setSelf
                       , systemExternalRole: appcontext.systemExternalRole} ) }</div>
                   }
@@ -128,7 +128,7 @@ export function collectBehaviour( arrayOfBehaviours )
         if ( supportMyRoletype )
         {
           // eslint-disable-next-line react/prop-types
-          return  <PSContext.Consumer>{pscontext => <div ref={this.ref}>{ React.cloneElement( this.props.children,
+          return  <PSContext.Consumer>{pscontext => <div ref={this.ref}>{ cloneElement( this.props.children,
                     { setSelf
                     , myroletype: pscontext.myroletype }) }</div>
                   }</PSContext.Consumer>;
@@ -136,7 +136,7 @@ export function collectBehaviour( arrayOfBehaviours )
         else
         {
           // eslint-disable-next-line react/prop-types
-          return <div ref={this.ref}>{ React.cloneElement( this.props.children, {setSelf} ) }</div>;
+          return <div ref={this.ref}>{ cloneElement( this.props.children, {setSelf} ) }</div>;
         }
       }
     }
@@ -175,12 +175,12 @@ export function addBehaviour( Receiver, arrayOfBehaviours )
     supportMyRoletype = true;
   }
 
-  return class ComponentWithBehaviour extends React.Component
+  return class ComponentWithBehaviour extends Component
   {
     constructor(props)
     {
       super(props);
-      this.ref = React.createRef();
+      this.ref = createRef();
       this.prevRef = undefined;
     }
     componentDidMount()
@@ -292,7 +292,7 @@ export class BehaviourReceivingComponent extends PerspectivesComponent
 }
 
 BehaviourReceivingComponent.propTypes =
-  { setSelf: PropTypes.func
+  { setSelf: func
   };
 
 ////////////////////////////////////////////////////////////////////////////////

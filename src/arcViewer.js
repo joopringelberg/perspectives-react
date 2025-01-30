@@ -18,8 +18,8 @@
 // Full text of this license can be found in the LICENSE file in the projects root.
 // END LICENSE
 
-import React from "react";
-import PropTypes from "prop-types";
+import React, {Component} from "react";
+import { string } from "prop-types";
 import {PDRproxy} from "perspectives-proxy";
 
 
@@ -42,7 +42,7 @@ hljs.registerLanguage("perspectives-arc", perspectivesarc);
 // Various components from react-bootstrap
 import Container from 'react-bootstrap/Container';
 
-export class ArcViewer extends React.Component
+export class ArcViewer extends Component
 {
   constructor(props)
   {
@@ -119,7 +119,7 @@ export class ArcViewer extends React.Component
 }
 
 ArcViewer.propTypes =
-  { propId: PropTypes.string.isRequired
-  , roleId: PropTypes.string
-  , fileName: PropTypes.string
+  { propId: string.isRequired
+  , roleId: string
+  , fileName: string
   }

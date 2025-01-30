@@ -23,10 +23,9 @@ import
   , Modal
   } from "react-bootstrap";
 
-// import React, { useState } from 'react';
 import React from 'react';
 
-import PropTypes from "prop-types";
+import { bool, func, string } from "prop-types";
 
 export default function Alert(props) {
   // const [show, setShow] = useState(false);
@@ -56,8 +55,8 @@ export default function Alert(props) {
   );
 }
 Alert.propTypes =
-  { title: PropTypes.string.isRequired
-  , message: PropTypes.string.isRequired
-  , show: PropTypes.bool.isRequired
-  , close: PropTypes.func
+  { title: string.isRequired
+  , message: string.isRequired
+  , show: bool.isRequired
+  , close: func
   };

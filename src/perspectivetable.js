@@ -1,4 +1,4 @@
-import React from "react"; // 2
+import React, { Component, createRef } from "react"; // 2
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PSRol} from "./reactcontexts";
 import {addBehaviour} from "./behaviourcomponent.js";
@@ -12,7 +12,7 @@ import
   , Form
   } from "react-bootstrap";
 import "./components.css";
-import PropTypes from "prop-types";
+import { object } from "prop-types";
 
 ////////////////////////////////////////////////////////////////////////////////
 // CARD
@@ -20,7 +20,7 @@ import PropTypes from "prop-types";
 // The default component to display in the card column. Shows a plain text control.
 // The behaviours granted to the table will be established on this Card component.
 // Displays the value of prop cardcolumn of RoleTable (a property of the role).
-class Card extends React.Component
+class Card extends Component
 {
   componentDidMount()
   {
@@ -63,7 +63,7 @@ export default class PerspectiveTable extends PerspectivesComponent
     // this.propertyNames = Object.keys( component.props.perspective.properties );
     // Map role verbs to behaviour.
     this.roleRepresentation = addBehaviour( Card, mapRoleVerbsToBehaviours( component.props.perspective ) );
-    this.eventDiv = React.createRef();
+    this.eventDiv = createRef();
     this.handleKeyDown = this.handleKeyDown.bind( this );
 
     component.state =
@@ -260,7 +260,7 @@ PerspectiveTable.propTypes =
   {
   // A React component that is displayed in the card column.
   // Is by the default the Card class given above.
-  "roleRepresentation": PropTypes.object
+  "roleRepresentation": object
   // When given a perspective, the table will not retrieve roleinstances itself.
-  , "perspective": PropTypes.object.isRequired
+  , "perspective": object.isRequired
   };

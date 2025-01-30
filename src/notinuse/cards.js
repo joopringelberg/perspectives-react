@@ -1,5 +1,5 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React, { Component, createRef, forwardRef } from "react";
+import { string, func } from "prop-types";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 
@@ -15,7 +15,7 @@ import {Card} from "react-bootstrap";
 /*
 From some content (e.g. a Card, the `inner component`), construct a component X that expects a PSRol context.
 Provide that context with a RoleInstanceIterator.
-The inner component is passed a ref. If it is a function component, define it with React.forwardRef
+The inner component is passed a ref. If it is a function component, define it with React forwardRef
 (see example below; for more information, see https://reactjs.org/docs/forwarding-refs.html).
 X is constructed so that one can add behaviour to it with addBehaviour.
 X represents a role instance, ie. one of the items in the role list. It
@@ -43,7 +43,7 @@ export function makeRoleInListPresentation (RoleRep)
     constructor(props)
     {
       super(props);
-      this.ref = React.createRef();
+      this.ref = createRef();
     }
 
     componentDidMount()
@@ -85,9 +85,9 @@ export function makeRoleInListPresentation (RoleRep)
   RoleInListPresentation.contextType = PSRol;
 
   RoleInListPresentation.propTypes =
-    { viewname: PropTypes.string
-    , labelProperty: PropTypes.string.isRequired
-    , setSelf: PropTypes.func.isRequired
+    { viewname: string
+    , labelProperty: string.isRequired
+    , setSelf: func.isRequired
   };
   return RoleInListPresentation;
 }
@@ -101,7 +101,7 @@ export function makeRoleInListPresentation (RoleRep)
 // This card must be used in a context that provides PSRol.
 export const NameDescriptionCard = makeRoleInListPresentation(
   // eslint-disable-next-line react/display-name
-  React.forwardRef( function(props, ref)
+  forwardRef( function(props, ref)
   {
     // eslint-disable-next-line react/prop-types
     return  <Card ref={ref} tabIndex={props.tabIndex} aria-label={props["aria-label"]}>
@@ -139,7 +139,7 @@ export const NameDescriptionCard = makeRoleInListPresentation(
   */
   export function makeSingleRolePresentation (RoleRep)
   {
-    class SingleRolePresentation extends React.Component
+    class SingleRolePresentation extends Component
     {
       componentDidMount()
       {
@@ -168,9 +168,9 @@ export const NameDescriptionCard = makeRoleInListPresentation(
     SingleRolePresentation.contextType = PSRol;
 
     SingleRolePresentation.propTypes =
-      { viewname: PropTypes.string
-      , labelProperty: PropTypes.string.isRequired
-      , setSelf: PropTypes.func.isRequired
+      { viewname: string
+      , labelProperty: string.isRequired
+      , setSelf: func.isRequired
     };
     return SingleRolePresentation;
   }
@@ -184,7 +184,7 @@ export const NameDescriptionCard = makeRoleInListPresentation(
   // This card must be used in a context that provides PSRol.
   export const AriaLabelCard = makeSingleRolePresentation(
     // eslint-disable-next-line react/display-name
-    React.forwardRef( function(props, ref)
+    forwardRef( function(props, ref)
     {
       // eslint-disable-next-line react/prop-types
       return  <Card ref={ref} tabIndex={props.tabIndex} aria-label={props["aria-label"]}>

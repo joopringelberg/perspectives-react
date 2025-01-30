@@ -22,7 +22,7 @@ import React from "react";
 import {PDRproxy, CONTINUOUS} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
 import PerspectiveBasedForm from "./perspectivebasedform.js";
-import PropTypes from "prop-types";
+import { string } from "prop-types";
 import mapRoleVerbsToBehaviours from "./maproleverbstobehaviours.js";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -95,7 +95,7 @@ export default class PerspectiveForm extends PerspectivesComponent
 }
 
 PerspectiveForm.propTypes =
-  { roleinstance: PropTypes.string.isRequired
-  , contextinstance: PropTypes.string
-  , myroletype: PropTypes.string
+  { roleinstance: string.isRequired
+  , contextinstance: string
+  , myroletype: string
   };

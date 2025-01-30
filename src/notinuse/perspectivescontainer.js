@@ -1,7 +1,7 @@
 // OBSOLETE
 
-import React from "react";
-const Component = React.PureComponent;
+import React, { createRef, PureComponent } from "react";
+const Component = PureComponent;
 
 import PropTypes from "prop-types";
 
@@ -45,7 +45,7 @@ export class PerspectivesContainer extends Component
       , cardprop: undefined
       , backwardsNavigation: undefined
       };
-    this.containerRef = React.createRef();
+    this.containerRef = createRef();
   }
 
   componentDidMount ()

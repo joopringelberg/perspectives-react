@@ -11,7 +11,7 @@ import i18next from "i18next";
 This module gives functions that add behaviour to a component that represents a role.
 The functions built on the assumption that the role component has a PSRol context.
 We will call that component a `Card` here, though there is no reason to use a Reactbootstrap.Card component.
-However, it must be class based (implemented by extending React.Component).
+However, it must be class based (implemented by extending React Component).
 Add these behaviours to the Card using the collectBehaviour or addBehaviour function; prepare the Card
 by extending BehaviourReceivingComponent or by adding to the method componentDidMount the following line:
 

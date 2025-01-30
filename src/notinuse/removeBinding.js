@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Children, cloneElement } from "react";
 import {PDRproxy} from "perspectives-proxy";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
@@ -17,11 +17,11 @@ class RemoveBinding_ extends PerspectivesComponent
   render ()
   {
     const component = this;
-    return React.Children.map(
+    return Children.map(
       component.props.children,
       function(child)
       {
-        return React.cloneElement(
+        return cloneElement(
           child,
           {
             // Can be applied to a PSRol context type.

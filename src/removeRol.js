@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Children, cloneElement } from "react";
 import {PDRproxy} from "perspectives-proxy";
 import {PSContext} from "./reactcontexts.js";
 
@@ -18,11 +18,11 @@ class RemoveRol_ extends PerspectivesComponent
   render ()
   {
     const component = this;
-    return React.Children.map(
+    return Children.map(
       component.props.children,
       function(child)
       {
-        return React.cloneElement(
+        return cloneElement(
           child,
           {
             // Should be applied to a PSRol object.

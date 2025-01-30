@@ -35,7 +35,7 @@ import
   { Navbar
   } from "react-bootstrap";
 import "./components.css";
-import PropTypes from "prop-types";
+import { shape, string } from "prop-types";
 
 ////////////////////////////////////////////////////////////////////////////////
 // TABLECONTROLS
@@ -230,7 +230,7 @@ export default class TableControls extends PerspectivesComponent
 TableControls.contextType = PSContext;
 
 TableControls.propTypes =
-  { perspective: PropTypes.shape( SerialisedPerspective ).isRequired
+  { perspective: shape( SerialisedPerspective ).isRequired
   // This is the row that is selected in the table, possibly none.
-  , selectedroleinstance: PropTypes.string
+  , selectedroleinstance: string
   };

@@ -1,8 +1,9 @@
 {
   "name": "perspectives-react",
-  "version": "0.26.3",
+  "version": "0.26.4",
   "description": "React components to build a GUI based on the perspectives-protocol (hides connection to perspectives-core).",
   "main": "dist/perspectives-react.js",
+  "types": "dist/perspectives-react-components.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --watch",
@@ -39,6 +40,7 @@
   "devDependencies": {
     "@babel/cli": "^7.25.7",
     "@babel/core": "^7.25.8",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/preset-env": "^7.25.8",
     "@babel/preset-react": "^7.25.7",
     "babel-loader": "^9.2.1",
@@ -47,6 +49,7 @@
     "eslint-plugin-react": "^7.37.1",
     "ignore-loader": "^0.1.2",
     "style-loader": "^4.0.0",
+    "typescript": "^5.7.3",
     "webpack": "^5.95.0",
     "webpack-cli": "^5.1.4"
   },

@@ -18,10 +18,10 @@
 // Full text of this license can be found in the LICENSE file in the projects root.
 // END LICENSE
 
-import React, { Component } from "react";
+import React, { Component, forwardRef } from "react";
 import {Dropdown} from 'react-bootstrap';
 import {PlusIcon} from '@primer/octicons-react';
-import PropTypes from "prop-types";
+import { func, objectOf, string } from "prop-types";
 import i18next from "i18next";
 
 export default class CreateContextDropDown extends Component
@@ -82,12 +82,12 @@ export default class CreateContextDropDown extends Component
 }
 
 CreateContextDropDown.propTypes =
-  { create: PropTypes.func
-  , contexts: PropTypes.objectOf(PropTypes.string)
+  { create: func
+  , contexts: objectOf(string)
   };
 
 // eslint-disable-next-line react/display-name, react/prop-types
-const CustomToggle = React.forwardRef(({ children, onClick, disabled }, ref) => (
+const CustomToggle = forwardRef(({ children, onClick, disabled }, ref) => (
   <a
     href=""
     ref={ref}

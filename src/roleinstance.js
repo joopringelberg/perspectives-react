@@ -1,6 +1,6 @@
-import React from "react";
+import React, { Children, cloneElement, createRef } from "react";
 
-import PropTypes from "prop-types";
+import {string, bool} from "prop-types";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 
@@ -22,7 +22,7 @@ export default class RoleInstance extends PerspectivesComponent
   constructor (props)
   {
     super(props);
-    this.eventDiv = React.createRef();
+    this.eventDiv = createRef();
     // We omit the functions.
     this.state =
       { contextinstance: undefined
@@ -210,13 +210,13 @@ export default class RoleInstance extends PerspectivesComponent
     let defaultElement, children;
     if (component.stateIsComplete(["rolinstance"]))
     {
-      if (React.Children.count( component.props.children ) == 1)
+      if (Children.count( component.props.children ) == 1)
       {
         children = component.props.children;
       }
       else
       {
-        children = React.Children.toArray( component.props.children );
+        children = Children.toArray( component.props.children );
         defaultElement = children[0];
         children = children.slice(1);
       }
@@ -242,7 +242,7 @@ export default class RoleInstance extends PerspectivesComponent
         // has an extra prop `createrole`.
         return  <PSRol.Provider value={component.state}>
                   {
-                    React.cloneElement( defaultElement, {createrole: (receiveResponse) => component.createRole(receiveResponse)})
+                    cloneElement( defaultElement, {createrole: (receiveResponse) => component.createRole(receiveResponse)})
                   }
                 </PSRol.Provider>;
       }
@@ -259,11 +259,11 @@ export default class RoleInstance extends PerspectivesComponent
 }
 
 RoleInstance.propTypes =
-  { roleinstance: PropTypes.string
-  , roletype: PropTypes.string.isRequired
-  , rolekind: PropTypes.string.isRequired
-  , contextinstance: PropTypes.string.isRequired
-  , contexttype: PropTypes.string.isRequired
-  , myroletype: PropTypes.string.isRequired
-  , allowedtoremovecontext: PropTypes.bool.isRequired
+  { roleinstance: string
+  , roletype: string.isRequired
+  , rolekind: string.isRequired
+  , contextinstance: string.isRequired
+  , contexttype: string.isRequired
+  , myroletype: string.isRequired
+  , allowedtoremovecontext: bool.isRequired
   };

@@ -1,9 +1,9 @@
 
-import React from 'react';
+import React, { PureComponent } from "react";
 
 import {PDRproxy} from "perspectives-proxy";
-import PropTypes from "prop-types";
-const Component = React.PureComponent;
+import { string } from "prop-types";
+const Component = PureComponent;
 import i18next from "i18next";
 import {UserMessagingPromise} from "./userMessaging.js";
 import { Image } from 'react-bootstrap';
@@ -84,7 +84,7 @@ export class AsyncImage extends Component
 }
 
 AsyncImage.propTypes =
-  { propId: PropTypes.string.isRequired
-  , roleId: PropTypes.string
-  , fileName: PropTypes.string
+  { propId: string.isRequired
+  , roleId: string
+  , fileName: string
   }

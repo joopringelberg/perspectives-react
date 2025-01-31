@@ -1,6 +1,6 @@
 {
   "name": "perspectives-react",
-  "version": "0.26.4",
+  "version": "0.26.5",
   "description": "React components to build a GUI based on the perspectives-protocol (hides connection to perspectives-core).",
   "main": "dist/perspectives-react.js",
   "types": "dist/perspectives-react-components.d.ts",

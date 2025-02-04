@@ -1,15 +1,16 @@
-const path = require("path");
-const webpack = require('webpack');
+import webpack from 'webpack';
+import { CleanWebpackPlugin } from 'clean-webpack-plugin';
+import CopyPlugin from "copy-webpack-plugin";
 
-module.exports = {
-  entry: path.join(__dirname, "src/perspectives-react-components.js"),
+export default {
+  entry: new URL("src/perspectives-react-components.js", import.meta.url).pathname,
   output: {
+    filename: "perspectives-react.jsm",
+    path: new URL("dist", import.meta.url).pathname,
     library: {
       type: "module" 
     },
-    filename: "perspectives-react.js",
-    path: path.join(__dirname, "dist"),
-    sourceMapFilename: "perspectives-react.js.map" // Ensure this line is included
+    sourceMapFilename: "perspectives-react.jsm.map" // Ensure this line is included
   },
   experiments: {
     outputModule: true // Enable output as a module
@@ -22,18 +23,9 @@ module.exports = {
       {
         test: /.jsx?$/,
         exclude: /node_modules/,
-        use: [
-          {
-            loader: "babel-loader",
-            options: {
-              presets: ['@babel/preset-env', "@babel/preset-react"],
-              plugins: [
-                '@babel/plugin-syntax-dynamic-import'
-              ],
-              sourceMaps: true
-            }
-          }
-        ]
+        use: {
+          loader: "babel-loader"
+        }
       },
       {
         test: /\.css$/,
@@ -42,11 +34,19 @@ module.exports = {
     ]
   },
   plugins: [
+    new CleanWebpackPlugin(),
     new webpack.DefinePlugin({
       __PPSTORAGELIMIT__: 10,
       __PPWARNINGLEVEL__: 5,
       __PPSTORAGEURL__: '"https://mycontexts.com/ppsfs/uploadfile"'
-    })
+    }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: new URL("src/perspectives-react-components.d.ts", import.meta.url).pathname,
+          to: new URL("dist/perspectives-react.jsm.d.ts", import.meta.url).pathname
+        }
+      ]})
   ],
   externals: {
     "react": "react",
@@ -57,5 +57,8 @@ module.exports = {
     "perspectives-proxy": "perspectives-proxy",
     "pouchdb-browser": "commonjs pouchdb-browser",
     "i18next": "i18next",
+  },
+  resolve: {
+    mainFields: ["module", "main"]
   }
 };

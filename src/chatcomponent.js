@@ -18,7 +18,7 @@
 import {PDRproxy} from "perspectives-proxy";
 
 import { PropTypes } from "prop-types"
-import PerspectivesComponent from "./perspectivescomponent";
+import PerspectivesComponent from "./perspectivescomponent.js";
 import React from "react";
 
 import { MainContainer, ChatContainer, MessageList, Message, MessageInput, ConversationHeader, Avatar, VoiceCallButton, VideoCallButton, InfoButton, TypingIndicator, MessageSeparator, SendButton, AttachmentButton, AvatarGroup, ExpansionPanel } from '@chatscope/chat-ui-kit-react';

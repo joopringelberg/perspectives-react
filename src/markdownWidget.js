@@ -25,9 +25,9 @@ import {PDRproxy} from "perspectives-proxy";
 import markdownit from 'markdown-it'
 const md = markdownit();
 
-const markdownPerspectives = require('./perspectives-markdown');
+import {default as markdownPerspectives} from "./perspectives-markdown.js";
 // https://www.npmjs.com/package/markdown-it-link-attributes
-var mila = require("markdown-it-link-attributes");
+import mila from "markdown-it-link-attributes";
 
 md.use(markdownPerspectives);
 // All hyperlinks will open in a new tab or window.

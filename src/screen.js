@@ -1,4 +1,4 @@
-import "regenerator-runtime/runtime";
+import "regenerator-runtime";
 
 import React, { createRef } from 'react';
 

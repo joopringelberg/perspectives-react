@@ -43,7 +43,7 @@ const filePropShape =
     }
   )
 
-export default class PerspectivesFile extends PerspectivesComponent
+export class PerspectivesFile extends PerspectivesComponent
 {
   constructor(props)
   {

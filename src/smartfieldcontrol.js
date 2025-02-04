@@ -31,7 +31,7 @@ import {string, bool, any} from "prop-types";
 import {serialisedProperty, propertyValues} from "./perspectiveshape.js";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
-import PerspectivesFile from "./perspectivesFile.js";
+import {PerspectivesFile} from "./perspectivesFile.js";
 import {MarkDownWidget} from "./markdownWidget.js";
 
 ////////////////////////////////////////////////////////////////////////////////

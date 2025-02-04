@@ -23,7 +23,7 @@ import {string} from "prop-types";
 
 import {PDRproxy, CONTINUOUS} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
-import {PSContext} from "./reactcontexts";
+import {PSContext} from "./reactcontexts.js";
 import PerspectiveBasedForm from "./perspectivebasedform.js";
 import PerspectiveTable from "./perspectivetable.js";
 import mapRoleVerbsToBehaviours from "./maproleverbstobehaviours.js";

@@ -32,7 +32,7 @@
 
 import { Button, Card, Modal } from "react-bootstrap";
 import {shape, string, func} from "prop-types";
-import PerspectivesComponent from "./perspectivescomponent";
+import PerspectivesComponent from "./perspectivescomponent.js";
 
 class UserMessaging
 {

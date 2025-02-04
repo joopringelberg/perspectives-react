@@ -1,4 +1,4 @@
-module.exports = function (md) {
+export default function (md) {
 
   // The tokenize function to add.
   function tokenize(state, silent) {

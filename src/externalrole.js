@@ -3,7 +3,7 @@ import {PDRproxy} from "perspectives-proxy";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {externalRole} from "./urifunctions.js";
-import {PSRol, PSContext} from "./reactcontexts";
+import {PSRol, PSContext} from "./reactcontexts.js";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
 

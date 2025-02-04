@@ -21,10 +21,10 @@
 import React from "react"; // 2
 import PerspectivesComponent from "./perspectivescomponent.js";
 import {PDRproxy} from "perspectives-proxy";
-import {AppContext} from "./reactcontexts";
+import {AppContext} from "./reactcontexts.js";
 import ActionDropDown from "./actiondropdown.js";
 import CreateContextDropDown from "./createContextDropdown.js";
-import {PSContext} from "./reactcontexts";
+import {PSContext} from "./reactcontexts.js";
 import TablePasteRole from "./tablepasterole.js";
 import OpenPublicResource from "./openpublicresource.js";
 import { SerialisedPerspective } from "./perspectiveshape.js";

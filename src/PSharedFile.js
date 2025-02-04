@@ -1,7 +1,7 @@
 // PSharedFile is a Perspectives property Range type.
 // It is a serialised JSON structure:
 
-import { string } from "prop-types";
+import { string, number } from "prop-types";
 
 export const PSharedFile =
   { // The file name as it was uploaded.

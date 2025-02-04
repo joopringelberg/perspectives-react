@@ -5,7 +5,7 @@ import classNames from "classnames";
 import Button from "./button.js";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMicrophone } from "@fortawesome/free-solid-svg-icons/faMicrophone";
+import { faMicrophone } from "@fortawesome/free-solid-svg-icons/faMicrophone.js";
 
 // export const MicrophoneButton = forwardRef( ({ className = "", children, ...rest }) => {
 export const MicrophoneButton = forwardRef( (props, ref) => {

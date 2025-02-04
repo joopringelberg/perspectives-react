@@ -28,7 +28,7 @@ import {PDRproxy} from "perspectives-proxy";
 import hljs from 'highlight.js/lib/core';
 
 // Import perspectives-arc as a third party language
-import perspectivesarc from 'perspectives-highlightjs';
+import {default as perspectivesarc} from 'perspectives-highlightjs';
 
 import i18next from "i18next";
 import {UserMessagingPromise} from "./userMessaging.js";
@@ -40,7 +40,7 @@ import "highlight.js/styles/base16/solar-flare.css";
 hljs.registerLanguage("perspectives-arc", perspectivesarc); 
 
 // Various components from react-bootstrap
-import Container from 'react-bootstrap/Container';
+import {Container} from 'react-bootstrap';
 
 export class ArcViewer extends Component
 {

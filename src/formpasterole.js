@@ -23,7 +23,7 @@ import { string } from "prop-types";
 
 import {PDRproxy} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivescomponent.js";
-import {PSRol} from "./reactcontexts";
+import {PSRol} from "./reactcontexts.js";
 import { default as ModelDependencies } from "./modelDependencies.js";
 import {PasteIcon} from '@primer/octicons-react';
 import i18next from "i18next";

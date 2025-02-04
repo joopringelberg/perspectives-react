@@ -1,6 +1,6 @@
 import React, { Component, createRef } from "react"; // 2
 import PerspectivesComponent from "./perspectivescomponent.js";
-import {PSRol} from "./reactcontexts";
+import {PSRol} from "./reactcontexts.js";
 import {addBehaviour} from "./behaviourcomponent.js";
 import mapRoleVerbsToBehaviours from "./maproleverbstobehaviours.js";
 import TableRow from "./tablerow.js";

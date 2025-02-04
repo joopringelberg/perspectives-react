@@ -4,7 +4,7 @@ import {string, bool} from "prop-types";
 
 import PerspectivesComponent from "./perspectivescomponent.js";
 
-import {PSRol, PSContext} from "./reactcontexts";
+import {PSRol, PSContext} from "./reactcontexts.js";
 
 import {PDRproxy, FIREANDFORGET} from "perspectives-proxy";
 

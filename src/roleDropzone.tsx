@@ -9,7 +9,7 @@ import { default as ModelDependencies } from "./modelDependencies.js";
 import {PDRproxy, FIREANDFORGET, RoleInstanceT} from "perspectives-proxy";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
-import { RoleDataProper, RoleOnClipboard } from "./perspectivesshape.js";
+import { RoleDataProper, RoleOnClipboard } from "./roledata.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 // ROLEDROPZONE

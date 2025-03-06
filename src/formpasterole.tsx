@@ -29,10 +29,10 @@ import {PasteIcon} from '@primer/octicons-react';
 import i18next from "i18next";
 
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
-import { RoleOnClipboard } from './perspectivesshape';
+import { RoleOnClipboard } from './roledata';
 import { OverlayInjectedProps } from 'react-bootstrap/esm/Overlay';
 
-import "components.css";
+import "./components.css";
 
 interface FormPasteRoleProps {
   systemexternalrole: RoleInstanceT;

@@ -39,4 +39,4 @@ export { ArcViewer } from "./arcViewer";
 export { UnboundMarkDownWidget } from "./markdownWidget";
 
 export {getPreact} from "./getLanguage";
-export type * from "./perspectivesshape.d.ts";
+export type * from "./roledata";

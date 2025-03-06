@@ -22,8 +22,8 @@
 
 import React, { PureComponent } from "react";
 const Component = PureComponent;
-import {ContextInstanceT, PDRproxy, RoleInstanceT, RoleType, ValueT, PropertyValues, SerialisedProperty } from "perspectives-proxy";
-import { mapRange } from "perspectives-proxy/dist/perspectivesshape";
+import {ContextInstanceT, PDRproxy, RoleInstanceT, RoleType, ValueT, PropertyValues, SerialisedProperty, InputType } from "perspectives-proxy";
+import { mapRange } from "perspectives-proxy";
 import { Form } from "react-bootstrap";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
@@ -58,8 +58,6 @@ interface SmartFieldControlState
 {
   value: string;
 }
-
-type InputType = "text" | "checkbox" | "datetime-local" | "date" | "time" | "number" | "email" | "file" | "markdown"
 
 export default class SmartFieldControl extends Component<SmartFieldControlProps, SmartFieldControlState>
 {

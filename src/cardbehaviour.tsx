@@ -5,7 +5,7 @@ import {isQualifiedName} from "./urifunctions";
 import { default as ModelDependencies } from "./modelDependencies";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
-import { RoleOnClipboard } from "./perspectivesshape";
+import { RoleOnClipboard } from "./roledata";
 import { PSRolType } from "./reactcontexts";
 import { t } from "i18next";
 import React from 'react';

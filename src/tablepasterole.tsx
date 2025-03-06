@@ -30,7 +30,7 @@ import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
 
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
-import { RoleOnClipboard } from './perspectivesshape';
+import { RoleOnClipboard } from './roledata';
 import { OverlayInjectedProps } from 'react-bootstrap/esm/Overlay';
 
 interface TablePasteRoleProps

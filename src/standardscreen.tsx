@@ -118,7 +118,7 @@ export default class StandardScreen extends PerspectivesComponent<StandardScreen
     PDRproxy.then( function (pproxy)
       {
         // If a ContextRole Kind, create a new context, too.
-        if (perspective.roleKind == "ContextRole" && perspective.contextTypesToCreate.length > 0)
+        if (perspective.roleKind == "ContextRole" && Object.keys(perspective.contextTypesToCreate).length > 0)
         {
           pproxy.createContext (
               {

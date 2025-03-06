@@ -35,7 +35,7 @@ import {MarkDownWidget} from './markdownWidget.js';
 import SmartFieldControl from './smartfieldcontrol.js';
 import ChatComponent from './chatcomponent.js';
 import { externalRole } from './urifunctions.js';
-import {  } from './perspectivesshape';
+import {  } from './roledata';
 import { mapRoleVerbsToBehaviourNames } from './maproleverbstobehaviours';
 
 interface ScreenDefinitionInterpreterProps
@@ -126,7 +126,7 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent<S
     PDRproxy.then( function (pproxy)
       {
         // If a ContextRole Kind, create a new context, too.
-        if (perspective.roleKind == "ContextRole" && perspective.contextTypesToCreate.length > 0)
+        if (perspective.roleKind == "ContextRole" && Object.keys(perspective.contextTypesToCreate).length > 0)
         {
           pproxy.createContext (
               {

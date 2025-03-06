@@ -1,21 +1,22 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "module": "commonjs",
+    "module": "ESNext",
+    "target": "ES2023",
     "declaration": true,
+    "jsx": "react",
+    "declarationDir": "./dist/types",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "outDir": "./dist",
+    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "typeRoots": ["./node_modules/@types"],
     "baseUrl": ".",
-    "paths": {
-      "reactcontexts": ["src/reactcontexts"],
-      "cardbehaviour": ["src/cardbehaviour"],
-      "behaviourcomponent": ["src/behaviourcomponent"],
-      "userMessaging": ["src/userMessaging"]
-    }
+    "moduleResolution": "node",
+    "resolveJsonModule": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

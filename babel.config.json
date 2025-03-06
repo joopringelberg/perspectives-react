@@ -1,7 +1,0 @@
-{
-  "presets": ["@babel/preset-env", "@babel/preset-react"],
-  "targets": {
-    "chrome": "129"
-  },
-  "sourceMaps": true
-}

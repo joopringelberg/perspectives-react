@@ -31,3 +31,9 @@ for a discussion about variables and sass. */
 .widget {
   flex-grow: 1;
 }
+
+.disabledIcon {
+  opacity: 0.5; /* Make the icon appear faded */
+  pointer-events: none; /* Prevent user interactions */
+  cursor: not-allowed; /* Change the cursor to indicate the icon is disabled */
+}

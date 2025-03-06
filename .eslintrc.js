@@ -4,22 +4,25 @@ module.exports = {
         "es6": true,
         "node": true
     },
-    "extends": ["eslint:recommended", "plugin:react/recommended"],
+    "parser": "@typescript-eslint/parser",
     "parserOptions": {
+        "ecmaVersion": 2023,
+        "sourceType": "module",
         "ecmaFeatures": {
             "jsx": true
-        },
-        "ecmaVersion": 2018,
-        "sourceType": "module"
+        }
     },
     "plugins": [
+        "@typescript-eslint",
         "react"
     ],
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react/recommended"
+    ],
     "rules": {
-        // "indent": [
-        //     "error",
-        //     2
-        // ],
+        // Add your custom rules here
         "linebreak-style": [
             "error",
             "unix"
@@ -28,5 +31,10 @@ module.exports = {
             "error",
             "always"
         ]
+    },
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
     }
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component, JSX } from "react";
 import {ContextInstanceT, PDRproxy, ContextType, RoleType} from "perspectives-proxy";
 
 import PerspectivesComponent from "./perspectivesComponent";
@@ -12,12 +12,12 @@ interface MySystemState {
 }
 
 interface MySystemProps {
-  children: any;
+  children: React.ReactNode;
 }
 
-export default class MySystem extends PerspectivesComponent<MySystemProps, MySystemState>
+export default class MySystem extends Component<MySystemProps, MySystemState>
 {
-  constructor (props: any)
+  constructor (props: MySystemProps)
   {
     super(props);
     this.state = {
@@ -42,7 +42,7 @@ export default class MySystem extends PerspectivesComponent<MySystemProps, MySys
       });
   }
 
-  render ()
+  render () : JSX.Element
   {
     const component = this;
     if (component.state.contextinstance !== "")

@@ -1,6 +1,5 @@
-import React, { PureComponent } from "react";
+import React, { Component, PureComponent } from "react";
 import {PDRproxy, Unsubscriber} from "perspectives-proxy";
-const Component = PureComponent;
 
 interface PerspectivesComponentState {
   [key: string]: any;

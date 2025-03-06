@@ -1,6 +1,21 @@
 import { ContextType, PropertyType, RoleType } from "perspectives-proxy";
 
-export default 
+interface ModelDependenciesT
+{
+  cardClipBoard: PropertyType;
+  currentLanguage: PropertyType;
+  sysUser: RoleType;
+  system: ContextType;
+  systemExternal: RoleType;
+  notifications: RoleType;
+  allNotifications: RoleType;
+  notificationMessage: PropertyType;
+  isOnScreen: PropertyType;
+  nrOfUploadedFiles: PropertyType;
+  disabled: PropertyType;
+}
+
+const ModelDependencies =
 { cardClipBoard: "model://perspectives.domains#System$PerspectivesSystem$External$CardClipBoard" as PropertyType
 , currentLanguage: "model://perspectives.domains#System$PerspectivesSystem$External$CurrentLanguage" as PropertyType
 , sysUser: "model://perspectives.domains#System$PerspectivesSystem$User" as RoleType
@@ -12,4 +27,6 @@ export default
 , isOnScreen: "model://perspectives.domains#System$ContextWithScreenState$External$IsOnScreen" as PropertyType
 , nrOfUploadedFiles: "model://perspectives.domains#SharedFileServices$SharedFileServices$DefaultFileServer$NrOfUploadedFiles" as PropertyType
 , disabled: "model://perspectives.domains#SharedFileServices$SharedFileServices$DefaultFileServer$Disabled" as PropertyType
-}
+} as ModelDependenciesT;
+
+export default ModelDependencies;

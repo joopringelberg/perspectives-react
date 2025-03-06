@@ -12,7 +12,7 @@ export {
   externalRole,
   deconstructLocalName,
   isSchemedResourceIdentifier,
-  takeCUID // Ensure this line is included
+  takeCUID
 } from "./urifunctions";
 export { default as Screen } from "./screen";
 export { default as RemoveRol } from "./removeRol";

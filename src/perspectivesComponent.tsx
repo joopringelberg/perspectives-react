@@ -21,11 +21,14 @@ export default class PerspectivesComponent<P = PerspectivesComponentProps, S = P
     this.__mounted__ = true;
   }
 
-  // componentDidMount ()
-  // {
-  //   this.__mounted__ = true;
-  //   super.componentDidMount();
-  // }
+  componentDidMount ()
+  {
+    this.__mounted__ = true;
+    if (super.componentDidMount)
+    {
+      super.componentDidMount();
+    }
+  }
 
   componentWillUnmount ()
   {
@@ -52,10 +55,10 @@ export default class PerspectivesComponent<P = PerspectivesComponentProps, S = P
 
   setState<K extends keyof S>(state: S | ((prevState: Readonly<S>, props: Readonly<P>) => S | Pick<S, K> | null) | Pick<S, K> | null, callback?: () => void): void
   {
-    if (this.__mounted__)
-    {
+    // if (this.__mounted__)
+    // {
       super.setState(state, callback);
-    }
+    // }
   }
 
   // A single component may perform multiple calls through the API. All of these may connect a callback

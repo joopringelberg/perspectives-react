@@ -37,24 +37,21 @@ export type EventDispatcher = (data: RoleOnClipboard) => void;
 ////////////////////////////////////////////
 export type AppContextType = 
   { systemExternalRole: RoleInstanceT   // The external role of MySystem.
-  , externalRoleId: RoleInstanceT       // The external role of the selected context.
-  , roleId: RoleInstanceT               // The role identifier of the selected role (OBSOLETE?)
-  , myRoleType: RoleType                // The role type of the users' role in the selected context.
   , systemIdentifier: ContextInstanceT  // The identifier of MySystem.
+  , systemUser: RoleInstanceT           // The user role of MySystem.
   , setEventDispatcher: (dispatcher: EventDispatcher) => void
-  , couchdbUrl: string
+  
+  , externalRoleId?: RoleInstanceT       // The external role of the selected context.
+  , roleId?: RoleInstanceT               // The role identifier of the selected role (OBSOLETE?)
+  , myRoleType?: RoleType                // The role type of the users' role in the selected context.
+  , couchdbUrl?: string
   };
 
-export const AppContext = createContext(
+export const AppContext = createContext<AppContextType>(
   { systemExternalRole: "" as RoleInstanceT
-  , externalRoleId: "" as RoleInstanceT
-  // for roles that are opened
-  , roleId: "" as RoleInstanceT
-  , myRoleType: "" as RoleType
-  // The user identifier (his GUID).
   , systemIdentifier: "" as ContextInstanceT
+  , systemUser: "" as RoleInstanceT
   , setEventDispatcher: function(ignore: EventDispatcher){}
-  , couchdbUrl: ""
   });
                       
 ////////////////////////////////////////////
@@ -74,18 +71,18 @@ export type PSRoleInstances =
   , checkbinding: (roleData: RoleDataProper) => Promise<boolean>
 }
 
-export const PSRoleInstances = createContext(
-  { contextinstance: ""
-  , contexttype: ""
-  , rol: ""
-  , roltype: ""
-  , roleKind: ""
-  , instances: []
-  , cursor: ""
+export const PSRoleInstances = createContext<PSRoleInstances>(
+  { contextinstance: "" as ContextInstanceT
+  , contexttype: "" as ContextType
+  , rol: "" as RoleType
+  , roltype: "" as RoleType
+  , roleKind: ""  as RoleKind
+  , instances: [] as RoleInstanceT[]
+  , cursor: ""  // The cursor for the next page of instances.
   // Handles its own errors and returns a promise.
-  , createRole: function(){ console.warn("Default (no-op) createRole called. You likely miss a PSRoleInstances.Provider!");}
-  , bind: function(){console.warn("Default (no-op) bind called. You likely miss a PSRoleInstances.Provider!");}
-  , checkbinding: function(){console.warn("Default (no-op) checkbinding called. You likely miss a PSRol.Provider or PSRoleInstances.Provider!");}
+  , createRole: function(ignore){ console.warn("Default (no-op) createRole called. You likely miss a PSRoleInstances.Provider!");} as (roleData: RoleDataProper) => Promise<void>
+  , bind: function(ignore){console.warn("Default (no-op) bind called. You likely miss a PSRoleInstances.Provider!");} as (roleData: RoleDataProper) => Promise<RoleInstanceT>
+  , checkbinding: function(ignore){console.warn("Default (no-op) checkbinding called. You likely miss a PSRol.Provider or PSRoleInstances.Provider!");} as (roleData: RoleDataProper) => Promise<boolean>
   });
 
 ////////////////////////////////////////////

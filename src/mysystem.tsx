@@ -37,7 +37,7 @@ export default class MySystem extends Component<MySystemProps, MySystemState>
           .then(
             function(sysId)
             {
-              component.setState({contextinstance: "def:#" + sysId[0] as ContextInstanceT});
+              component.setState({contextinstance: "def:#" + sysId as ContextInstanceT});
             });
       });
   }

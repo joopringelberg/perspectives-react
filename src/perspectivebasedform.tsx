@@ -45,6 +45,7 @@ interface PerspectiveBasedFormProps {
   roleinstance?: RoleInstanceT;
   behaviours?: string[];
   cardtitle: PropertyType;
+  showControls : boolean;
 }
 
 interface PerspectiveBasedFormState {
@@ -250,7 +251,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent<Perspect
               />
             )
           }
-          <Controls/>
+          { component.props.showControls ? <Controls/> : null}
         </>);
     }
   }

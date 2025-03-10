@@ -39,9 +39,18 @@ const RoleCard: React.FC<CardProperties & { [key: string]: any }> = ({title, lab
 // Context type of PerspectiveTable is PSContext
 
 
+/**
+ * Props for the PerspectiveTable component.
+ *
+ * @interface PerspectiveTableProps
+ * @property {Perspective} perspective - The perspective data to be displayed in the table.
+ * @property {string} cardcolumn? - The name of the column that contains card data. If omitted, the identifying property of the perspective is used.
+ * @property {boolean}   , showcontrolsandcaption?: boolean? - Whether to show the table controls and caption. Default is true.
+ */
 interface PerspectiveTableProps
   { perspective: Perspective
-  , cardcolumn: string
+  , cardcolumn?: string
+  , showcontrolsandcaption?: boolean
   }
 
 interface PerspectiveTableState
@@ -115,7 +124,7 @@ export default class PerspectiveTable extends PerspectivesComponent<PerspectiveT
       function (e)
       {
         // By definition of row selection, the card column now becomes the current column.
-        component.setState( { column: component.props.cardcolumn });
+        component.setState( { column: component.props.cardcolumn || component.props.perspective.identifyingProperty } );
         e.stopPropagation();
       },
       false);
@@ -221,7 +230,7 @@ export default class PerspectiveTable extends PerspectivesComponent<PerspectiveT
           hover
           size="sm"
           className="mb-0">
-          <caption>{ i18next.t("table_subscriptionLeader", {ns: 'preact'}) }{ perspective.displayName }</caption>
+          {component.props.showcontrolsandcaption !== false ? <caption>{ i18next.t("table_subscriptionLeader", {ns: 'preact'}) }{ perspective.displayName }</caption> : null}
           <thead>
             <tr>
             { component.propertyNames.map( pn =>
@@ -251,10 +260,10 @@ export default class PerspectiveTable extends PerspectivesComponent<PerspectiveT
             }
           </tbody>
         </Table>
-        <TableControls
+        { component.props.showcontrolsandcaption !== false ? <TableControls
           perspective={ perspective}
           selectedroleinstance={component.state.row}
-        />
+        /> : null}
       </>
       :
         null

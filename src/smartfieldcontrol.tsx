@@ -88,13 +88,14 @@ export default class SmartFieldControl extends Component<SmartFieldControlProps,
   htmlControlType ()
   {
     const controlType = mapRange(this.props.serialisedProperty.range );
+    const maxLength = this.maxLength(this.inputType);
     if (controlType == "checkbox")
     {
       return "checkbox";
     }
     if (controlType == "text")
     {
-      if (this.maxLength(this.inputType) > 80 || this.minLength(this.inputType) > 80 || this.state.value.length > 80)
+      if (maxLength && maxLength > 80 || this.minLength(this.inputType) > 80 || this.state.value.length > 80)
       {
         return "textarea";
       }
@@ -333,16 +334,16 @@ export default class SmartFieldControl extends Component<SmartFieldControlProps,
   }
 
   // Returns an integer. It will be zero (0) if the property has no maximum length.
-  maxLength(inputType : InputType) : number
+  maxLength(inputType : InputType) : number | undefined
   {
     const component = this;
     if (["text", "search", "url", "tel", "email", "password", "markdown"].indexOf(inputType) >= 0)
     {
-      return component.props.serialisedProperty.constrainingFacets.maxLength || 0;
+      return component.props.serialisedProperty.constrainingFacets.maxLength || undefined;
     }
     else
     {
-      return 0;
+      return undefined;
     }
   }
 
@@ -410,6 +411,7 @@ export default class SmartFieldControl extends Component<SmartFieldControlProps,
     const component = this;
     const mandatory = component.props.serialisedProperty.isMandatory;
     const pattern = component.pattern();
+    const maxLength = component.maxLength(component.inputType);
     switch ( this.controlType ){
       case "checkbox":
         return (
@@ -476,7 +478,7 @@ export default class SmartFieldControl extends Component<SmartFieldControlProps,
                   type="text"
                   required={mandatory}
                   minLength={component.minLength(component.inputType)}
-                  maxLength={component.maxLength(component.inputType)}
+                  {... maxLength ? { maxLength: maxLength } : {}}
                   min={component.minInclusive()}
                   max={component.maxInclusive()}
                   {...(pattern ? { pattern: patternToSource(pattern) } : {})}
@@ -498,7 +500,7 @@ export default class SmartFieldControl extends Component<SmartFieldControlProps,
               type={component.inputType}
               required={mandatory}
               minLength={component.minLength(component.inputType)}
-              maxLength={component.maxLength(component.inputType)}
+              {... maxLength ? { maxLength: maxLength } : {}}
               min={component.minInclusive()}
               max={component.maxInclusive()}
               {...(pattern ? { pattern: patternToSource(pattern) } : {})}

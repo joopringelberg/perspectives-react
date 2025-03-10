@@ -102,6 +102,7 @@ export default class StandardScreen extends PerspectivesComponent<StandardScreen
                   perspective={perspective}
                   behaviours={mapRoleVerbsToBehaviourNames( perspective )}
                   cardtitle={ perspective.identifyingProperty }
+                  showControls={true}
                   />
                 : <PerspectiveTable
                     cardcolumn={ perspective.identifyingProperty }

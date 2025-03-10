@@ -5,6 +5,7 @@ interface ModelDependenciesT
   cardClipBoard: PropertyType;
   currentLanguage: PropertyType;
   sysUser: RoleType;
+  startContexts: RoleType;
   system: ContextType;
   systemExternal: RoleType;
   notifications: RoleType;
@@ -19,6 +20,7 @@ const ModelDependencies =
 { cardClipBoard: "model://perspectives.domains#System$PerspectivesSystem$External$CardClipBoard" as PropertyType
 , currentLanguage: "model://perspectives.domains#System$PerspectivesSystem$External$CurrentLanguage" as PropertyType
 , sysUser: "model://perspectives.domains#System$PerspectivesSystem$User" as RoleType
+, startContexts: "model://perspectives.domains#System$PerspectivesSystem$StartContexts" as RoleType
 , system: "model://perspectives.domains#System$PerspectivesSystem" as ContextType
 , systemExternal: "model://perspectives.domains#System$PerspectivesSystem$External" as RoleType
 , notifications: "model://perspectives.domains#System$ContextWithNotification$Notifications" as RoleType

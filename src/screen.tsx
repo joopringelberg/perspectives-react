@@ -34,7 +34,7 @@ import lifecycle from 'page-lifecycle';
 interface FetchModuleFromPouchdbParams {
   modelName: string;
   systemIdentifier: string;
-  couchdbUrl: string;
+  couchdbUrl?: string;
 }
 
 interface ScreenModule {
@@ -70,7 +70,7 @@ interface ScreenOutcome {
   module: React.ComponentType<any>;
 }
 
-function importScreens( roleNames : string[], userIdentifier: string, couchdbUrl : string ): Promise<ScreenOutcome[]> {
+function importScreens( roleNames : string[], userIdentifier: string, couchdbUrl? : string ): Promise<ScreenOutcome[]> {
   const promises = roleNames.map((roleName) => {
     const modelName = deconstructModelName(roleName);
     return fetchModuleFromPouchdb({ modelName, systemIdentifier: userIdentifier, couchdbUrl }).then((module) => {
@@ -124,7 +124,7 @@ interface ScreenProps_
 {
   externalroleinstance: RoleInstanceT;
   setMyRoleType: (roleType: RoleType) => void;
-  couchdbUrl: string;
+  couchdbUrl?: string;
   systemIdentifier: string;
 }
 interface ScreenState_ {

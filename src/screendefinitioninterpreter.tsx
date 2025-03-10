@@ -306,6 +306,7 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent<S
         perspective={perspective}
         behaviours={mapRoleVerbsToBehaviourNames( perspective )}
         cardtitle={ perspective.identifyingProperty }
+        showControls={true}
         />);
   }
   buildChat({fields} : ChatElementDef)

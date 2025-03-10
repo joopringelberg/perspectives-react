@@ -91,6 +91,7 @@ export default class PerspectiveForm extends PerspectivesComponent<PerspectiveFo
                 roleinstance={component.props.roleinstance}
                 behaviours={mapRoleVerbsToBehaviourNames( perspective )}
                 cardtitle={ perspective.identifyingProperty }
+                showControls={true}
               />;
     }
     else

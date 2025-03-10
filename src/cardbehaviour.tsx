@@ -516,11 +516,11 @@ function addBehaviour(component: BehaviourComponent, behaviour: string, behaviou
 ////////////////////////////////////////
 
 const behaviourMap: { [key: string]: BehaviourAdder } = {
-  openContextOrRoleForm: addOpenContextOrRoleForm,
-  fillWithARole: addFillWithRole,
-  fillARole: addFillARole,
-  removeFiller: addRemoveFiller,
-  removeRoleFromContext: addRemoveRoleFromContext,
+  addOpenContextOrRoleForm: addOpenContextOrRoleForm,
+  addFillWithARole: addFillWithRole,
+  addFillARole: addFillARole,
+  addRemoveFiller: addRemoveFiller,
+  addRemoveRoleFromContext: addRemoveRoleFromContext,
   addRemoveContext: addRemoveContext,
 };
 

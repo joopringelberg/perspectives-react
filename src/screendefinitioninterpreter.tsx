@@ -23,7 +23,7 @@ import {string} from "prop-types";
 
 import {PDRproxy, CONTINUOUS, ContextInstanceT, ContextType, RoleType, Unsubscriber, PropertyType, EnumeratedOrCalculatedProperty, ScreenDefinition, ChatElementDef, ColumnElementDef, FormElementDef, MarkDownElementDef, Perspective, Roleinstancewithprops, RowElementDef, ScreenElementDefTagged, TabDef, TableElementDef, WidgetCommonFields, WhoWhatWhereScreenDef, TableFormDef, What} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivesComponent";
-import {PSContext} from "./reactcontexts.js";
+import {PSContext, PSContextType} from "./reactcontexts.js";
 import PerspectiveBasedForm from "./perspectivebasedform.js";
 import PerspectiveTable from "./perspectivetable.js";
 import PerspectivesTabs from "./perspectivestabs.js";
@@ -52,7 +52,8 @@ interface ScreenDefinitionInterpreterState
 
 export default class ScreenDefinitionInterpreter extends PerspectivesComponent<ScreenDefinitionInterpreterProps, ScreenDefinitionInterpreterState>
 {
-  declare context: React.ContextType<typeof PSContext>
+  declare context: PSContextType
+  static contextType = PSContext
   activeTabKey: number;
   unsubscriber: Unsubscriber | undefined;
   

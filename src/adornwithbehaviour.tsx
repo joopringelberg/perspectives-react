@@ -1,6 +1,6 @@
 import { PropertyType, RoleInstanceT, RoleType } from "perspectives-proxy";
 import React, { createRef } from "react";
-import { EventDispatcher, PSRolType } from "./reactcontexts";
+import { EventDispatcher, PSRol, PSRolType } from "./reactcontexts";
 import { BehaviourAdder } from "./cardbehaviour";
 
 /*
@@ -34,6 +34,7 @@ export class AdornWithBehaviour extends React.Component<AdornWithBehaviourProps>
   prevRef?: HTMLDivElement | null;
   addedBehaviour: string[];
   declare context: PSRolType;
+  static contextType = PSRol
   
   constructor(props: AdornWithBehaviourProps) {
     super(props);

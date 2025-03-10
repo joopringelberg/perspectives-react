@@ -14,7 +14,9 @@ interface ContextInstanceProps
 
 export default class ContextInstance extends PerspectivesComponent<ContextInstanceProps, PSContextType>
 {
-  declare context: React.ContextType<typeof PSContext>;
+  declare context: PSContextType;
+  static contextType = PSContext
+  
   constructor (props: ContextInstanceProps)
   {
     super(props);

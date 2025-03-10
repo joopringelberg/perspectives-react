@@ -47,7 +47,8 @@ interface TableControlsProps
 
 export default class TableControls extends PerspectivesComponent<TableControlsProps>
 {
-  declare context: React.ContextType<typeof PSContext>;
+  declare context: PSContextType;
+  static contextType = PSContext;
   
   constructor( props : TableControlsProps)
   {

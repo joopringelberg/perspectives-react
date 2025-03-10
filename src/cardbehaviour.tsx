@@ -80,7 +80,8 @@ export type BehaviourAdder = (domEl: HTMLElement, component: BehaviourComponent)
 //  * setEventDispatcher, a function to set a function in the App context that will
 //    dispatch the OpenRoleForm event on the component. This function will be called
 //    from the OpenRoleForm tool in App.
-
+// The component should have a PSRol context. This is provided by ExternalRole, RoleInstance and RoleInstanceIterator.
+// Consequently, we can use this behaviour in the PerspectivesBasedForm and in TableCell, on a selected card that is not editable.
 export function addOpenContextOrRoleForm(domEl: HTMLElement, component: BehaviourComponent)  {
   function handle(onNewTab: boolean) {
     const roleKind = component.context.roleKind;

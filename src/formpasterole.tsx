@@ -45,6 +45,7 @@ interface FormPasteRoleState {
 export default class FormPasteRole extends PerspectivesComponent<FormPasteRoleProps, FormPasteRoleState>
 {
   declare context: PSRolType;
+  static contextType = PSRol;
   constructor( props : FormPasteRoleProps )
   {
     super(props);

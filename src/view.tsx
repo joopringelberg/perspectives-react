@@ -54,7 +54,8 @@ interface View_State
 // To solve this problem, use the localName rolProperty of the View (however, this has not yet been implemented).
 class View_ extends PerspectivesComponent<View_Props, View_State>
 {
-  declare context: React.ContextType<typeof PSRol>
+  declare context: PSRolType
+
 
   changeValue (ln : string, val : ValueT)
   {

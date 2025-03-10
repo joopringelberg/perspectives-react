@@ -26,7 +26,6 @@ import SmartFieldControl from "./smartfieldcontrol.js";
 import RoleInstance from "./roleinstance.js";
 
 import "./components.css";
-import {string, bool, func, object} from "prop-types";
 import { PropertyType, RoleInstanceT, RoleType, Perspective, PropertyValues, SerialisedProperty } from "perspectives-proxy";
 import { CardProperties } from "./cardbehaviour";
 

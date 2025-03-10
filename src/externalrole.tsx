@@ -21,6 +21,7 @@ interface ExternalRoleState
 export default class ExternalRole extends PerspectivesComponent<ExternalRoleProps, ExternalRoleState>
 {
   declare context: PSContextType;
+  static contextType = PSRol;
 
   constructor (props : ExternalRoleProps)
   {

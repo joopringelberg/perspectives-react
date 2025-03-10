@@ -43,7 +43,7 @@ export default [
       json(), // Add the json plugin here
       copy({
         targets: [
-          { src: 'src/perspectivesshape.d.ts', dest: 'dist/types' },
+          { src: 'src/roledata.d.ts', dest: 'dist/types' },
           { src: 'src/components.css', dest: 'dist/types' }
         ]
       }),

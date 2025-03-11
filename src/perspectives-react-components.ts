@@ -37,6 +37,7 @@ export { default as OpenPublicResource } from "./openpublicresource";
 export { thisAppsLocation } from "./utilities";
 export { ArcViewer } from "./arcViewer";
 export { UnboundMarkDownWidget } from "./markdownWidget";
+export { default as FreeFormScreen } from "./freeformscreen";
 
 export {getPreact} from "./getLanguage";
 export type * from "./roledata";

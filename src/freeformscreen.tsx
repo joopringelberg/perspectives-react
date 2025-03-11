@@ -21,7 +21,7 @@
 import React from 'react';
 import {string} from "prop-types";
 
-import {PDRproxy, CONTINUOUS, ContextInstanceT, ContextType, RoleType, Unsubscriber, PropertyType, EnumeratedOrCalculatedProperty, ScreenDefinition, ChatElementDef, ColumnElementDef, FormElementDef, MarkDownElementDef, Perspective, Roleinstancewithprops, RowElementDef, ScreenElementDefTagged, TabDef, TableElementDef, WidgetCommonFields, WhoWhatWhereScreenDef, TableFormDef, What} from "perspectives-proxy";
+import {PDRproxy, ContextInstanceT, ContextType, RoleType, Unsubscriber, PropertyType, EnumeratedOrCalculatedProperty, ScreenDefinition, ChatElementDef, ColumnElementDef, FormElementDef, MarkDownElementDef, Perspective, Roleinstancewithprops, RowElementDef, ScreenElementDefTagged, TabDef, TableElementDef, WidgetCommonFields, MainScreenElements} from "perspectives-proxy";
 import PerspectivesComponent from "./perspectivesComponent";
 import {PSContext, PSContextType} from "./reactcontexts.js";
 import PerspectiveBasedForm from "./perspectivebasedform.js";
@@ -30,34 +30,34 @@ import PerspectivesTabs from "./perspectivestabs.js";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
 
-import {Tab, Container, Card, Row, Col} from "react-bootstrap";
+import {Tab, Container, Row, Col} from "react-bootstrap";
 import {MarkDownWidget} from './markdownWidget.js';
 import SmartFieldControl from './smartfieldcontrol.js';
 import ChatComponent from './chatcomponent.js';
 import { externalRole } from './urifunctions.js';
-import {  } from './roledata';
 import { mapRoleVerbsToBehaviourNames } from './maproleverbstobehaviours';
 
-interface ScreenDefinitionInterpreterProps
+interface FreeFormProps
 {
+  screen: MainScreenElements
+  myroletype: RoleType
   contextinstance: ContextInstanceT
   contexttype: ContextType
-  myroletype: RoleType
 }
-
-interface ScreenDefinitionInterpreterState
+// MainScreenElements
+interface FreeFormState
 {
   screen: ScreenDefinition | "Reload" | "TryAnotherRole" | undefined
 }
 
-export default class ScreenDefinitionInterpreter extends PerspectivesComponent<ScreenDefinitionInterpreterProps, ScreenDefinitionInterpreterState>
+export default class FreeFormScreen extends PerspectivesComponent<FreeFormProps, FreeFormState>
 {
   declare context: PSContextType
   static contextType = PSContext
   activeTabKey: number;
   unsubscriber: Unsubscriber | undefined;
   
-  constructor( props : ScreenDefinitionInterpreterProps)
+  constructor( props : FreeFormProps)
   {
     super(props);
     this.state =
@@ -69,52 +69,6 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent<S
     this.buildColumn = this.buildColumn.bind(this);
     this.activeTabKey = 0;
     this.unsubscriber = undefined;
-  }
-  componentDidMount()
-  {
-    this.getScreen();
-  }
-  componentDidUpdate(prevProps : ScreenDefinitionInterpreterProps)
-  {
-    if (this.props.contextinstance != prevProps.contextinstance ||
-        this.props.myroletype != prevProps.myroletype )
-    {
-      if (this.state.screen)
-      {
-        this.setState({screen: undefined});
-      }
-      this.getScreen();
-    }
-  }
-  getScreen ()
-  {
-    const component = this;
-    PDRproxy.then(function(pproxy)
-      {
-        if (component.unsubscriber)
-        {
-          pproxy.send(component.unsubscriber, function(){});
-        }
-        // { request: "GetScreen", subject: UserRoleType, object: ContextInstance }
-        pproxy.getScreen(
-          component.props.myroletype
-          ,component.props.contextinstance
-          ,component.props.contexttype
-          ,function( screens : ScreenDefinition[] ) 
-          {
-            console.log( screens[0] );
-            component.setState({screen: screens[0] ? screens[0] : "TryAnotherRole"});
-          }
-          ,CONTINUOUS
-          ,function()
-          {
-            component.setState({screen: "Reload"});
-          }
-        ).then( function(unsubscriber)
-          {
-            component.unsubscriber = unsubscriber;
-          });
-      });
   }
   mayCreateInstance( perspective : Perspective )
   {
@@ -404,46 +358,7 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent<S
 
   render()
   {
-    const component = this;
-    let screen;
-    if (component.stateIsComplete())
-    {
-      screen = component.state.screen;
-      switch (screen) {
-        case "Reload":
-          return    <Container>
-                      <Card>
-                        <Card.Body>
-                          <Card.Title>An error condition occurred</Card.Title>
-                          <Card.Text>
-                            The program could not compute a screen. This may be caused by missing data.
-                            This may have been fixed automatically. Try navigating back and forth again.
-                          </Card.Text>
-                        </Card.Body>
-                        </Card>
-                    </Container>;
-          break;
-        case "TryAnotherRole":
-          return    <Container>
-                      <Card>
-                        <Card.Body>
-                          <Card.Title>Nothing to show</Card.Title>
-                          <Card.Text>
-                            It may be that the role you currently have in this context has no perspectives. Try another role.
-                          </Card.Text>
-                        </Card.Body>
-                        </Card>
-                    </Container>;
-        default:
-          return component.buildScreen(screen as ScreenDefinition);;
-      }
-    }
-    else
-    {
-      return  <Container>
-                <h3 className="text-center pt-5">{ i18next.t( "openContext", { ns: 'preact' }) }</h3>
-              </Container>
-    }
+    return this.buildScreen(this.props.screen as ScreenDefinition);
   }
 }
 

@@ -91,10 +91,10 @@ export default class TableRow extends PerspectivesComponent<TableRowProps>
               onClick={component.handleClick}
               onKeyDown={component.handleKeyDown}
               ref={component.ref}
+              key={ roleInstanceWithProps.roleId }
             >{
               component.props.orderedProperties.map( serialisedProperty =>
                 <TableCell
-                  key = {serialisedProperty.id}
                   propertyname = {serialisedProperty.id}
                   serialisedProperty={serialisedProperty}
                   roleinstance={component.props.roleinstance}

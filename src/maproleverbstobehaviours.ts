@@ -93,7 +93,7 @@ export function mapRoleVerbsToBehaviourNames(perspective : Perspective) : string
       case "Delete":
         return "addRemoveRoleFromContext";
       case "Fill":
-        return "addFillWithRole";
+        return "addFillARole";
       case "Unbind":
         return "addRemoveFiller";
       case "RemoveFiller":

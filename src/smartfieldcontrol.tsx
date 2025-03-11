@@ -415,7 +415,7 @@ export default class SmartFieldControl extends Component<SmartFieldControlProps,
     switch ( this.controlType ){
       case "checkbox":
         return (
-          <div onKeyDown={e => component.handleKeyDown(e, component.state.value)}>
+          <div onKeyDown={e => component.handleKeyDown(e, component.state.value)} key={component.props.serialisedProperty.id}>
             <Form.Check
               {... component.props.inputRef ? { ref: component.props.inputRef as React.RefObject<HTMLInputElement>} : {}}
               tabIndex={component.props.isselected ? receiveFocusByKeyboard : focusable}
@@ -428,7 +428,7 @@ export default class SmartFieldControl extends Component<SmartFieldControlProps,
           </div>);
       case "select":
         return (
-          <div onKeyDown={e => component.handleKeyDown(e, (e.target as HTMLInputElement).value)}>
+          <div onKeyDown={e => component.handleKeyDown(e, (e.target as HTMLInputElement).value)} key={component.props.serialisedProperty.id}>
             <Form.Control
               as="select"
               {... component.props.inputRef ? { ref: component.props.inputRef as React.RefObject<HTMLSelectElement>} : {}}
@@ -465,7 +465,7 @@ export default class SmartFieldControl extends Component<SmartFieldControlProps,
             // Create an editor. Currently, this is just an html input or a textarea, depdending on minInclusive.
             const as = component.minLength("markdown") > 80 ? "textarea" : "input";
             return (
-              <div onKeyDown={e => component.handleKeyDown(e, (e.target as HTMLInputElement).value)}>
+              <div onKeyDown={e => component.handleKeyDown(e, (e.target as HTMLInputElement).value)} key={component.props.serialisedProperty.id}>
                 <Form.Control
                   as={as}
                   {... component.props.inputRef ? { ref: component.props.inputRef as React.RefObject<HTMLInputElement>} : {}}
@@ -487,7 +487,7 @@ export default class SmartFieldControl extends Component<SmartFieldControlProps,
               }
       default:
         return (
-          <div onKeyDown={e => component.handleKeyDown(e, (e.target as HTMLInputElement).value)}>
+          <div onKeyDown={e => component.handleKeyDown(e, (e.target as HTMLInputElement).value)} key={component.props.serialisedProperty.id}>
             <Form.Control
               as={ (component.controlType as React.ElementType) || "input" }
               {... component.props.inputRef ? { ref: component.props.inputRef } : {}}

@@ -58,18 +58,12 @@ function fetchModuleFromPouchdb({ modelName, systemIdentifier, couchdbUrl }: Fet
     });
 }
 
-// Returns a promise that resolves to an array, possibly empty, of objects of the form {roleName :: String, module :: <A React Component> }.
-interface ImportScreensParams {
-  roleNames: string[];
-  userIdentifier: string;
-  couchdbUrl: string;
-}
-
 interface ScreenOutcome {
   roleName: string;
   module: React.ComponentType<any>;
 }
 
+// Returns a promise that resolves to an array, possibly empty, of objects of the form {roleName :: String, module :: <A React Component> }.
 function importScreens( roleNames : string[], userIdentifier: string, couchdbUrl? : string ): Promise<ScreenOutcome[]> {
   const promises = roleNames.map((roleName) => {
     const modelName = deconstructModelName(roleName);

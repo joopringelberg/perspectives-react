@@ -28,6 +28,7 @@ import RoleInstance from "./roleinstance.js";
 import "./components.css";
 import { PropertyType, RoleInstanceT, RoleType, Perspective, PropertyValues, SerialisedProperty } from "perspectives-proxy";
 import { CardProperties } from "./cardbehaviour";
+import { WithOutBehavioursProps } from "./adorningComponentWrapper";
 
 ////////////////////////////////////////////////////////////////////////////////
 // NAVIGATING IN A GRID AND A CELL
@@ -41,10 +42,21 @@ import { CardProperties } from "./cardbehaviour";
 // A negative value means that the element should be focusable,
 // but should not be reachable via sequential keyboard navigation;
 // Presumably this means clicking on it or setting it from Javascript.
+/**
+ * A constant representing the focusable state. Element is focusable, but not reachable via sequential keyboard navigation.
+ * 
+ * @constant {number} focusable
+ * @default -1
+ */
 const focusable = -1;
 
 // 0 means that the element should be focusable and reachable via sequential keyboard navigation,
 // but its relative order is defined by the platform convention;
+/**
+ * Element is focusable and reachable via sequential keyboard navigation, but its relative order is defined by the platform convention.
+ * @constant {number} receiveFocusByKeyboard
+ * @default 0
+ */
 const receiveFocusByKeyboard = 0;
 
 
@@ -58,7 +70,7 @@ interface TableCellProps
   isselected: boolean;
   iscard: boolean;
   roleinstance: RoleInstanceT;
-  roleRepresentation:  React.ComponentType<CardProperties>;
+  roleRepresentation:  React.ComponentType<WithOutBehavioursProps>;
   serialisedProperty: SerialisedProperty;
   propertyValues?: PropertyValues;
   perspective: Perspective;
@@ -90,13 +102,7 @@ export default class TableCell extends PerspectivesComponent<TableCellProps, Tab
   {
     if (this.props.isselected)
     {
-      if (this.inputRef.current)
-      {
-        // We need to use findDOMNode because the Form.Control element does not
-        // actually forward the ref we pass in to the DOM node.
-        //eslint-disable-next-line react/no-find-dom-node
-        this.inputRef.current.focus();
-      }
+      this.setFocus();
     }
   }
 
@@ -109,28 +115,9 @@ export default class TableCell extends PerspectivesComponent<TableCellProps, Tab
   {
     const component = this;
 
-    function setFocus()
-    {
-      if ( component.inputRef.current )
-      {
-        // We need to use findDOMNode because the Form.Control element does not
-        // actually forward the ref we pass in to the DOM node.
-        //eslint-disable-next-line react/no-find-dom-node
-        component.inputRef.current.focus();
-      }
-      else
-      {
-        // THIS IS A HACK, admittedly. However, React doesn't fullfil its
-        // promise to resolve refs before the componentDidUpdate function is called.
-        // Probably I've nested the ref too deep, but anyway this is the only way
-        // that I could make it work.
-        setTimeout( setFocus, 100);
-      }
-    }
-
     if (component.props.isselected)
     {
-      setFocus();
+      component.setFocus();
     }
 
     if (prevProps.isselected && !component.props.isselected && component.state.editable)
@@ -139,12 +126,28 @@ export default class TableCell extends PerspectivesComponent<TableCellProps, Tab
     }
   }
 
+  setFocus()
+  {
+    const component = this;
+    if ( component.inputRef.current )
+    {
+      component.inputRef.current.focus();
+    }
+    else
+    {
+      // THIS IS A HACK, admittedly. However, React doesn't fullfil its
+      // promise to resolve refs before the componentDidUpdate function is called.
+      setTimeout( () => component.inputRef.current?.focus(), 100);
+    }
+  }
+
+
   // Set the column in the RoleTable_.
   // React will then re-render, giving TableCell the value true for the isselected prop.
   handleClick ()
   {
     //eslint-disable-next-line react/no-find-dom-node
-    this.inputRef.current!.dispatchEvent( new CustomEvent('SetColumn', { detail: this.props.propertyname, bubbles: true }) );
+    this.inputRef.current?.dispatchEvent( new CustomEvent('SetColumn', { detail: this.props.propertyname, bubbles: true }) );
   }
 
   handleKeyDown(event : React.KeyboardEvent)
@@ -249,8 +252,11 @@ export default class TableCell extends PerspectivesComponent<TableCellProps, Tab
               >
                 {[
                   <component.props.roleRepresentation
+                    externalRef={component.inputRef as React.RefObject<HTMLElement>}
+                    key={component.props.roleinstance}
+                    // The title is the value of the cell. It is picked up automatically.
                     title={component.values().join(", ")}
-                    labelProperty={component.props.propertyname} // deconstructLocalName ( component.props.propertyname )
+                    aria-label={component.props.propertyname} // deconstructLocalName ( component.props.propertyname )
                     // Other properties to pass on.
                     tabIndex={receiveFocusByKeyboard}
                     className="shadow bg-info"
@@ -266,11 +272,13 @@ export default class TableCell extends PerspectivesComponent<TableCellProps, Tab
         return (
           <td>
               <component.props.roleRepresentation
+                externalRef={component.inputRef as React.RefObject<HTMLElement>}
+                key={component.props.roleinstance}
                 tabIndex={focusable}
                 title={component.values().join(", ")}
                 className="shadow"
                 onClick={component.handleClick}
-                labelProperty={component.props.propertyname} // deconstructLocalName ( component.props.propertyname )
+                aria-label={component.props.propertyname} // deconstructLocalName ( component.props.propertyname )
               />
           </td>);
       }

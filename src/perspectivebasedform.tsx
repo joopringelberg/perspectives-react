@@ -205,7 +205,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent<Perspect
                   myroletype={component.props.perspective.userRoleType}
                   card={ <DraggableCard 
                       behaviourNames={component.props.behaviours || []}
-                      labelProperty={component.props.cardtitle} 
+                      aria-label={component.props.cardtitle} 
                       title={component.props.perspective.displayName}/> }
                   />
 
@@ -222,7 +222,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent<Perspect
                     myroletype={component.props.perspective.userRoleType}
                     card={ <DraggableCard 
                       behaviourNames={component.props.behaviours || []}
-                      labelProperty={component.props.cardtitle} 
+                      aria-label={component.props.cardtitle} 
                       title={component.props.perspective.displayName}/> }
                   />
                 </RoleDropZone>
@@ -240,9 +240,10 @@ export default class PerspectiveBasedForm extends PerspectivesComponent<Perspect
       return (
         <>
           {
-            Object.values(perspective.properties).map(serialisedProperty =>
+            Object.values(perspective.properties).map((serialisedProperty, index) =>
               <SmartFieldControlGroup
                 key={serialisedProperty.id}
+                hasFocus={index === 0}
                 serialisedProperty={serialisedProperty}
                 propertyValues={component.findValues( serialisedProperty.id )}
                 roleId={component.state.roleInstanceWithProps ? component.state.roleInstanceWithProps.roleId : undefined}
@@ -262,8 +263,9 @@ export default class PerspectiveBasedForm extends PerspectivesComponent<Perspect
 // This component is used to display a role in a card.
 ////////////////////////////////////////////////////////////////////////////////
 
-const RoleCard: React.FC<CardProperties> = ({title, labelProperty}) => {
-  return (<Card tabIndex={0} aria-label="Drag this card to manipulate this role." className="ml-3 mr-3">
+const RoleCard: React.FC<CardProperties> = ({title, tabIndex, onClick, ...rest}) => {
+  // The rest will be aria-label and className.
+  return (<Card {...rest}>
     <Card.Body className="navbarCard">
       <Card.Text>
         {title}

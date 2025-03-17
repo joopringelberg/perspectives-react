@@ -11,8 +11,8 @@ import
   , Form
   } from "react-bootstrap";
 import "./components.css";
-import { CardProperties } from "./cardbehaviour";
-import { cardWithFixedBehaviour } from "./adorningComponentWrapper";
+import { CardProperties, InnerCardProperties } from "./cardbehaviour";
+import { CardWithFixedBehaviour, WithOutBehavioursProps } from "./adorningComponentWrapper";
 import { RoleInstanceT, Perspective, SerialisedProperty } from "perspectives-proxy";
 import RoleInstance from "./roleinstance";
 
@@ -24,12 +24,13 @@ import RoleInstance from "./roleinstance";
 // Displays the value of prop cardcolumn of RoleTable (a property of the role).
 
 
-const RoleCard: React.FC<CardProperties & { [key: string]: any }> = ({title, labelProperty}) => {
+const RoleCard: React.FC<CardProperties> = ({title, tabIndex, onClick, ...rest}) => {
   return  <Form.Control
             readOnly
             plaintext
             value={title}
-            aria-label={labelProperty}
+            // The rest will be aria-label and className.
+            {...rest}
             />;
 }
 
@@ -60,7 +61,7 @@ interface PerspectiveTableState
 
 export default class PerspectiveTable extends PerspectivesComponent<PerspectiveTableProps, PerspectiveTableState>
 {
-  private roleRepresentation : React.ComponentType<CardProperties>;
+  private roleRepresentation : React.ComponentType<WithOutBehavioursProps>;
   private eventDiv: React.RefObject<HTMLTableSectionElement>;
   private propertyNames: string[];
   private orderedProperties: SerialisedProperty[];
@@ -74,8 +75,8 @@ export default class PerspectiveTable extends PerspectivesComponent<PerspectiveT
 
     component.orderProperties();
     // this.propertyNames = Object.keys( component.props.perspective.properties );
-    // Map role verbs to behaviour.
-    this.roleRepresentation = cardWithFixedBehaviour(RoleCard, mapRoleVerbsToBehaviourNames( component.props.perspective ));
+    // Add behaviours to the card component.
+    this.roleRepresentation = CardWithFixedBehaviour(RoleCard, mapRoleVerbsToBehaviourNames( component.props.perspective ));
     this.eventDiv = createRef() as React.RefObject<HTMLTableSectionElement>;
     this.handleKeyDown = this.handleKeyDown.bind( this );
 
@@ -105,8 +106,8 @@ export default class PerspectiveTable extends PerspectivesComponent<PerspectiveT
       function (e: Event)
       {
         const customEvent = e as CustomEvent;
-        component.setrow(customEvent.detail);
-        e.stopPropagation();
+        component.setrow(customEvent.detail.roleInstance);
+        // e.stopPropagation();
       },
       false);
     component.eventDiv.current.addEventListener('SetColumn',

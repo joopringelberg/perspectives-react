@@ -36,32 +36,37 @@ The behaviour annotations are kept in an array of strings in the member "addedBe
   - removeRoleFromContext
 */
 
-export interface ComponentProps {
-  viewname?: string;
-  cardprop?: PropertyType;
-  setEventDispatcher: (dispatcher: EventDispatcher) => void;
-  myroletype: RoleType;
-  systemExternalRole: RoleInstanceT;
-  labelProperty: PropertyType;
+////////////////////////////////////////
+// THE CARD INTERFACES
+////////////////////////////////////////
+export interface InnerCardProperties {
+  title: string;
+  "aria-label": string;
+  className?: string;
 }
 
-export interface CardProperties {
-  title: string;
-  labelProperty: PropertyType;
+export interface CardProperties extends InnerCardProperties{
   tabIndex?: number;
-  className?: string;
+  // This handler has nothing to do with behaviour. It is used to add column- and row selection in a perspectives table.
   onClick?: (event: React.MouseEvent) => void;
 }
 
-export interface BehaviourComponent extends React.Component<ComponentProps> {
+////////////////////////////////////////
+// THE BEHAVIOUR COMPONENT
+////////////////////////////////////////
+export interface BehaviourComponentProps {
+  cardprop?: PropertyType;
+  myroletype: RoleType;
+  systemExternalRole: RoleInstanceT;
+}
+
+export interface BehaviourComponent extends React.Component<BehaviourComponentProps> {
   context: PSRolType;
   addedBehaviour: string[];
 }
 
-type EventDispatcher = (data: RoleOnClipboard) => void;
-
 // All the functions that add a behaviour have type BehaviourAdder.
-export type BehaviourAdder = (domEl: HTMLElement, component: BehaviourComponent) => void;
+export type BehaviourAdder = (domEl: HTMLElement, component: BehaviourComponent, title?: string) => void;
 
 ////////////////////////////////////////
 // OPEN CONTEXT OR ROLE FORM
@@ -75,18 +80,12 @@ export type BehaviourAdder = (domEl: HTMLElement, component: BehaviourComponent)
 // If the role has rolekind ContextRole or ExternalRole, the corresponding context is opened, unless FormMode is active.
 // In that case, the RoleForm is opened.
 // The component that adds this behaviour may receive three additional props:
-//  * viewname, giving the view that is used for the RoleForm (default is "allProperties");
 //  * cardprop, that makes a card appear on the form, representing the role itself, when specified.
-//  * setEventDispatcher, a function to set a function in the App context that will
-//    dispatch the OpenRoleForm event on the component. This function will be called
-//    from the OpenRoleForm tool in App.
 // The component should have a PSRol context. This is provided by ExternalRole, RoleInstance and RoleInstanceIterator.
 // Consequently, we can use this behaviour in the PerspectivesBasedForm and in TableCell, on a selected card that is not editable.
-export function addOpenContextOrRoleForm(domEl: HTMLElement, component: BehaviourComponent)  {
+export const addOpenContextOrRoleForm : BehaviourAdder = (domEl, component) => {
   function handle(onNewTab: boolean) {
     const roleKind = component.context.roleKind;
-    const viewname = component.props.viewname ? component.props.viewname : "allProperties";
-    const cardprop = component.props.cardprop;
     const appLocation = location.origin + location.pathname;
     if (roleKind == "ContextRole" || roleKind == "ExternalRole") {
       if (onNewTab) {
@@ -94,13 +93,7 @@ export function addOpenContextOrRoleForm(domEl: HTMLElement, component: Behaviou
       } else {
         domEl.dispatchEvent(new CustomEvent('OpenContext', { detail: component.context.rolinstance, bubbles: true }));
       }
-    } else {
-      if (onNewTab) {
-        window.open(appLocation + "?openroleform=" + encodeURIComponent(component.context.rolinstance!) + "&viewname=" + viewname + "&cardprop=" + cardprop, "mycontexts", "left=100,top=100,width=800,height=600");
-      } else {
-        domEl.dispatchEvent(new CustomEvent('OpenContext', { detail: component.context.rolinstance, bubbles: true }));
-      }
-    }
+    } 
   }
 
   function handleClick(e: MouseEvent) {
@@ -115,27 +108,14 @@ export function addOpenContextOrRoleForm(domEl: HTMLElement, component: Behaviou
         if (component.context.isselected) {
           if (e.shiftKey) {
             handle(e.altKey);
-            component.props.setEventDispatcher(eventDispatcher);
-            e.stopPropagation();
+            // I've commented this out to enable opening the details form of the master-slave component through the keyboard.
+            // e.stopPropagation();
           }
         }
     }
   }
 
   const previousOnDragStart = domEl.ondragstart;
-
-  function eventDispatcher({ roleData, addedBehaviour }: RoleOnClipboard) {
-    if (roleData.rolinstance == component.context.rolinstance && addedBehaviour.includes("openContextOrRoleForm")) {
-      domEl.dispatchEvent(new CustomEvent('OpenRoleForm', {
-        detail: {
-          rolinstance: component.context.rolinstance,
-          viewname: component.props.viewname ? component.props.viewname : "allProperties",
-          cardprop: component.props.cardprop
-        },
-        bubbles: true
-      }));
-    }
-  }
 
   addBehaviour(component, "openContextOrRoleForm", function (component : BehaviourComponent) {
     domEl.addEventListener("keydown", handleKeyDown);
@@ -144,7 +124,6 @@ export function addOpenContextOrRoleForm(domEl: HTMLElement, component: Behaviou
     if (previousOnDragStart) {
       domEl.ondragstart = function (ev) {
         previousOnDragStart.call(domEl, ev);
-        component.props.setEventDispatcher(eventDispatcher);
       };
     } else {
       domEl.ondragstart = function (ev) {
@@ -156,7 +135,6 @@ export function addOpenContextOrRoleForm(domEl: HTMLElement, component: Behaviou
         if (ev.dataTransfer) {
           ev.dataTransfer.setData("PSRol", payload);
         }
-        component.props.setEventDispatcher(eventDispatcher);
       };
     }
   });
@@ -165,7 +143,7 @@ export function addOpenContextOrRoleForm(domEl: HTMLElement, component: Behaviou
 ////////////////////////////////////////
 // FILL WITH A ROLE
 ////////////////////////////////////////
-export function addFillWithRole(domEl: HTMLElement, component: BehaviourComponent) {
+export const addFillWithRole : BehaviourAdder = (domEl: HTMLElement, component: BehaviourComponent) => {
   function readClipBoard(receiveResults: (data: RoleOnClipboard | null) => void) {
     PDRproxy.then(function (pproxy) {
       pproxy.getProperty(
@@ -271,7 +249,7 @@ export function addFillWithRole(domEl: HTMLElement, component: BehaviourComponen
 // Makes the Card draggable.
 // Adds keydown behaviour: ctrl-c will put the Card on the Card clipboard.
 
-export function addFillARole(domEl: HTMLElement, component: BehaviourComponent) {
+export const addFillARole : BehaviourAdder = (domEl, component, title) => {
   function handleKeyDown(event: KeyboardEvent) {
     switch (event.key) {
       case 'c':
@@ -281,34 +259,8 @@ export function addFillARole(domEl: HTMLElement, component: BehaviourComponent) 
     }
   }
 
-  function withLabelProperty(f: (valArr: string[]) => void) {
-    if (component.context.rolinstance != "" && component.context.roltype != "") {
-      if (isQualifiedName(component.props.labelProperty)) {
-        PDRproxy.then((pproxy) =>
-          pproxy.getProperty(
-            component.context.rolinstance!,
-            component.props.labelProperty,
-            component.context.roltype,
-            f,
-            FIREANDFORGET
-          )
-        );
-      } else {
-        PDRproxy.then((pproxy) =>
-          pproxy.getPropertyFromLocalName(
-            component.context.rolinstance!,
-            component.props.labelProperty,
-            component.context.roltype,
-            f,
-            FIREANDFORGET
-          )
-        );
-      }
-    }
-  }
 
   function copy(event: Event) {
-    withLabelProperty(function (valArr) {
       navigator.clipboard.writeText(component.context.rolinstance!);
       PDRproxy.then((pproxy) =>
         pproxy
@@ -318,7 +270,7 @@ export function addFillARole(domEl: HTMLElement, component: BehaviourComponent) 
             JSON.stringify({
               roleData: {
                 rolinstance: component.context.rolinstance,
-                cardTitle: valArr[0] || "No title",
+                cardTitle: title || "No title",
                 roleType: component.context.roltype,
                 contextType: component.context.contexttype,
               },
@@ -337,26 +289,23 @@ export function addFillARole(domEl: HTMLElement, component: BehaviourComponent) 
             )
           )
       );
-    });
     event.preventDefault();
     event.stopPropagation();
   }
 
   addBehaviour(component, "fillARole", function (component: BehaviourComponent) {
     if (!domEl.ondragstart) {
-      withLabelProperty((valArr) =>
         (domEl.ondragstart = (ev: DragEvent) => {
           const payload = JSON.stringify({
             roleData: component.context,
-            cardTitle: valArr[0] || "No title",
+            cardTitle: title || "No title",
             addedBehaviour: component.addedBehaviour,
             myroletype: component.props.myroletype,
           });
           if (ev.dataTransfer) {
             ev.dataTransfer.setData("PSRol", payload);
           }
-        })
-      );
+        });
     }
     domEl.draggable = true;
     domEl.addEventListener("keydown", handleKeyDown);
@@ -369,7 +318,7 @@ export function addFillARole(domEl: HTMLElement, component: BehaviourComponent) 
 // Makes the Card draggable, so it can be dropped in the Unbind tool.
 // Adds keydown behaviour for delete.
 
-export function addRemoveFiller(domEl: HTMLElement, component: BehaviourComponent) {
+export const addRemoveFiller : BehaviourAdder = (domEl, component) => {
   function handleKeyDown(event: KeyboardEvent) {
     switch (event.code) {
       case "Backspace": // Backspace
@@ -422,7 +371,7 @@ export function addRemoveFiller(domEl: HTMLElement, component: BehaviourComponen
 ////////////////////////////////////////
 // Makes the Card draggable, so it can be dropped in the Trash.
 // Adds keydown behaviour for shift-delete.
-export function addRemoveRoleFromContext(domEl: HTMLElement, component: BehaviourComponent) {
+export const addRemoveRoleFromContext : BehaviourAdder = (domEl, component) => {
   function handleKeyDown(event: KeyboardEvent) {
     switch (event.code) {
       case 'Backspace':
@@ -459,7 +408,7 @@ export function addRemoveRoleFromContext(domEl: HTMLElement, component: Behaviou
 
 // Makes the Card draggable, so it can be dropped in the Trash.
 // Adds keydown behaviour for shift-delete.
-export function addRemoveContext(domEl: HTMLElement, component: BehaviourComponent) {
+export const addRemoveContext : BehaviourAdder = (domEl, component) => {
   function handleKeyDown(event: KeyboardEvent) {
     switch (event.code) {
       case "Backspace": // Backspace

@@ -24,6 +24,7 @@ import TableCell from "./tablecell.js";
 import "./components.css";
 import { Perspective, Roleinstancewithprops, SerialisedProperty, RoleInstanceT, RoleType } from "perspectives-proxy";
 import { CardProperties } from "./cardbehaviour";
+import { WithOutBehavioursProps } from "./adorningComponentWrapper";
 
 ////////////////////////////////////////////////////////////////////////////////
 // TABLEROW
@@ -34,7 +35,7 @@ interface TableRowProps
   , column: string
   , isselected: boolean
   , cardcolumn: string
-  , roleRepresentation:  React.ComponentType<CardProperties>
+  , roleRepresentation:  React.ComponentType<WithOutBehavioursProps>
   , roleinstancewithprops: Roleinstancewithprops
   , perspective: Perspective
   , orderedProperties: SerialisedProperty[]
@@ -56,7 +57,12 @@ export default class TableRow extends PerspectivesComponent<TableRowProps>
     // event.preventDefault();
     event.stopPropagation();
     // Signal to Table that this row is selected.
-    this.ref.current.dispatchEvent( new CustomEvent('SetRow', { detail: this.props.roleinstance, bubbles: true }) );
+    this.ref.current.dispatchEvent( new CustomEvent('SetRow', 
+      { detail: 
+        { roleInstance: this.props.roleinstance
+        , roleType: this.props.perspective.roleType }
+      ,  bubbles: true }
+      ) );
     // When shift is held, the card column becomes selected.
     if ( event.shiftKey )
     {
@@ -67,20 +73,25 @@ export default class TableRow extends PerspectivesComponent<TableRowProps>
   handleKeyDown (event : React.KeyboardEvent)
   {
     switch(event.code){
-      case " ": // Space
+      case "Space": // Space
         if (event.shiftKey)
         {
           event.preventDefault();
           event.stopPropagation();
           // Signal to Table that this row is selected
-          this.ref.current.dispatchEvent( new CustomEvent('SetRow', { detail: this.props.roleinstance, bubbles: true }) );
-        }
-        // When shift is held, the card column becomes selected.
-        if ( event.shiftKey )
-        {
-          this.ref.current.dispatchEvent( new CustomEvent('SetSelectRow', { bubbles: true }) );
-        }
-      }
+          this.ref.current.dispatchEvent( new CustomEvent('SetRow', 
+            { detail: 
+              { roleInstance: this.props.roleinstance
+              , roleType: this.props.perspective.roleType }
+            ,  bubbles: true }) );
+          this.ref.current.dispatchEvent( new CustomEvent('SetSelectRow', 
+            { detail: 
+              { roleInstance: this.props.roleinstance
+              , roleType: this.props.perspective.roleType}
+              ,  bubbles: true }) );
+          }
+        break;
+    }
   }
 
   render()
@@ -95,6 +106,7 @@ export default class TableRow extends PerspectivesComponent<TableRowProps>
             >{
               component.props.orderedProperties.map( serialisedProperty =>
                 <TableCell
+                  key={serialisedProperty.id}
                   propertyname = {serialisedProperty.id}
                   serialisedProperty={serialisedProperty}
                   roleinstance={component.props.roleinstance}

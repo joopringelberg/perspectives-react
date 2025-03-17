@@ -65,6 +65,7 @@ interface SmartFieldControlGroupProps
   roleId?: RoleInstanceT;
   myroletype: RoleType;
   contextinstance: ContextInstanceT;
+  hasFocus?: boolean;
 }
 
 export default class SmartFieldControlGroup extends Component<SmartFieldControlGroupProps>
@@ -109,7 +110,7 @@ export default class SmartFieldControlGroup extends Component<SmartFieldControlG
             roleId = { component.props.roleId }
             myroletype = { component.props.myroletype }
             disabled={ component.propertyOnlyConsultable() || !component.props.roleId }
-            isselected={true}
+            isselected={!!component.props.hasFocus}
             contextinstance={component.props.contextinstance}
           />
         </Col>

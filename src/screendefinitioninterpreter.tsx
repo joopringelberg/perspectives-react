@@ -168,7 +168,7 @@ export default class ScreenDefinitionInterpreter extends PerspectivesComponent<S
     const component = this;
       switch(event.code){
         case "Enter":
-        case " ":
+        case "Space":
           component.createRoleInstance( perspective );
           event.preventDefault();
           event.stopPropagation();

@@ -102,7 +102,7 @@ export default class TablePasteRole extends PerspectivesComponent<TablePasteRole
     const component = this;
     switch (e.code){
       case "Enter": // Return
-      case " ": // space
+      case "Space": // space
         component.pasteRole();
         e.stopPropagation();
         break;

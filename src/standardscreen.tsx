@@ -161,7 +161,7 @@ export default class StandardScreen extends PerspectivesComponent<StandardScreen
     const component = this;
       switch(event.code){
         case "Enter": // Return
-        case " ": // Space
+        case "Space": // Space
           component.createRoleInstance( perspective );
           event.preventDefault();
           event.stopPropagation();

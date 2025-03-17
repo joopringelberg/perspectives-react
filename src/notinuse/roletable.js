@@ -54,7 +54,6 @@ class Card extends Component
     delete selectedProps.labelProperty;
     delete selectedProps.systemExternalRole;
     delete selectedProps.formMode;
-    delete selectedProps.setEventDispatcher;
     return  <Form.Control
               readOnly
               plaintext

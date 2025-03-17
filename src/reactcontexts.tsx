@@ -30,8 +30,6 @@ export const DefaultPSContext =
 
 export const PSContext = createContext<PSContextType>( DefaultPSContext);
 
-export type EventDispatcher = (data: RoleOnClipboard) => void;
-
 ////////////////////////////////////////////
 //// APPCONTEXT
 ////////////////////////////////////////////
@@ -39,7 +37,6 @@ export type AppContextType =
   { systemExternalRole: RoleInstanceT   // The external role of MySystem.
   , systemIdentifier: ContextInstanceT  // The identifier of MySystem.
   , systemUser: RoleInstanceT           // The user role of MySystem.
-  , setEventDispatcher: (dispatcher: EventDispatcher) => void
   
   , externalRoleId?: RoleInstanceT       // The external role of the selected context.
   , roleId?: RoleInstanceT               // The role identifier of the selected role (OBSOLETE?)
@@ -51,7 +48,6 @@ export const AppContext = createContext<AppContextType>(
   { systemExternalRole: "" as RoleInstanceT
   , systemIdentifier: "" as ContextInstanceT
   , systemUser: "" as RoleInstanceT
-  , setEventDispatcher: function(ignore: EventDispatcher){}
   });
                       
 ////////////////////////////////////////////

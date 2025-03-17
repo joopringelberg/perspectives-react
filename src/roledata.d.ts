@@ -26,6 +26,6 @@ export type RoleOnClipboard =
       roleType: RoleType,
       contextType: ContextType
     },
-    addedBehaviour: component.addedBehaviour,
+    addedBehaviour: string[],
     myroletype: RoleType
   }

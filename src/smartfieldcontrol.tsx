@@ -75,6 +75,16 @@ export default class SmartFieldControl extends Component<SmartFieldControlProps,
     this.controlType = this.htmlControlType();
   }
 
+  componentDidMount(): void {
+    if (this.props.isselected)
+    {
+      if (this.props.inputRef)
+      {
+        this.props.inputRef.current?.focus();
+      }
+    }
+  }
+
   componentDidUpdate(prevProps : SmartFieldControlProps)
   {
     if (prevProps.propertyValues
@@ -83,7 +93,14 @@ export default class SmartFieldControl extends Component<SmartFieldControlProps,
     {
       this.setState({ value: this.valueOnProps()});
     }
-  }
+    if (this.props.isselected)
+      {
+        if (this.props.inputRef)
+        {
+          this.props.inputRef.current?.focus();
+        }
+      }
+   }
 
   htmlControlType ()
   {
@@ -251,20 +268,20 @@ export default class SmartFieldControl extends Component<SmartFieldControlProps,
     const component = this;
     if (!component.props.disabled)
     {
-      switch( event.keyCode )
+      switch( event.key )
       {
         // Assuming this code only runs when the field control is active,
         // let it handle the navigation keys locally but do not bubble.
-        case 37: // left arrow.
-        case 39: // right arrow.
-        case 38: // Up arrow
-        case 40: // Down arrow
-        case 9:  // Horizontal Tab.
-        case 11: // Vertical Tab.
-        case 32: // Space
+        case "ArrowLeft": // left arrow.
+        case "ArrowRight": // right arrow.
+        case "ArrowUp": // Up arrow
+        case "ArrowDown": // Down arrow
+        case "Tab":  // Horizontal Tab.
+        case "Control": // Vertical Tab.
+        case "Space": // Space
           event.stopPropagation();
           break;
-        case 13: // Return
+        case "Enter": // Return
           if ( !event.shiftKey )
             {
               // Safe changes, allow event to bubble.
@@ -282,7 +299,7 @@ export default class SmartFieldControl extends Component<SmartFieldControlProps,
               event.stopPropagation();
             }
           break;
-        case 27: // Escape
+        case "Escape": // Escape
           // Discard changes, allow event to bubble.
           component.setState( {value: component.valueOnProps()});
           event.preventDefault();
@@ -415,7 +432,7 @@ export default class SmartFieldControl extends Component<SmartFieldControlProps,
     switch ( this.controlType ){
       case "checkbox":
         return (
-          <div onKeyDown={e => component.handleKeyDown(e, component.state.value)} key={component.props.serialisedProperty.id}>
+          <div onKeyDown={e => component.handleKeyDown(e, component.state.value)}>
             <Form.Check
               {... component.props.inputRef ? { ref: component.props.inputRef as React.RefObject<HTMLInputElement>} : {}}
               tabIndex={component.props.isselected ? receiveFocusByKeyboard : focusable}
@@ -428,7 +445,7 @@ export default class SmartFieldControl extends Component<SmartFieldControlProps,
           </div>);
       case "select":
         return (
-          <div onKeyDown={e => component.handleKeyDown(e, (e.target as HTMLInputElement).value)} key={component.props.serialisedProperty.id}>
+          <div onKeyDown={e => component.handleKeyDown(e, (e.target as HTMLInputElement).value)}>
             <Form.Control
               as="select"
               {... component.props.inputRef ? { ref: component.props.inputRef as React.RefObject<HTMLSelectElement>} : {}}
@@ -465,7 +482,7 @@ export default class SmartFieldControl extends Component<SmartFieldControlProps,
             // Create an editor. Currently, this is just an html input or a textarea, depdending on minInclusive.
             const as = component.minLength("markdown") > 80 ? "textarea" : "input";
             return (
-              <div onKeyDown={e => component.handleKeyDown(e, (e.target as HTMLInputElement).value)} key={component.props.serialisedProperty.id}>
+              <div onKeyDown={e => component.handleKeyDown(e, (e.target as HTMLInputElement).value)}>
                 <Form.Control
                   as={as}
                   {... component.props.inputRef ? { ref: component.props.inputRef as React.RefObject<HTMLInputElement>} : {}}
@@ -487,7 +504,7 @@ export default class SmartFieldControl extends Component<SmartFieldControlProps,
               }
       default:
         return (
-          <div onKeyDown={e => component.handleKeyDown(e, (e.target as HTMLInputElement).value)} key={component.props.serialisedProperty.id}>
+          <div onKeyDown={e => component.handleKeyDown(e, (e.target as HTMLInputElement).value)}>
             <Form.Control
               as={ (component.controlType as React.ElementType) || "input" }
               {... component.props.inputRef ? { ref: component.props.inputRef } : {}}

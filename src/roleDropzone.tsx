@@ -118,7 +118,7 @@ class RoleDropZone_ extends PerspectivesComponent
                       })))
                   );
               }
-            else {
+            else if (component.eventDiv.current){
               component.eventDiv.current.classList.add("failure");
               component.eventDiv.current.focus();
               UserMessagingPromise.then( um => 
@@ -159,8 +159,8 @@ class RoleDropZone_ extends PerspectivesComponent
               onDragEnter={ event => {
                 event.preventDefault();
                 event.stopPropagation();
-                component.eventDiv.current.blur();
-                component.eventDiv.current.classList.add("dropHere");
+                component.eventDiv.current?.blur();
+                component.eventDiv.current?.classList.add("dropHere");
               } }
               // No drop without this...
               onDragOver ={ event => {

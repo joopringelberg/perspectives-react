@@ -59,7 +59,7 @@ export function makeRoleInListPresentation (RoleRep)
       const component = this;
       if (component.context.isselected)
       {
-        this.ref.current.focus();
+        this.ref.current?.focus();
       }
     }
     render()
@@ -68,7 +68,7 @@ export function makeRoleInListPresentation (RoleRep)
       return <View viewname={component.props.viewname ? component.props.viewname : "allProperties"}>
                  <PSView.Consumer>
                    {psview =>
-                     <div onClick={() => component.ref.current.dispatchEvent(
+                     <div onClick={() => component.ref.current?.dispatchEvent(
                          new CustomEvent('SetCursor', { detail: component.context.rolinstance, bubbles: true }) )}>
                        <RoleRep
                         ref={component.ref}

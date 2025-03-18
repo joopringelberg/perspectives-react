@@ -57,7 +57,7 @@ export default class TableRow extends PerspectivesComponent<TableRowProps>
     // event.preventDefault();
     event.stopPropagation();
     // Signal to Table that this row is selected.
-    this.ref.current.dispatchEvent( new CustomEvent('SetRow', 
+    this.ref.current?.dispatchEvent( new CustomEvent('SetRow', 
       { detail: 
         { roleInstance: this.props.roleinstance
         , roleType: this.props.perspective.roleType }
@@ -66,7 +66,7 @@ export default class TableRow extends PerspectivesComponent<TableRowProps>
     // When shift is held, the card column becomes selected.
     if ( event.shiftKey )
     {
-      this.ref.current.dispatchEvent( new CustomEvent('SetSelectRow', { bubbles: true }) );
+      this.ref.current?.dispatchEvent( new CustomEvent('SetSelectRow', { bubbles: true }) );
     }
   }
 
@@ -84,7 +84,7 @@ export default class TableRow extends PerspectivesComponent<TableRowProps>
               { roleInstance: this.props.roleinstance
               , roleType: this.props.perspective.roleType }
             ,  bubbles: true }) );
-          this.ref.current.dispatchEvent( new CustomEvent('SetSelectRow', 
+          this.ref.current?.dispatchEvent( new CustomEvent('SetSelectRow', 
             { detail: 
               { roleInstance: this.props.roleinstance
               , roleType: this.props.perspective.roleType}

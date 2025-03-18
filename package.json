@@ -32,6 +32,7 @@
   "homepage": "https://github.com/joopringelberg/perspectives-react#readme",
   "peerDependencies": {
     "@primer/octicons-react": "^19.15.0",
+    "events": "^3.3.0",
     "i18next": "^24.2.1",
     "perspectives-proxy": "https://github.com/joopringelberg/perspectives-proxy.git#v1.21.4",
     "pouchdb-browser": "^9.0.0",
@@ -60,6 +61,7 @@
     "rollup-plugin-delete": "^3.0.0",
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-visualizer": "^5.14.0",
     "typescript": "^5.8.2"
   },
   "dependencies": {
@@ -69,11 +71,10 @@
     "@dicebear/core": "^9.2.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@paralleldrive/cuid2": "^2.2.2",
-    "@primer/octicons-react": "^19.15.1",
+    "@primer/octicons-react": "^19.15.0",
     "@types/markdown-it": "^14.1.2",
     "@types/markdown-it-link-attributes": "^3.0.5",
     "classnames": "^2.5.1",
-    "events": "^3.3.0",
     "highlight.js": "^11.11.1",
     "markdown-it": "^14.1.0",
     "markdown-it-link-attributes": "^4.0.1",

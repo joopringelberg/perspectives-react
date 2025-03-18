@@ -44,7 +44,10 @@ export class AdornWithBehaviour extends React.Component<AdornWithBehaviourProps>
     // Save for componentDidUpdate, so we can see if we need to re-establish behaviour.
     component.prevRef = domEl;
     // Add behaviour to the div DOM element.
-    this.props.addedBehaviour.forEach(behaviour => behaviour(domEl!, this, component.props.title));
+    if (domEl) 
+      {
+        this.props.addedBehaviour.forEach(behaviour => behaviour(domEl!, this, component.props.title));
+      }
   }
 
   componentDidUpdate() {
@@ -52,7 +55,10 @@ export class AdornWithBehaviour extends React.Component<AdornWithBehaviourProps>
     const domEl = this.ref.current;
     if (component.prevRef !== domEl) {
       // Do behaviour again.
-      this.props.addedBehaviour.forEach(behaviour => behaviour(domEl!, this, component.props.title));
+      if (domEl)
+      {
+        this.props.addedBehaviour.forEach(behaviour => behaviour(domEl!, this, component.props.title));
+      }
     }
   }
 

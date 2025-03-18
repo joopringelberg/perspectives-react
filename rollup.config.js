@@ -7,6 +7,7 @@ import json from '@rollup/plugin-json';
 import del from 'rollup-plugin-delete';
 import dts from 'rollup-plugin-dts';
 import copy from 'rollup-plugin-copy';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 export default [
   {
@@ -47,6 +48,10 @@ export default [
           { src: 'src/components.css', dest: 'dist/types' }
         ]
       }),
+      visualizer({
+        filename: 'bundle-analysis.html',
+        open: true
+      })  
       // terser() // Optional: Minify the output
     ],
     external: [

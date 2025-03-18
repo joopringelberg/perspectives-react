@@ -312,11 +312,11 @@ class TableRow extends PerspectivesComponent
     event.preventDefault();
     event.stopPropagation();
     // Signal to RoleInstances that the role instance on this row now has the cursor.
-    this.ref.current.dispatchEvent( new CustomEvent('SetCursor', { detail: this.context.rolinstance, bubbles: true }) );
+    this.ref.current?.dispatchEvent( new CustomEvent('SetCursor', { detail: this.context.rolinstance, bubbles: true }) );
     // When shift is held, the card column becomes selected.
     if ( event.shiftKey )
     {
-      this.ref.current.dispatchEvent( new CustomEvent('SetSelectRow', { bubbles: true }) );
+      this.ref.current?.dispatchEvent( new CustomEvent('SetSelectRow', { bubbles: true }) );
     }
   }
 
@@ -329,12 +329,12 @@ class TableRow extends PerspectivesComponent
           event.preventDefault();
           event.stopPropagation();
           // Signal to RoleInstances that the role instance on this row now has the cursor.
-          this.ref.current.dispatchEvent( new CustomEvent('SetCursor', { detail: this.context.rolinstance, bubbles: true }) );
+          this.ref.current?.dispatchEvent( new CustomEvent('SetCursor', { detail: this.context.rolinstance, bubbles: true }) );
         }
         // When shift is held, the card column becomes selected.
         if ( event.shiftKey )
         {
-          this.ref.current.dispatchEvent( new CustomEvent('SetSelectRow', { bubbles: true }) );
+          this.ref.current?.dispatchEvent( new CustomEvent('SetSelectRow', { bubbles: true }) );
         }
       }
   }
@@ -465,7 +465,7 @@ class TableCell extends PerspectivesComponent
   // React will then re-render, giving TableCell the value true for the isselected prop.
   handleClick ()
   {
-    this.inputRef.current.dispatchEvent( new CustomEvent('SetColumn', { detail: this.props.propertyname, bubbles: true }) );
+    this.inputRef.current?.dispatchEvent( new CustomEvent('SetColumn', { detail: this.props.propertyname, bubbles: true }) );
   }
 
   componentDidUpdate(prevProps/*, prevState*/)
@@ -476,7 +476,7 @@ class TableCell extends PerspectivesComponent
     if ( component.props.isselected && (!prevProps.isselected || component.props.iscard))
     {
       // Gives the Form.Control the focus, activating it.
-      component.inputRef.current.focus();
+      component.inputRef.current?.focus();
       // Deregister the previous selected cell:
       this.props.deregisterPreviousCell.f();
       // In case we jump back later into the table, make the current cell think

@@ -41,7 +41,7 @@ export default class RoleInstances extends PerspectivesComponent
     component.getRoleInstances();
     if (component.stateIsComplete())
     {
-      component.eventDiv.current.addEventListener('SetCursor',
+      component.eventDiv.current?.addEventListener('SetCursor',
         function (e)
         {
           component.setcursor( e.detail );
@@ -243,7 +243,7 @@ export default class RoleInstances extends PerspectivesComponent
     const component = this;
     if ( component.stateIsComplete() && !prevState.instances )
     {
-      component.eventDiv.current.addEventListener('SetCursor',
+      component.eventDiv.current?.addEventListener('SetCursor',
         function (e)
         {
           component.setcursor( e.detail );

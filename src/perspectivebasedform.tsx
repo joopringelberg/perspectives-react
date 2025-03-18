@@ -26,7 +26,7 @@ import RoleInstance from "./roleinstance.js";
 import SmartFieldControlGroup from "./smartfieldcontrolgroup.js";
 import FormControls from "./formcontrols.js";
 import
-  { Card
+  { Card, Form
   } from "react-bootstrap";
 import {UserMessagingPromise} from "./userMessaging.js";
 import i18next from "i18next";
@@ -238,7 +238,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent<Perspect
     else
     {
       return (
-        <>
+        <Form>
           {
             Object.values(perspective.properties).map((serialisedProperty, index) =>
               <SmartFieldControlGroup
@@ -253,7 +253,7 @@ export default class PerspectiveBasedForm extends PerspectivesComponent<Perspect
             )
           }
           { component.props.showControls ? <Controls/> : null}
-        </>);
+        </Form>);
     }
   }
 }

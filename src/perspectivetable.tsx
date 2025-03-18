@@ -102,33 +102,36 @@ export default class PerspectiveTable extends PerspectivesComponent<PerspectiveT
   componentDidMount ()
   {
     const component = this;
-    component.eventDiv.current.addEventListener('SetRow',
-      function (e: Event)
-      {
-        const customEvent = e as CustomEvent;
-        component.setrow(customEvent.detail.roleInstance);
-        // e.stopPropagation();
-      },
-      false);
-    component.eventDiv.current.addEventListener('SetColumn',
-      function (e)
-      {
-        const customEvent = e as CustomEvent;
-        if (customEvent.detail !== component.state.column)
+    if (component.eventDiv.current)
+    {
+      component.eventDiv.current.addEventListener('SetRow',
+        function (e: Event)
         {
-          component.setState({column: customEvent.detail});
-        }
-        e.stopPropagation();
-      },
-      false);
-    component.eventDiv.current.addEventListener('SetSelectRow',
-      function (e)
-      {
-        // By definition of row selection, the card column now becomes the current column.
-        component.setState( { column: component.props.cardcolumn || component.props.perspective.identifyingProperty } );
-        e.stopPropagation();
-      },
-      false);
+          const customEvent = e as CustomEvent;
+          component.setrow(customEvent.detail.roleInstance);
+          // e.stopPropagation();
+        },
+        false);
+      component.eventDiv.current.addEventListener('SetColumn',
+        function (e)
+        {
+          const customEvent = e as CustomEvent;
+          if (customEvent.detail !== component.state.column)
+          {
+            component.setState({column: customEvent.detail});
+          }
+          e.stopPropagation();
+        },
+        false);
+      component.eventDiv.current.addEventListener('SetSelectRow',
+        function (e)
+        {
+          // By definition of row selection, the card column now becomes the current column.
+          component.setState( { column: component.props.cardcolumn || component.props.perspective.identifyingProperty } );
+          e.stopPropagation();
+        },
+        false);
+      }
   }
 
   componentDidUpdate(prevProps : PerspectiveTableProps)

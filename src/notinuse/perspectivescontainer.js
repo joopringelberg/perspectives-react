@@ -66,7 +66,7 @@ export class PerspectivesContainer extends Component
           e.stopPropagation();
         }
       };
-    this.containerRef.current.addEventListener( "OpenContext",
+    this.containerRef.current?.addEventListener( "OpenContext",
       function(e)
       {
         history.pushState({ selectedContext: e.detail }, "");
@@ -79,7 +79,7 @@ export class PerspectivesContainer extends Component
           , backwardsNavigation: false });
         e.stopPropagation();
       });
-    this.containerRef.current.addEventListener( "OpenRoleForm",
+    this.containerRef.current?.addEventListener( "OpenRoleForm",
       function(e)
       {
         const {rolinstance, viewname, cardprop} = e.detail;

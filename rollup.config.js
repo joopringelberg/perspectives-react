@@ -52,7 +52,6 @@ export default [
         filename: 'bundle-analysis.html',
         open: true
       })  
-      // terser() // Optional: Minify the output
     ],
     external: [
       'react',
@@ -62,7 +61,8 @@ export default [
       'prop-types',
       'perspectives-proxy',
       'pouchdb-browser',
-      'i18next'
+      'i18next',
+      'regenerator-runtime'
     ]
   },
   {
